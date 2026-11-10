@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
     private fun runPythonMission(code: String): Pair<String, Boolean> = try {
         val raw = Python.getInstance().getModule("runner")
             .callAttr("run_code", code,
-                "INFO: service started\\nERROR: invalid token\\nWARNING: retry scheduled\\nERROR: permission denied\\n")
+                "INFO: service started\nERROR: invalid token\nWARNING: retry scheduled\nERROR: permission denied\n")
             .toString()
         val result = JSONObject(raw)
         val output = result.optString("output")
@@ -76,9 +76,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> Unit) {
     var editor by remember {
-        mutableStateOf(TextFieldValue("errors = []\\n\\n# TODO: read access.log and collect ERROR lines\\n\\nprint(len(errors))"))
+        mutableStateOf(TextFieldValue("errors = []\n\n# TODO: read access.log and collect ERROR lines\n\nprint(len(errors))"))
     }
-    var output by remember { mutableStateOf("SYSTEM READY\\nAwaiting analyst input...") }
+    var output by remember { mutableStateOf("SYSTEM READY\nAwaiting analyst input...") }
     var status by remember { mutableStateOf("TRAINING SIMULATION") }
     var isRunning by remember { mutableStateOf(false) }
 
@@ -112,7 +112,7 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                     Text("root@helix-node:~$ tail -n 4 access.log", color = Neon, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
                     Spacer(Modifier.height(7.dp))
                     Text(
-                        "INFO: service started\\nERROR: invalid token\\nWARNING: retry scheduled\\nERROR: permission denied",
+                        "INFO: service started\nERROR: invalid token\nWARNING: retry scheduled\nERROR: permission denied",
                         color = Color(0xFFB7C7D1), fontFamily = FontFamily.Monospace, fontSize = 11.sp, lineHeight = 17.sp
                     )
                     Spacer(Modifier.height(8.dp))
