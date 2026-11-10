@@ -6,7 +6,7 @@ import unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "app/src/main/python"))
 import runner
 
-LOG = "INFO: started\\nERROR: one\\nWARNING: wait\\nERROR: two\\n"
+LOG = "INFO: started\nERROR: one\nWARNING: wait\nERROR: two\n"
 
 class RunnerTests(unittest.TestCase):
     def run_code(self, source):
@@ -32,7 +32,7 @@ print(len(errors))'''
         self.assertIn("Only read-only access", result["error"])
 
     def test_instruction_budget(self):
-        result = self.run_code("while True:\\n    pass")
+        result = self.run_code("while True:\n    pass")
         self.assertIn("Execution budget exceeded", result["error"])
 
 if __name__ == "__main__":
