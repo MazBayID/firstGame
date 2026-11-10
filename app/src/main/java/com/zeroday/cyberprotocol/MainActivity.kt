@@ -176,7 +176,7 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     repeat(maxOf(1, editor.text.count { it == '\n' } + 1)) { line ->
-                        Text("\${line + 1}", color = Color(0xFF536775), fontFamily = FontFamily.Monospace, fontSize = 10.sp, lineHeight = 17.sp)
+                        Text((line + 1).toString(), color = Color(0xFF536775), fontFamily = FontFamily.Monospace, fontSize = 10.sp, lineHeight = 17.sp)
                     }
                 }
                 BasicTextField(
