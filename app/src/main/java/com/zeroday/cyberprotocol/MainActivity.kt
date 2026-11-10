@@ -94,6 +94,7 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
     val context = LocalContext.current
     val prefs = remember { context.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
     var xp by remember { mutableIntStateOf(prefs.getInt("xp", 0)) }
+    var credits by remember { mutableIntStateOf(prefs.getInt("credits", 0)) }
     var missionComplete by remember { mutableStateOf(prefs.getBoolean("chapter_01_mission_01", false)) }
     var editor by remember {
         mutableStateOf(TextFieldValue(
@@ -115,8 +116,8 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                 Text("ZERO DAY  /  CHAPTER 01", color = Muted, fontSize = 10.sp, letterSpacing = 1.5.sp)
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text("LEVEL 01", color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                Text("$xp XP", color = Neon, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text("LEVEL ${xp / 250 + 1}", color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("$xp XP  •  $credits CR", color = Neon, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -220,7 +221,8 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                         if (passed && !missionComplete) {
                             missionComplete = true
                             xp += 100
-                            prefs.edit().putBoolean("chapter_01_mission_01", true).putInt("xp", xp).apply()
+                            credits += 50
+                            prefs.edit().putBoolean("chapter_01_mission_01", true).putInt("xp", xp).putInt("credits", credits).apply()
                             status = "MISSION COMPLETE  /  +100 XP"
                         } else if (passed) {
                             status = "MISSION VERIFIED  /  REWARD ALREADY CLAIMED"
