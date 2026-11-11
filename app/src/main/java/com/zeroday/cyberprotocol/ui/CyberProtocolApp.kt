@@ -1,5 +1,6 @@
 package com.zeroday.cyberprotocol.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,8 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zeroday.cyberprotocol.core.model.Mission
@@ -21,7 +24,45 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private enum class Screen { HOME, LEARN, PRACTICE, MISSIONS, MISSION }
+private enum class Screen { HOME, LEARN, PRACTICE, MISSIONS, MISSION, SETTINGS }
+private enum class UiLanguage(val code: String, val label: String) {
+    EN("en", "English"), ID("id", "Bahasa Indonesia")
+}
+
+private fun tr(key: String, language: UiLanguage): String {
+    if (language == UiLanguage.EN) return when (key) {
+        "learn" -> "LEARN"; "practice" -> "PRACTICE"; "missions" -> "MISSION BOARD"
+        "settings" -> "SETTINGS"; "back" -> "BACK"; "home_sub" -> "CYBER INTELLIGENCE RPG  /  PYTHON TRAINING"
+        "learn_sub" -> "Understand the concepts before using them."
+        "practice_sub" -> "Experiment, run, observe, and repair."
+        "mission_sub" -> "Choose an available assignment."
+        "language" -> "INTERFACE LANGUAGE"; "language_note" -> "Story and lesson text currently follows the chapter's authored language."
+        "run_practice" -> "RUN PRACTICE"; "run" -> "RUN  ·  EXECUTE ONLY"
+        "submit" -> "SUBMIT  ·  MISSION CHECK"; "editor" -> "Python code editor"
+        "practice_editor" -> "Python practice editor"; "hint" -> "REQUEST HINT"
+        "executed" -> "Executed only. No mission evaluation was performed."
+        "run_done" -> "RUN completed. The mission has not been evaluated."
+        "objective" -> "OBJECTIVE"; "loading" -> "RUNNING..."
+        else -> key
+    }
+    return when (key) {
+        "learn" -> "BELAJAR"; "practice" -> "LATIHAN"; "missions" -> "PAPAN MISI"
+        "settings" -> "PENGATURAN"; "back" -> "KEMBALI"
+        "home_sub" -> "RPG INTELIJEN SIBER  /  PELATIHAN PYTHON"
+        "learn_sub" -> "Pahami konsep sebelum menggunakannya."
+        "practice_sub" -> "Bereksperimen, jalankan, amati, dan perbaiki."
+        "mission_sub" -> "Pilih tugas yang tersedia."
+        "language" -> "BAHASA ANTARMUKA"
+        "language_note" -> "Teks cerita dan materi mengikuti bahasa yang ditulis pada chapter."
+        "run_practice" -> "JALANKAN LATIHAN"; "run" -> "JALANKAN  ·  EKSEKUSI SAJA"
+        "submit" -> "KIRIM  ·  PERIKSA MISI"; "editor" -> "Editor kode Python"
+        "practice_editor" -> "Editor latihan Python"; "hint" -> "MINTA PETUNJUK"
+        "executed" -> "Kode dijalankan. Evaluasi misi tidak dilakukan."
+        "run_done" -> "RUN selesai. Misi belum dievaluasi."
+        "objective" -> "TUJUAN"; "loading" -> "MENJALANKAN..."
+        else -> key
+    }
+}
 
 @Composable
 fun CyberProtocolApp() {
@@ -31,10 +72,17 @@ fun CyberProtocolApp() {
     val runner = remember { PythonExecutionService() }
     val story = remember { StoryEngine() }
     val scope = rememberCoroutineScope()
+    val preferences = remember { context.getSharedPreferences("cyber_protocol_settings", 0) }
+    var language by remember {
+        mutableStateOf(
+            if (preferences.getString("language", "en") == "id") UiLanguage.ID else UiLanguage.EN
+        )
+    }
+    var languageMenu by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(progressStore.load()) }
     var screen by remember { mutableStateOf(Screen.HOME) }
     var selectedMission by remember { mutableStateOf(chapter.missions.first()) }
-    var source by remember { mutableStateOf(chapter.missions.first().starterCode) }
+    var source by remember { mutableStateOf(TextFieldValue(chapter.missions.first().starterCode)) }
     var terminal by remember { mutableStateOf("TRAINING ENVIRONMENT READY\nWaiting for analyst input...") }
     var feedback by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
@@ -42,20 +90,29 @@ fun CyberProtocolApp() {
 
     fun selectMission(mission: Mission) {
         selectedMission = mission
-        source = mission.starterCode
+        source = TextFieldValue(mission.starterCode, TextRange(mission.starterCode.length))
         terminal = "MISSION ${mission.id.toString().padStart(2, '0')} READY"
         feedback = ""
         hintLevel = 0
         screen = Screen.MISSION
     }
 
+    BackHandler(enabled = screen != Screen.HOME) {
+        screen = when (screen) {
+            Screen.MISSION -> Screen.MISSIONS
+            Screen.LEARN, Screen.PRACTICE, Screen.MISSIONS, Screen.SETTINGS -> Screen.HOME
+            Screen.HOME -> Screen.HOME
+        }
+    }
+
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Text("CYBER PROTOCOL", color = MaterialTheme.colorScheme.primary, fontSize = 23.sp,
                 fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-            Text("CYBER INTELLIGENCE RPG  /  PYTHON TRAINING",
-                color = MaterialTheme.colorScheme.secondary, fontSize = 10.sp)
+            Text(tr("home_sub", language), color = MaterialTheme.colorScheme.secondary, fontSize = 10.sp)
 
             when (screen) {
                 Screen.HOME -> {
@@ -63,12 +120,13 @@ fun CyberProtocolApp() {
                     Text(chapter.opening, color = Color.LightGray)
                     Text("LEVEL ${progress.xp / 250 + 1}   •   ${progress.xp} XP   •   ${progress.credits} CR")
                     Text("CHAPTER PROGRESS  ${(story.chapterProgress(chapter, progress.completedMissions) * 100).toInt()}%")
-                    Button(onClick = { screen = Screen.LEARN }, Modifier.fillMaxWidth()) { Text("LEARN") }
-                    Button(onClick = { screen = Screen.PRACTICE }, Modifier.fillMaxWidth()) { Text("PRACTICE") }
-                    Button(onClick = { screen = Screen.MISSIONS }, Modifier.fillMaxWidth()) { Text("MISSION BOARD") }
+                    Button(onClick = { screen = Screen.LEARN }, Modifier.fillMaxWidth()) { Text(tr("learn", language)) }
+                    Button(onClick = { screen = Screen.PRACTICE }, Modifier.fillMaxWidth()) { Text(tr("practice", language)) }
+                    Button(onClick = { screen = Screen.MISSIONS }, Modifier.fillMaxWidth()) { Text(tr("missions", language)) }
+                    OutlinedButton(onClick = { screen = Screen.SETTINGS }, Modifier.fillMaxWidth()) { Text(tr("settings", language)) }
                 }
                 Screen.LEARN -> {
-                    PageTitle("LEARN", "Understand the concepts before using them.")
+                    PageTitle(tr("learn", language), tr("learn_sub", language))
                     chapter.lessons.forEach { lesson ->
                         Text(lesson.title, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                         Text(lesson.concept, color = MaterialTheme.colorScheme.secondary)
@@ -77,31 +135,28 @@ fun CyberProtocolApp() {
                         Text("OUTPUT\n${lesson.expectedOutput}", color = MaterialTheme.colorScheme.secondary,
                             fontFamily = FontFamily.Monospace)
                     }
-                    BackButton { screen = Screen.HOME }
+                    BackButton { screen = Screen.HOME; }
                 }
                 Screen.PRACTICE -> {
-                    PageTitle("PRACTICE", "Experiment, run, observe, and repair.")
-                    Text("Practice execution does not award mission completion.")
-                    OutlinedTextField(value = source, onValueChange = { source = it },
-                        modifier = Modifier.fillMaxWidth().height(190.dp),
-                        label = { Text("Python practice editor") },
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace))
+                    PageTitle(tr("practice", language), tr("practice_sub", language))
+                    Text(if (language == UiLanguage.ID) "Eksekusi latihan tidak meluluskan misi." else "Practice execution does not award mission completion.")
+                    CodeEditor(source, { source = it }, tr("practice_editor", language), 190)
                     Button(enabled = !busy, onClick = {
                         busy = true
                         scope.launch {
-                            val result = withContext(Dispatchers.IO) { runner.run(source) }
+                            val result = withContext(Dispatchers.IO) { runner.run(source.text) }
                             terminal = result.output.ifBlank { "(no output)" }
                             if (result.error.isNotBlank()) terminal += "\nERROR: ${result.error}"
-                            feedback = "Executed only. No mission evaluation was performed."
+                            feedback = tr("executed", language)
                             busy = false
                         }
-                    }, modifier = Modifier.fillMaxWidth()) { Text(if (busy) "RUNNING..." else "RUN PRACTICE") }
+                    }, modifier = Modifier.fillMaxWidth()) { Text(if (busy) tr("loading", language) else tr("run_practice", language)) }
                     CodePanel(terminal)
                     Text(feedback, color = MaterialTheme.colorScheme.secondary)
                     BackButton { screen = Screen.HOME }
                 }
                 Screen.MISSIONS -> {
-                    PageTitle("MISSION BOARD", "Choose an available assignment.")
+                    PageTitle(tr("missions", language), tr("mission_sub", language))
                     chapter.missions.forEach { mission ->
                         val unlocked = mission.id == 1 || (mission.id - 1) in progress.completedMissions
                         Button(enabled = unlocked, onClick = { selectMission(mission) },
@@ -115,28 +170,25 @@ fun CyberProtocolApp() {
                 Screen.MISSION -> {
                     PageTitle("MISSION ${selectedMission.id.toString().padStart(2, '0')}", selectedMission.title)
                     Text(selectedMission.briefing, color = Color.LightGray)
-                    Text("OBJECTIVE", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+                    Text(tr("objective", language), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                     Text(selectedMission.objective)
                     Text("CONCEPTS: ${selectedMission.concepts.joinToString()}",
                         color = MaterialTheme.colorScheme.secondary)
-                    OutlinedTextField(value = source, onValueChange = { source = it },
-                        modifier = Modifier.fillMaxWidth().height(220.dp),
-                        label = { Text("Python code editor") },
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace))
+                    CodeEditor(source, { source = it }, tr("editor", language), 220)
                     Button(enabled = !busy, onClick = {
                         busy = true
                         scope.launch {
-                            val result = withContext(Dispatchers.IO) { runner.run(source) }
+                            val result = withContext(Dispatchers.IO) { runner.run(source.text) }
                             terminal = result.output.ifBlank { "(no output)" }
                             if (result.error.isNotBlank()) terminal += "\nERROR: ${result.error}"
-                            feedback = "RUN completed. The mission has not been evaluated."
+                            feedback = tr("run_done", language)
                             busy = false
                         }
-                    }, modifier = Modifier.fillMaxWidth()) { Text("RUN  ·  EXECUTE ONLY") }
+                    }, modifier = Modifier.fillMaxWidth()) { Text(if (busy) tr("loading", language) else tr("run", language)) }
                     Button(enabled = !busy, onClick = {
                         busy = true
                         scope.launch {
-                            val result = withContext(Dispatchers.IO) { runner.submit(selectedMission.id, source) }
+                            val result = withContext(Dispatchers.IO) { runner.submit(selectedMission.id, source.text) }
                             terminal = result.output.ifBlank { "(no output)" }
                             feedback = result.error.ifBlank { result.feedback }
                             if (result.passed) {
@@ -145,16 +197,34 @@ fun CyberProtocolApp() {
                             }
                             busy = false
                         }
-                    }, modifier = Modifier.fillMaxWidth()) { Text("SUBMIT  ·  MISSION CHECK") }
+                    }, modifier = Modifier.fillMaxWidth()) { Text(tr("submit", language)) }
                     CodePanel(terminal)
                     Text(feedback, color = if (selectedMission.id in progress.completedMissions)
                         MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary)
                     TextButton(onClick = { hintLevel = (hintLevel + 1).coerceAtMost(3) }) {
-                        Text(if (hintLevel == 0) "REQUEST HINT" else "NEXT HINT ($hintLevel/3)")
+                        Text(if (hintLevel == 0) tr("hint", language) else if (language == UiLanguage.ID) "PETUNJUK BERIKUTNYA ($hintLevel/3)" else "NEXT HINT ($hintLevel/3)")
                     }
                     if (hintLevel > 0) Text(selectedMission.hints[hintLevel - 1],
                         color = MaterialTheme.colorScheme.secondary)
                     BackButton { screen = Screen.MISSIONS }
+                }
+                Screen.SETTINGS -> {
+                    PageTitle(tr("settings", language), if (language == UiLanguage.ID) "Atur preferensi antarmuka." else "Configure interface preferences.")
+                    Text(tr("language", language), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+                    Box {
+                        OutlinedButton(onClick = { languageMenu = true }) { Text(language.label + "  ▾") }
+                        DropdownMenu(expanded = languageMenu, onDismissRequest = { languageMenu = false }) {
+                            UiLanguage.entries.forEach { option ->
+                                DropdownMenuItem(text = { Text(option.label) }, onClick = {
+                                    language = option
+                                    preferences.edit().putString("language", option.code).apply()
+                                    languageMenu = false
+                                })
+                            }
+                        }
+                    }
+                    Text(tr("language_note", language), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
+                    BackButton { screen = Screen.HOME }
                 }
             }
         }
@@ -177,5 +247,5 @@ private fun CodePanel(text: String) {
 
 @Composable
 private fun BackButton(onClick: () -> Unit) {
-    TextButton(onClick = onClick) { Text("BACK") }
+    TextButton(onClick = onClick) { Text("←  ${tr("back", UiLanguage.EN)}") }
 }
