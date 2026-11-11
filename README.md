@@ -62,15 +62,21 @@ The current Python runner applies AST restrictions and resource limits, but exec
 - [Visual Identity](docs/VISUAL_IDENTITY.md) — approved visual direction.
 - [Asset Catalog](docs/ASSET_CATALOG.md) — semantic UI asset registry.
 
-## Build
+## Build and CI
 
-Requirements: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13 for standalone runner tests.
+Requirements for local validation: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13.
+
+Run the test suites locally:
 
 ```bash
 python -m unittest discover -s tests -v
-gradle --no-daemon testDebugUnitTest assembleDebug
+gradle --no-daemon testDebugUnitTest
 ```
 
-Debug APK output: `app/build/outputs/apk/debug/app-debug.apk`.
+These commands run tests only; they do not produce an APK. The **Android Tests** GitHub Actions workflow follows the same rule: it runs Python and Android/Kotlin unit tests only, never builds, signs, or uploads an APK, and never accesses release-signing secrets.
+
+After a push to `main` or the active development branch passes **Android Tests**, the **Android Release APK** workflow builds the exact tested commit as a Release variant. It restores the permanent release keystore only inside the ephemeral CI runner, verifies package identity, ABI, version code, and certificate fingerprint, then publishes the signed `app-release.apk` artifact under GitHub Actions.
+
+For physical-device installation, download only the `cyber-protocol-release` artifact from a successful **Android Release APK** run. Do not use a Debug APK for device acceptance or distribution. Pull-request test runs do not produce release APKs.
 
 The project is an evolving game foundation. This repository does not claim that the full v1.0 campaign is complete.
