@@ -1,6 +1,7 @@
 package com.zeroday.cyberprotocol.data
 
 import android.content.Context
+import com.zeroday.cyberprotocol.core.model.MissionDefinition
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -143,6 +144,57 @@ class VirtualFileSystem(context: Context) {
         return files[resolved]
     }
 
+    /**
+     * Opens only the files declared by an authored mission. The returned handle
+     * never exposes arbitrary paths or the Android host filesystem.
+     */
+    @Synchronized
+    fun openMissionWorkspace(definition: MissionDefinition): MissionWorkspace {
+        val missionRoot = "$root/missions/"
+        require(definition.workspaceDirectory.startsWith(missionRoot)) {
+            "Mission workspace must remain inside the virtual missions directory."
+        }
+        val segments = definition.workspaceDirectory.removePrefix("/").split("/")
+        require(segments.all { it.matches(Regex("[A-Za-z0-9_.-]{1,64}")) && it != "." && it != ".." }) {
+            "Invalid mission workspace path."
+        }
+        var path = ""
+        segments.forEach { segment ->
+            path += "/$segment"
+            directories.add(path)
+        }
+        persist()
+        return MissionWorkspace(
+            owner = this,
+            directory = definition.workspaceDirectory,
+            allowedFiles = definition.allowedFiles,
+            writableFiles = definition.writableFiles
+        )
+    }
+
+    @Synchronized
+    internal fun listMissionFiles(directory: String, allowedFiles: Set<String>): List<String> =
+        allowedFiles.filter { files.containsKey("$directory/$it") }.sorted()
+
+    @Synchronized
+    internal fun readMissionFile(directory: String, allowedFiles: Set<String>, name: String): String? {
+        if (name !in allowedFiles) return null
+        return files["$directory/$name"]
+    }
+
+    @Synchronized
+    internal fun writeMissionFile(
+        directory: String,
+        writableFiles: Set<String>,
+        name: String,
+        content: String
+    ): Boolean {
+        if (name !in writableFiles || content.length > MAX_MISSION_FILE_LENGTH) return false
+        files["$directory/$name"] = content
+        persist()
+        return true
+    }
+
     private fun restore() {
         val raw = preferences.getString("files", null) ?: return
         try {
@@ -189,8 +241,27 @@ class VirtualFileSystem(context: Context) {
     }
 
     private fun parent(path: String): String = path.substringBeforeLast("/", "")
+
+    companion object { private const val MAX_MISSION_FILE_LENGTH = 50_000 }
     private fun tokenize(line: String): List<String> =
         Regex(""""([^"]*)"|'([^']*)'|(\S+)""").findAll(line).map { match ->
             match.groups[1]?.value ?: match.groups[2]?.value ?: match.groups[3]?.value.orEmpty()
         }.toList()
+}
+
+
+/** Narrow capability handle for one mission workspace. */
+class MissionWorkspace internal constructor(
+    private val owner: VirtualFileSystem,
+    val directory: String,
+    private val allowedFiles: Set<String>,
+    private val writableFiles: Set<String>
+) {
+    fun listFiles(): List<String> = owner.listMissionFiles(directory, allowedFiles)
+
+    fun readFile(name: String): String? =
+        owner.readMissionFile(directory, allowedFiles, name)
+
+    fun writeFile(name: String, content: String): Boolean =
+        owner.writeMissionFile(directory, writableFiles, name, content)
 }
