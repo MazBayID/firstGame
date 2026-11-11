@@ -89,6 +89,18 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print(receipts[0])\nprint(receipts[1])', 13)["passed"])
 
+    def test_first_contact_normalize_uses_integer_conversion_and_signed_delta(self):
+        source = 'first_time = int(receipt_seconds[0])\nsecond_time = int(receipt_seconds[1])\ndelta = second_time - first_time\nprint(delta)'
+        result = self.submit(source, 14)
+        self.assertTrue(result["passed"], result)
+        self.assertFalse(self.submit("print(4)", 14)["passed"])
+
+    def test_first_contact_validates_absolute_delta_across_reversed_sources(self):
+        source = 'difference = abs(int(receipt_seconds[1]) - int(receipt_seconds[0]))\nprint(difference)'
+        result = self.submit(source, 15)
+        self.assertTrue(result["passed"], result)
+        self.assertFalse(self.submit("print(4)", 15)["passed"])
+
     def test_mission_run_receives_read_only_input_variables(self):
         source = 'count = 0\nfor event in events:\n    if "ERROR" in event:\n        count += 1\nprint(count)'
         result = json.loads(runner.run_code_json(
