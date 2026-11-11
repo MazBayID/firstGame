@@ -27,7 +27,7 @@ object Campaign01Catalog {
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/signal",
             allowedFiles = setOf("briefing.txt", "message_fragment.txt", "signal.py"),
             writableFiles = setOf("signal.py"),
-            initialFiles = mapOf("message_fragment.txt" to "ACCESS GRANTED\\n"),
+            initialFiles = mapOf("message_fragment.txt" to "ACCESS GRANTED\n"),
             objectives = listOf(
                 MissionObjective(
                     id = "assign_signal",
