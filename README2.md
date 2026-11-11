@@ -213,7 +213,7 @@ The opening recruitment story should introduce decryption as part of the narrati
 - Increase complexity gradually as the player's technical skills grow. Early “decryption” may use fictional, deliberately simple transformations; do not present it as real cryptographic security.
 - Preserve the distinction between narrative suspense and learning fairness: provide contextual clues and graduated hints, and never require an unexplained advanced syntax from a beginner.
 
-## 6.2 Narrative principles
+## 6.4 Narrative principles
 
 - Story must not feel pasted onto unrelated coding questions.
 - Every mission should have a believable narrative reason to exist.
@@ -239,6 +239,18 @@ The intended mission cycle:
 10. **Next operation** — the campaign continues with new challenges.
 
 **Run and Submit must remain separate actions.** Run executes and displays output/errors. Submit evaluates mission requirements. Running code alone must not silently mark a mission complete.
+
+## 7.1 Mission-to-Mission Code Clues
+
+Every mission should contain a **code- or syntax-based clue pointing toward the next mission**.
+
+- The clue should emerge naturally from the mission's story, evidence, terminal output, decrypted message, dossier, or debriefing.
+- It may be a short code fragment, a syntax pattern, a function name, a variable, or a technical term that foreshadows the next concept or operation.
+- The clue should create curiosity and give the player a useful preview of what comes next, without simply revealing the next mission's full solution.
+- Where appropriate, the next mission should make the connection clear and reward the player for recognizing or remembering the clue.
+- Clues must match the player's current learning level. Do not introduce unexplained advanced syntax too early.
+- Keep clues coherent with campaign continuity; they should feel like meaningful intelligence breadcrumbs, not random easter eggs.
+- The clue is a narrative/learning bridge. It must not become an unfair blocker: the next mission should still provide the explanation or graduated hints needed to learn its new concept.
 
 # 8. Learning Through Operations
 
