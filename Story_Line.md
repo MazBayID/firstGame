@@ -83,7 +83,9 @@ Di tempat itulah penugasan pertamanya menunggu.
 
 Tugas awal tampak sederhana. A.E.G.I.S. ingin memastikan bahwa pemain dapat mengikuti instruksi, memahami informasi yang diberikan, dan berkomunikasi dengan sistem melalui program kecil.
 
-Freya mendampingi pemain saat ia menyimpan sebuah pesan ke dalam variabel dan menampilkannya. Setelah itu, pemain menghadapi tugas berikutnya yang meminta pemahaman serupa dengan sedikit perubahan.
+Sebuah fragmen bertuliskan **ACCESS GRANTED** tersedia dalam berkas `message_fragment.txt`. Freya mengirimkannya sebagai lampiran, sementara salinan yang sama juga tersedia di File Repository intranet. Pemain menyimpan berkas itu ke ruang kerja misi, membacanya melalui Terminal, lalu mengolah isinya.
+
+Freya mendampingi pemain saat ia menyimpan pesan tersebut ke dalam variabel dan menampilkannya. Setelah itu, pemain menghadapi tugas berikutnya yang meminta pemahaman serupa dengan sedikit perubahan.
 
 Bagi organisasi, tugas-tugas itu mungkin hanya pemeriksaan dasar. Bagi pemain, keduanya adalah pengalaman pertama mengubah instruksi menjadi sesuatu yang benar-benar dilakukan komputer.
 
