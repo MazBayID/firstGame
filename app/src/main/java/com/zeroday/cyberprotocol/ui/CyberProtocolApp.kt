@@ -68,6 +68,41 @@ private val storyExpected = listOf("ACCESS GRANTED", "IDENTITY VERIFIED")
 @Composable
 fun CyberProtocolApp() {
     val context = LocalContext.current
+    var startupReady by remember { mutableStateOf(false) }
+    var startupError by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        runCatching {
+            withContext(Dispatchers.IO) {
+                LocalGameStateRepository(context).load()
+                VirtualFileSystem(context).initialDirectory()
+                com.chaquo.python.Python.getInstance()
+            }
+        }.onSuccess {
+            startupReady = true
+        }.onFailure {
+            startupError = it.message ?: "Inisialisasi game gagal."
+        }
+    }
+
+    if (!startupReady) {
+        EntryLoadingScreen(
+            ready = startupReady,
+            error = startupError,
+            onRetry = {
+                startupError = null
+                // Recomposition alone does not restart a completed effect; the retry
+                // key is advanced by the dedicated retry state below.
+            }
+        )
+        return
+    }
+    CyberProtocolGameContent()
+}
+
+@Composable
+private fun CyberProtocolGameContent() {
+    val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
     val gameStateRepository = remember { LocalGameStateRepository(context) }
     val initialGameState = remember { gameStateRepository.load() }
