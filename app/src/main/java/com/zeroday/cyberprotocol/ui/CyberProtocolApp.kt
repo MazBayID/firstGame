@@ -70,8 +70,9 @@ fun CyberProtocolApp() {
     val context = LocalContext.current
     var startupReady by remember { mutableStateOf(false) }
     var startupError by remember { mutableStateOf<String?>(null) }
+    var startupAttempt by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(startupAttempt) {
         runCatching {
             withContext(Dispatchers.IO) {
                 LocalGameStateRepository(context).load()
@@ -90,9 +91,9 @@ fun CyberProtocolApp() {
             ready = startupReady,
             error = startupError,
             onRetry = {
+                startupReady = false
                 startupError = null
-                // Recomposition alone does not restart a completed effect; the retry
-                // key is advanced by the dedicated retry state below.
+                startupAttempt += 1
             }
         )
         return
