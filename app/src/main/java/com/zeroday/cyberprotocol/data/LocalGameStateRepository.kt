@@ -24,7 +24,7 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         val raw = preferences.getString(KEY_SNAPSHOT, null)
         if (raw.isNullOrBlank()) return migrateLegacyProgress()
 
-        val current = runCatching { decode(JSONObject(raw)) }.getOrNull()
+        val current = runCatching { GameStateCodec.decode(JSONObject(raw)) }.getOrNull()
         if (current != null) {
             if (current.schemaVersion < GameState.CURRENT_SCHEMA_VERSION) {
                 val migratedBeat = LegacyProgressMigration.migrateExpandedChapterBeat(
@@ -46,18 +46,18 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         // Preserve the damaged snapshot for diagnostics before attempting recovery.
         preferences.edit().putString(KEY_CORRUPT_BACKUP, raw).apply()
         val previousRaw = preferences.getString(KEY_PREVIOUS_SNAPSHOT, null)
-        val previous = previousRaw?.let { runCatching { decode(JSONObject(it)) }.getOrNull() }
+        val previous = previousRaw?.let { runCatching { GameStateCodec.decode(JSONObject(it)) }.getOrNull() }
         if (previous != null) {
             val recovered = previous.copy(
                 schemaVersion = GameState.CURRENT_SCHEMA_VERSION,
                 lastCheckpoint = "recovered_previous_snapshot"
             )
-            preferences.edit().putString(KEY_SNAPSHOT, encode(recovered).toString()).apply()
+            preferences.edit().putString(KEY_SNAPSHOT, GameStateCodec.encode(recovered).toString()).apply()
             return recovered
         }
 
         val migrated = migrateLegacyProgress().copy(lastCheckpoint = "recovered_legacy_progress")
-        preferences.edit().putString(KEY_SNAPSHOT, encode(migrated).toString()).apply()
+        preferences.edit().putString(KEY_SNAPSHOT, GameStateCodec.encode(migrated).toString()).apply()
         return migrated
     }
 
@@ -70,7 +70,7 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
             clearance = state.clearance.coerceAtLeast(0),
             updatedAtEpochMillis = System.currentTimeMillis()
         )
-        val encoded = encode(normalized).toString()
+        val encoded = GameStateCodec.encode(normalized).toString()
         val previous = preferences.getString(KEY_SNAPSHOT, null)
         val editor = preferences.edit()
         if (!previous.isNullOrBlank() && previous != encoded) {
@@ -99,92 +99,6 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         // Legacy key used by the original opening-slice implementation.
         return appContext.getSharedPreferences("cyber_protocol_campaign_v2", Context.MODE_PRIVATE)
             .getInt("story_stage", 0)
-    }
-
-    private fun encode(state: GameState): JSONObject = JSONObject().apply {
-        put("schemaVersion", state.schemaVersion)
-        put("campaignId", state.campaignId)
-        put("storyBeat", state.storyBeat)
-        put("recruitmentNotificationOpened", state.recruitmentNotificationOpened)
-        put("freyaContactOpened", state.freyaContactOpened)
-        put("nexusContactUnlocked", state.nexusContactUnlocked)
-        put("activeMissionId", state.activeMissionId)
-        put("completedMissionIds", JSONArray(state.completedMissionIds.sorted()))
-        put("rank", state.rank)
-        put("experience", state.experience)
-        put("clearance", state.clearance)
-        put("unlockedApps", JSONArray(state.unlockedApps.sorted()))
-        put("lastCheckpoint", state.lastCheckpoint)
-        put("updatedAtEpochMillis", state.updatedAtEpochMillis)
-        put("savedCode", JSONObject().apply {
-            state.savedCode.forEach { (key, value) -> put(key, value) }
-        })
-        put("evidence", JSONArray().apply {
-            state.evidence.forEach { record ->
-                put(JSONObject().apply {
-                    put("id", record.id)
-                    put("title", record.title)
-                    put("summary", record.summary)
-                    put("source", record.source)
-                    put("status", record.status.name)
-                    put("missionId", record.missionId)
-                    put("recordedAtEpochMillis", record.recordedAtEpochMillis)
-                })
-            }
-        })
-    }
-
-    private fun decode(json: JSONObject): GameState {
-        val version = json.optInt("schemaVersion", 0)
-        require(version in 1..GameState.CURRENT_SCHEMA_VERSION) { "Unsupported save schema: $version" }
-        val codeJson = json.optJSONObject("savedCode") ?: JSONObject()
-        val code = linkedMapOf<String, String>()
-        codeJson.keys().forEach { key -> code[key] = codeJson.optString(key, "") }
-        val evidenceJson = json.optJSONArray("evidence") ?: JSONArray()
-        val evidence = buildList {
-            for (index in 0 until evidenceJson.length()) {
-                val item = evidenceJson.optJSONObject(index) ?: continue
-                val status = runCatching {
-                    EvidenceStatus.valueOf(item.optString("status", "UNVERIFIED"))
-                }.getOrDefault(EvidenceStatus.UNVERIFIED)
-                add(EvidenceRecord(
-                    id = item.optString("id"),
-                    title = item.optString("title"),
-                    summary = item.optString("summary"),
-                    source = item.optString("source"),
-                    status = status,
-                    missionId = item.optString("missionId"),
-                    recordedAtEpochMillis = item.optLong("recordedAtEpochMillis", 0L)
-                ))
-            }
-        }
-        return GameState(
-            schemaVersion = version,
-            campaignId = json.optString("campaignId", "campaign_01_recruitment"),
-            storyBeat = json.optInt("storyBeat", 0).coerceAtLeast(0),
-            recruitmentNotificationOpened = json.optBoolean(
-                "recruitmentNotificationOpened", json.optInt("storyBeat", 0) >= 2
-            ),
-            freyaContactOpened = json.optBoolean("freyaContactOpened", false),
-            nexusContactUnlocked = json.optBoolean("nexusContactUnlocked", false),
-            activeMissionId = json.optString("activeMissionId").takeIf { it.isNotBlank() && it != "null" },
-            completedMissionIds = json.stringSet("completedMissionIds"),
-            rank = json.optString("rank", "CIVILIAN"),
-            experience = json.optInt("experience", 0).coerceAtLeast(0),
-            clearance = json.optInt("clearance", 0).coerceAtLeast(0),
-            unlockedApps = json.stringSet("unlockedApps").ifEmpty {
-                ProgressionRules.unlockedAppsForStoryBeat(json.optInt("storyBeat", 0))
-            },
-            evidence = evidence,
-            savedCode = code,
-            lastCheckpoint = json.optString("lastCheckpoint", "recovered"),
-            updatedAtEpochMillis = json.optLong("updatedAtEpochMillis", 0L)
-        )
-    }
-
-    private fun JSONObject.stringSet(key: String): Set<String> {
-        val array = optJSONArray(key) ?: return emptySet()
-        return buildSet { for (index in 0 until array.length()) add(array.optString(index)) }
     }
 
     companion object {
