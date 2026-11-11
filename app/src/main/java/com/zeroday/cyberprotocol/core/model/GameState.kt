@@ -31,7 +31,16 @@ data class EvidenceRecord(
     val status: EvidenceStatus = EvidenceStatus.UNVERIFIED,
     val missionId: String,
     val recordedAtEpochMillis: Long = System.currentTimeMillis()
-)
+) {
+    init {
+        require(id.isNotBlank())
+        require(title.isNotBlank())
+        require(summary.isNotBlank())
+        require(source.isNotBlank())
+        require(missionId.isNotBlank())
+        require(recordedAtEpochMillis >= 0L)
+    }
+}
 
 enum class FilePermission { READ_ONLY, READ_WRITE }
 
