@@ -69,6 +69,23 @@ class RunnerTests(unittest.TestCase):
     def test_blank_source(self):
         self.assertIn("Write some Python code", self.run_code("   ")["error"])
 
+    def test_range_budget_is_enforced(self):
+        result = self.run_code("for item in range(5001):\\n    print(item)")
+        self.assertIn("Range is limited", result["error"])
+
+    def test_output_is_bounded(self):
+        result = self.run_code('print("x" * 12000)')
+        self.assertLessEqual(len(result["output"]), runner.MAX_OUTPUT_LENGTH)
+
+    def test_ast_complexity_is_bounded(self):
+        source = "value = [" + ",".join("1" for _ in range(2600)) + "]"
+        result = self.run_code(source)
+        self.assertIn("too complex", result["error"])
+
+    def test_large_integer_literal_is_rejected(self):
+        result = self.run_code("value = 1000000001")
+        self.assertIn("Integer constants are limited", result["error"])
+
 
 if __name__ == "__main__":
     unittest.main()
