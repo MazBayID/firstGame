@@ -9,6 +9,14 @@ val releaseKeystorePath = System.getenv("ANDROID_KEYSTORE_PATH")
 val releaseKeystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
 val releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
 val releaseKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+val configuredVersionCode = System.getenv("ANDROID_VERSION_CODE")
+val androidVersionCode = configuredVersionCode?.toIntOrNull()
+    ?: if (configuredVersionCode == null) 6
+    else throw GradleException("ANDROID_VERSION_CODE must be a positive integer.")
+
+if (androidVersionCode <= 0) {
+    throw GradleException("ANDROID_VERSION_CODE must be a positive integer.")
+}
 
 val apkBuildRequested = gradle.startParameter.taskNames.any {
     it.contains("assemble", ignoreCase = true)
@@ -32,7 +40,7 @@ android {
         applicationId = "com.zeroday.cyberprotocol"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
+        versionCode = androidVersionCode
         versionName = "0.6.0"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
