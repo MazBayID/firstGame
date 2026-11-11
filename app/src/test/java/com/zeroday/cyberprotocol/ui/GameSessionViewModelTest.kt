@@ -50,6 +50,23 @@ class GameSessionViewModelTest {
     }
 
     @Test
+    fun freyaIntroductionCannotBeOpenedBeforeTheFirstMissionIsActive() {
+        val viewModel = GameSessionViewModel(MemoryRepository())
+
+        viewModel.openFreyaIntroduction()
+        assertFalse(viewModel.gameState.freyaContactOpened)
+
+        viewModel.saveStoryBeat(4)
+        viewModel.openFreyaIntroduction()
+        assertFalse(viewModel.gameState.freyaContactOpened)
+
+        viewModel.startMission("first_contact.signal")
+        viewModel.openFreyaIntroduction()
+        assertTrue(viewModel.gameState.freyaContactOpened)
+        assertEquals("freya_introduction_opened", viewModel.gameState.lastCheckpoint)
+    }
+
+    @Test
     fun freyaContactMustBeOpenedBeforeNexusCanBeUnlocked() {
         val viewModel = GameSessionViewModel(MemoryRepository())
         viewModel.unlockNexusContact()
