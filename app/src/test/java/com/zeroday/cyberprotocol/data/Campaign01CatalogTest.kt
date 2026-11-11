@@ -14,6 +14,7 @@ class Campaign01CatalogTest {
         assertEquals(6, missions.size)
         assertEquals(missions.size, missions.map { it.id }.distinct().size)
         assertNotNull(Campaign01Catalog.find("first_contact.signal"))
+        assertTrue(!Campaign01Catalog.find("first_contact.signal")!!.briefing.contains("Freya", ignoreCase = true))
         assertNotNull(Campaign01Catalog.find("first_contact.identity"))
         assertNotNull(Campaign01Catalog.find("first_contact.audit"))
         assertNotNull(Campaign01Catalog.find("first_contact.inventory"))
