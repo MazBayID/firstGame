@@ -578,14 +578,14 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
             Surface(color = Color(0xFF0B2028).copy(alpha = 0.82f), shape = RoundedCornerShape(4.dp),
                 border = BorderStroke(1.dp, Color(0xFF28515B)), modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MenuButton("LANJUTKAN KAMPANYE", "Lanjutkan berkas rekrutmenmu", onContinue, true)
-                    MenuButton("KAMPANYE BARU", "Mulai Bab 001 — Kontak Pertama", onNewCampaign)
-                    MenuButton("PUSAT APLIKASI", "Buka perangkat A.E.G.I.S.-mu", onHub)
-                    MenuButton("PROFIL AGEN", "Rank, pengalaman, dan clearance", onProfile)
-                    MenuButton("ARSIP", "Bukti dan riwayat operasi", onArchives)
-                    MenuButton("PENCAPAIAN", "Penghargaan dan milestone", onAchievements)
-                    MenuButton("PENGATURAN", "Aksesibilitas dan preferensi tampilan", onSettings)
-                    MenuButton("BAHASA", "Preferensi bahasa permainan", onLanguage)
+                    MenuButton("LANJUTKAN KAMPANYE", "Lanjutkan berkas rekrutmenmu", onContinue, true, CyberAssets.home)
+                    MenuButton("KAMPANYE BARU", "Mulai Bab 001 — Kontak Pertama", onNewCampaign, icon = CyberAssets.intelligence)
+                    MenuButton("PUSAT APLIKASI", "Buka perangkat A.E.G.I.S.-mu", onHub, icon = CyberAssets.connection)
+                    MenuButton("PROFIL AGEN", "Rank, pengalaman, dan clearance", onProfile, icon = CyberAssets.profile)
+                    MenuButton("ARSIP", "Bukti dan riwayat operasi", onArchives, icon = CyberAssets.archive)
+                    MenuButton("PENCAPAIAN", "Penghargaan dan milestone", onAchievements, icon = CyberAssets.achievements)
+                    MenuButton("PENGATURAN", "Aksesibilitas dan preferensi tampilan", onSettings, icon = CyberAssets.settings)
+                    MenuButton("BAHASA", "Preferensi bahasa permainan", onLanguage, icon = CyberAssets.document)
                 }
             }
             Spacer(Modifier.height(30.dp))
@@ -596,12 +596,17 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
 }
 
 @Composable
-private fun MenuButton(title: String, subtitle: String, onClick: () -> Unit, primary: Boolean = false) {
+private fun MenuButton(title: String, subtitle: String, onClick: () -> Unit, primary: Boolean = false, icon: Int? = null) {
     Surface(onClick = onClick, color = if (primary) Color(0xFF12404A) else Color(0xFF0C2931),
         shape = RoundedCornerShape(3.dp),
         border = BorderStroke(1.dp, if (primary) Color(0xFF5A9BA3) else Color(0xFF25434A)),
         modifier = Modifier.fillMaxWidth()) {
-        Row(Modifier.padding(horizontal = 14.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.padding(horizontal = 14.dp, vertical = 14.dp), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (icon != null) androidx.compose.foundation.Image(
+                painterResource(icon), null, Modifier.size(34.dp),
+                alpha = if (primary) 1f else 0.88f
+            )
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text(title, color = Color.White, fontWeight = FontWeight.Bold, letterSpacing = 0.8.sp)
                 Text(subtitle, color = Color(0xFF9AB4B8), fontSize = 11.sp)
