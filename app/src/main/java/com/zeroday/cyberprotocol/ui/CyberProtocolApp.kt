@@ -1181,7 +1181,14 @@ private fun MessengerScreen(
         else -> "Pesan Aman"
     }
     val quickReplies = when (selectedContact) {
-        "FREYA" -> listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?")
+        "FREYA" -> listOf(
+            "Apa fungsi Terminal?",
+            "Bagaimana membaca berkas misi?",
+            "Apa itu variabel Python?",
+            "Bagaimana menjalankan dan mengirim kode?",
+            "Masih banyak yang harus kupelajari.",
+            "Mengapa kamu memilihku?"
+        )
         "NEXUS" -> listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?")
         else -> emptyList()
     }
@@ -1328,7 +1335,7 @@ private fun MessengerScreen(
                         ChatBubble(
                             "Freya Knox",
                             if (activeMissionTitle != null) {
-                                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Jalankan kode untuk melihat hasilnya, lalu kirim untuk verifikasi jika kamu sudah yakin."
+                                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Tulis kode di Code Editor, jalankan melalui Terminal, lalu kirim hasilnya dari Browser Mission Control setelah eksekusinya berhasil."
                             } else {
                                 "Kalau belum ada tugas aktif, buka kembali rangkaian misi dari Campaign. Aku akan membantumu memahami instruksi saat tugas berikutnya tersedia."
                             },
