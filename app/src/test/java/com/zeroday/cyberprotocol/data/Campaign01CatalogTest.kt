@@ -11,12 +11,14 @@ class Campaign01CatalogTest {
     @Test
     fun openingMissionsHaveStableUniqueIdentifiers() {
         val missions = Campaign01Catalog.missions
-        assertEquals(4, missions.size)
+        assertEquals(6, missions.size)
         assertEquals(missions.size, missions.map { it.id }.distinct().size)
         assertNotNull(Campaign01Catalog.find("first_contact.signal"))
         assertNotNull(Campaign01Catalog.find("first_contact.identity"))
         assertNotNull(Campaign01Catalog.find("first_contact.audit"))
         assertNotNull(Campaign01Catalog.find("first_contact.inventory"))
+        assertNotNull(Campaign01Catalog.find("first_contact.trace"))
+        assertNotNull(Campaign01Catalog.find("first_contact.compare"))
         assertNull(Campaign01Catalog.find("unapproved_case"))
     }
 
@@ -33,6 +35,10 @@ class Campaign01CatalogTest {
         assertEquals(11, Campaign01Catalog.find("first_contact.inventory")!!.evaluatorId)
         assertEquals(5, Campaign01Catalog.find("first_contact.audit")!!.runtimeVariables["events"]!!.size)
         assertEquals(3, Campaign01Catalog.find("first_contact.inventory")!!.runtimeVariables["records"]!!.size)
+        assertEquals(12, Campaign01Catalog.find("first_contact.trace")!!.evaluatorId)
+        assertEquals(13, Campaign01Catalog.find("first_contact.compare")!!.evaluatorId)
+        assertEquals(2, Campaign01Catalog.find("first_contact.trace")!!.runtimeVariables["receipts"]!!.size)
+        assertEquals(2, Campaign01Catalog.find("first_contact.compare")!!.runtimeVariables["receipts"]!!.size)
         assertEquals(Campaign01Catalog.CAMPAIGN_ID, signal.campaignId)
         assertEquals(Campaign01Catalog.CHAPTER_ID, identity.chapterId)
     }
