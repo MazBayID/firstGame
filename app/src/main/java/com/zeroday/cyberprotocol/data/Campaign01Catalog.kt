@@ -128,7 +128,7 @@ object Campaign01Catalog {
                 MissionHint(2, "Gunakan record_count = len(records)."),
                 MissionHint(3, "Tampilkan hasilnya dengan print(record_count).")
             )
-        )
+        ),
         MissionDefinition(
             id = "first_contact.trace",
             campaignId = CAMPAIGN_ID,
