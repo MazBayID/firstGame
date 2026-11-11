@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.data.Campaign01Story
@@ -32,8 +33,6 @@ import com.zeroday.cyberprotocol.data.StoryBeat
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.data.VirtualFileSystem
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
-import com.zeroday.cyberprotocol.domain.usecase.CompleteMissionUseCase
-import com.zeroday.cyberprotocol.domain.usecase.RecordEvidenceUseCase
 import com.zeroday.cyberprotocol.ui.theme.CyberPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -88,9 +87,11 @@ fun CyberProtocolApp() {
 private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChange: (Boolean) -> Unit) {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
-    val gameStateRepository = remember { LocalGameStateRepository(context) }
-    val initialGameState = remember { gameStateRepository.load() }
-    var currentGameState by remember { mutableStateOf(initialGameState) }
+    val sessionViewModel: GameSessionViewModel = viewModel(
+        factory = GameSessionViewModel.Factory(context)
+    )
+    val initialGameState = sessionViewModel.gameState
+    val currentGameState = sessionViewModel.gameState
     val fileSystem = remember { VirtualFileSystem(context) }
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
@@ -134,35 +135,14 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(screenName, storyStage) {
-        currentGameState = gameStateRepository.load()
+        sessionViewModel.refresh()
     }
 
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 7)
         preferences.edit().putInt("story_stage", storyStage).apply()
-        val previousState = gameStateRepository.load()
-        gameStateRepository.save(previousState.copy(
-            storyBeat = storyStage,
-            clearance = if (storyStage >= 7) maxOf(previousState.clearance, 1) else previousState.clearance,
-            unlockedApps = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.unlockedAppsForStoryBeat(storyStage),
-            lastCheckpoint = "story_beat_$storyStage"
-        ))
-        if (storyStage >= 7 && gameStateRepository.load().evidence.none { it.id == "transmission_timestamp_discrepancy" }) {
-            RecordEvidenceUseCase(gameStateRepository).record(
-                com.zeroday.cyberprotocol.core.model.EvidenceRecord(
-                    id = "transmission_timestamp_discrepancy",
-                    title = "Perbedaan Waktu Penerimaan Transmisi",
-                    summary = "Dua sistem internal mencatat waktu penerimaan pesan yang berbeda. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
-                    source = "NEXUS / perbandingan metadata tanda terima",
-                    status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.UNVERIFIED,
-                    missionId = "first_contact.recruitment"
-                )
-            )
-            val withLead = gameStateRepository.load()
-            gameStateRepository.save(withLead.copy(lastCheckpoint = "story_beat_7"))
-        }
-        currentGameState = gameStateRepository.load()
-        val savedDraft = gameStateRepository.load().savedCode["story_$storyStage"]
+        sessionViewModel.saveStoryBeat(storyStage)
+        val savedDraft = sessionViewModel.gameState.savedCode["story_$storyStage"]
             ?: preferences.getString("saved_code_$storyStage",
                 Campaign01Story.codeTemplates.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }).orEmpty()
         code = TextFieldValue(savedDraft)
@@ -256,13 +236,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             }
             LaunchedEffect(authoredMission?.id) {
                 authoredMission?.let { mission ->
-                    val latest = gameStateRepository.load()
+                    val latest = sessionViewModel.refresh()
                     if (mission.id !in latest.completedMissionIds && latest.activeMissionId != mission.id) {
-                        gameStateRepository.save(latest.copy(
-                            activeMissionId = mission.id,
-                            lastCheckpoint = "mission_started:" + mission.id
-                        ))
-                        currentGameState = gameStateRepository.load()
+                        sessionViewModel.startMission(mission.id)
                     }
                 }
             }
@@ -282,12 +258,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                         fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
                     }
                     preferences.edit().putString("saved_code_$storyStage", code.text).apply()
-                    val previousState = gameStateRepository.load()
-                    gameStateRepository.save(previousState.copy(
-                        savedCode = previousState.savedCode + ("story_$storyStage" to code.text),
-                        lastCheckpoint = "code_saved_story_$storyStage"
-                    ))
-                    currentGameState = gameStateRepository.load()
+                    sessionViewModel.saveCode(
+                        "story_$storyStage", code.text, "code_saved_story_$storyStage"
+                    )
                     savedCodeStatus = "TERSIMPAN"
                 },
                 onRun = {
@@ -312,12 +285,11 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                         if (result.passed) {
                             var rewardGranted = 0
                             authoredMission?.let { mission ->
-                                val alreadyCompleted = mission.id in gameStateRepository.load().completedMissionIds
-                                CompleteMissionUseCase(gameStateRepository).complete(
+                                val firstCompletion = sessionViewModel.completeMission(
                                     mission.id, mission.rewardXp, mission.requiredClearance
                                 )
-                                if (!alreadyCompleted) rewardGranted = mission.rewardXp
-                                RecordEvidenceUseCase(gameStateRepository).record(
+                                if (firstCompletion) rewardGranted = mission.rewardXp
+                                sessionViewModel.recordEvidence(
                                     com.zeroday.cyberprotocol.core.model.EvidenceRecord(
                                         id = "evidence_" + mission.id,
                                         title = mission.title,
@@ -332,12 +304,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                                 fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
                             }
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
-                            val previousState = gameStateRepository.load()
-                            gameStateRepository.save(previousState.copy(
-                                savedCode = previousState.savedCode + ("story_$storyStage" to code.text),
-                                lastCheckpoint = "code_checkpoint_story_$storyStage"
-                            ))
-                            currentGameState = gameStateRepository.load()
+                            sessionViewModel.saveCode(
+                                "story_$storyStage", code.text, "code_checkpoint_story_$storyStage"
+                            )
                             savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
                             saveStage(storyStage + 1)
                             debriefTitle = authoredMission?.title ?: "MISI SELESAI"
@@ -539,7 +508,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             confirmButton = {
                 TextButton(onClick = {
                     showResetDialog = false
-                    gameStateRepository.save(GameState(lastCheckpoint = "new_campaign"))
+                    sessionViewModel.resetCampaign()
                     preferences.edit().putInt("story_stage", 0).apply()
                     saveStage(0)
                     screenName = GameScreen.CAMPAIGN.name
