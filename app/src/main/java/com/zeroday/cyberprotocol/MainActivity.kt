@@ -200,7 +200,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             }
             Spacer(Modifier.height(24.dp))
             Text("CHAPTER 01  •  OFFLINE TRAINING LAB", color = Muted, fontSize = 9.sp)
-            Text("v0.3.0  •  PYTHON 3.13", color = Muted, fontSize = 9.sp)
+            Text("v0.4.0  •  PYTHON 3.13", color = Muted, fontSize = 9.sp)
         }
     } else if (screen == "settings") {
         Column(Modifier.fillMaxSize().background(Bg).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
