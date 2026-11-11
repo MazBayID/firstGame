@@ -15,10 +15,12 @@ class CompleteMissionUseCase(private val repository: GameStateRepository) {
         require(current.clearance >= requiredClearance) { "Required clearance has not been granted." }
         if (missionId in current.completedMissionIds) return current
 
+        val newExperience = (current.experience + rewardXp).coerceAtLeast(0)
         val updated = current.copy(
             activeMissionId = null,
             completedMissionIds = current.completedMissionIds + missionId,
-            experience = (current.experience + rewardXp).coerceAtLeast(0),
+            experience = newExperience,
+            rank = ProgressionRules.rankForExperience(newExperience),
             lastCheckpoint = "mission_completed:$missionId"
         )
         repository.save(updated)
