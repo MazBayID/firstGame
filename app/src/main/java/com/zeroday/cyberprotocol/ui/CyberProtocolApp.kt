@@ -452,24 +452,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             onExecute = { executeTerminalCommand() },
             onBack = { navigate(GameScreen.APP_HUB) }
         )
-        GameScreen.DATABASE -> DatabaseScreen(
+        GameScreen.DATABASE -> IntelligenceDatabaseScreen(
             gameState = currentGameState,
             onBack = { navigate(GameScreen.APP_HUB) }
         )
-        GameScreen.DOSSIER -> InfoAppScreen(
-            "BERKAS PERSONEL", "CATATAN PERSONEL / REKRUT",
-            "IDENTITAS: AGEN MAGANG\n" +
-                "ORGANISASI: A.E.G.I.S.\n" +
-                "MENTOR: " + (if (currentGameState.freyaContactOpened) "FREYA KNOX" else "MENUNGGU KONTAK PERTAMA") + "\n" +
-                "RANK: " + currentGameState.rank.replace('_', ' ') + "\n" +
-                "XP: " + currentGameState.experience + "\n" +
-                "CLEARANCE: " + currentGameState.clearance + "\n" +
-                "BAB: " + (currentGameState.storyBeat - 2).coerceIn(0, 14) + "/14\n" +
-                "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\n" +
-                "BUKTI TERCATAT: " + currentGameState.evidence.size + "\n\n" +
-                "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi." +
-                if (currentGameState.storyBeat >= 10) "\n\nCATATAN TERBATAS / ANOMALI WAKTU\nDua sistem internal mencatat waktu penerimaan transmisi yang berbeda. Penyebab belum diketahui. Status: BELUM TERVERIFIKASI." else "",
-            CyberAssets.document, { navigate(GameScreen.APP_HUB) }
+        GameScreen.DOSSIER -> PersonnelDossierScreen(
+            gameState = currentGameState,
+            onBack = { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.ANALYSIS -> AnalysisScreen(
             gameState = currentGameState,
