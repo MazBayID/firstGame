@@ -96,9 +96,14 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
 
-    var screenName by rememberSaveable { mutableStateOf(GameScreen.MAIN_MENU.name) }
-    val screen = runCatching { GameScreen.valueOf(screenName) }.getOrDefault(GameScreen.MAIN_MENU)
-    var returnScreen by rememberSaveable { mutableStateOf(GameScreen.CAMPAIGN.name) }
+    var navigation by rememberSaveable(saver = GameNavigationState.Saver) {
+        mutableStateOf(GameNavigationState())
+    }
+    val screen = navigation.currentScreen
+
+    fun navigate(destination: GameScreen) {
+        navigation = navigation.navigateTo(destination)
+    }
     var storyStage by rememberSaveable {
         mutableIntStateOf(initialGameState.storyBeat.coerceIn(0, 7))
     }
@@ -134,7 +139,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     var debriefXp by rememberSaveable { mutableIntStateOf(0) }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
-    LaunchedEffect(screenName, storyStage) {
+    LaunchedEffect(screen, storyStage) {
         sessionViewModel.refresh()
     }
 
@@ -153,10 +158,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
 
     fun openHub(from: GameScreen) {
-        returnScreen = from.name
+        navigation = navigation.openHub(from)
         val activeMission = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
         currentDirectory = activeMission?.workspaceDirectory ?: fileSystem.initialDirectory()
-        screenName = GameScreen.APP_HUB.name
     }
 
     fun appendTerminalOutput(value: String) {
@@ -211,38 +215,26 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
 
     BackHandler(enabled = screen != GameScreen.MAIN_MENU) {
-        screenName = when (screen) {
-            GameScreen.CAMPAIGN -> GameScreen.MAIN_MENU.name
-            GameScreen.STORY -> GameScreen.CAMPAIGN.name
-            GameScreen.DEBRIEF -> if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
-            GameScreen.APP_HUB -> returnScreen
-            GameScreen.MESSENGER -> if (messengerContact.isNotBlank()) {
-                messengerContact = ""
-                GameScreen.MESSENGER.name
-            } else GameScreen.APP_HUB.name
-            GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER,
-            GameScreen.ANALYSIS, GameScreen.OPERATIONS -> GameScreen.APP_HUB.name
-            GameScreen.PROFILE, GameScreen.ARCHIVES, GameScreen.ACHIEVEMENTS,
-            GameScreen.SETTINGS, GameScreen.LANGUAGE -> GameScreen.MAIN_MENU.name
-            GameScreen.MAIN_MENU -> GameScreen.MAIN_MENU.name
-        }
+        val hasSelectedContact = messengerContact.isNotBlank()
+        navigation = navigation.back(storyStage, hasSelectedContact)
+        if (screen == GameScreen.MESSENGER && hasSelectedContact) messengerContact = ""
     }
 
     when (screen) {
         GameScreen.MAIN_MENU -> MainMenuScreen(
-            onContinue = { screenName = GameScreen.CAMPAIGN.name },
+            onContinue = { navigate(GameScreen.CAMPAIGN) },
             onNewCampaign = { showResetDialog = true },
             onHub = { openHub(GameScreen.MAIN_MENU) },
-            onProfile = { screenName = GameScreen.PROFILE.name },
-            onArchives = { screenName = GameScreen.ARCHIVES.name },
-            onAchievements = { screenName = GameScreen.ACHIEVEMENTS.name },
-            onSettings = { screenName = GameScreen.SETTINGS.name },
-            onLanguage = { screenName = GameScreen.LANGUAGE.name }
+            onProfile = { navigate(GameScreen.PROFILE) },
+            onArchives = { navigate(GameScreen.ARCHIVES) },
+            onAchievements = { navigate(GameScreen.ACHIEVEMENTS) },
+            onSettings = { navigate(GameScreen.SETTINGS) },
+            onLanguage = { navigate(GameScreen.LANGUAGE) }
         )
         GameScreen.CAMPAIGN -> CampaignScreen(
             storyStage = storyStage,
-            onBack = { screenName = GameScreen.MAIN_MENU.name },
-            onContinue = { screenName = if (storyStage < 7) GameScreen.STORY.name else GameScreen.APP_HUB.name },
+            onBack = { navigate(GameScreen.MAIN_MENU) },
+            onContinue = { navigate(if (storyStage < 7) GameScreen.STORY else GameScreen.APP_HUB) },
             onHub = { openHub(GameScreen.CAMPAIGN) }
         )
         GameScreen.STORY -> {
@@ -330,7 +322,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                             debriefTitle = authoredMission?.title ?: "MISI SELESAI"
                             debriefFeedback = result.feedback
                             debriefXp = rewardGranted
-                            screenName = GameScreen.DEBRIEF.name
+                            navigate(GameScreen.DEBRIEF)
                         } else {
                             codeFeedback = result.feedback.ifBlank {
                                 "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
@@ -341,12 +333,12 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 onContinue = {
                     if (storyStage == 6) {
                         saveStage(7)
-                        screenName = GameScreen.CAMPAIGN.name
+                        navigate(GameScreen.CAMPAIGN)
                     } else {
                         saveStage(storyStage + 1)
                     }
                 },
-                onBack = { screenName = GameScreen.CAMPAIGN.name },
+                onBack = { navigate(GameScreen.CAMPAIGN) },
                 onHub = { openHub(GameScreen.STORY) }
             )
         }
@@ -357,18 +349,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             rank = currentGameState.rank.replace('_', ' '),
             totalExperience = currentGameState.experience,
             onContinue = {
-                screenName = if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
+                navigate(if (storyStage >= 7) GameScreen.CAMPAIGN else GameScreen.STORY)
             }
         )
         GameScreen.APP_HUB -> AppHubScreen(
             gameState = currentGameState,
-            onClose = { screenName = returnScreen },
-            onOpen = { target -> screenName = target.name }
+            onClose = { navigate(navigation.hubReturnScreen) },
+            onOpen = { target -> navigate(target) }
         )
         GameScreen.MESSENGER -> MessengerScreen(
             selectedContact = messengerContact,
             onSelectContact = { messengerContact = it },
-            onClose = { screenName = GameScreen.APP_HUB.name },
+            onClose = { navigate(GameScreen.APP_HUB) },
             replies = if (messengerContact == "FREYA") freyaReplies else nexusReplies,
             onReply = { reply ->
                 if (messengerContact == "FREYA") {
@@ -389,7 +381,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             output = terminalOutput,
             busy = terminalBusy,
             onExecute = { executeTerminalCommand() },
-            onBack = { screenName = GameScreen.APP_HUB.name }
+            onBack = { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.DATABASE -> InfoAppScreen(
             "DATABASE INTELIJEN", "A.E.G.I.S. / INDEKS TERBATAS",
@@ -406,7 +398,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 }
                 append("Seluruh data pada indeks ini merupakan bagian dari simulasi fiktif A.E.G.I.S.")
             },
-            CyberAssets.database, { screenName = GameScreen.APP_HUB.name }
+            CyberAssets.database, { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.DOSSIER -> InfoAppScreen(
             "BERKAS PERSONEL", "CATATAN PERSONEL / REKRUT",
@@ -421,7 +413,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 "BUKTI TERCATAT: " + currentGameState.evidence.size + "\n\n" +
                 "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi." +
                 if (currentGameState.storyBeat >= 7) "\n\nCATATAN TERBATAS / ANOMALI WAKTU\nDua sistem internal mencatat waktu penerimaan transmisi yang berbeda. Penyebab belum diketahui. Status: BELUM TERVERIFIKASI." else "",
-            CyberAssets.document, { screenName = GameScreen.APP_HUB.name }
+            CyberAssets.document, { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.ANALYSIS -> InfoAppScreen(
             "ANALISIS", "RUANG KERJA INTELIJEN",
@@ -440,7 +432,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 }
                 append("Status: TERKONFIRMASI, DISIMPULKAN, DIPERSELISIHKAN, BELUM TERVERIFIKASI.")
             },
-            CyberAssets.dataAnalysis, { screenName = GameScreen.APP_HUB.name }
+            CyberAssets.dataAnalysis, { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.OPERATIONS -> InfoAppScreen(
             "OPERASI", "AKSES MISI / PEMERIKSAAN IZIN",
@@ -457,7 +449,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 }
                 append("Operasi lanjutan belum dibuka. Kasus berikutnya tidak akan ditampilkan sebelum konten dan otorisasinya siap.")
             },
-            CyberAssets.investigation, { screenName = GameScreen.APP_HUB.name }
+            CyberAssets.investigation, { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.PROFILE -> InfoAppScreen(
             "PROFIL AGEN", "A.E.G.I.S. / IDENTITAS PERSONEL",
@@ -474,7 +466,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 if (nextRankXp == null) append("RANK MAKSIMUM TERCAPAI")
                 else append("MENUJU RANK BERIKUTNYA: ").append(nextRankXp - currentGameState.experience).append(" XP")
             },
-            CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
+            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.ARCHIVES -> InfoAppScreen(
             "ARSIP", "A.E.G.I.S. / RIWAYAT OPERASI",
@@ -490,7 +482,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 }
                 if (currentGameState.evidence.isEmpty()) append("Belum ada bukti tersimpan.\n")
             },
-            CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
+            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.ACHIEVEMENTS -> InfoAppScreen(
             "PENCAPAIAN", "A.E.G.I.S. / PENGHARGAAN",
@@ -506,17 +498,17 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 }
                 append(if (currentGameState.storyBeat >= 7) "[DIPEROLEH] Rekrutmen A.E.G.I.S. Selesai" else "[TERKUNCI] Rekrutmen A.E.G.I.S. Selesai")
             },
-            CyberAssets.investigation, { screenName = GameScreen.MAIN_MENU.name }
+            CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.SETTINGS -> SettingsScreen(
             reducedMotion = reducedMotion,
             onReducedMotionChange = onReducedMotionChange,
-            onBack = { screenName = GameScreen.MAIN_MENU.name }
+            onBack = { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.LANGUAGE -> InfoAppScreen(
             "BAHASA", "PREFERENSI LOKALISASI",
             "BAHASA AKTIF: BAHASA INDONESIA\n\nPaket bahasa Inggris belum tersedia. Pilihan bahasa lain akan diaktifkan setelah seluruh dialog, misi, dan antarmuka memiliki terjemahan yang konsisten.",
-            CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
+            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
         )
     }
 
@@ -531,7 +523,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     sessionViewModel.resetCampaign()
                     preferences.edit().putInt("story_stage", 0).apply()
                     saveStage(0)
-                    screenName = GameScreen.CAMPAIGN.name
+                    navigate(GameScreen.CAMPAIGN)
                 }) { Text("MULAI") }
             },
             dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text("BATAL") } }
