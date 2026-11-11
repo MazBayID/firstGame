@@ -39,11 +39,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private enum class GameScreen {
-    MAIN_MENU, CAMPAIGN, STORY, DEBRIEF, APP_HUB, MESSENGER, TERMINAL,
-    DATABASE, DOSSIER, ANALYSIS, OPERATIONS, PROFILE, ARCHIVES, ACHIEVEMENTS, SETTINGS, LANGUAGE
-}
-
 @Composable
 fun CyberProtocolApp() {
     val context = LocalContext.current
