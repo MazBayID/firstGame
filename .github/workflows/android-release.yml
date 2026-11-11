@@ -1,26 +1,28 @@
 name: Android Release APK
 
 on:
-  push:
-    branches:
-      - rebuild/full-game
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Android Tests"]
+    types: [completed]
+    branches: [main, rebuild/full-game]
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
   build-release-apk:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      (github.event.workflow_run.head_branch == 'main' ||
+       github.event.workflow_run.head_branch == 'rebuild/full-game')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - name: Check out the exact tested commit
+        uses: actions/checkout@v4
         with:
-          python-version: "3.13"
-
-      - name: Test Python runner
-        run: python -m unittest discover -s tests -v
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - uses: actions/setup-java@v4
         with:
@@ -38,7 +40,7 @@ jobs:
         with:
           gradle-version: "8.13"
 
-      - name: Restore and validate signing keystore
+      - name: Restore and validate permanent release keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -51,13 +53,20 @@ jobs:
           test -n "$ANDROID_KEY_ALIAS"
 
           KEYSTORE_PATH="$RUNNER_TEMP/cyberprotocol-release.jks"
+          CERT_PATH="$RUNNER_TEMP/cyberprotocol-release-cert.der"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
           chmod 600 "$KEYSTORE_PATH"
 
           keytool -list -keystore "$KEYSTORE_PATH" \
             -alias "$ANDROID_KEY_ALIAS" \
             -storepass:env ANDROID_KEYSTORE_PASSWORD >/dev/null
+          keytool -exportcert -keystore "$KEYSTORE_PATH" \
+            -alias "$ANDROID_KEY_ALIAS" \
+            -storepass:env ANDROID_KEYSTORE_PASSWORD \
+            -file "$CERT_PATH" >/dev/null
 
+          CERT_SHA256=$(sha256sum "$CERT_PATH" | awk '{print tolower($1)}')
+          echo "EXPECTED_CERT_SHA256=$CERT_SHA256" >> "$GITHUB_ENV"
           echo "ANDROID_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
 
       - name: Set monotonic Android version code
@@ -68,27 +77,45 @@ jobs:
           echo "ANDROID_VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
           echo "Release version code: $VERSION_CODE"
 
-      - name: Build signed release APK
+      - name: Build signed Release APK only
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle --no-daemon testDebugUnitTest assembleRelease
+        run: gradle --no-daemon assembleRelease
 
-      - name: Verify release APK version code
+      - name: Verify package, version code, and supported ABIs
         shell: bash
         run: |
           set -euo pipefail
           APK="app/build/outputs/apk/release/app-release.apk"
-          ACTUAL=$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | sed -n "s/.*versionCode='\\([0-9]*\\)'.*/\\1/p" | head -n 1)
-          test "$ACTUAL" = "$ANDROID_VERSION_CODE"
-          test "$ACTUAL" -gt 6
-          echo "Verified version code: $ACTUAL"
+          BADGING=$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK")
+          ACTUAL_PACKAGE=$(printf '%s\n' "$BADGING" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p" | head -n 1)
+          ACTUAL_VERSION_CODE=$(printf '%s\n' "$BADGING" | sed -n "s/.*versionCode='\\([0-9]*\\)'.*/\\1/p" | head -n 1)
 
-      - name: Verify release APK signature
+          test "$ACTUAL_PACKAGE" = "com.zeroday.cyberprotocol"
+          test "$ACTUAL_VERSION_CODE" = "$ANDROID_VERSION_CODE"
+          test "$ACTUAL_VERSION_CODE" -gt 6
+
+          unzip -Z1 "$APK" | grep -q '^lib/arm64-v8a/'
+          unzip -Z1 "$APK" | grep -q '^lib/x86_64/'
+          echo "Verified package: $ACTUAL_PACKAGE"
+          echo "Verified version code: $ACTUAL_VERSION_CODE"
+          echo "Verified ABIs: arm64-v8a, x86_64"
+
+      - name: Verify APK signature matches the permanent release certificate
+        shell: bash
         run: |
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs \
-            app/build/outputs/apk/release/app-release.apk
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/app-release.apk"
+          SIGNATURE_OUTPUT=$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK")
+          printf '%s\n' "$SIGNATURE_OUTPUT"
+          ACTUAL_CERT_SHA256=$(printf '%s\n' "$SIGNATURE_OUTPUT" | \
+            awk -F': ' '/Signer #1 certificate SHA-256 digest:/ {print tolower($2); exit}' | tr -d ':')
+          EXPECTED=$(printf '%s' "$EXPECTED_CERT_SHA256" | tr -d ':')
+          test -n "$ACTUAL_CERT_SHA256"
+          test "$ACTUAL_CERT_SHA256" = "$EXPECTED"
+          echo "APK signature matches the permanent release keystore."
 
       - uses: actions/upload-artifact@v4
         with:
@@ -97,6 +124,9 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Remove temporary signing keystore
+      - name: Remove temporary signing material
         if: always()
-        run: rm -f "$RUNNER_TEMP/cyberprotocol-release.jks"
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/cyberprotocol-release.jks"
+          rm -f "$RUNNER_TEMP/cyberprotocol-release-cert.der"
