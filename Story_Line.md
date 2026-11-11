@@ -189,7 +189,24 @@ The player has one primary human mentor from the beginning of recruitment.
 
 The mentor is a recurring character—not a tutorial menu, mission dispatcher, or interchangeable instructor.
 
-## 7.1 Role in the story
+## 7.1 Role and personality
+
+The primary mentor is **highly intelligent, relaxed, playful, and wonderfully goofy**. Their sense of humor can be so unexpected that other agents sometimes question whether this person is taking the situation seriously.
+
+That first impression is deliberately misleading.
+
+- The mentor is genuinely sharp: they connect information quickly, notice details others overlook, and understand the risks of an operation.
+- They enjoy jokes, teasing, odd remarks, and occasionally ridiculous behavior, but can switch instantly into a focused, professional mode when the situation demands it.
+- Their humor should make the player feel comfortable and make the cast memorable. It must not trivialize victims, sensitive evidence, or genuine danger.
+- The mentor may sometimes behave as though the recruitment decision was an impulsive joke. In reality, selecting the player was a deliberate decision.
+
+### Why this mentor chose the player
+
+At the time of an urgent A.E.G.I.S. situation, the mentor selects an ordinary person who has no formal programming knowledge or intelligence training. To other agents, this seems absurd: why bring an untrained civilian into an operation that needs technical help?
+
+The mentor has already reviewed a dossier of information about the player-character and believes it reveals potential that the player has not yet recognized. The mentor is not choosing the player because they are secretly an expert. The player's value lies in qualities that can be developed—such as curiosity, pattern recognition, persistence, unusual problem-solving, or another trait that the story will establish through evidence.
+
+The exact data source, how the mentor obtained access to it, what first drew their attention, and how much they know remain **unresolved story mysteries**. Reveal these details gradually and make the explanation credible. Do not use omniscient profiling as a shortcut, and do not suggest that the fictional dossier contains or represents the real player's private personal data.
 
 - Welcomes the player into the A.E.G.I.S. process and explains the immediate situation.
 - Guides the player's early development without pretending the player is already an expert.
@@ -210,7 +227,7 @@ The mentor-player relationship may develop through:
 
 Do not reduce the relationship to a simplistic meter that dictates every line. Use dialogue, remembered events, changed behavior, optional conversations, and consequential scenes. Romance is not assumed or required.
 
-The mentor's name, appearance, age, history, exact personality, expertise, and private secrets remain open until designed and approved.
+The mentor's name, appearance, age, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. The broad personality direction and recruitment rationale above are established story decisions.
 
 # 8. Specialists and Recurring Characters
 
