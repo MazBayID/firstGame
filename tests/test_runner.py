@@ -97,10 +97,10 @@ class RunnerTests(unittest.TestCase):
         self.assertIn("read-only", denied["error"])
 
     def test_mission_workspace_rejects_oversized_file_content(self):
+        large_content = " + ".join(['"x" * 1000'] * 51)
+        source = 'write_text("script.py", ' + large_content + ')'
         result = json.loads(runner.run_code_json(
-            'write_text("script.py", "x" * 50001)',
-            json.dumps({}),
-            json.dumps(["script.py"])
+            source, json.dumps({}), json.dumps(["script.py"])
         ))
         self.assertIn("50000", result["error"])
 
