@@ -231,7 +231,7 @@ The mentor-player relationship may develop through:
 
 Do not reduce the relationship to a simplistic meter that dictates every line. Use dialogue, remembered events, changed behavior, optional conversations, and consequential scenes. Romance is not assumed or required.
 
-The mentor's appearance, age, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. Her gender, broad personality direction, humor-as-teaching approach, and recruitment rationale above are established story decisions.
+The mentor's exact age, facial features, hairstyle, clothing, accessories, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. Her gender, broad personality direction, **youthful and energetic appearance direction**, humor-as-teaching approach, and recruitment rationale above are established story decisions.
 
 # 8. Specialists and Recurring Characters
 
