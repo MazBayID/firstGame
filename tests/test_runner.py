@@ -56,12 +56,14 @@ class RunnerTests(unittest.TestCase):
 
     def test_first_contact_stage_one_uses_structured_evaluator(self):
         source = 'signal = "ACCESS GRANTED"\nprint(signal)'
-        self.assertTrue(self.submit(source, 9)["passed"])
+        result = self.submit(source, 9)
+        self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print("ACCESS GRANTED")', 9)["passed"])
 
     def test_first_contact_stage_two_uses_structured_evaluator(self):
         source = 'message = "IDENTITY VERIFIED"\nprint(message)'
-        self.assertTrue(self.submit(source, 10)["passed"])
+        result = self.submit(source, 10)
+        self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print("IDENTITY VERIFIED")', 10)["passed"])
 
     def test_unknown_mission(self):
