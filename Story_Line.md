@@ -220,6 +220,11 @@ The initial discrepancy remains the same unresolved training case. These two mis
 3. **Penelusuran Referensi:** Freya supplies a small, fictional receipt list containing source labels, record references, and timestamps. The player uses `enumerate()`, `for`, and `if` to locate entries for `RX-14` while preserving each entry's original index. The evaluator checks more than one fixture so a hard-coded output cannot pass.
 4. **Perbandingan Dua Sumber:** the player uses list indexing to assign `receipts[0]` to `primary` and `receipts[1]` to `archive`, then prints both records. The evaluator supplies more than one pair to ensure the program reads the actual list rather than printing fixed text.
 
+5. **Normalisasi Waktu:** the two receipt timestamps are also supplied as numeric strings representing seconds since midnight. The player uses `int()`, list indexing, named variables, and subtraction to calculate a signed delta. Multiple fixtures deliberately include equal and reversed source order; a negative delta is valid and must not be mistaken for an error.
+6. **Validasi Selisih:** the player uses `abs()` on the difference between the two normalized timestamps. Multiple fixtures verify that the magnitude is non-negative, including when the source order is reversed.
+
+The two additional missions deepen the same receipt discrepancy. They do not create another incident or establish a cause. The final report follows only after both exercises, and it continues to distinguish measured values from interpretation.
+
 The final First Contact report records the two receipt entries as evidence: A.E.G.I.S. records `RX-14` at `09:41:12`, while ARCHIVE records the same reference at `09:41:16`. The four-second difference is observable; its cause is not established.
 
 The player must distinguish:
