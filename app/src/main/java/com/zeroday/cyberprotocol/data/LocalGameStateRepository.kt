@@ -15,7 +15,8 @@ import org.json.JSONObject
  * meaningful checkpoints, not every UI recomposition or keystroke.
  */
 class LocalGameStateRepository(context: Context) : GameStateRepository {
-    private val preferences = context.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
+    private val appContext = context.applicationContext
+    private val preferences = appContext.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE)
 
     @Synchronized
     override fun load(): GameState {
@@ -50,7 +51,8 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
 
     private fun contextPreferencesLegacy(): Int {
         // Legacy key used by the original opening-slice implementation.
-        return preferences.contextLegacyStoryBeat()
+        return appContext.getSharedPreferences("cyber_protocol_campaign_v2", Context.MODE_PRIVATE)
+            .getInt("story_stage", 0)
     }
 
     private fun encode(state: GameState): JSONObject = JSONObject().apply {
@@ -126,12 +128,6 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         val array = optJSONArray(key) ?: return emptySet()
         return buildSet { for (index in 0 until array.length()) add(array.optString(index)) }
     }
-
-    private fun android.content.Context.preferencesLegacy(): Int =
-        getSharedPreferences("cyber_protocol_campaign_v2", Context.MODE_PRIVATE)
-            .getInt("story_stage", 0)
-
-    private fun android.content.Context.contextLegacyStoryBeat(): Int = preferencesLegacy()
 
     companion object {
         private const val STORE_NAME = "cp_game_state_v1"
