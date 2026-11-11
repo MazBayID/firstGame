@@ -554,7 +554,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     append(if (earned) "[DIPEROLEH] " else "[TERKUNCI] ")
                     append(award.first).append("\n")
                 }
-                append(if (currentGameState.storyBeat >= 14) "[DIPEROLEH] First Contact Selesai" else "[TERKUNCI] First Contact Selesai")
+                append(if (currentGameState.storyBeat >= 16) "[DIPEROLEH] First Contact Selesai" else "[TERKUNCI] First Contact Selesai")
             },
             CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
         )
@@ -802,7 +802,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                     Text("PROGRES CHAPTER", color = CyberPalette.SteelGray,
                         fontSize = 9.sp, letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
-                    Text(if (storyStage >= 14) "LAPORAN INVESTIGASI SELESAI" else "FIRST CONTACT",
+                    Text(if (storyStage >= 16) "LAPORAN INVESTIGASI SELESAI" else "FIRST CONTACT",
                         color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
                 Text("${(progress * 100).toInt()}%", color = CyberPalette.Crimson,
@@ -849,7 +849,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
                     else Text("TERKUNCI", color = CyberPalette.SteelGray, fontSize = 8.sp)
                 }
             }
-            CPPrimaryButton(if (storyStage >= 14) "BUKA PUSAT A.E.G.I.S." else "LANJUTKAN CERITA", onContinue)
+            CPPrimaryButton(if (storyStage >= 16) "BUKA PUSAT A.E.G.I.S." else "LANJUTKAN CERITA", onContinue)
         }
         Text(
             "Chapter baru dan operasi lanjutan akan terbuka melalui perkembangan cerita. Setiap bukti dan akses memiliki sumber serta otorisasi.",
