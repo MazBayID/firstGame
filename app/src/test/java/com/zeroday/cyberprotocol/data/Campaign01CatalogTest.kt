@@ -31,6 +31,8 @@ class Campaign01CatalogTest {
         assertEquals(35, identity.rewardXp)
         assertEquals(8, Campaign01Catalog.find("first_contact.audit")!!.evaluatorId)
         assertEquals(11, Campaign01Catalog.find("first_contact.inventory")!!.evaluatorId)
+        assertEquals(5, Campaign01Catalog.find("first_contact.audit")!!.runtimeVariables["events"]!!.size)
+        assertEquals(3, Campaign01Catalog.find("first_contact.inventory")!!.runtimeVariables["records"]!!.size)
         assertEquals(Campaign01Catalog.CAMPAIGN_ID, signal.campaignId)
         assertEquals(Campaign01Catalog.CHAPTER_ID, identity.chapterId)
     }
