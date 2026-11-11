@@ -18,7 +18,7 @@ The opening notifications and links are in-game simulations. The app does not ac
 
 ## Current playable foundation
 
-The approved First Contact chapter currently contains **12 story beats and six evaluated Python missions**:
+The approved First Contact chapter currently contains **14 story beats and eight evaluated Python missions**:
 
 1. Sinyal Pertama — variables and `print()`.
 2. Verifikasi Identitas — named variables and output verification.
@@ -26,6 +26,8 @@ The approved First Contact chapter currently contains **12 story beats and six e
 4. Inventaris Rekaman — `len()` and list size.
 5. Penelusuran Referensi — `enumerate()`, filtering, and source indices.
 6. Perbandingan Dua Sumber — list indexing and source comparison.
+7. Normalisasi Waktu — `int()`, indexing, and signed arithmetic.
+8. Validasi Selisih — `abs()` and absolute time difference.
 
 The closing report records a four-second difference between two fictional receipt timestamps. The difference is observable; its cause remains unverified. The chapter does not identify a culprit or claim tampering.
 
