@@ -63,11 +63,11 @@ class GameSessionViewModelTest {
     @Test
     fun chapterCanAdvanceBeyondRecruitmentCheckpointWithoutLosingClearance() {
         val viewModel = GameSessionViewModel(MemoryRepository())
-        viewModel.saveStoryBeat(13)
+        viewModel.saveStoryBeat(14)
 
-        assertEquals(13, viewModel.gameState.storyBeat)
+        assertEquals(14, viewModel.gameState.storyBeat)
         assertEquals(1, viewModel.gameState.clearance)
-        assertEquals("story_beat_13", viewModel.gameState.lastCheckpoint)
+        assertEquals("story_beat_14", viewModel.gameState.lastCheckpoint)
     }
 
     @Test
