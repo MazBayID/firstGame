@@ -154,6 +154,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
 
     fun openHub(from: GameScreen) {
         returnScreen = from.name
+        val activeMission = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
+        currentDirectory = activeMission?.workspaceDirectory ?: fileSystem.initialDirectory()
         screenName = GameScreen.APP_HUB.name
     }
 
@@ -165,7 +167,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         val input = command.trim()
         if (input.isEmpty() || terminalBusy) return
         command = ""
-        val response = fileSystem.execute(input, currentDirectory)
+        val activeMission = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
+        val response = if (activeMission == null) {
+            fileSystem.execute(input, currentDirectory)
+        } else {
+            fileSystem.execute(
+                input,
+                currentDirectory,
+                activeMission.workspaceDirectory,
+                activeMission.allowedFiles,
+                activeMission.writableFiles
+            )
+        }
         currentDirectory = response.currentDirectory
         if (response.clearScreen) {
             terminalOutput = "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n"
@@ -175,13 +188,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         val output = response.output
         if (output.startsWith("PYTHON_LAUNCH:")) {
             val fileName = output.removePrefix("PYTHON_LAUNCH:")
-            val source = fileSystem.readFile(fileName, currentDirectory)
+            val source = if (activeMission == null) {
+                fileSystem.readFile(fileName, currentDirectory)
+            } else {
+                fileSystem.readFile(fileName, currentDirectory, activeMission.workspaceDirectory, activeMission.allowedFiles)
+            }
             if (source == null) {
                 appendTerminalOutput("python: tidak dapat membuka '$fileName': file tidak ditemukan\n")
             } else {
                 terminalBusy = true
                 scope.launch {
-                    val result = withContext(Dispatchers.IO) { python.run(source) }
+                    val missionWorkspace = activeMission?.let { fileSystem.openMissionWorkspace(it) }
+                    val result = withContext(Dispatchers.IO) { python.run(source, missionWorkspace) }
                     appendTerminalOutput((result.output.ifBlank { "(tidak ada keluaran)" }) + "\n")
                     if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
                     terminalBusy = false
@@ -364,6 +382,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         )
         GameScreen.TERMINAL -> TerminalScreen(
             currentDirectory = currentDirectory,
+            workspaceLabel = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it)?.title }
+                ?.let { "MISSION WORKSPACE  /  $it" } ?: "PERSONAL WORKSPACE  /  A.E.G.I.S.",
             command = command,
             onCommandChange = { command = it },
             output = terminalOutput,
@@ -849,10 +869,10 @@ private fun ChatBubble(sender: String, message: String, outgoing: Boolean) {
 
 @Composable
 private fun TerminalScreen(
-    currentDirectory: String, command: String, onCommandChange: (String) -> Unit,
+    currentDirectory: String, workspaceLabel: String, command: String, onCommandChange: (String) -> Unit,
     output: String, busy: Boolean, onExecute: () -> Unit, onBack: () -> Unit
 ) {
-    GamePage("TERMINAL", "LINGKUNGAN VIRTUAL A.E.G.I.S.", onBack, null) {
+    GamePage("TERMINAL", workspaceLabel, onBack, null) {
         GamePanel {
             Text(currentDirectory, color = Color(0xFF8CC8A2), fontSize = 10.sp, fontFamily = FontFamily.Monospace)
             Surface(color = Color(0xFF070B0E), shape = RoundedCornerShape(8.dp),
