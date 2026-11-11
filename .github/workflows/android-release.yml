@@ -1,28 +1,60 @@
 name: Android Release APK
 
 on:
-  workflow_run:
-    workflows: ["Android Tests"]
-    types: [completed]
+  push:
     branches: [main, rebuild/full-game]
+  workflow_dispatch:
 
 permissions:
-  actions: read
   contents: read
 
 jobs:
+  validate-release-source:
+    name: Validate source before release
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rebuild/full-game'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the exact release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Test Python runner
+        run: python -m unittest discover -s tests -v
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: "platform-tools"
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Run Android unit tests
+        run: gradle --no-daemon testDebugUnitTest
+
   build-release-apk:
-    if: >-
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'push' &&
-      (github.event.workflow_run.head_branch == 'main' ||
-       github.event.workflow_run.head_branch == 'rebuild/full-game')
+    name: Build permanently signed Release APK
+    needs: validate-release-source
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rebuild/full-game'
     runs-on: ubuntu-latest
     steps:
       - name: Check out the exact tested commit
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          ref: ${{ github.sha }}
 
       - uses: actions/setup-java@v4
         with:
