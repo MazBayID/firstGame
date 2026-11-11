@@ -39,6 +39,7 @@ The closing report records a four-second difference between two fictional receip
 - **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence.
 - **Virtual terminal and workspaces:** Linux-like commands operate within a game-managed virtual filesystem, never the Android host shell.
 - **Evidence and progression:** mission checkpoints, provenance-aware evidence, XP, rank, clearance, archives, and achievements.
+- **Narrative clues:** each mission's successful debrief surfaces a short authored clue that points toward the next story or technical step.
 - **Offline-first foundation:** core story, mission execution, evaluation, and progression do not require an account, server, external AI, or API key.
 - **Accessibility foundation:** reduced-motion preference and responsive Android layouts.
 
