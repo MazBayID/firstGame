@@ -107,7 +107,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         navigation = navigation.navigateTo(destination)
     }
     var storyStage by rememberSaveable {
-        mutableIntStateOf(initialGameState.storyBeat.coerceIn(0, 14))
+        mutableIntStateOf(initialGameState.storyBeat.coerceIn(0, 16))
     }
     var code by remember {
         mutableStateOf(TextFieldValue(
@@ -148,7 +148,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
 
     fun saveStage(value: Int) {
-        storyStage = value.coerceIn(0, 14)
+        storyStage = value.coerceIn(0, 16)
         preferences.edit().putInt("story_stage", storyStage).apply()
         sessionViewModel.saveStoryBeat(storyStage)
         val savedDraft = sessionViewModel.gameState.savedCode["story_$storyStage"]
@@ -258,13 +258,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 CampaignScreen(
                     storyStage = storyStage,
                     onBack = { navigate(GameScreen.MAIN_MENU) },
-                    onContinue = { navigate(if (storyStage < 14) GameScreen.STORY else GameScreen.APP_HUB) },
+                    onContinue = { navigate(if (storyStage < 16) GameScreen.STORY else GameScreen.APP_HUB) },
                     onHub = { openHub(GameScreen.CAMPAIGN) }
                 )
             }
         }
         GameScreen.STORY -> {
-            val beatIndex = storyStage.coerceIn(2, 13)
+            val beatIndex = storyStage.coerceIn(2, 15)
             val authoredMission = when (beatIndex) {
                 4 -> Campaign01Catalog.find("first_contact.signal")
                 5 -> Campaign01Catalog.find("first_contact.identity")
@@ -272,6 +272,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 9 -> Campaign01Catalog.find("first_contact.inventory")
                 11 -> Campaign01Catalog.find("first_contact.trace")
                 12 -> Campaign01Catalog.find("first_contact.compare")
+                13 -> Campaign01Catalog.find("first_contact.normalize")
+                14 -> Campaign01Catalog.find("first_contact.validate_delta")
                 else -> null
             }
             LaunchedEffect(authoredMission?.id) {
@@ -365,8 +367,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     }
                 },
                 onContinue = {
-                    if (storyStage >= 13) {
-                        saveStage(14)
+                    if (storyStage >= 15) {
+                        saveStage(16)
                         navigate(GameScreen.CAMPAIGN)
                     } else {
                         saveStage(storyStage + 1)
@@ -460,7 +462,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 "RANK: " + currentGameState.rank.replace('_', ' ') + "\n" +
                 "XP: " + currentGameState.experience + "\n" +
                 "CLEARANCE: " + currentGameState.clearance + "\n" +
-                "BAB: " + (currentGameState.storyBeat - 2).coerceIn(0, 12) + "/12\n" +
+                "BAB: " + (currentGameState.storyBeat - 2).coerceIn(0, 14) + "/14\n" +
                 "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\n" +
                 "BUKTI TERCATAT: " + currentGameState.evidence.size + "\n\n" +
                 "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi." +
@@ -491,7 +493,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             buildString {
                 append("CAMPAIGN 01  /  THE RECRUITMENT\n")
                 append("CHAPTER 001  /  FIRST CONTACT\n")
-                append("PROGRES CERITA: ").append((currentGameState.storyBeat - 2).coerceIn(0, 12)).append("/12\n\n")
+                append("PROGRES CERITA: ").append((currentGameState.storyBeat - 2).coerceIn(0, 12)).append("/14\n\n")
                 Campaign01Catalog.missions.forEach { mission ->
                     val completed = mission.id in currentGameState.completedMissionIds
                     val active = mission.id == currentGameState.activeMissionId
@@ -738,13 +740,14 @@ private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
 
 @Composable
 private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -> Unit, onHub: () -> Unit) {
-    val completedBeats = (storyStage - 2).coerceIn(0, 12)
-    val progress = completedBeats / 12f
+    val completedBeats = (storyStage - 2).coerceIn(0, 14)
+    val progress = completedBeats / 14f
     val milestones = listOf(
         "ORIENTASI A.E.G.I.S.", "BERKAS RAHASIA 001", "SINYAL PERTAMA",
         "VERIFIKASI IDENTITAS", "STATUS RECRUIT", "SELISIH PERTAMA",
         "AUDIT JEJAK SISTEM", "INVENTARIS REKAMAN", "LAPORAN AWAL",
-        "PENELUSURAN REFERENSI", "PERBANDINGAN DUA SUMBER", "LAPORAN INVESTIGASI"
+        "PENELUSURAN REFERENSI", "PERBANDINGAN DUA SUMBER", "NORMALISASI WAKTU",
+        "VALIDASI SELISIH", "LAPORAN INVESTIGASI"
     )
 
     GamePage("KAMPANYE", "A.E.G.I.S. / OPERASI CERITA", onBack, onHub) {
@@ -783,13 +786,13 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(color = Color(0xFF4B2732), shape = RoundedCornerShape(50)) {
                         Text(
-                            if (storyStage >= 14) "CHAPTER COMPLETE" else "ACTIVE OPERATION",
+                            if (storyStage >= 16) "CHAPTER COMPLETE" else "ACTIVE OPERATION",
                             Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                             color = Color(0xFFFFDCE2), fontSize = 8.sp, fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(Modifier.weight(1f))
-                    Text("${completedBeats} / 12", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("${completedBeats} / 14", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -813,7 +816,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
             )
             milestones.forEachIndexed { index, title ->
                 val complete = index < completedBeats
-                val current = index == completedBeats && storyStage < 14
+                val current = index == completedBeats && storyStage < 16
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -894,7 +897,7 @@ private fun StoryScreen(
                 Text(beat.body, color = Color(0xFFD1D9DF), lineHeight = 23.sp, fontSize = 13.sp)
             }
         }
-        if (stage == 4 || stage == 5 || stage == 8 || stage == 9 || stage == 11 || stage == 12) {
+        if (stage == 4 || stage == 5 || stage == 8 || stage == 9 || stage == 11 || stage == 12 || stage == 13 || stage == 14) {
             GamePanel {
                 Text(
                     if (stage <= 5 && freyaContactUnlocked) "FREYA KNOX  /  BANTUAN PELATIHAN"
