@@ -132,6 +132,19 @@ class RunnerTests(unittest.TestCase):
         result = self.run_code(source)
         self.assertIn("too complex", result["error"])
 
+    def test_large_string_repetition_is_rejected(self):
+        result = self.run_code('text = "x"\nprint(text * 1001)')
+        self.assertIn("repetition is limited", result["error"])
+
+    def test_large_list_repetition_is_rejected(self):
+        result = self.run_code("items = [1]\nexpanded = items * 1001")
+        self.assertIn("repetition is limited", result["error"])
+
+    def test_oversized_text_literal_is_rejected(self):
+        source = 'text = "' + ("x" * 10001) + '"'
+        result = self.run_code(source)
+        self.assertIn("Text literals are limited", result["error"])
+
     def test_large_integer_literal_is_rejected(self):
         result = self.run_code("value = 1000000001")
         self.assertIn("Integer constants are limited", result["error"])
