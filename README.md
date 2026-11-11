@@ -15,6 +15,12 @@ Programming is core gameplay—not a quiz attached to a story.
 - **Expandable architecture:** Python is the first language, not a permanent architectural limit.
 - **Safety first:** fictional simulations only. The embedded runner is a teaching prototype, not a hardened hostile-code sandbox.
 
+## Visual foundation
+- Cinematic Red Intelligence art direction: Obsidian / Charcoal / Crimson palette with anime character artwork direction.
+- Material 3 semantic color tokens and reusable Compose UI components.
+- Vector emblem and navigation icon starter set; runtime asset pipeline documented in docs/ASSET_PIPELINE.md.
+- Visual rules documented in docs/VISUAL_IDENTITY.md.
+
 ## Reconstructed foundation
 - Kotlin, Jetpack Compose, Material 3, Android-first.
 - CPython 3.13 through Chaquopy.

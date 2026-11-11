@@ -1,6 +1,7 @@
 package com.zeroday.cyberprotocol.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,6 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +23,7 @@ import com.zeroday.cyberprotocol.data.ContentRepository
 import com.zeroday.cyberprotocol.data.ProgressRepository
 import com.zeroday.cyberprotocol.core.model.StoryEngine
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
+import com.zeroday.cyberprotocol.ui.theme.CyberPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -110,16 +114,47 @@ fun CyberProtocolApp() {
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("CYBER PROTOCOL", color = MaterialTheme.colorScheme.primary, fontSize = 23.sp,
-                fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-            Text(tr("home_sub", language), color = MaterialTheme.colorScheme.secondary, fontSize = 10.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Image(
+                    painter = painterResource(CyberAssets.emblem),
+                    contentDescription = "Cyber Protocol emblem",
+                    modifier = Modifier.size(44.dp)
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text("CYBER PROTOCOL", color = MaterialTheme.colorScheme.primary,
+                        fontSize = 22.sp, fontWeight = FontWeight.Black, letterSpacing = 1.8.sp)
+                    Text(tr("home_sub", language), color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 10.sp, letterSpacing = 0.5.sp)
+                }
+            }
 
             when (screen) {
                 Screen.HOME -> {
-                    Text(chapter.title, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                    Text(chapter.opening, color = Color.LightGray)
-                    Text("LEVEL ${progress.xp / 250 + 1}   •   ${progress.xp} XP   •   ${progress.credits} CR")
-                    Text("CHAPTER PROGRESS  ${(story.chapterProgress(chapter, progress.completedMissions) * 100).toInt()}%")
+                    CPPanel {
+                        CPSectionHeader(chapter.title, eyebrow = "CURRENT CHAPTER")
+                        Text(chapter.opening, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    CPPanel {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            CPMetric("OPERATIVE LEVEL", (progress.xp / 250 + 1).toString())
+                            CPMetric("EXPERIENCE", "${progress.xp} XP")
+                            CPMetric("CREDITS", "${progress.credits} CR")
+                        }
+                        CPDivider()
+                        Text(
+                            "CHAPTER PROGRESS  ${(story.chapterProgress(chapter, progress.completedMissions) * 100).toInt()}%",
+                            color = CyberPalette.Crimson,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                    }
                     Button(onClick = { screen = Screen.LEARN }, Modifier.fillMaxWidth()) { Text(tr("learn", language)) }
                     Button(onClick = { screen = Screen.PRACTICE }, Modifier.fillMaxWidth()) { Text(tr("practice", language)) }
                     Button(onClick = { screen = Screen.MISSIONS }, Modifier.fillMaxWidth()) { Text(tr("missions", language)) }
@@ -239,9 +274,18 @@ private fun PageTitle(title: String, subtitle: String) {
 
 @Composable
 private fun CodePanel(text: String) {
-    Surface(color = Color(0xFF111B23), shape = MaterialTheme.shapes.medium) {
-        Text(text, Modifier.fillMaxWidth().padding(12.dp), color = Color(0xFFB7C7D1),
-            fontFamily = FontFamily.Monospace, fontSize = 12.sp)
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = MaterialTheme.shapes.medium,
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+    ) {
+        Text(
+            text,
+            Modifier.fillMaxWidth().padding(12.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = FontFamily.Monospace,
+            fontSize = 12.sp
+        )
     }
 }
 
