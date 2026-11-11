@@ -1224,7 +1224,7 @@ private fun MessengerScreen(
                             "Untuk tugas teknis, ada satu sistem internal yang bisa membantu memeriksa informasi dan menjelaskan perangkat kerja. Namanya NEXUS. Aku sertakan tautan kanalnya di bawah. Kamu bisa membukanya saat siap.",
                             false
                         )
-                        replies.forEachIndexed { index, message ->
+                        replies.forEach { message ->
                             ChatBubble("Kamu", message, true)
                             ChatBubble(
                                 "Freya Knox",
