@@ -41,6 +41,7 @@ data class MissionDefinition(
     val requiredClearance: Int,
     val workspaceDirectory: String,
     val allowedFiles: Set<String>,
+    val writableFiles: Set<String> = allowedFiles,
     val objectives: List<MissionObjective>,
     val hints: List<MissionHint>
 ) {
@@ -53,7 +54,8 @@ data class MissionDefinition(
         require(rewardXp >= 0)
         require(requiredClearance >= 0)
         require(workspaceDirectory.startsWith("/A.E.G.I.S/missions/"))
-        require(allowedFiles.all { it.isNotBlank() && !it.startsWith("/") && ".." !in it })
+        require(allowedFiles.all { it.matches(Regex("[A-Za-z0-9_.-]{1,64}")) && it != "." && it != ".." })
+        require(writableFiles.all { it in allowedFiles })
         require(objectives.isNotEmpty())
         require(objectives.map { it.id }.distinct().size == objectives.size)
         require(hints.map { it.level }.distinct().size == hints.size)
