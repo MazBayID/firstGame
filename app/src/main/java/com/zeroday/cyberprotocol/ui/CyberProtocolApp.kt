@@ -951,7 +951,7 @@ private fun StoryScreen(
         } else {
             CPPrimaryButton(beat.button, onContinue)
         }
-        Text("TITIK SIMPAN " + (stage + 1) + " / 10", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+        Text("TITIK SIMPAN " + (stage - 1) + " / 12", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
     }
 }
 
