@@ -175,6 +175,20 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             unlockedApps = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.unlockedAppsForStoryBeat(storyStage),
             lastCheckpoint = "story_beat_$storyStage"
         ))
+        if (storyStage >= 7 && gameStateRepository.load().evidence.none { it.id == "transmission_timestamp_discrepancy" }) {
+            RecordEvidenceUseCase(gameStateRepository).record(
+                com.zeroday.cyberprotocol.core.model.EvidenceRecord(
+                    id = "transmission_timestamp_discrepancy",
+                    title = "Perbedaan Waktu Penerimaan Transmisi",
+                    summary = "Dua sistem internal mencatat waktu penerimaan pesan yang berbeda. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
+                    source = "NEXUS / perbandingan metadata tanda terima",
+                    status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.UNVERIFIED,
+                    missionId = "first_contact.recruitment"
+                )
+            )
+            val withLead = gameStateRepository.load()
+            gameStateRepository.save(withLead.copy(lastCheckpoint = "story_beat_7"))
+        }
         currentGameState = gameStateRepository.load()
         val savedDraft = gameStateRepository.load().savedCode["story_$storyStage"]
             ?: preferences.getString("saved_code_$storyStage",
