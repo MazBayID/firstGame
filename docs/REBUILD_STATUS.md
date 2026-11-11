@@ -67,7 +67,7 @@ These foundations are not automatically production-ready. Python file access is 
 ### 6. Quality and release readiness
 - Unit-test domain logic, evaluators, command parsing, virtual filesystem, save migrations, and runtime boundaries.
 - Add integration tests for campaign transitions, persistence, mission completion, and App Hub navigation.
-- Build debug and release variants in CI; verify manifest, package, ABI, and dependency configuration.
+- Run Android unit tests in the test workflow; produce only the permanently signed Release APK for device testing. Verify package, ABI, monotonically increasing versionCode, and APK signature.
 - Run static checks and dependency/security review where supported.
 - Validate layouts and keyboard behavior on representative Android screen sizes.
 - Produce a release candidate only after the complete campaign path and core systems pass the defined quality gates.
@@ -145,7 +145,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Added Python runner limits for AST size, range iteration, integer literals, collection literals, and captured stdout. These are teaching-runtime guardrails, **not a hardened sandbox**.
 - Added the entry-only WebP loading animation. It decodes one frame at a time and releases the previous bitmap instead of loading all 240 frames into memory.
 - Added Python regression tests and Kotlin domain-use-case tests.
-- Updated CI configuration to run Android unit tests before APK assembly.
+- Split CI responsibilities: Android Tests runs Python and Kotlin tests without publishing an APK; Android Release APK builds and publishes only app-release.apk, signed with the permanent keystore. Release CI verifies the APK signature and versionCode.
 
 
 - Tightened the Freya notification checkpoint: the introduction can only be acknowledged while the first mission is active; added regression coverage for premature access and the required mission gate.
@@ -162,6 +162,13 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Added unit tests for evidence ordering, status isolation, combined search/filter behavior, and provenance-field search.
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
+
+### Signed release-only build policy
+
+- Device testing uses only `app-release.apk`, signed with the permanent Android release keystore. No debug APK is built or published by the development-branch release workflow.
+- The separate Android Tests workflow runs automated tests only and does not generate an installable APK artifact.
+- Release CI assigns a monotonically increasing versionCode from the workflow run number (starting above the existing versionCode 6) and verifies that the APK contains the expected value before artifact upload.
+- Release CI verifies the APK signature and uploads one artifact named `cyber-protocol-release`.
 
 ### Verification observed so far
 - CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
