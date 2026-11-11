@@ -450,11 +450,11 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             "BERKAS PERSONEL", "CATATAN PERSONEL / REKRUT",
             "IDENTITAS: AGEN MAGANG\n" +
                 "ORGANISASI: A.E.G.I.S.\n" +
-                "MENTOR: FREYA KNOX\n" +
+                "MENTOR: " + (if (currentGameState.freyaContactOpened) "FREYA KNOX" else "MENUNGGU KONTAK PERTAMA") + "\n" +
                 "RANK: " + currentGameState.rank.replace('_', ' ') + "\n" +
                 "XP: " + currentGameState.experience + "\n" +
                 "CLEARANCE: " + currentGameState.clearance + "\n" +
-                "BAB: " + currentGameState.storyBeat.coerceAtMost(7) + "/7\n" +
+                "BAB: " + currentGameState.storyBeat.coerceAtMost(10) + "/10\n" +
                 "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\n" +
                 "BUKTI TERCATAT: " + currentGameState.evidence.size + "\n\n" +
                 "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi." +
@@ -485,7 +485,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             buildString {
                 append("CAMPAIGN 01  /  THE RECRUITMENT\n")
                 append("CHAPTER 001  /  FIRST CONTACT\n")
-                append("PROGRES CERITA: ").append(currentGameState.storyBeat.coerceAtMost(7)).append("/7\n\n")
+                append("PROGRES CERITA: ").append(currentGameState.storyBeat.coerceAtMost(10)).append("/10\n\n")
                 Campaign01Catalog.missions.forEach { mission ->
                     val completed = mission.id in currentGameState.completedMissionIds
                     val active = mission.id == currentGameState.activeMissionId
@@ -493,7 +493,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     append(mission.title).append("\n")
                     append("XP: ").append(mission.rewardXp).append("  /  CLEARANCE: ").append(mission.requiredClearance).append("\n\n")
                 }
-                append("Operasi lanjutan belum dibuka. Kasus berikutnya tidak akan ditampilkan sebelum konten dan otorisasinya siap.")
+                append("Setiap misi memiliki ruang kerja dan sumber data yang terpisah. Hasil pemeriksaan harus tetap sesuai dengan bukti yang tersedia.")
             },
             CyberAssets.investigation, { navigate(GameScreen.APP_HUB) }
         )
@@ -535,7 +535,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             buildString {
                 val awards = listOf(
                     "FIRST_SIGNAL" to ("Sinyal Pertama" to "first_contact.signal"),
-                    "IDENTITY_VERIFIED" to ("Identitas Terverifikasi" to "first_contact.identity")
+                    "IDENTITY_VERIFIED" to ("Identitas Terverifikasi" to "first_contact.identity"),
+                    "AUDIT_COMPLETE" to ("Audit Jejak Selesai" to "first_contact.audit"),
+                    "INVENTORY_COMPLETE" to ("Inventaris Rekaman Selesai" to "first_contact.inventory")
                 )
                 awards.forEach { (_, award) ->
                     val earned = award.second in currentGameState.completedMissionIds
