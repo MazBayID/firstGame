@@ -7,4 +7,7 @@ internal object MissionWorkspacePolicy {
 
     fun canWrite(fileName: String, contentLength: Int, writableFiles: Set<String>): Boolean =
         fileName in writableFiles && contentLength in 0..50_000
+
+    fun canInstallAsset(fileName: String, contentLength: Int, allowedFiles: Set<String>, writableFiles: Set<String>): Boolean =
+        fileName in allowedFiles && fileName !in writableFiles && contentLength in 0..50_000
 }
