@@ -143,6 +143,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         val previousState = gameStateRepository.load()
         gameStateRepository.save(previousState.copy(
             storyBeat = storyStage,
+            clearance = if (storyStage >= 7) maxOf(previousState.clearance, 1) else previousState.clearance,
             unlockedApps = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.unlockedAppsForStoryBeat(storyStage),
             lastCheckpoint = "story_beat_$storyStage"
         ))
