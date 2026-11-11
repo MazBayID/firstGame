@@ -341,23 +341,69 @@ private fun CyberProtocolGameContent() {
         )
         GameScreen.DATABASE -> InfoAppScreen(
             "DATABASE INTELIJEN", "A.E.G.I.S. / INDEKS TERBATAS",
-            "Belum ada catatan operasi yang tersedia untuk tingkat izinmu.\n\nCatatan pelatihan dan data kasus fiktif akan muncul seiring bertambahnya izin kampanye.",
+            buildString {
+                append("ORGANISASI  /  A.E.G.I.S.\\n")
+                append("Advanced Espionage & Global Intelligence Service\\n")
+                append("MARKAS PUSAT  /  MANILA, FILIPINA\\n\\n")
+                append("INDEKS MISI TERDAFTAR\\n")
+                Campaign01Catalog.missions.forEach { mission ->
+                    val status = if (mission.id in currentGameState.completedMissionIds) "TERVERIFIKASI" else "BELUM SELESAI"
+                    append("• ").append(mission.title).append("  /  ").append(status).append("\\n")
+                    append("  ID: ").append(mission.id).append("\\n")
+                    append("  TUJUAN: ").append(mission.objectives.size).append("  /  XP: ").append(mission.rewardXp).append("\\n\\n")
+                }
+                append("Seluruh data pada indeks ini merupakan bagian dari simulasi fiktif A.E.G.I.S.")
+            },
             CyberAssets.database, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.DOSSIER -> InfoAppScreen(
             "BERKAS PERSONEL", "CATATAN PERSONEL / REKRUT",
-            "IDENTITAS: AGEN MAGANG\nORGANISASI: A.E.G.I.S.\nIZIN: SEMENTARA\nMENTOR: FREYA KNOX\nSTATUS: REKRUTMEN SELESAI\n\nCatatan personel dan operasi tambahan akan terbuka seiring perkembangan kampanye.",
+            "IDENTITAS: AGEN MAGANG\\n" +
+                "ORGANISASI: A.E.G.I.S.\\n" +
+                "MENTOR: FREYA KNOX\\n" +
+                "RANK: " + currentGameState.rank.replace('_', ' ') + "\\n" +
+                "XP: " + currentGameState.experience + "\\n" +
+                "CLEARANCE: " + currentGameState.clearance + "\\n" +
+                "BAB: " + currentGameState.storyBeat.coerceAtMost(7) + "/7\\n" +
+                "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\\n" +
+                "BUKTI TERCATAT: " + currentGameState.evidence.size + "\\n\\n" +
+                "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi.",
             CyberAssets.document, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.ANALYSIS -> InfoAppScreen(
             "ANALISIS", "RUANG KERJA INTELIJEN",
-            "Ruang analisis akan mengumpulkan temuan terverifikasi, catatan kerja, dan penilaian bukti.\n\nStatus bukti membedakan TERKONFIRMASI, DISIMPULKAN, DIPERSELISIHKAN, dan BELUM TERVERIFIKASI.",
+            buildString {
+                append("CATATAN BUKTI  /  ").append(currentGameState.evidence.size).append("\\n\\n")
+                if (currentGameState.evidence.isEmpty()) {
+                    append("Belum ada bukti yang dicatat. Selesaikan tugas dan verifikasi hasilnya untuk menambahkan rekaman dengan sumber yang jelas.")
+                } else {
+                    currentGameState.evidence.forEach { evidence ->
+                        append(evidence.title.uppercase()).append("\\n")
+                        append("STATUS: ").append(evidence.status.name.replace('_', ' ')).append("\\n")
+                        append("SUMBER: ").append(evidence.source).append("\\n")
+                        append("MISI: ").append(evidence.missionId).append("\\n")
+                        append(evidence.summary).append("\\n\\n")
+                    }
+                }
+                append("Status: TERKONFIRMASI, DISIMPULKAN, DIPERSELISIHKAN, BELUM TERVERIFIKASI.")
+            },
             CyberAssets.dataAnalysis, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.OPERATIONS -> InfoAppScreen(
             "OPERASI", "AKSES MISI / PEMERIKSAAN IZIN",
-            if (storyStage >= 7) "KONTAK PERTAMA — REKRUTMEN\nSTATUS: SELESAI\n\nPenugasan operasional berikutnya sedang disiapkan."
-            else "Belum ada operasi yang diizinkan.\nSelesaikan rangkaian rekrutmen untuk menerima penugasan pertamamu.",
+            buildString {
+                append("CAMPAIGN 01  /  THE RECRUITMENT\\n")
+                append("CHAPTER 001  /  FIRST CONTACT\\n")
+                append("PROGRES CERITA: ").append(currentGameState.storyBeat.coerceAtMost(7)).append("/7\\n\\n")
+                Campaign01Catalog.missions.forEach { mission ->
+                    val completed = mission.id in currentGameState.completedMissionIds
+                    val active = mission.id == currentGameState.activeMissionId
+                    append(if (completed) "[SELESAI] " else if (active) "[AKTIF] " else "[TERCATAT] ")
+                    append(mission.title).append("\\n")
+                    append("XP: ").append(mission.rewardXp).append("  /  CLEARANCE: ").append(mission.requiredClearance).append("\\n\\n")
+                }
+                append("Operasi lanjutan belum dibuka. Kasus berikutnya tidak akan ditampilkan sebelum konten dan otorisasinya siap.")
+            },
             CyberAssets.investigation, { screenName = GameScreen.APP_HUB.name }
         )
     }
@@ -518,7 +564,7 @@ private fun StoryScreen(
 }
 
 @Composable
-private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
+private fun AppHubScreen(storyStage: Int, gameState: GameState, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
     GamePage("PUSAT APLIKASI", "PERANGKAT AMAN A.E.G.I.S.", onClose, null) {
         GamePanel {
             Text("APLIKASI YANG DIIZINKAN", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
