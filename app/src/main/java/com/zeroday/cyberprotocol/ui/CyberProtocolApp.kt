@@ -143,6 +143,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         mutableStateOf(if (browserAuthenticated) "home" else "login")
     }
     var browserReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
+    var terminalReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
     var freyaReplies by remember {
         mutableStateOf(messengerPreferences.getString("freya_replies", "").orEmpty()
             .split("\u001F").filter { it.isNotBlank() })
@@ -329,6 +330,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         command = "python $fileName"
         lastSuccessfulRunSource = null
         codeFeedback = "MENJALANKAN MELALUI A.E.G.I.S. TERMINAL..."
+        terminalReturnScreen = GameScreen.STORY.name
+        navigate(GameScreen.TERMINAL)
         executeTerminalCommand(mission) { output, error ->
             codeOutput = output.ifBlank { "(tidak ada keluaran)" }
             if (error.isNotBlank()) codeOutput += "\n" + error
@@ -349,6 +352,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     BackHandler(enabled = screen != GameScreen.MAIN_MENU) {
         if (screen == GameScreen.BROWSER) {
             navigate(runCatching { GameScreen.valueOf(browserReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+        } else if (screen == GameScreen.TERMINAL) {
+            navigate(runCatching { GameScreen.valueOf(terminalReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
         } else if (screen == GameScreen.MESSENGER) {
             if (messengerContact.isNotBlank()) {
                 messengerContact = ""
@@ -494,6 +499,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             onOpen = { target ->
                 if (target == GameScreen.MESSENGER) messengerReturnScreen = GameScreen.APP_HUB.name
                 if (target == GameScreen.BROWSER) browserReturnScreen = GameScreen.APP_HUB.name
+                if (target == GameScreen.TERMINAL) terminalReturnScreen = GameScreen.APP_HUB.name
                 navigate(target)
             }
         )
@@ -573,7 +579,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             output = terminalOutput,
             busy = terminalBusy,
             onExecute = { executeTerminalCommand() },
-            onBack = { navigate(GameScreen.APP_HUB) }
+            onBack = {
+                navigate(runCatching { GameScreen.valueOf(terminalReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+            }
         )
         GameScreen.DATABASE -> IntelligenceDatabaseScreen(
             gameState = currentGameState,
