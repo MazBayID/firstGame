@@ -5,6 +5,7 @@ data class GameState(
     val schemaVersion: Int = CURRENT_SCHEMA_VERSION,
     val campaignId: String = "campaign_01_recruitment",
     val storyBeat: Int = 0,
+    val recruitmentNotificationOpened: Boolean = false,
     val activeMissionId: String? = null,
     val completedMissionIds: Set<String> = emptySet(),
     val rank: String = "CIVILIAN",
@@ -17,7 +18,7 @@ data class GameState(
     val updatedAtEpochMillis: Long = 0L
 ) {
     companion object {
-        const val CURRENT_SCHEMA_VERSION = 2
+        const val CURRENT_SCHEMA_VERSION = 3
     }
 }
 
