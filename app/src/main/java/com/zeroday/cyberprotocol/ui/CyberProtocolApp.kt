@@ -70,6 +70,7 @@ fun CyberProtocolApp() {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
     val gameStateRepository = remember { LocalGameStateRepository(context) }
+    val initialGameState = remember { gameStateRepository.load() }
     val fileSystem = remember { VirtualFileSystem(context) }
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
@@ -78,9 +79,15 @@ fun CyberProtocolApp() {
     val screen = runCatching { GameScreen.valueOf(screenName) }.getOrDefault(GameScreen.MAIN_MENU)
     var returnScreen by rememberSaveable { mutableStateOf(GameScreen.CAMPAIGN.name) }
     var storyStage by rememberSaveable {
-        mutableIntStateOf(gameStateRepository.load().storyBeat.coerceIn(0, 7))
+        mutableIntStateOf(initialGameState.storyBeat.coerceIn(0, 7))
     }
-    var code by remember { mutableStateOf(TextFieldValue(preferences.getString("saved_code_$storyStage", storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }) ?: "")) }
+    var code by remember {
+        mutableStateOf(TextFieldValue(
+            initialGameState.savedCode["story_$storyStage"]
+                ?: preferences.getString("saved_code_$storyStage",
+                    storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }).orEmpty()
+        ))
+    }
     var codeOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
     var command by rememberSaveable { mutableStateOf("") }
@@ -101,10 +108,10 @@ fun CyberProtocolApp() {
             storyBeat = storyStage,
             lastCheckpoint = "story_beat_$storyStage"
         ))
-        code = TextFieldValue(
-            preferences.getString("saved_code_$storyStage",
-                storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }) ?: ""
-        )
+        val savedDraft = gameStateRepository.load().savedCode["story_$storyStage"]
+            ?: preferences.getString("saved_code_$storyStage",
+                storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }).orEmpty()
+        code = TextFieldValue(savedDraft)
         codeOutput = "KELUARAN AKAN MUNCUL DI SINI"
         codeFeedback = ""
         savedCodeStatus = "DRAF TERSIMPAN"
