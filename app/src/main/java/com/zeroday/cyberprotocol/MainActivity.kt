@@ -209,10 +209,10 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             Text("‹", color = Cyan, fontSize = 28.sp, modifier = Modifier.clickable { screen = "home" }.padding(end = 10.dp))
             Column(Modifier.weight(1f)) {
                 Text("CYBER PROTOCOL", color = Neon, fontSize = 18.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-                Text("ZERO DAY  /  CHAPTER 01", color = Muted, fontSize = 10.sp, letterSpacing = 1.5.sp)
+                Text(localized(language, "ZERO DAY  /  CHAPTER 01", "ZERO DAY  /  BAB 01"), color = Muted, fontSize = 10.sp, letterSpacing = 1.5.sp)
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text("LEVEL ${xp / 250 + 1}", color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(localized(language, "LEVEL ${xp / 250 + 1}", "LEVEL ${xp / 250 + 1}"), color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Text("$xp XP  •  $credits CR", color = Neon, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             }
         }
@@ -246,16 +246,16 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("●", color = Neon, fontSize = 10.sp)
-                Text("  INCOMING CASE  /  HELIX DYNAMICS", color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(localized(language, "  INCOMING CASE  /  HELIX DYNAMICS", "  KASUS MASUK  /  HELIX DYNAMICS"), color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.weight(1f))
-                Text("OFFLINE LAB", color = Muted, fontSize = 9.sp)
+                Text(localized(language, "OFFLINE LAB", "LAB OFFLINE"), color = Muted, fontSize = 9.sp)
             }
             Text(missionTitle, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(
                 when (selectedMission) {
-                    1 -> "Mara, Senior Security Analyst: “The night audit found suspicious access attempts. Recover the evidence before the trail disappears.”"
-                    2 -> "Mara: “A monitoring node raised repeated warnings before the outage. Separate warnings from routine log noise.”"
-                    else -> "Mara: “Someone tried to enter the admin console. Count failed logins and preserve the evidence for incident response.”"
+                    1 -> localized(language, "Mara, Senior Security Analyst: “The night audit found suspicious access attempts. Recover the evidence before the trail disappears.”", "Mara, Analis Keamanan Senior: “Audit malam menemukan upaya akses mencurigakan. Amankan buktinya sebelum jejaknya hilang.”")
+                    2 -> localized(language, "Mara: “A monitoring node raised repeated warnings before the outage. Separate warnings from routine log noise.”", "Mara: “Node pemantau mengirim peringatan berulang sebelum gangguan terjadi. Pisahkan peringatan dari log rutin.”")
+                    else -> localized(language, "Mara: “Someone tried to enter the admin console. Count failed logins and preserve the evidence for incident response.”", "Mara: “Seseorang mencoba masuk ke konsol admin. Hitung login yang gagal dan simpan bukti untuk penanganan insiden.”")
                 },
                 color = Muted, fontSize = 11.sp, lineHeight = 16.sp
             )
@@ -275,7 +275,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(status, color = if (selectedMission in completedMissions) Neon else Muted, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                Text("BRIEFING", color = Cyan, fontSize = 9.sp, fontWeight = FontWeight.Bold,
+                Text(localized(language, "BRIEFING", "BRIEFING"), color = Cyan, fontSize = 9.sp, fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { showBriefing = true }.padding(4.dp))
             }
         }
@@ -286,7 +286,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             verticalArrangement = Arrangement.spacedBy(7.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("PYTHON 3.13 EDITOR", color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                Text(localized(language, "PYTHON 3.13 EDITOR", "EDITOR PYTHON 3.13"), color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 Spacer(Modifier.weight(1f))
                 Text("main.py", color = Muted, fontSize = 9.sp)
             }
@@ -313,7 +313,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                     visualTransformation = PythonHighlightTransformation,
                     decorationBox = { inner ->
                         Box {
-                            if (editor.text.isEmpty()) Text("# Write your Python solution...", color = Muted, fontFamily = FontFamily.Monospace)
+                            if (editor.text.isEmpty()) Text(localized(language, "# Write your Python solution...", "# Tulis solusi Python-mu..."), color = Muted, fontFamily = FontFamily.Monospace)
                             inner()
                         }
                     }
@@ -376,12 +376,12 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                 colors = ButtonDefaults.buttonColors(containerColor = Neon, contentColor = Bg),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(if (isRunning) "RUNNING..." else "▶  RUN MISSION", fontWeight = FontWeight.Black, letterSpacing = 1.sp, fontSize = 12.sp)
+                Text(if (isRunning) localized(language, "RUNNING...", "MENJALANKAN...") else localized(language, "▶  RUN MISSION", "▶  JALANKAN MISI"), fontWeight = FontWeight.Black, letterSpacing = 1.sp, fontSize = 12.sp)
             }
         }
 
         Column(Modifier.fillMaxWidth().background(Color(0xFF05090C), RoundedCornerShape(10.dp)).padding(9.dp)) {
-            Text("MISSION OUTPUT  /  LOCAL PYTHON", color = Muted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+            Text(localized(language, "MISSION OUTPUT  /  LOCAL PYTHON", "HASIL MISI  /  PYTHON LOKAL"), color = Muted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
             Text(output, color = if (output.contains("Error") || output.contains("limit")) Danger else Neon,
                 fontSize = 10.sp, fontFamily = FontFamily.Monospace, lineHeight = 14.sp)
         }
@@ -395,12 +395,12 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             title = { Text(localized(language, "MISSION BRIEFING", "BRIEFING MISI"), color = Neon, fontWeight = FontWeight.Bold) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("MARA / SENIOR SECURITY ANALYST", color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(localized(language, "MARA / SENIOR SECURITY ANALYST", "MARA / ANALIS KEAMANAN SENIOR"), color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Text(
                         when (selectedMission) {
-                            1 -> "“Read access.log and count every line containing ERROR. The test system will swap the evidence file to verify your logic.”"
-                            2 -> "“Read access.log and count every line containing WARNING. Do not count ERROR or INFO entries.”"
-                            else -> "“Read access.log and count every line containing FAILED. The evidence will include successful logins too.”"
+                            1 -> localized(language, "“Read access.log and count every line containing ERROR. The test system will swap the evidence file to verify your logic.”", "“Baca access.log dan hitung setiap baris yang berisi ERROR. Sistem pengujian akan mengganti file bukti untuk memverifikasi logikamu.”")
+                            2 -> localized(language, "“Read access.log and count every line containing WARNING. Do not count ERROR or INFO entries.”", "“Baca access.log dan hitung setiap baris yang berisi WARNING. Jangan hitung entri ERROR atau INFO.”")
+                            else -> localized(language, "“Read access.log and count every line containing FAILED. The evidence will include successful logins too.”", "“Baca access.log dan hitung setiap baris yang berisi FAILED. Bukti juga akan memuat login yang berhasil.”")
                         },
                         color = Color.White, fontSize = 13.sp, lineHeight = 19.sp
                     )
