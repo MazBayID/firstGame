@@ -577,15 +577,17 @@ The initial version uses a **local Python runtime on the Android device**. Playe
 - Core code exercises and missions must work offline. A remote execution service is not a dependency of the initial version.
 - Treat sandboxing as a security boundary that requires careful engineering and testing, not as a guarantee merely because Python runs through Chaquopy.
 
-## 16.2 Progress Saving — Autosave
+## 16.2 Progress Saving — Autosave and Code Checkpoints
 
-The initial version uses **autosave**; manual save slots are not required.
+The initial version uses **autosave for campaign progress**, while player-written mission code uses **explicit save points and mission checkpoints**. Manual campaign save slots are not required.
 
-- Save at meaningful checkpoints: completed story beats, mission-stage transitions, successful submissions, debrief completion, and rank/XP or unlock changes.
-- Preserve campaign position, active mission stage, completed objectives, relevant mission work/context, rank/XP, unlocked content and applications, and collected evidence.
-- Resume from the latest valid checkpoint after the app is closed, interrupted, or reopened.
-- Use deliberate checkpoints and safe persistence for important state changes; do not write to storage for every minor UI interaction.
-- Temporary UI state and animations do not need to persist unless a later design decision identifies a clear need.
+- Save campaign progress automatically at meaningful checkpoints: completed story beats, mission-stage transitions, successful submissions, debrief completion, and rank/XP or unlock changes.
+- Do **not** autosave the code editor contents on every keystroke or every small edit.
+- Provide a deliberate way for the player to save their current code draft at appropriate points, such as a **Save** action. Also preserve the code when a mission stage is successfully completed or another clearly defined mission checkpoint is reached.
+- Make it clear when the latest code draft was saved. Do not imply unsaved edits are safely stored.
+- Preserve saved code drafts together with the relevant mission and stage so the player can resume that work later.
+- Resume campaign progress and the most recently saved code draft after the app is closed, interrupted, or reopened.
+- Use deliberate checkpoints and safe persistence for important state changes; temporary UI state and animations do not need to persist unless a later design decision identifies a clear need.
 
 ## 16.3 Connectivity — Offline-first
 
