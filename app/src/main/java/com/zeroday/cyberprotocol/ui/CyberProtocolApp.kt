@@ -329,7 +329,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                                         id = "evidence_" + mission.id,
                                         title = mission.title,
                                         summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
-                                        source = "NEXUS / Python evaluator " + mission.evaluatorId,
+                                        source = "A.E.G.I.S. / Python evaluator " + mission.evaluatorId,
                                         status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
                                         missionId = mission.id
                                     )
@@ -387,7 +387,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             rank = currentGameState.rank.replace('_', ' '),
             totalExperience = currentGameState.experience,
             onContinue = {
-                navigate(if (storyStage >= 10) GameScreen.CAMPAIGN else GameScreen.STORY)
+                navigate(GameScreen.STORY)
             }
         )
         GameScreen.APP_HUB -> AppHubScreen(
@@ -774,7 +774,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
                         )
                     }
                     Spacer(Modifier.weight(1f))
-                    Text("${completedBeats} / 5", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("${completedBeats} / 8", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -798,7 +798,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
             )
             milestones.forEachIndexed { index, title ->
                 val complete = index < completedBeats
-                val current = index == completedBeats && storyStage < 7
+                val current = index == completedBeats && storyStage < 10
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -1109,12 +1109,12 @@ private fun MessengerScreen(
                     )
                 }
                 val visibleTerms = listOf(
-                    "A.E.G.I.S.", "recruitment", "perintah untuk merekrutmu",
+                    "A.E.G.I.S.", "recruitment", "Recruitment Office", "perintah untuk merekrutmu",
                     "FREYA KNOX", "FREYA", "mentor", "NEXUS", "sistem komunikasi"
                 )
-                val visible = (recruitmentInvitation && visibleTerms.take(3).any { it.contains(search, true) }) ||
-                    (freyaContactUnlocked && visibleTerms.slice(3..5).any { it.contains(search, true) }) ||
-                    (nexusUnlocked && visibleTerms.slice(6..7).any { it.contains(search, true) })
+                val visible = (recruitmentInvitation && visibleTerms.take(4).any { it.contains(search, true) }) ||
+                    (freyaContactUnlocked && visibleTerms.slice(4..6).any { it.contains(search, true) }) ||
+                    (nexusUnlocked && visibleTerms.slice(7..8).any { it.contains(search, true) })
                 if (search.isNotBlank() && !visible) {
                     Text("Tidak ada percakapan yang cocok.", color = Color(0xFF9BAEB4),
                         modifier = Modifier.fillMaxWidth().padding(18.dp), fontSize = 12.sp)
