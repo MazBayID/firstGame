@@ -661,3 +661,21 @@ Cyber Protocol will include an embedded **Python 3 runtime** so players can exec
 - Keep the Python runtime modular behind a Code Runner interface so the game can evolve its execution implementation without coupling mission logic or UI directly to Chaquopy APIs.
 - RUN executes the player's program and presents its actual result. SUBMIT remains a separate action that evaluates the mission criteria.
 - The exact Python 3 minor version and package set are implementation decisions to be selected after inspecting the repository's current build configuration and testing compatibility; do not hard-code a version in the design bible prematurely.
+
+
+### 16.9 — Game-Managed Virtual File System
+
+Cyber Protocol will include a real, game-managed virtual file system as part of its in-game terminal environment. The filesystem is not a view of Android storage and must never expose unrestricted access to the device filesystem.
+
+**Hybrid, progressively unlocked design:**
+- Players can work with folders and files through supported terminal commands: navigate, list, read, create, edit, and delete files where permissions allow.
+- The initial experience introduces only the small set of filesystem operations needed for the current mission. Additional commands, locations, file types, and capabilities become available as the campaign progresses and the player's rank or clearance increases.
+- The terminal provides command help, contextual suggestions, and clear permission or path errors. It must not silently perform a different operation when a command is invalid or unavailable.
+- The virtual workspace can contain mission files, evidence, reports, datasets, scripts, and other fictional A.E.G.I.S. resources. Its structure and contents are controlled by the game.
+- Mission objectives may grant read-only, read/write, or other narrowly scoped access to particular locations. Access to evidence or operational data must follow the mission's authorization and story context.
+- File operations produce genuine, inspectable results within the virtual environment. They are not merely decorative terminal output.
+- The virtual filesystem must be integrated with the local Python runtime through explicit, controlled interfaces. Python programs may access only the files and data granted to the current environment; they must not bypass permissions or access unrelated Android files.
+- Filesystem state and player-created work must be persisted according to the game's save/checkpoint rules. The exact boundary between persistent personal workspace and mission-scoped temporary files remains a separate design decision.
+- The game must validate paths and operations, prevent traversal outside the virtual workspace, enforce resource limits, and protect campaign state and system data from arbitrary file modification.
+
+The virtual filesystem should make the terminal feel like a functional computer environment while preserving the controlled, offline-first, story-driven nature of Cyber Protocol.
