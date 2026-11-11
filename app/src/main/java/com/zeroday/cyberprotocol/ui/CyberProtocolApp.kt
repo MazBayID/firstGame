@@ -419,6 +419,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             recruitmentInvitation = currentGameState.recruitmentNotificationOpened,
             freyaContactUnlocked = currentGameState.freyaContactOpened,
             nexusUnlocked = currentGameState.nexusContactUnlocked,
+            activeMissionTitle = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it)?.title },
+            completedMissionCount = currentGameState.completedMissionIds.size,
             onOpenMissionLink = {
                 if (storyStage < 2) saveStage(2)
                 messengerContact = ""
@@ -1044,6 +1046,8 @@ private fun MessengerScreen(
     recruitmentInvitation: Boolean,
     freyaContactUnlocked: Boolean,
     nexusUnlocked: Boolean,
+    activeMissionTitle: String?,
+    completedMissionCount: Int,
     onOpenMissionLink: () -> Unit,
     onOpenNexusLink: () -> Unit,
     replies: List<String>,
@@ -1199,6 +1203,20 @@ private fun MessengerScreen(
                         ChatBubble(
                             "Freya Knox",
                             "Halo. Aku Freya Knox. Selamat datang. Aku akan mendampingimu selama rangkaian misi awal A.E.G.I.S. dan membantu menjelaskan apa yang perlu kamu lakukan. Kita jalani satu per satu—tidak ada alasan untuk berpura-pura sudah memahami sesuatu yang baru kamu temui.",
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            if (activeMissionTitle != null) {
+                                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Jalankan kode untuk melihat hasilnya, lalu kirim untuk verifikasi jika kamu sudah yakin."
+                            } else {
+                                "Kalau belum ada tugas aktif, buka kembali rangkaian misi dari Campaign. Aku akan membantumu memahami instruksi saat tugas berikutnya tersedia."
+                            },
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            "Progresmu tercatat pada $completedMissionCount misi yang sudah diverifikasi. Kita tidak perlu terburu-buru; yang penting kamu memahami alasan di balik setiap langkah.",
                             false
                         )
                         ChatBubble(
