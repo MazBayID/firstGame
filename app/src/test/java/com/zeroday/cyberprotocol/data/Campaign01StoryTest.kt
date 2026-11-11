@@ -7,10 +7,11 @@ import org.junit.Test
 
 class Campaign01StoryTest {
     @Test
-    fun firstContactContainsSevenApprovedStoryBeats() {
-        assertEquals(7, Campaign01Story.beats.size)
-        assertEquals("PENGIRIM TAK DIKENAL", Campaign01Story.beats.first().title)
+    fun firstContactStartsAfterTheMessengerRecruitmentInvitation() {
+        assertEquals(5, Campaign01Story.beats.size)
+        assertEquals("ORGANISASI", Campaign01Story.beats.first().title)
         assertEquals("REKRUTMEN RESMI", Campaign01Story.beats.last().title)
+        assertFalse(Campaign01Story.beats.any { it.title.contains("PENGIRIM", ignoreCase = true) })
         assertTrue(Campaign01Story.beats.last().body.contains("waktu penerimaan pesan yang berbeda"))
     }
 
