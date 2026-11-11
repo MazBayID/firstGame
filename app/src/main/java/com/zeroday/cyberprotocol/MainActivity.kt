@@ -130,43 +130,59 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
     var xp by remember { mutableIntStateOf(prefs.getInt("xp", 0)) }
     var credits by remember { mutableIntStateOf(prefs.getInt("credits", 0)) }
     var completedMissions by remember {
-        mutableStateOf((1..3).filter { mission ->
+        mutableStateOf((1..8).filter { mission ->
             prefs.getBoolean("mission_$mission", mission == 1 && prefs.getBoolean("chapter_01_mission_01", false))
         }.toSet())
     }
     var selectedMission by remember { mutableIntStateOf(1) }
     var language by remember { mutableStateOf(prefs.getString("language", "id") ?: "id") }
     var screen by remember { mutableStateOf("home") }
-    val missionTitle = when (selectedMission) {
-        1 -> localized(language, "01 — THE CORRUPTED ACCESS LOG", "01 — LOG AKSES TERCEMAR")
-        2 -> localized(language, "02 — THE WARNING SIGNAL", "02 — SINYAL PERINGATAN")
-        else -> localized(language, "03 — THE FAILED LOGIN TRAIL", "03 — JEJAK LOGIN GAGAL")
-    }
-    val missionObjective = when (selectedMission) {
-        1 -> localized(language, "LEVEL 1 · Count ERROR lines. The logs list is ready.", "LEVEL 1 · Hitung baris ERROR. List logs sudah tersedia.")
-        2 -> localized(language, "LEVEL 2 · Read access.log and count WARNING lines.", "LEVEL 2 · Baca access.log dan hitung baris WARNING.")
-        else -> localized(language, "LEVEL 3 · Read access.log and count FAILED login lines.", "LEVEL 3 · Baca access.log dan hitung baris login FAILED.")
-    }
+    val missionTitles = listOf("FIRST CONTACT", "SIGNAL ONLINE", "ANALYST IDENTITY", "POWER CALIBRATION", "REPAIR THE SHIELD", "POWER DECISION", "SIGNAL SWEEP", "THREAT TRIAGE")
+    val missionConcepts = listOf("print() dan output pertama", "Beberapa print() dan komentar", "Variabel dan string", "Angka dan operator matematika", "Variabel dan operasi matematika", "if, else, dan perbandingan", "for dan range()", "List, for, if, dan counter")
+    val missionObjectives = listOf(
+        "Kirim pesan pertamamu ke terminal.", "Tampilkan status sistem dalam dua baris.",
+        "Simpan identitas analis ke variabel lalu tampilkan.", "Hitung hasil kalibrasi daya: 6 × 7.",
+        "Hitung HP setelah menerima 25 damage dari 100 HP.", "Aktifkan sistem hanya jika energi lebih dari nol.",
+        "Jalankan empat tahap pemindaian menggunakan loop.", "Hitung jumlah event ERROR dari daftar bukti."
+    )
+    val missionTitle = "M%02d — %s".format(selectedMission, missionTitles[selectedMission - 1])
+    val missionObjective = "LEVEL $selectedMission · ${missionConcepts[selectedMission - 1]} — ${missionObjectives[selectedMission - 1]}"
     val missionLog = when (selectedMission) {
-        1 -> "INFO: service started\nERROR: invalid token\nWARNING: retry scheduled\nERROR: permission denied"
-        2 -> "INFO: service started\nWARNING: retry scheduled\nERROR: invalid token\nWARNING: timeout"
-        else -> "FAILED login user=admin\nOK login user=guest\nFAILED login user=root"
+        1 -> "Expected output:\nHello, Cyber Protocol!"
+        2 -> "Expected output:\nSYSTEM ONLINE\nACCESS GRANTED"
+        3 -> "Expected output:\nMARA\nONLINE"
+        4 -> "Expected output:\n42"
+        5 -> "Expected output:\nHP: 75"
+        6 -> "energy = 10 → SYSTEM ACTIVE\nenergy = 0 → SYSTEM STANDBY"
+        7 -> "Expected output:\nSCAN 1\nSCAN 2\nSCAN 3\nSCAN 4"
+        else -> "Evidence events:\nINFO: boot\nERROR: token\nWARNING: retry\nERROR: denied"
     }
-    val missionHint = when (selectedMission) {
-        1 -> localized(language, "HINT: logs is ready. Replace pass with count += 1 when a line contains ERROR.", "PETUNJUK: logs sudah tersedia. Ganti pass dengan count += 1 saat baris berisi ERROR.")
-        2 -> localized(language, "HINT: read access.log. Replace pass with count += 1 when a line contains WARNING.", "PETUNJUK: baca access.log. Ganti pass dengan count += 1 saat baris berisi WARNING.")
-        else -> localized(language, "HINT: replace pass with count += 1 when a line contains FAILED.", "PETUNJUK: ganti pass dengan count += 1 saat baris berisi FAILED.")
-    }
+    val missionHint = listOf(
+        "Gunakan print() dan teks di dalam tanda kutip.",
+        "Panggil print() dua kali. Baris yang diawali # adalah komentar.",
+        "Buat variabel agent dan status, lalu cetak keduanya.",
+        "Gunakan operator * untuk perkalian.",
+        "Simpan 100 ke hp, 25 ke damage, lalu kurangi hp.",
+        "Periksa energy > 0. Gunakan else untuk kondisi selain itu.",
+        "Gunakan for step in range(1, 5), lalu cetak SCAN dan step.",
+        "Mulai count dari 0. Telusuri events dan tambah count jika ERROR ditemukan."
+    )[selectedMission - 1]
     fun starterCode(mission: Int) = when (mission) {
-        1 -> "count = 0\n\nfor line in logs:\n    if \"ERROR\" in line:\n        pass  # Replace pass with: count += 1\n\nprint(count)"
-        2 -> "count = 0\n\nwith open(\"access.log\", \"r\") as log_file:\n    for line in log_file:\n        if \"WARNING\" in line:\n            pass  # Replace pass with: count += 1\n\nprint(count)"
-        else -> "count = 0\n\nwith open(\"access.log\", \"r\") as log_file:\n    for line in log_file:\n        if \"FAILED\" in line:\n            pass  # Replace pass with: count += 1\n\nprint(count)"
+        1 -> "print(\"Hello, Cyber Protocol!\")"
+        2 -> "# Boot sequence\nprint(\"SYSTEM ONLINE\")\nprint(\"ACCESS GRANTED\")"
+        3 -> "agent = \"MARA\"\nstatus = \"ONLINE\"\n\nprint(agent)\nprint(status)"
+        4 -> "print(6 * 7)"
+        5 -> "hp = 100\ndamage = 25\nhp = hp - damage\n\nprint(\"HP:\", hp)"
+        6 -> "if energy > 0:\n    print(\"SYSTEM ACTIVE\")\nelse:\n    print(\"SYSTEM STANDBY\")"
+        7 -> "for step in range(1, 5):\n    print(\"SCAN\", step)"
+        else -> "count = 0\n\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\n\nprint(count)"
     }
     var editor by remember { mutableStateOf(TextFieldValue(starterCode(1))) }
     var output by remember { mutableStateOf(localized(language, "SYSTEM READY\nAwaiting analyst input...", "SISTEM SIAP\nMenunggu input analis...")) }
     var status by remember { mutableStateOf(localized(language, "TRAINING SIMULATION  /  CASE OPEN", "SIMULASI LATIHAN  /  KASUS TERBUKA")) }
     var isRunning by remember { mutableStateOf(false) }
     var showBriefing by remember { mutableStateOf(true) }
+    var showLesson by remember { mutableStateOf(false) }
 
     if (screen == "home") {
         Column(Modifier.fillMaxSize().background(Bg).padding(24.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -218,7 +234,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         }
 
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-            (1..3).forEach { mission ->
+            (1..8).forEach { mission ->
                 val unlocked = mission == 1 || (mission - 1) in completedMissions
                 val active = selectedMission == mission
                 Text(
@@ -263,7 +279,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                 Modifier.fillMaxWidth().weight(1f).background(Color(0xFF070B0F), RoundedCornerShape(9.dp)).padding(9.dp)
             ) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
-                    Text("root@helix-node:~$ cat access.log", color = Neon, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
+                    Text("root@helix-node:~$ python lesson.py", color = Neon, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
                     Spacer(Modifier.height(6.dp))
                     Text(
                         missionLog,
@@ -275,8 +291,12 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(status, color = if (selectedMission in completedMissions) Neon else Muted, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                Text(localized(language, "BRIEFING", "BRIEFING"), color = Cyan, fontSize = 9.sp, fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { showBriefing = true }.padding(4.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(localized(language, "LEARN", "BELAJAR"), color = Neon, fontSize = 9.sp, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable { showLesson = true }.padding(4.dp))
+                    Text(localized(language, "BRIEFING", "BRIEFING"), color = Cyan, fontSize = 9.sp, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable { showBriefing = true }.padding(4.dp))
+                }
             }
         }
 
@@ -409,8 +429,31 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                 }
             },
             confirmButton = {
-                Button(onClick = { showBriefing = false }, colors = ButtonDefaults.buttonColors(containerColor = Neon, contentColor = Bg)) {
-                    Text(localized(language, "ACCEPT MISSION", "MULAI MISI"))
+                Button(onClick = { showBriefing = false; showLesson = true }, colors = ButtonDefaults.buttonColors(containerColor = Neon, contentColor = Bg)) {
+                    Text(localized(language, "CONTINUE TO LESSON", "LANJUT KE MATERI"))
+                }
+            }
+        )
+    }
+    if (showLesson && screen == "game") {
+        val lesson = when (selectedMission) {
+            1 -> localized(language, "LEARN · print()\n\nprint() sends information to the output terminal. Text must be wrapped in quotes.\n\nDEMONSTRATION\nprint(\"Hello, Cyber Protocol!\")\n\nOUTPUT\nHello, Cyber Protocol!\n\nEXPERIMENT\nChange the message inside the quotes, run it, and observe the output. Then restore the mission message.", "BELAJAR · print()\n\nprint() mengirim informasi ke terminal output. Teks harus berada di dalam tanda kutip.\n\nDEMONSTRASI\nprint(\"Hello, Cyber Protocol!\")\n\nHASIL\nHello, Cyber Protocol!\n\nEKSPERIMEN\nUbah pesan di dalam tanda kutip, jalankan, dan amati hasilnya. Setelah itu kembalikan pesan sesuai misi.")
+            2 -> localized(language, "LEARN · Multiple output and comments\n\nEach print() creates a new output line. A comment starts with # and is ignored by Python.\n\nDEMONSTRATION\n# Start the system\nprint(\"SYSTEM ONLINE\")\nprint(\"ACCESS GRANTED\")\n\nEXPERIMENT\nAdd another print() line, then add a comment.", "BELAJAR · Beberapa output dan komentar\n\nSetiap print() membuat baris output baru. Komentar diawali # dan diabaikan Python.\n\nDEMONSTRASI\n# Menyalakan sistem\nprint(\"SYSTEM ONLINE\")\nprint(\"ACCESS GRANTED\")\n\nEKSPERIMEN\nTambahkan satu print() lagi, lalu tambahkan komentar.")
+            3 -> localized(language, "LEARN · Variables\n\nA variable is a name that refers to a value. Use = to assign a value, then use its name to read it. Text values use quotes.\n\nDEMONSTRATION\nagent = \"MARA\"\nstatus = \"ONLINE\"\nprint(agent)\nprint(status)\n\nEXPERIMENT\nChange ONLINE to OFFLINE and run again.", "BELAJAR · Variabel\n\nVariabel adalah nama yang merujuk pada nilai. Gunakan = untuk menyimpan nilai, lalu gunakan nama variabel untuk membacanya. Teks memakai tanda kutip.\n\nDEMONSTRASI\nagent = \"MARA\"\nstatus = \"ONLINE\"\nprint(agent)\nprint(status)\n\nEKSPERIMEN\nUbah ONLINE menjadi OFFLINE lalu jalankan.")
+            4 -> localized(language, "LEARN · Numbers and operators\n\n+ addition, - subtraction, * multiplication, / division.\n\nDEMONSTRATION\nprint(6 * 7)\n\nOUTPUT\n42\n\nEXPERIMENT\nTry 6 + 7, 6 - 7, and 6 / 7. Restore 6 * 7.", "BELAJAR · Angka dan operator\n\n+ penjumlahan, - pengurangan, * perkalian, / pembagian.\n\nDEMONSTRASI\nprint(6 * 7)\n\nHASIL\n42\n\nEKSPERIMEN\nCoba 6 + 7, 6 - 7, dan 6 / 7. Kembalikan 6 * 7.")
+            5 -> localized(language, "LEARN · Variables plus arithmetic\n\nVariables can hold numbers. Calculate a new value and assign it back. print(\"HP:\", hp) prints text and a value.\n\nDEMONSTRATION\nhp = 100\ndamage = 25\nhp = hp - damage\nprint(\"HP:\", hp)\n\nEXPERIMENT\nChange damage to 40 and predict the result.", "BELAJAR · Variabel dan matematika\n\nVariabel dapat menyimpan angka. Hitung nilai baru lalu simpan kembali. print(\"HP:\", hp) mencetak teks dan nilai.\n\nDEMONSTRASI\nhp = 100\ndamage = 25\nhp = hp - damage\nprint(\"HP:\", hp)\n\nEKSPERIMEN\nUbah damage menjadi 40 dan prediksi hasilnya.")
+            6 -> localized(language, "LEARN · if and else\n\nA condition chooses which code runs. > means greater than. The indented block after if runs when true; else handles the other case.\n\nDEMONSTRATION\nif energy > 0:\n    print(\"SYSTEM ACTIVE\")\nelse:\n    print(\"SYSTEM STANDBY\")\n\nEXPERIMENT\nThe lab tests energy as 10, 0, and -5.", "BELAJAR · if dan else\n\nKondisi menentukan kode yang dijalankan. > berarti lebih besar dari. Blok setelah if berjalan saat benar; else menangani kondisi lainnya.\n\nDEMONSTRASI\nif energy > 0:\n    print(\"SYSTEM ACTIVE\")\nelse:\n    print(\"SYSTEM STANDBY\")\n\nEKSPERIMEN\nLab menguji energy dengan nilai 10, 0, dan -5.")
+            7 -> localized(language, "LEARN · for and range()\n\nA for loop repeats a block. range(1, 5) produces 1, 2, 3, 4; the ending number is not included.\n\nDEMONSTRATION\nfor step in range(1, 5):\n    print(\"SCAN\", step)\n\nEXPERIMENT\nChange the range to range(1, 4), then restore it.", "BELAJAR · for dan range()\n\nLoop for mengulang blok kode. range(1, 5) menghasilkan 1, 2, 3, 4; angka akhir tidak ikut.\n\nDEMONSTRASI\nfor step in range(1, 5):\n    print(\"SCAN\", step)\n\nEKSPERIMEN\nUbah range menjadi range(1, 4), lalu kembalikan.")
+            else -> localized(language, "LEARN · Lists, loops, conditions, and counters\n\nA list stores multiple values. for visits each item. if filters matching items. count += 1 adds one to the counter. The lab supplies different events in every test.\n\nDEMONSTRATION\ncount = 0\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\nprint(count)\n\nEXPERIMENT\nChange ERROR to WARNING and observe the count.", "BELAJAR · List, loop, kondisi, dan counter\n\nList menyimpan banyak nilai. for mengunjungi setiap item. if menyaring item yang cocok. count += 1 menambah counter satu angka. Lab memberikan daftar event berbeda pada setiap pengujian.\n\nDEMONSTRASI\ncount = 0\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\nprint(count)\n\nEKSPERIMEN\nUbah ERROR menjadi WARNING dan amati jumlahnya.")
+        }
+        AlertDialog(
+            onDismissRequest = { showLesson = false },
+            containerColor = Panel,
+            title = { Text(localized(language, "HYBRID LEARNING  /  LESSON $selectedMission", "HYBRID LEARNING  /  MATERI $selectedMission"), color = Neon, fontWeight = FontWeight.Bold) },
+            text = { Text(lesson, color = Color.White, fontSize = 12.sp, lineHeight = 18.sp) },
+            confirmButton = {
+                Button(onClick = { showLesson = false }, colors = ButtonDefaults.buttonColors(containerColor = Neon, contentColor = Bg)) {
+                    Text(localized(language, "START PRACTICE", "MULAI LATIHAN"))
                 }
             }
         )
