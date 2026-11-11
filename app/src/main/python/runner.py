@@ -147,7 +147,7 @@ def run_code(source, access_log):
     try:
         _validate(source)
         compiled = compile(source, "<mission>", "exec")
-        namespace = {"__builtins__": safe_builtins, "open": virtual_open}
+        namespace = {"__builtins__": safe_builtins, "open": virtual_open, "logs": access_log.splitlines()}
         with contextlib.redirect_stdout(output):
             sys.settrace(budget_trace)
             exec(compiled, namespace, namespace)
@@ -195,19 +195,19 @@ def evaluate_mission(source, mission_id=1):
             "passed": False, "feedback": "Mission not found.",
         })
     outputs = []
-    for log_text, expected in mission["cases"]:
+    for case_number, (log_text, expected) in enumerate(mission["cases"], start=1):
         result = run_code(source, log_text)
         if result["error"]:
             return json.dumps({
                 "output": result["output"], "error": result["error"], "passed": False,
-                "feedback": "Fix the Python error, then run the mission again.",
+                "feedback": f"Python error in evidence test {case_number}/3. Check the code and try again.",
             })
         actual = result["output"].strip()
         outputs.append(actual)
         if actual != expected:
             return json.dumps({
                 "output": outputs[0], "error": "", "passed": False,
-                "feedback": "Your code ran, but it did not solve every evidence test. Do not hardcode the answer.",
+                "feedback": f"Evidence test {case_number}/3: expected {expected}, got {actual or '(no output)'}. Review your condition and counter.",
             })
     return json.dumps({
         "output": outputs[0], "error": "", "passed": True,
