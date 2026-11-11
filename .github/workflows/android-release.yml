@@ -60,12 +60,30 @@ jobs:
 
           echo "ANDROID_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
 
+      - name: Set monotonic Android version code
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION_CODE=$((1000 + GITHUB_RUN_NUMBER))
+          echo "ANDROID_VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+          echo "Release version code: $VERSION_CODE"
+
       - name: Build signed release APK
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: gradle --no-daemon testDebugUnitTest assembleRelease
+
+      - name: Verify release APK version code
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/release/app-release.apk"
+          ACTUAL=$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | sed -n "s/.*versionCode='\\([0-9]*\\)'.*/\\1/p" | head -n 1)
+          test "$ACTUAL" = "$ANDROID_VERSION_CODE"
+          test "$ACTUAL" -gt 6
+          echo "Verified version code: $ACTUAL"
 
       - name: Verify release APK signature
         run: |
