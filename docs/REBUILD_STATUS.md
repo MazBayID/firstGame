@@ -41,7 +41,7 @@ These foundations are not automatically production-ready. In particular, the cur
 - Add deterministic tests for domain rules and storage behavior.
 
 ### 2. Runtime and terminal
-- Replace prototype-only assumptions with an explicit execution contract and documented capability limits.
+- Replace prototype-only assumptions with an explicit execution contract and documented capability limits; Python currently receives mission-scoped text-file capabilities, but remains in-process and is not a hardened hostile-code sandbox.
 - Connect Python file I/O only through a game-owned, permission-checked virtual filesystem interface.
 - Enforce source/output/resource limits, cancellation where feasible, and safe error reporting.
 - Implement authentic standard command conventions in an allowlisted virtual terminal; never invoke the Android/Linux host shell.
@@ -105,6 +105,10 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Authored the two approved First Contact coding missions as catalog entries; later case concepts remain excluded until approved.
 - Integrated the First Contact mission catalog into the opening story UI: authored briefings/objectives and progressive hint reveal now come from mission data rather than duplicated screen text.
 - Successful First Contact submissions now use the mission completion use case and award their configured XP exactly once.
+- Added mission workspace handles with per-mission file allowlists, explicit writable-file sets, bounded text writes, and seeded read-only briefings.
+- Connected Python RUN to mission workspaces through bounded `read_text()` / `write_text()` capabilities; changed files return as structured data and persist only through Kotlin permission checks.
+- Confined the general-purpose in-game terminal to the personal virtual workspace so path navigation cannot browse mission directories or the virtual root.
+- Added Python regression cases for allowlisted reads, denied reads, writable-file enforcement, and file-size limits.
 - Added `GameState`, evidence models, and a repository interface independent of Android storage APIs.
 - Added versioned local campaign-state persistence, including migration of the previous story-stage preference.
 - Added checkpoint and idempotent mission-completion use cases with clearance and XP rules.
@@ -125,7 +129,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 ### Remaining before this can be called a complete game
 - Finish modularizing navigation, UI state, campaign/story content, and data ownership.
-- Implement the mission-scoped permission model and a controlled Python-to-virtual-filesystem bridge.
+- Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Replace the remaining placeholder Database, Dossier, Analysis, and Operations surfaces with working, story-linked systems.
 - Implement complete campaign operations, evidence lifecycle/provenance, hybrid evaluation, hints, debriefs, and progression unlocks.
