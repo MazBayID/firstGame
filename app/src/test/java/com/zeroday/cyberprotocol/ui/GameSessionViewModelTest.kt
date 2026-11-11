@@ -39,6 +39,8 @@ class GameSessionViewModelTest {
         viewModel.openRecruitmentInvitation()
 
         assertTrue(viewModel.gameState.recruitmentNotificationOpened)
+        assertFalse(viewModel.gameState.freyaContactOpened)
+        assertFalse(viewModel.gameState.nexusContactUnlocked)
         assertEquals(2, viewModel.gameState.storyBeat)
         assertEquals("recruitment_invitation_opened", viewModel.gameState.lastCheckpoint)
 
