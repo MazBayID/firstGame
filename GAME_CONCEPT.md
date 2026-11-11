@@ -852,3 +852,24 @@ The in-game **Pesan Aman / Secure Messenger** should feel like a familiar, polis
 - Returning from a conversation should preserve the inbox; closing Messenger should return to the game screen that opened it without losing campaign context.
 - Use original A.E.G.I.S. visual identity. Do not copy WhatsApp logos or proprietary assets, or imply that this is the real WhatsApp service.
 - Keep the experience offline-first and locally persisted. No real phone contacts, SMS, notifications, or external messaging account access is required.
+
+
+# 23. First Contact — Approved Mission and Evidence Sequence
+
+The opening chapter now contains six technical missions across twelve story beats. It is one continuous orientation and investigation, not six unrelated coding exercises.
+
+| Mission | Player learning objective | Evidence purpose |
+|---|---|---|
+| Sinyal Pertama | Variables and `print()` | Verify a first authored response |
+| Verifikasi Identitas | Named variables and output | Verify a second response |
+| Audit Jejak Sistem | `for`, `if`, counting | Count ERROR entries in a supplied event log |
+| Inventaris Rekaman | `len()` | Count available record references |
+| Penelusuran Referensi | `enumerate()`, loop, filtering | Find the matching reference while retaining source indices |
+| Perbandingan Dua Sumber | List indexing and named variables | Read and display the two receipt records for comparison |
+
+- All datasets are fictional, deterministic, local, and read-only during execution.
+- RUN executes the player's code against the current mission dataset; SUBMIT evaluates the solution against multiple fixtures where appropriate.
+- Mission evaluators must verify the intended programming concept as well as the expected behavior. A hard-coded answer must not pass a mission that teaches a variable, loop, condition, enumeration, or indexing.
+- The final report records the four-second difference between A.E.G.I.S. and ARCHIVE receipt times without asserting a cause.
+- The discrepancy remains unverified as to cause. Do not introduce a culprit, reveal manipulation, or start a separate case without approved narrative content.
+- Completion of the twelve story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
