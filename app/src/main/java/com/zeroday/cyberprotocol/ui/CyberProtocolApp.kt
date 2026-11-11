@@ -539,14 +539,16 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     "FIRST_SIGNAL" to ("Sinyal Pertama" to "first_contact.signal"),
                     "IDENTITY_VERIFIED" to ("Identitas Terverifikasi" to "first_contact.identity"),
                     "AUDIT_COMPLETE" to ("Audit Jejak Selesai" to "first_contact.audit"),
-                    "INVENTORY_COMPLETE" to ("Inventaris Rekaman Selesai" to "first_contact.inventory")
+                    "INVENTORY_COMPLETE" to ("Inventaris Rekaman Selesai" to "first_contact.inventory"),
+                    "TRACE_COMPLETE" to ("Penelusuran Referensi Selesai" to "first_contact.trace"),
+                    "COMPARE_COMPLETE" to ("Perbandingan Dua Sumber Selesai" to "first_contact.compare")
                 )
                 awards.forEach { (_, award) ->
                     val earned = award.second in currentGameState.completedMissionIds
                     append(if (earned) "[DIPEROLEH] " else "[TERKUNCI] ")
                     append(award.first).append("\n")
                 }
-                append(if (currentGameState.storyBeat >= 14) "[DIPEROLEH] Rekrutmen A.E.G.I.S. Selesai" else "[TERKUNCI] Rekrutmen A.E.G.I.S. Selesai")
+                append(if (currentGameState.storyBeat >= 14) "[DIPEROLEH] First Contact Selesai" else "[TERKUNCI] First Contact Selesai")
             },
             CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
         )
