@@ -42,6 +42,7 @@ data class MissionDefinition(
     val workspaceDirectory: String,
     val allowedFiles: Set<String>,
     val writableFiles: Set<String> = allowedFiles,
+    val runtimeVariables: Map<String, List<String>> = emptyMap(),
     val objectives: List<MissionObjective>,
     val hints: List<MissionHint>
 ) {
@@ -59,6 +60,11 @@ data class MissionDefinition(
         require(allowedFiles.isNotEmpty())
         require(allowedFiles.all { it.matches(Regex("[A-Za-z0-9_.-]{1,64}")) && it != "." && it != ".." })
         require(writableFiles.all { it in allowedFiles })
+        require(runtimeVariables.all { (name, values) ->
+            name.matches(Regex("[A-Za-z][A-Za-z0-9_]{0,63}")) &&
+                !name.startsWith("_") && "__" !in name && values.size <= 1000 &&
+                values.all { it.length <= 1000 }
+        })
         require(objectives.isNotEmpty())
         require(objectives.map { it.id }.distinct().size == objectives.size)
         require(hints.map { it.level }.distinct().size == hints.size)
