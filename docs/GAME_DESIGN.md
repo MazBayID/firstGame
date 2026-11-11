@@ -18,23 +18,24 @@ The player joins Helix Dynamics as a junior analyst. Senior analyst Mara assigns
 
 ### Mission 01 — The Corrupted Access Log
 
-- Skill: file reading, loops, conditionals, string membership, list append, and len.
-- Task: read the virtual access.log and count lines containing ERROR.
+- Skill: beginner loop, condition, string membership, and counter increment.
+- Task: use the preloaded `logs` list and count lines containing ERROR. The starter code provides the loop and condition; the player replaces one `pass` with `count += 1`.
+- Teaching progression: file reading is deferred to M02 so the first mission teaches one new action at a time.
 - Evidence validation: the same program must return 2, 1, and 0 for three different log fixtures.
 - Reward: 100 XP and 50 credits, granted once and persisted locally.
 
 ### Mission 02 — The Warning Signal
 
-- Skill: file iteration, string matching, lists, and counting.
-- Task: read the virtual access.log and count lines containing WARNING, ignoring ERROR and INFO.
+- Skill: opening a file, iterating over lines, string matching, and counting.
+- Task: read virtual access.log and count lines containing WARNING. The starter code provides the file-reading structure and leaves the counter action to the player.
 - Evidence validation: the same program must return 2, 1, and 0 for three different log fixtures.
 - Unlock: complete Mission 01.
 - Reward: 100 XP and 50 credits, granted once.
 
 ### Mission 03 — The Failed Login Trail
 
-- Skill: filtering records and identifying failed authentication events.
-- Task: count lines containing FAILED while ignoring successful OK login records.
+- Skill: reinforce file iteration, filtering records, and identifying failed authentication events.
+- Task: count lines containing FAILED while ignoring successful OK login records. The starter code provides the familiar file-reading structure and leaves the counter action to the player.
 - Evidence validation: the same program must return 2, 1, and 0 for three different log fixtures.
 - Unlock: complete Mission 02.
 - Reward: 100 XP and 50 credits, granted once.
