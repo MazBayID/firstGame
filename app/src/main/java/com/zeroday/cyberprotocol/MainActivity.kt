@@ -163,8 +163,8 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         else -> "failed = []\n\n# Count every line containing FAILED\n\nprint(len(failed))"
     }
     var editor by remember { mutableStateOf(TextFieldValue(starterCode(1))) }
-    var output by remember { mutableStateOf("SYSTEM READY\nAwaiting analyst input...") }
-    var status by remember { mutableStateOf("TRAINING SIMULATION  /  CASE OPEN") }
+    var output by remember { mutableStateOf(localized(language, "SYSTEM READY\nAwaiting analyst input...", "SISTEM SIAP\nMenunggu input analis...")) }
+    var status by remember { mutableStateOf(localized(language, "TRAINING SIMULATION  /  CASE OPEN", "SIMULASI LATIHAN  /  KASUS TERBUKA")) }
     var isRunning by remember { mutableStateOf(false) }
     var showBriefing by remember { mutableStateOf(true) }
 
@@ -176,7 +176,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             Text(localized(language, "HACKER RPG  /  CODING SIMULATION", "HACKER RPG  /  SIMULASI PEMROGRAMAN"), color = Cyan, fontSize = 10.sp, letterSpacing = 1.sp)
             Spacer(Modifier.height(38.dp))
             Button(onClick = { screen = "game"; showBriefing = true }, modifier = Modifier.fillMaxWidth().height(52.dp), colors = ButtonDefaults.buttonColors(containerColor = Neon, contentColor = Bg), shape = RoundedCornerShape(10.dp)) {
-                Text(localized(language, "▶  CONTINUE / NEW GAME", "▶  LANJUTKAN / MULAI GAME"), fontWeight = FontWeight.Black)
+                Text(localized(language, "▶  START CAMPAIGN", "▶  MULAI KAMPANYE"), fontWeight = FontWeight.Black)
             }
             Spacer(Modifier.height(10.dp))
             Button(onClick = { screen = "settings" }, modifier = Modifier.fillMaxWidth().height(48.dp), colors = ButtonDefaults.buttonColors(containerColor = PanelAlt, contentColor = Cyan), shape = RoundedCornerShape(10.dp)) {
@@ -231,8 +231,8 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                         .clickable(enabled = unlocked && !isRunning) {
                             selectedMission = mission
                             editor = TextFieldValue(starterCode(mission))
-                            output = "MISSION 0$mission READY\nWrite your solution and run the evidence tests."
-                            status = if (mission in completedMissions) "MISSION VERIFIED  /  REPLAY AVAILABLE" else "TRAINING SIMULATION  /  CASE OPEN"
+                            output = localized(language, "MISSION 0$mission READY\nWrite your solution and run the evidence tests.", "MISI 0$mission SIAP\nTulis solusi dan jalankan pengujian bukti.")
+                            status = if (mission in completedMissions) localized(language, "MISSION VERIFIED  /  REPLAY AVAILABLE", "MISI TERVERIFIKASI  /  BISA DIULANGI") else localized(language, "TRAINING SIMULATION  /  CASE OPEN", "SIMULASI LATIHAN  /  KASUS TERBUKA")
                         }
                         .padding(horizontal = 14.dp, vertical = 9.dp)
                 )
@@ -349,7 +349,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             Button(
                 onClick = {
                     isRunning = true
-                    status = "EXECUTING PYTHON..."
+                    status = localized(language, "EXECUTING PYTHON...", "MENJALANKAN PYTHON...")
                     val runningMission = selectedMission
                     onRunCode(runningMission, editor.text) { result, passed ->
                         output = result
@@ -362,11 +362,11 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                                 .putInt("xp", xp)
                                 .putInt("credits", credits)
                                 .apply()
-                            status = "MISSION COMPLETE  /  +100 XP"
+                            status = localized(language, "MISSION COMPLETE  /  +100 XP", "MISI SELESAI  /  +100 XP")
                         } else if (passed) {
-                            status = "MISSION VERIFIED  /  REWARD ALREADY CLAIMED"
+                            status = localized(language, "MISSION VERIFIED  /  REWARD ALREADY CLAIMED", "MISI TERVERIFIKASI  /  HADIAH SUDAH DIAMBIL")
                         } else {
-                            status = "CODE EXECUTED  /  OBJECTIVE NOT MET"
+                            status = localized(language, "CODE EXECUTED  /  OBJECTIVE NOT MET", "KODE DIJALANKAN  /  TUJUAN BELUM TERCAPAI")
                         }
                         isRunning = false
                     }
