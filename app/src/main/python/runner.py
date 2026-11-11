@@ -161,25 +161,25 @@ def run_code(source, access_log):
 MISSIONS = {
     1: {
         "cases": (
-            ("INFO: booted\\nERROR: invalid token\\nWARNING: retry\\nERROR: denied\\n", "2"),
-            ("ERROR: suspicious login\\nINFO: audit complete\\n", "1"),
-            ("INFO: service started\\nWARNING: retry scheduled\\n", "0"),
+            ("INFO: booted\nERROR: invalid token\nWARNING: retry\nERROR: denied\n", "2"),
+            ("ERROR: suspicious login\nINFO: audit complete\n", "1"),
+            ("INFO: service started\nWARNING: retry scheduled\n", "0"),
         ),
         "feedback": "All evidence tests passed. The ERROR counter works on different log files.",
     },
     2: {
         "cases": (
-            ("INFO: booted\\nWARNING: retry\\nERROR: denied\\nWARNING: timeout\\n", "2"),
-            ("WARNING: disk usage high\\nINFO: audit complete\\n", "1"),
-            ("ERROR: invalid token\\nINFO: service started\\n", "0"),
+            ("INFO: booted\nWARNING: retry\nERROR: denied\nWARNING: timeout\n", "2"),
+            ("WARNING: disk usage high\nINFO: audit complete\n", "1"),
+            ("ERROR: invalid token\nINFO: service started\n", "0"),
         ),
         "feedback": "All evidence tests passed. The WARNING counter works on different log files.",
     },
     3: {
         "cases": (
-            ("FAILED login user=admin\\nOK login user=guest\\nFAILED login user=root\\n", "2"),
-            ("FAILED login user=analyst\\nOK login user=operator\\n", "1"),
-            ("OK login user=guest\\nINFO audit complete\\n", "0"),
+            ("FAILED login user=admin\nOK login user=guest\nFAILED login user=root\n", "2"),
+            ("FAILED login user=analyst\nOK login user=operator\n", "1"),
+            ("OK login user=guest\nINFO audit complete\n", "0"),
         ),
         "feedback": "All evidence tests passed. The failed-login detector handles different evidence files.",
     },
