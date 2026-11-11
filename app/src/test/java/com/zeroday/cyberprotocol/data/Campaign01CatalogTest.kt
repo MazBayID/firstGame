@@ -39,7 +39,7 @@ class Campaign01CatalogTest {
             mission.copy(writableFiles = setOf("../outside.py"))
         }
         assertThrows(IllegalArgumentException::class.java) {
-            mission.copy(writableFiles = setOf("briefing.txt"))
+            mission.copy(writableFiles = setOf("not-allowed.py"))
         }
     }
 
