@@ -10,7 +10,9 @@ MAX_OUTPUT_LENGTH = 8000
 MAX_TRACE_EVENTS = 50000
 MAX_AST_NODES = 2500
 MAX_RANGE_ITEMS = 5000
-MAX_INTEGER_ABS = 1_000_000_000
+MAX_INTEGER_ABS = 1_000_000
+MAX_LITERAL_STRING_LENGTH = 10_000
+MAX_REPEAT_COUNT = 1_000
 
 
 class LimitedTextWriter:
@@ -68,6 +70,21 @@ def _validate(tree, extra_call_names=()):
     nodes = list(ast.walk(tree))
     if len(nodes) > MAX_AST_NODES:
         raise RunnerError("This program is too complex for the current training environment.")
+
+    constant_assignments = {}
+    for node in nodes:
+        if (isinstance(node, ast.Assign) and len(node.targets) == 1
+                and isinstance(node.targets[0], ast.Name)
+                and isinstance(node.value, ast.Constant)):
+            constant_assignments[node.targets[0].id] = node.value.value
+
+    def known_value(expression):
+        if isinstance(expression, ast.Constant):
+            return expression.value
+        if isinstance(expression, ast.Name):
+            return constant_assignments.get(expression.id)
+        return None
+
     for node in nodes:
         if not isinstance(node, ALLOWED_NODES):
             raise RunnerError(f"Unsupported syntax: {type(node).__name__}")
@@ -78,9 +95,21 @@ def _validate(tree, extra_call_names=()):
                 raise RunnerError("Only approved built-in functions may be called.")
         if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, complex)):
             raise RunnerError("This value type is not available in the training runner.")
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            if len(node.value) > MAX_LITERAL_STRING_LENGTH:
+                raise RunnerError("Text literals are limited in this training environment.")
         if isinstance(node, ast.Constant) and isinstance(node.value, int):
             if abs(node.value) > MAX_INTEGER_ABS:
                 raise RunnerError("Integer constants are limited in this training environment.")
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mult):
+            left = known_value(node.left)
+            right = known_value(node.right)
+            if isinstance(left, (str, list, tuple)) and isinstance(right, int):
+                if abs(right) > MAX_REPEAT_COUNT:
+                    raise RunnerError("Text and collection repetition is limited to prevent excessive memory use.")
+            if isinstance(right, (str, list, tuple)) and isinstance(left, int):
+                if abs(left) > MAX_REPEAT_COUNT:
+                    raise RunnerError("Text and collection repetition is limited to prevent excessive memory use.")
         if isinstance(node, (ast.List, ast.Tuple)) and len(node.elts) > 1000:
             raise RunnerError("Collection literals are limited to 1000 items.")
 
