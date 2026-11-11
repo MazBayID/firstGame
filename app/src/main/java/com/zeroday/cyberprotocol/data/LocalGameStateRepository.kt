@@ -5,6 +5,7 @@ import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
+import com.zeroday.cyberprotocol.domain.usecase.ProgressionRules
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -72,7 +73,11 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         val legacy = runCatching {
             contextPreferencesLegacy()
         }.getOrDefault(0)
-        return GameState(storyBeat = legacy.coerceIn(0, 7))
+        val storyBeat = legacy.coerceIn(0, 7)
+        return GameState(
+            storyBeat = storyBeat,
+            unlockedApps = ProgressionRules.unlockedAppsForStoryBeat(storyBeat)
+        )
     }
 
     private fun contextPreferencesLegacy(): Int {
@@ -142,7 +147,9 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
             rank = json.optString("rank", "CIVILIAN"),
             experience = json.optInt("experience", 0).coerceAtLeast(0),
             clearance = json.optInt("clearance", 0).coerceAtLeast(0),
-            unlockedApps = json.stringSet("unlockedApps").ifEmpty { setOf("MESSENGER") },
+            unlockedApps = json.stringSet("unlockedApps").ifEmpty {
+                ProgressionRules.unlockedAppsForStoryBeat(json.optInt("storyBeat", 0))
+            },
             evidence = evidence,
             savedCode = code,
             lastCheckpoint = json.optString("lastCheckpoint", "recovered"),
