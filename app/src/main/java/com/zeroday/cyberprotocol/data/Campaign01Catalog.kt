@@ -245,5 +245,19 @@ object Campaign01Catalog {
 
     private val byId = missions.associateBy { it.id }
 
+    private val storyStageByMissionId = mapOf(
+        "first_contact.signal" to 4,
+        "first_contact.identity" to 5,
+        "first_contact.audit" to 8,
+        "first_contact.inventory" to 9,
+        "first_contact.trace" to 11,
+        "first_contact.compare" to 12,
+        "first_contact.normalize" to 13,
+        "first_contact.validate_delta" to 14
+    )
+
     fun find(missionId: String): MissionDefinition? = byId[missionId]
+
+    /** Returns the authored story checkpoint that hosts a mission, if any. */
+    fun storyStageForMission(missionId: String): Int? = storyStageByMissionId[missionId]
 }
