@@ -143,9 +143,9 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         else -> localized(language, "03 — THE FAILED LOGIN TRAIL", "03 — JEJAK LOGIN GAGAL")
     }
     val missionObjective = when (selectedMission) {
-        1 -> localized(language, "OBJECTIVE: count every ERROR entry using Python.", "TUJUAN: hitung setiap entri ERROR menggunakan Python.")
-        2 -> localized(language, "OBJECTIVE: count every WARNING entry using Python.", "TUJUAN: hitung setiap entri WARNING menggunakan Python.")
-        else -> localized(language, "OBJECTIVE: count every FAILED login entry using Python.", "TUJUAN: hitung setiap entri login FAILED menggunakan Python.")
+        1 -> localized(language, "LEVEL 1 · Count ERROR lines. The logs list is ready.", "LEVEL 1 · Hitung baris ERROR. List logs sudah tersedia.")
+        2 -> localized(language, "LEVEL 2 · Read access.log and count WARNING lines.", "LEVEL 2 · Baca access.log dan hitung baris WARNING.")
+        else -> localized(language, "LEVEL 3 · Read access.log and count FAILED login lines.", "LEVEL 3 · Baca access.log dan hitung baris login FAILED.")
     }
     val missionLog = when (selectedMission) {
         1 -> "INFO: service started\nERROR: invalid token\nWARNING: retry scheduled\nERROR: permission denied"
@@ -153,14 +153,14 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         else -> "FAILED login user=admin\nOK login user=guest\nFAILED login user=root"
     }
     val missionHint = when (selectedMission) {
-        1 -> localized(language, "HINT: use open(), with, for, if, in, append(), and len().", "PETUNJUK: gunakan open(), with, for, if, in, append(), dan len().")
-        2 -> localized(language, "HINT: reuse the file-reading pattern. Look for the word WARNING.", "PETUNJUK: gunakan kembali pola membaca file. Cari kata WARNING.")
-        else -> localized(language, "HINT: inspect each line for FAILED, then count matching entries.", "PETUNJUK: periksa setiap baris untuk FAILED, lalu hitung yang cocok.")
+        1 -> localized(language, "HINT: logs is ready. Replace pass with count += 1 when a line contains ERROR.", "PETUNJUK: logs sudah tersedia. Ganti pass dengan count += 1 saat baris berisi ERROR.")
+        2 -> localized(language, "HINT: read access.log. Replace pass with count += 1 when a line contains WARNING.", "PETUNJUK: baca access.log. Ganti pass dengan count += 1 saat baris berisi WARNING.")
+        else -> localized(language, "HINT: replace pass with count += 1 when a line contains FAILED.", "PETUNJUK: ganti pass dengan count += 1 saat baris berisi FAILED.")
     }
     fun starterCode(mission: Int) = when (mission) {
-        1 -> "errors = []\n\n# Count every line containing ERROR\n\nprint(len(errors))"
-        2 -> "warnings = []\n\n# Count every line containing WARNING\n\nprint(len(warnings))"
-        else -> "failed = []\n\n# Count every line containing FAILED\n\nprint(len(failed))"
+        1 -> "count = 0\n\nfor line in logs:\n    if \"ERROR\" in line:\n        pass  # Replace pass with: count += 1\n\nprint(count)"
+        2 -> "count = 0\n\nwith open(\"access.log\", \"r\") as log_file:\n    for line in log_file:\n        if \"WARNING\" in line:\n            pass  # Replace pass with: count += 1\n\nprint(count)"
+        else -> "count = 0\n\nwith open(\"access.log\", \"r\") as log_file:\n    for line in log_file:\n        if \"FAILED\" in line:\n            pass  # Replace pass with: count += 1\n\nprint(count)"
     }
     var editor by remember { mutableStateOf(TextFieldValue(starterCode(1))) }
     var output by remember { mutableStateOf(localized(language, "SYSTEM READY\nAwaiting analyst input...", "SISTEM SIAP\nMenunggu input analis...")) }
@@ -184,7 +184,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
             }
             Spacer(Modifier.height(24.dp))
             Text("CHAPTER 01  •  OFFLINE TRAINING LAB", color = Muted, fontSize = 9.sp)
-            Text("v0.2.0  •  PYTHON 3.13", color = Muted, fontSize = 9.sp)
+            Text("v0.3.0  •  PYTHON 3.13", color = Muted, fontSize = 9.sp)
         }
     } else if (screen == "settings") {
         Column(Modifier.fillMaxSize().background(Bg).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -398,7 +398,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                     Text(localized(language, "MARA / SENIOR SECURITY ANALYST", "MARA / ANALIS KEAMANAN SENIOR"), color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Text(
                         when (selectedMission) {
-                            1 -> localized(language, "“Read access.log and count every line containing ERROR. The test system will swap the evidence file to verify your logic.”", "“Baca access.log dan hitung setiap baris yang berisi ERROR. Sistem pengujian akan mengganti file bukti untuk memverifikasi logikamu.”")
+                            1 -> localized(language, "“This is your first coding task. The log lines are prepared in a list named logs. Follow the loop and condition. Replace pass with count += 1 so each ERROR line is counted. The evidence changes during testing.”", "“Ini tugas pemrograman pertamamu. Baris log sudah disiapkan dalam list bernama logs. Ikuti perulangan dan kondisi. Ganti pass dengan count += 1 agar setiap baris ERROR dihitung. Bukti berubah saat pengujian.”")
                             2 -> localized(language, "“Read access.log and count every line containing WARNING. Do not count ERROR or INFO entries.”", "“Baca access.log dan hitung setiap baris yang berisi WARNING. Jangan hitung entri ERROR atau INFO.”")
                             else -> localized(language, "“Read access.log and count every line containing FAILED. The evidence will include successful logins too.”", "“Baca access.log dan hitung setiap baris yang berisi FAILED. Bukti juga akan memuat login yang berhasil.”")
                         },
