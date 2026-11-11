@@ -224,6 +224,8 @@ The exact data source, how the mentor obtained access to it, what first drew the
 The default presentation for conversations between the player and characters is an in-game **chat interface**.
 
 - Freya's conversations with the player appear as messages in a secure A.E.G.I.S. messaging interface, not as default visual-novel dialogue boxes.
+- Messenger opens to a **contact list**. The player selects Freya, NEXUS, or another available agent to open that contact's conversation; a single shared chat is not the default landing view.
+- Contacts become available as characters are introduced and the player's access permits. Returning from a conversation leads back to the contact list; closing Messenger returns to the previous game screen without losing operation context.
 - Messages identify their sender and use distinguishable chat bubbles for the character and player.
 - When a response is needed, present a set of **predefined authored reply choices** as messages the player can send. The initial version does not accept free-text replies.
 - Dialogue choices in the initial version are **cosmetic**. They select the player's immediate wording and may produce a different immediate response, but they do not alter relationship values, unlock content, change mission access, or branch the main story. Do not implement persistent dialogue-choice flags or a relationship meter for this version.
