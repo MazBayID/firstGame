@@ -1,4 +1,4 @@
-# CYBER PROTOCOL — README2
+# CYBER PROTOCOL — GAME CONCEPT
 ## Private Design Bible / Canonical Development Reference
 
 > **Purpose:** This document is the canonical creative and product-design reference for Cyber Protocol. Consult it before making significant changes to story, UI, gameplay, progression, learning systems, assets, or architecture.
@@ -185,6 +185,20 @@ NEXUS can:
 - Remember the player's in-game progress and previously demonstrated skills, where supported by the game data model.
 
 NEXUS must guide the player's thinking, not automatically solve every mission. Hints should be useful without removing the player's agency. The system should feel like a competent operational partner, not a decorative chatbot.
+
+
+## 5.4 Primary Mentor and Specialist Handoffs
+
+The player should have **one primary human mentor** who accompanies them from the beginning of recruitment and serves as their main point of contact throughout the RPG experience.
+
+- The primary mentor builds an ongoing relationship with the player, provides guidance, follows the player's development, and helps maintain continuity across the campaign.
+- The player should not feel as though they are being passed randomly between unrelated guides. The primary mentor remains the familiar central figure.
+- When an operation requires expertise outside the primary mentor's field, the mentor should arrange a clear handoff in the communication interface, introducing or connecting the player with an appropriate specialist.
+- The specialist temporarily leads the conversation for that specific subject or task and provides domain-specific guidance. For example, a technical specialist may assist with device or embedded-system work, while an intelligence analyst may help with evidence interpretation.
+- The handoff should feel like a natural RPG communication event: the primary mentor explains why another expert is needed, then the specialist joins the conversation with clear identity and role.
+- Specialist assistance should complement the primary mentor rather than replace the ongoing mentor relationship. The primary mentor can remain aware of the player's progress and resume the lead when appropriate.
+- Specialist characters, their names, personalities, expertise, and exact handoff mechanics remain to be designed.
+
 
 # 6. Campaign and Narrative
 
@@ -414,7 +428,7 @@ This is a continuity note, not a guarantee that every item remains present in th
 
 Before each significant development task:
 
-1. Read this README2 design bible.
+1. Read this GAME_CONCEPT design bible.
 2. Inspect the current repository and relevant source files.
 3. Identify how the requested change supports the first-person RPG + tactical simulator vision.
 4. Preserve established story, terminology, visual rules, and player experience.
