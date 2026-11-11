@@ -877,6 +877,99 @@ The opening chapter now contains eight technical missions across fourteen story 
 - The discrepancy remains unverified as to cause. Do not introduce a culprit, reveal manipulation, or start a separate case without approved narrative content.
 - Completion of the fourteen story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
 
+
+## 23.1 — Zero-Prerequisite Onboarding: Freya's Full Technical Training
+
+Cyber Protocol must be playable and understandable by someone who has **never used a command-line terminal and has never written a line of code**. The player is not expected to arrive with programming knowledge. Teaching these skills from the ground up is a core part of the opening campaign and of the game's identity.
+
+**Freya Knox is the primary instructor.** She personally teaches the player how to use the in-game terminal and Python, beginning with the most elementary concepts and gradually building toward independent problem-solving. This is integrated into the story and operational workflow; it must not feel like a detached programming course or a tutorial checklist outside the fiction.
+
+### Teaching principles
+
+- Assume zero prior knowledge. Never rely on unexplained terms such as command, directory, path, variable, string, argument, function, loop, or error. Introduce each term in plain language before expecting the player to use it.
+- Teach the purpose and meaning of an action, not only the exact text to type. Explain what a command or line of code does, why it is written in that form, what the player should expect to see, and how to recognize whether it worked.
+- Freya should be patient, encouraging, lively, and consistent with her approved personality. She can joke and tease affectionately, but must never shame a beginner, treat a reasonable question as foolish, or assume the player already understands a concept.
+- Present one manageable new idea at a time. Build on previously demonstrated knowledge, revisit concepts naturally, and avoid overwhelming the player with a large block of instructions or several unfamiliar syntax features at once.
+- Let the player perform the actions. Freya explains and demonstrates when appropriate, then asks the player to type commands or write and run code themselves. Do not auto-complete the learning experience by silently executing every step on the player's behalf.
+- Use guided practice first, followed by a small independent task and then a mission task that uses the same skill in a meaningful operational context.
+- Hints should be graduated: first prompt the player to observe or think; then remind them of the relevant concept; then offer a small syntax cue. Show a complete solution only when explicitly appropriate for an instructional demonstration, never as the default way to pass a mission.
+- Mistakes and runtime errors are expected parts of learning. Explain errors in beginner-friendly language, identify the relevant part of the player's input, and guide them toward diagnosing and correcting it. Do not punish experimentation with irreversible loss of mission progress.
+- Reuse familiar examples and vocabulary so that a concept learned in training remains useful when the campaign later applies it to evidence and operations.
+- The player may review explanations, command references, and previously introduced concepts. Essential knowledge must not depend on remembering a one-time chat message.
+
+### Terminal foundations
+
+Before the player is expected to use the terminal for mission work, Freya teaches its basic mental model and supported commands in the game's contained virtual environment.
+
+The initial terminal orientation should cover, in a gradual sequence:
+
+1. What a terminal is and how it differs from the code editor and other in-game applications.
+2. What the prompt represents, where the player currently is, and how to recognize the current working directory.
+3. How files and folders are organized, including the difference between a filename, a folder, and a path.
+4. How to inspect the current location and its contents using supported standard commands such as `pwd` and `ls`.
+5. How to move between folders using `cd`, return to an appropriate location, and understand relative versus absolute paths when the player is ready.
+6. How to read a text file using `cat`, and how to distinguish reading evidence from editing a script.
+7. How to create and manage practice files and folders using supported commands, without risking protected mission evidence.
+8. How to open the Python editor, save a script, run it through the terminal, and understand the relationship between the script filename and the command used to execute it.
+9. How to use contextual help, recognize common command errors, and recover from a mistake.
+
+Use recognizable Linux-like command conventions already specified in the terminal design. Teach only commands and options that the game actually implements. Clearly communicate that this is a safe, game-managed virtual environment, not unrestricted access to the Android device or host operating system.
+
+### Python foundations
+
+Freya introduces Python from the absolute beginning, with a practical progression appropriate for a first-time learner. The initial teaching sequence should include, when the player is ready:
+
+1. What Python is, what a script is, and how the game executes the player's code.
+2. The basic shape of a Python instruction and how to run a minimal first program.
+3. `print()` and reading program output.
+4. Text values (strings), quotation marks, and the difference between text and a variable name.
+5. Variables, assignment with `=`, naming, and reusing stored values.
+6. Basic input and output where supported by the mission environment.
+7. Common syntax errors, spelling mistakes, missing quotes or parentheses, and how to read error feedback.
+8. Conditions (`if` / `else`) and comparisons.
+9. Lists, indexing, and understanding that Python list positions begin at zero.
+10. Loops, including `for`, and progressively introducing `range()` and `enumerate()`.
+11. Counting and inspecting data with tools such as `len()`.
+12. Dictionaries, functions, file handling, and other concepts as later missions establish a genuine need for them.
+
+This is a progression guide, not a requirement to expose every topic during the first sitting. The campaign must introduce concepts in context and at a pace supported by the player's demonstrated understanding. Do not advance merely because the player tapped Continue; meaningful practice and successful use should establish readiness.
+
+### Opening tutorial as an in-world experience
+
+- The first technical lessons take place after the approved A.E.G.I.S. recruitment and Freya-contact sequence. Preserve the two distinct opening notifications and all existing narrative constraints.
+- Freya explains that the player is new to this work and explicitly reassures them that no prior terminal or programming experience is required.
+- She guides the player through the operative application hub and explains the role of Messenger, Terminal, Dossier, and Operations as those tools become relevant. Do not expose every tool or capability prematurely.
+- The first terminal exercises use safe practice files and a clearly identified practice workspace. The player must be able to tell practice material apart from mission evidence.
+- The first Python exercises begin with tiny, understandable programs. The player types, runs, observes the output, and makes a small change to see how the behavior changes.
+- Freya then connects the newly learned command or Python concept to a real action in the opening First Contact sequence. The tutorial and the mission must share the same files, interfaces, and execution rules; never teach a command in a disconnected mock screen that behaves differently from the actual terminal.
+- The transition from guided practice to mission work should be gradual. Early objectives may include explicit scaffolding; later objectives should reduce assistance as the player demonstrates competence.
+- The player must always have a way to review the relevant explanation or ask Freya for help without losing their current code, workspace, or mission progress.
+
+### Adaptive guidance and learning integrity
+
+- Track learning progress at the level of concepts demonstrated, not merely tutorial screens viewed. A player who has not successfully used a concept should receive suitable scaffolding when it next matters.
+- Allow players to revisit foundational training and request explanations. Do not force experienced players to repeat lengthy explanations unnecessarily; provide a clear, optional accelerated path while preserving the ability to learn any concept they do not know.
+- Evaluate mission work by actual execution and behavior, and verify the intended learning objective where appropriate. Do not accept a hard-coded output when the mission is explicitly teaching variables, loops, conditions, indexing, or another specific concept.
+- Do not make typing speed, memorization of unexplained syntax, or guessing the developer's intended answer the measure of programming ability.
+- Do not conceal required evidence or expected input from the player. Mission files, briefings, and Freya's guidance must provide a fair, discoverable path to the task.
+- The in-game Python runtime, editor, terminal, virtual filesystem, file permissions, and mission evaluator must behave consistently with the explanations Freya gives. A tutorial must never instruct the player to use a file, command, or Python feature that the current environment does not support.
+- Core training must work offline and must not depend on a live AI service. Freya's instructional dialogue and progression are authored and locally available. NEXUS may provide secondary technical reference or system diagnostics, but Freya remains the primary human mentor and teacher.
+
+The intended outcome is that a complete beginner can enter Cyber Protocol without outside programming knowledge, learn terminal and Python fundamentals through play, and gradually become capable of completing increasingly independent technical operations.
+
+## 23.2 — Canonical Design Compliance for Implementation
+
+`GAME_CONCEPT.md` is the canonical product-design reference for implementation.
+
+- Before writing or changing gameplay code, UI, dialogue, mission data, terminal behavior, Python execution, progression, save-state logic, or supporting architecture, review the relevant sections of this document and the approved narrative in `Story_Line.md`.
+- Every implementation must preserve the approved player experience, character roles, learning principles, story continuity, offline-first requirement, and safety boundaries defined here.
+- Do not introduce a new feature, interaction, teaching method, story fact, mission requirement, or technical capability that contradicts this document or silently turns a provisional idea into canon.
+- If a requested implementation reveals a genuine design gap or requires changing an established decision, update this document first (or in the same coherent change) and clearly identify the design decision before implementing dependent code.
+- Code must implement the design; the design must not be retroactively reinterpreted to excuse behavior that contradicts the approved experience.
+- When a feature is only partially implemented, document its actual status accurately. A screen or placeholder is not proof that the underlying gameplay, learning, persistence, or evaluation behavior works.
+- Keep changes on the active development branch and do not merge into `main` until the game is finished and the user explicitly authorizes the merge.
+
+
 # 24. Android Release Signing and Safe Updates
 
 Cyber Protocol uses a permanent Android release-signing identity. This is a product-maintenance requirement, not merely a build convenience.
