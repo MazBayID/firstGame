@@ -180,6 +180,11 @@ class RunnerTests(unittest.TestCase):
         result = self.run_code("for item in range(5001):\n    print(item)")
         self.assertIn("Range is limited", result["error"])
 
+    def test_wall_clock_execution_budget_is_enforced(self):
+        with patch("runner.time.monotonic", side_effect=[0.0, 4.0]):
+            result = runner._execute("print(1)")
+        self.assertIn("Execution time limit exceeded", result["error"])
+
     def test_output_is_bounded(self):
         result = self.run_code('print("x" * 12000)')
         self.assertLessEqual(len(result["output"]), runner.MAX_OUTPUT_LENGTH)
