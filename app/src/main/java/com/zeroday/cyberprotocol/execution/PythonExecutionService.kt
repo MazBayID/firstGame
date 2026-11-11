@@ -22,10 +22,12 @@ class PythonExecutionService {
             .callAttr("run_code_json", source, workspaceJson.toString(), writableJson.toString()).toString()
         val json = JSONObject(raw)
         val returnedFiles = json.optJSONObject("files") ?: JSONObject()
-        returnedFiles.keys().forEach { name ->
-            val updated = returnedFiles.optString(name, "")
-            if (name in writableNames && initialFiles[name] != updated) {
-                workspace?.writeFile(name, updated)
+        if (json.optString("error").isBlank()) {
+            returnedFiles.keys().forEach { name ->
+                val updated = returnedFiles.optString(name, "")
+                if (name in writableNames && initialFiles[name] != updated) {
+                    workspace?.writeFile(name, updated)
+                }
             }
         }
         ExecutionResult(json.optString("output"), json.optString("error"))
