@@ -109,7 +109,7 @@ class VirtualFileSystem(context: Context) {
                 (childDirs + childFiles).sorted().joinToString("\n").ifBlank { "(empty)" }
             }
             "cd" -> {
-                val target = resolve(rest.firstOrNull() ?: initialDirectory(), cwd, workspaceRoot)
+                val target = resolve(rest.firstOrNull() ?: workspaceRoot, cwd, workspaceRoot)
                     ?: return TerminalResponse("Jalur tidak valid: akses keluar dari ruang kerja virtual ditolak.", cwd)
                 if (!directories.contains(target)) return TerminalResponse("Folder tidak ditemukan: $target", cwd)
                 if (allowedFiles != null && target != workspaceRoot) return TerminalResponse("Mission workspace does not expose subdirectories.", cwd)
