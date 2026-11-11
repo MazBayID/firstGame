@@ -19,19 +19,20 @@ object Campaign01Catalog {
             chapterId = CHAPTER_ID,
             title = "Sinyal Pertama",
             nextClue = "Fragmen berikutnya memakai nama variabel message. Perhatikan nama yang diminta sebelum menampilkan nilainya.",
-            briefing = "A.E.G.I.S. menyediakan satu fragmen pesan pada kanal latihan. Simpan fragmen itu ke variabel signal, lalu tampilkan nilainya agar A.E.G.I.S. dapat memverifikasi respons awalmu.",
+            briefing = "A.E.G.I.S. menyediakan fragmen pesan di File Repository intranet. Unduh message_fragment.txt, baca isinya melalui Terminal dengan cat, simpan teks tersebut ke variabel signal, lalu tampilkan nilainya.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 9,
             rewardXp = 25,
             requiredClearance = 0,
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/signal",
-            allowedFiles = setOf("briefing.txt", "signal.py"),
+            allowedFiles = setOf("briefing.txt", "message_fragment.txt", "signal.py"),
             writableFiles = setOf("signal.py"),
+            initialFiles = mapOf("message_fragment.txt" to "ACCESS GRANTED\\n"),
             objectives = listOf(
                 MissionObjective(
                     id = "assign_signal",
                     title = "Simpan sinyal",
-                    description = "Buat variabel bernama signal dan isi dengan pesan yang diberikan."
+                    description = "Baca message_fragment.txt dari ruang kerja, lalu simpan teksnya ke variabel signal."
                 ),
                 MissionObjective(
                     id = "display_signal",
@@ -40,9 +41,9 @@ object Campaign01Catalog {
                 )
             ),
             hints = listOf(
-                MissionHint(1, "Python menyimpan nilai dengan pola nama_variabel = nilai."),
-                MissionHint(2, "Nama variabel yang diminta adalah signal."),
-                MissionHint(3, "Setelah assignment, panggil print(signal).")
+                MissionHint(1, "Gunakan cat message_fragment.txt di Terminal untuk membaca fragmen yang diunduh."),
+                MissionHint(2, "Simpan isi fragmen ke variabel bernama signal dengan pola signal = \"teks\"."),
+                MissionHint(3, "Tampilkan variabel tersebut dengan print(signal).")
             )
         ),
         MissionDefinition(
