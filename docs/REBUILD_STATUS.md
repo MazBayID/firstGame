@@ -19,7 +19,7 @@
 
 ## Repository audit — baseline
 
-The current repository is a playable vertical slice, not a blank project. It already contains reusable foundations:
+The baseline repository was a playable vertical slice, not a blank project. The rebuild has since extended several foundations:
 
 - Kotlin + Jetpack Compose Android application.
 - Chaquopy Python 3.13 integration.
@@ -30,26 +30,26 @@ The current repository is a playable vertical slice, not a blank project. It alr
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
 - GitHub Actions for Python unit tests and Android debug APK assembly.
 
-These foundations are not automatically production-ready. In particular, the current Python runner explicitly describes itself as a prototype guardrail, Python file access is not integrated with the virtual filesystem, the app state/navigation is concentrated in a large Compose file, several App Hub surfaces are placeholders, and the campaign is only an opening slice.
+These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the First Contact opening rather than a later investigative case.
 
 ## Production rebuild workstreams
 
 ### 1. Engineering foundation
 - Establish clear domain, data, execution, presentation, and platform boundaries.
 - Move campaign state and navigation decisions out of the monolithic UI composable.
-- Define versioned local persistence, migrations, checkpoint recovery, and corruption handling.
+- Define versioned local persistence, migrations, checkpoint recovery, previous-snapshot recovery, and corruption handling.
 - Add deterministic tests for domain rules and storage behavior.
 
 ### 2. Runtime and terminal
 - Replace prototype-only assumptions with an explicit execution contract and documented capability limits; Python currently receives mission-scoped text-file capabilities, but remains in-process and is not a hardened hostile-code sandbox.
-- Connect Python file I/O only through a game-owned, permission-checked virtual filesystem interface.
-- Enforce source/output/resource limits, cancellation where feasible, and safe error reporting.
+- Connect Python file I/O only through a game-owned, mission-scoped, permission-checked virtual filesystem interface.
+- Enforce source/output/resource limits, bounded file writes, cancellation where feasible, and safe error reporting.
 - Implement authentic standard command conventions in an allowlisted virtual terminal; never invoke the Android/Linux host shell.
 - Test path traversal, malformed input, resource exhaustion, and permission boundaries.
 
 ### 3. Complete player experience
-- Implement the approved main menu, campaign selection/progress, first-contact story, contact-list messenger, and App Hub.
-- Implement real Dossier, Intelligence Database, Analysis, and Operations data flows rather than placeholder surfaces.
+- Complete the approved main menu, campaign selection/progress, first-contact story, contact-list messenger, and App Hub interactions.
+- Continue expanding Dossier, Intelligence Database, Analysis, and Operations from their current data-backed opening implementations into full operational workspaces.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
 - Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
 
@@ -87,10 +87,10 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 ## Current status
 
 **Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
-**Phase 1 — Architecture and persistence foundation:** in progress; versioned state and domain mission contracts exist, while navigation/state extraction and recovery tests remain.  
-**Phase 2 — Runtime and terminal:** in progress; virtual terminal and Python adapter exist, but mission-scoped I/O and stronger execution isolation remain.  
-**Phase 3 — Complete campaign and operational systems:** in progress; First Contact has authored mission data and integrated objectives/hints/rewards; the remaining campaign and App Hub systems are unfinished.  
-**Phase 4 — Progression, archives, and release quality gates:** in progress at the foundation level; XP idempotency exists, while rank/clearance/unlocks/archives and full release gates remain.
+**Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, and an extracted destination model exist; ViewModel/state ownership and broader recovery tests remain.  
+**Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, personal-workspace terminal confinement, path-policy tests, and resource guardrails exist; process isolation and stronger hostile-code containment remain.  
+**Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has authored story beats, two evaluated coding missions, graduated hints, debriefs, contact-list messaging, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
+**Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists.
 
@@ -105,6 +105,16 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Authored the two approved First Contact coding missions as catalog entries; later case concepts remain excluded until approved.
 - Integrated the First Contact mission catalog into the opening story UI: authored briefings/objectives and progressive hint reveal now come from mission data rather than duplicated screen text.
 - Successful First Contact submissions now use the mission completion use case and award their configured XP exactly once.
+- Successful First Contact submissions now create mission-provenanced evidence records; the recruitment ending adds a separate unresolved transmission-timestamp discrepancy as UNVERIFIED evidence.
+- Added an evidence lifecycle use case for idempotent recording and explicit status updates.
+- Added deterministic rank thresholds for the approved rank ladder and story-gated App Hub unlock rules; legacy story-stage migration now restores the matching app access.
+- Added a previous-good-snapshot backup and corrupt-snapshot preservation path for local campaign save recovery.
+- Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; added Profile, Archives, Achievements, and a persistent reduced-motion setting to the main menu.
+- Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
+- Added a mission-success debrief screen before the story advances.
+- Extracted First Contact narrative content and game destination definitions from the main Compose shell.
+- Added a pure virtual path policy and regression tests for traversal, root access, and mission-directory denial from the personal terminal.
+- Added Python static limits for literal text, integer size, and string/list repetition to reduce accidental memory exhaustion. These remain teaching-runtime guardrails, not security isolation.
 - Added mission workspace handles with per-mission file allowlists, explicit writable-file sets, bounded text writes, and seeded read-only briefings.
 - Connected Python RUN to mission workspaces through bounded `read_text()` / `write_text()` capabilities; changed files return as structured data and persist only through Kotlin permission checks.
 - Confined the general-purpose in-game terminal to the personal virtual workspace so path navigation cannot browse mission directories or the virtual root.
@@ -131,10 +141,10 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Finish modularizing navigation, UI state, campaign/story content, and data ownership.
 - Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
-- Replace the remaining placeholder Database, Dossier, Analysis, and Operations surfaces with working, story-linked systems.
-- Implement complete campaign operations, evidence lifecycle/provenance, hybrid evaluation, hints, debriefs, and progression unlocks.
-- Complete checkpoint recovery, save migration/recovery behavior, and archive retention.
-- Complete the App Hub, messenger history, and the remaining player-facing systems.
+- Expand the current data-backed Database, Dossier, Analysis, and Operations surfaces into fully interactive, story-linked workspaces.
+- Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
+- Add automated tests for previous-snapshot recovery, save migration, and archive retention; expand clearance progression.
+- Finish ViewModel-driven state ownership, complete remaining App Hub interactions, localize all player-facing content, and add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
 
 The branch is deliberately kept as a draft. Phases 1–5 are being developed as one integrated rebuild, but are not yet complete and must not be represented as release-ready.
