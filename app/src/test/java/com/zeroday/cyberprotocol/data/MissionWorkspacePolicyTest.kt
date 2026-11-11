@@ -17,6 +17,18 @@ class MissionWorkspacePolicyTest {
     }
 
     @Test
+    fun repositoryAssetsCanOnlyBeInstalledAsDeclaredReadOnlyFiles() {
+        val allowed = setOf("briefing.txt", "message_fragment.txt", "signal.py")
+        val writable = setOf("signal.py")
+
+        assertTrue(MissionWorkspacePolicy.canInstallAsset("message_fragment.txt", 13, allowed, writable))
+        assertFalse(MissionWorkspacePolicy.canInstallAsset("signal.py", 13, allowed, writable))
+        assertFalse(MissionWorkspacePolicy.canInstallAsset("private.txt", 13, allowed, writable))
+        assertFalse(MissionWorkspacePolicy.canInstallAsset("../outside.txt", 13, allowed, writable))
+        assertFalse(MissionWorkspacePolicy.canInstallAsset("message_fragment.txt", 50_001, allowed, writable))
+    }
+
+    @Test
     fun writesRequireExplicitPermissionAndRespectSizeLimit() {
         assertTrue(MissionWorkspacePolicy.canWrite("signal.py", 0, writable))
         assertTrue(MissionWorkspacePolicy.canWrite("signal.py", 50_000, writable))
