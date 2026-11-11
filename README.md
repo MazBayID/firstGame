@@ -1,63 +1,73 @@
 # CYBER PROTOCOL
 
-**Cinematic Cyber-Intelligence RPG · Android-first · Educational Programming Game**
+**Adventure RPG · Android-first · Cinematic cyber-intelligence adventure**
 
-Cyber Protocol is a story-driven Android RPG in which an ordinary person is unexpectedly recruited into A.E.G.I.S., a fictional independent intelligence organization headquartered in Manila. The player learns programming and technical skills by using them to investigate fictional cases, examine evidence, and complete authorized simulated operations.
+Cyber Protocol is a story-driven Android Adventure RPG about an ordinary person recruited into **A.E.G.I.S.**, a fictional independent intelligence organization headquartered in Manila. The player investigates fictional incidents, examines evidence, and completes authorized simulations while gradually learning programming and technical skills.
 
 Programming is part of the world and the gameplay—not a detached course or a quiz with a story skin.
 
-## Story
+## Campaign 01 — THE RECRUITMENT
 
-A device you rarely use receives an encrypted message from an unknown sender. The sender claims to represent A.E.G.I.S. and appears to know something about you. The organization is investigating anomalies in records, financial trails, and disconnected systems. Before the player can understand the larger mystery, one question must be answered:
+Chapter 001 — **FIRST CONTACT** opens with an official A.E.G.I.S. recruitment notification. The player must tap it, read the organization's invitation in Secure Messenger, and follow its in-game mission link.
 
-**Why were you contacted?**
+When the first mission becomes active, a separate notification arrives from **Freya Knox**. She introduces herself as the player's mentor and guides the A.E.G.I.S. assignments. Freya is secretly the person who initiated the recruitment order, but neither the official invitation nor her initial greeting reveals that fact.
 
-The player begins Chapter 001 — FIRST CONTACT with a guided introduction to A.E.G.I.S., a classified recruitment file, and two progressive Python decryption exercises. After recruitment, the player is assigned **Freya Knox**, a highly capable mentor whose outrageous confidence and playful teaching style gradually become part of the team's dynamic.
+Freya later provides a link to **NEXUS**, an internal A.E.G.I.S. support system. NEXUS does not appear in the Messenger inbox until the player taps that link. Freya remains the primary human mentor.
 
-## Core design
+The opening notifications and links are in-game simulations. The app does not access real phone messages, contacts, or Android notifications.
 
-- **Story-driven campaign:** cinematic narrative beats and progressively unlocked operations.
+## Current playable foundation
+
+The approved First Contact chapter currently contains **12 story beats and six evaluated Python missions**:
+
+1. Sinyal Pertama — variables and `print()`.
+2. Verifikasi Identitas — named variables and output verification.
+3. Audit Jejak Sistem — `for`, `if`, and counting log entries.
+4. Inventaris Rekaman — `len()` and list size.
+5. Penelusuran Referensi — `enumerate()`, filtering, and source indices.
+6. Perbandingan Dua Sumber — list indexing and source comparison.
+
+The closing report records a four-second difference between two fictional receipt timestamps. The difference is observable; its cause remains unverified. The chapter does not identify a culprit or claim tampering.
+
+## Core systems
+
 - **First-person player identity:** the player is the operative; no player-avatar portrait is required.
-- **In-world learning:** Python concepts are introduced when the story gives the player a reason to use them.
-- **Real local Python execution:** CPython 3.13 through Chaquopy on Android.
-- **Separate Run and Submit:** RUN executes code; SUBMIT evaluates the current objective.
-- **In-game terminal:** recognizable Linux-like commands operate inside a game-managed virtual filesystem, never the Android host shell.
-- **Two workspaces:** persistent Personal Workspace and mission-scoped working areas.
-- **A.E.G.I.S. application hub:** Secure Messenger, Terminal, Intelligence Database, Dossier, Analysis, and Operations unlock progressively.
-- **Offline-first foundation:** the opening campaign flow and core training do not require a server or external AI API.
-- **Safety boundary:** fictional cases and controlled training data only. The current Python runner is a restricted teaching prototype, not a hardened sandbox for hostile code.
+- **In-world learning:** programming concepts appear when the story gives the player a reason to use them.
+- **Local Python execution:** CPython 3.13 through Chaquopy on Android.
+- **Separate RUN and SUBMIT:** RUN executes code against the active mission data; SUBMIT evaluates the authored mission criteria.
+- **Mission datasets:** deterministic, fictional, read-only inputs with multiple evaluator fixtures where appropriate.
+- **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence.
+- **Virtual terminal and workspaces:** Linux-like commands operate within a game-managed virtual filesystem, never the Android host shell.
+- **Evidence and progression:** mission checkpoints, provenance-aware evidence, XP, rank, clearance, archives, and achievements.
+- **Offline-first foundation:** core story, mission execution, evaluation, and progression do not require an account, server, external AI, or API key.
+- **Accessibility foundation:** reduced-motion preference and responsive Android layouts.
 
-## Language\n\nBahasa Indonesia is the default language for the opening experience, including campaign story, menu navigation, mentor dialogue, app labels, and the in-game terminal guidance. Python syntax and terminal commands intentionally retain their standard technical spelling.\n\n## Current playable foundation
+## Language
 
-The current reconstruction establishes the Android app shell and an initial vertical slice:
+Bahasa Indonesia is the current implemented language. English selection and complete localization across all player-facing screens remain planned work; the design requirements are documented in `GAME_CONCEPT.md`. Python syntax and standard technical command names remain unchanged.
 
-- Classic mobile-game-inspired main menu with the provisional dark-cyan headquarters identity.
-- Campaign 01 — THE RECRUITMENT and Chapter 001 — FIRST CONTACT.
-- Persistent story checkpoints and two guided Python tasks using variables and `print()`.
-- A secure-message interface introducing Freya Knox.
-- Six-app A.E.G.I.S. hub with progressive access states.
-- Local virtual filesystem with basic Linux-like file and directory commands.
-- Python script execution from files saved in the virtual workspace.
-- Existing UI artwork and emblem retained in the Android resource folders.
+## Safety and technical limitations
 
-Several systems remain foundational prototypes. The full campaign, complete operational simulations, granular filesystem permissions, Python-to-virtual-filesystem APIs, robust execution isolation, and final cinematic art are not yet complete. See [Rebuild Status](docs/REBUILD_STATUS.md).
+All principal cases, organizations, people, and datasets are fictional. Technical operations are controlled simulations.
+
+The current Python runner applies AST restrictions and resource limits, but executes in-process. It is **not a hardened sandbox for hostile code** and must not be treated as one.
 
 ## Canonical design references
 
-- [GAME_CONCEPT.md](GAME_CONCEPT.md) — canonical product and game-design bible.
+- [GAME_CONCEPT.md](GAME_CONCEPT.md) — product direction, gameplay rules, and implementation constraints.
 - [Story_Line.md](Story_Line.md) — narrative blueprint and continuity reference.
 - [Visual Identity](docs/VISUAL_IDENTITY.md) — approved visual direction.
 - [Asset Catalog](docs/ASSET_CATALOG.md) — semantic UI asset registry.
 
 ## Build
 
-Requirements: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13 for the standalone runner tests.
+Requirements: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13 for standalone runner tests.
 
 ```bash
 python -m unittest discover -s tests -v
-gradle --no-daemon assembleDebug
+gradle --no-daemon testDebugUnitTest assembleDebug
 ```
 
-APK output: `app/build/outputs/apk/debug/app-debug.apk`.
+Debug APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
-The project is an evolving game foundation, not a claim that the complete v1.0 campaign is already implemented.
+The project is an evolving game foundation. This repository does not claim that the full v1.0 campaign is complete.
