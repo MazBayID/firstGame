@@ -27,7 +27,7 @@ internal class GameSessionViewModel(
     }
 
     fun saveStoryBeat(value: Int) {
-        val beat = value.coerceIn(0, 10)
+        val beat = value.coerceIn(0, 13)
         updateState {
             it.copy(
                 storyBeat = beat,
