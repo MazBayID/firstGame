@@ -257,7 +257,7 @@ private fun CyberProtocolGameContent() {
                     }
                 },
                 onSubmit = {
-                    val missionId = authoredMission?.evaluatorId ?: return@StoryScreen
+                    val missionId = authoredMission?.evaluatorId ?: -1
                     scope.launch {
                         codeFeedback = "MEMVERIFIKASI..."
                         val result = withContext(Dispatchers.IO) {
