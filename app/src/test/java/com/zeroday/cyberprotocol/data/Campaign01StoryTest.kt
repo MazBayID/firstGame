@@ -19,21 +19,22 @@ class Campaign01StoryTest {
     }
 
     @Test
-    fun eightTechnicalMissionTemplatesAreMappedToTheirStoryStages() {
-        assertEquals(
-            "signal = \"ACCESS GRANTED\"\nprint(signal)",
-            Campaign01Story.codeTemplates[0]
-        )
-        assertEquals(
-            "message = \"IDENTITY VERIFIED\"\nprint(message)",
-            Campaign01Story.codeTemplates[1]
-        )
-        assertEquals(Campaign01Story.codeTemplates[2], Campaign01Story.codeTemplateForStage(8))
-        assertEquals(Campaign01Story.codeTemplates[3], Campaign01Story.codeTemplateForStage(9))
-        assertEquals(Campaign01Story.codeTemplates[4], Campaign01Story.codeTemplateForStage(11))
-        assertEquals(Campaign01Story.codeTemplates[5], Campaign01Story.codeTemplateForStage(12))
-        assertEquals(Campaign01Story.codeTemplates[6], Campaign01Story.codeTemplateForStage(13))
-        assertEquals(Campaign01Story.codeTemplates[7], Campaign01Story.codeTemplateForStage(14))
+    fun missionStarterDraftsContainObjectivesButNoExecutableSolutions() {
+        val stages = listOf(4, 5, 8, 9, 11, 12, 13, 14)
+        stages.forEachIndexed { index, stage ->
+            val draft = Campaign01Story.codeTemplateForStage(stage)
+            assertEquals(Campaign01Story.codeTemplates[index], draft)
+            assertTrue(draft.isNotBlank())
+            assertTrue(draft.lineSequence().filter { it.isNotBlank() }.all { it.trimStart().startsWith("#") })
+        }
+    }
+
+    @Test
+    fun oldBundledAnswersAreClearedButPlayerDraftsArePreserved() {
+        assertTrue(Campaign01Story.draftForStage(4, "signal = \"ACCESS GRANTED\"\nprint(signal)")
+            .contains("TODO"))
+        assertEquals("my_signal = \"custom\"", Campaign01Story.draftForStage(4, "my_signal = \"custom\""))
+        assertEquals(Campaign01Story.codeTemplateForStage(4), Campaign01Story.draftForStage(4, null))
     }
 
     @Test
