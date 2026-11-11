@@ -138,6 +138,7 @@ private fun CyberProtocolGameContent() {
     var terminalBusy by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
     var messengerReply by rememberSaveable { mutableStateOf("") }
+    var messengerContact by rememberSaveable { mutableStateOf("") }
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
@@ -205,8 +206,12 @@ private fun CyberProtocolGameContent() {
             GameScreen.CAMPAIGN -> GameScreen.MAIN_MENU.name
             GameScreen.STORY -> GameScreen.CAMPAIGN.name
             GameScreen.APP_HUB -> returnScreen
-            GameScreen.MESSENGER, GameScreen.TERMINAL, GameScreen.DATABASE,
-            GameScreen.DOSSIER, GameScreen.ANALYSIS, GameScreen.OPERATIONS -> GameScreen.APP_HUB.name
+            GameScreen.MESSENGER -> if (messengerContact.isNotBlank()) {
+                messengerContact = ""
+                GameScreen.MESSENGER.name
+            } else GameScreen.APP_HUB.name
+            GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER,
+            GameScreen.ANALYSIS, GameScreen.OPERATIONS -> GameScreen.APP_HUB.name
             GameScreen.MAIN_MENU -> GameScreen.MAIN_MENU.name
         }
     }
@@ -337,7 +342,9 @@ private fun CyberProtocolGameContent() {
             onOpen = { target -> screenName = target.name }
         )
         GameScreen.MESSENGER -> MessengerScreen(
-            onBack = { screenName = GameScreen.APP_HUB.name },
+            selectedContact = messengerContact,
+            onSelectContact = { messengerContact = it; messengerReply = "" },
+            onClose = { screenName = GameScreen.APP_HUB.name },
             reply = messengerReply,
             onReply = { messengerReply = it }
         )
@@ -615,30 +622,93 @@ private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScre
 }
 
 @Composable
-private fun MessengerScreen(onBack: () -> Unit, reply: String, onReply: (String) -> Unit) {
-    GamePage("PESAN AMAN", "A.E.G.I.S. / KANAL TERENKRIPSI", onBack, null) {
-        GamePanel {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Surface(color = Color(0xFF24333A), shape = RoundedCornerShape(50)) {
-                    Text("FK", Modifier.padding(12.dp), color = Color.White, fontWeight = FontWeight.Bold)
+private fun MessengerScreen(
+    selectedContact: String,
+    onSelectContact: (String) -> Unit,
+    onClose: () -> Unit,
+    reply: String,
+    onReply: (String) -> Unit
+) {
+    val contactName = when (selectedContact) {
+        "FREYA" -> "FREYA KNOX"
+        "NEXUS" -> "NEXUS"
+        else -> "PESAN AMAN"
+    }
+    GamePage(
+        contactName,
+        if (selectedContact.isBlank()) "A.E.G.I.S. / DAFTAR KONTAK" else "A.E.G.I.S. / KANAL TERENKRIPSI",
+        onBack = { if (selectedContact.isBlank()) onClose() else onSelectContact("") },
+        onHub = null
+    ) {
+        if (selectedContact.isBlank()) {
+            GamePanel {
+                Text("KONTAK TERSEDIA", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+                Surface(
+                    onClick = { onSelectContact("FREYA") },
+                    color = Color(0xFF1A1D24),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, CyberPalette.Divider),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Surface(color = Color(0xFF24333A), shape = RoundedCornerShape(50)) {
+                            Text("FK", Modifier.padding(12.dp), color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text("FREYA KNOX", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text("MENTOR UTAMA  ·  ONLINE", color = CyberPalette.Success, fontSize = 9.sp)
+                        }
+                        Text("›", color = CyberPalette.Crimson, fontSize = 24.sp)
+                    }
                 }
-                Column {
-                    Text("FREYA KNOX", color = Color.White, fontWeight = FontWeight.Bold)
-                    Text("MENTOR UTAMA  ·  AMAN", color = CyberPalette.Success, fontSize = 9.sp)
+                Surface(
+                    onClick = { onSelectContact("NEXUS") },
+                    color = Color(0xFF1A1D24),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, CyberPalette.Divider),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Surface(color = Color(0xFF24333A), shape = RoundedCornerShape(50)) {
+                            Text("NX", Modifier.padding(12.dp), color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                        Column(Modifier.weight(1f)) {
+                            Text("NEXUS", color = Color.White, fontWeight = FontWeight.Bold)
+                            Text("SISTEM KOMUNIKASI INTELIJEN", color = CyberPalette.SteelGray, fontSize = 9.sp)
+                        }
+                        Text("›", color = CyberPalette.Crimson, fontSize = 24.sp)
+                    }
                 }
             }
-            ChatBubble("Freya Knox", "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.", false)
-            ChatBubble("Freya Knox", "Aku sudah memeriksa berkasmu. Aku melihat potensi. Sementara itu, mungkin kamu melihat daftar panjang hal-hal yang belum kamu kuasai. Penilaian yang sangat masuk akal.", false)
-            if (reply.isNotBlank()) {
-                ChatBubble("KAMU", reply, true)
-                ChatBubble("Freya Knox", "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham.", false)
-                ChatBubble("Freya Knox", "Luar biasa. Kamu telah memilih mentor dengan kecerdasan yang tak tertandingi. Sebaiknya catat itu sebelum aku kembali rendah hati.", false)
+        } else {
+            GamePanel {
+                if (selectedContact == "FREYA") {
+                    ChatBubble("Freya Knox", "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.", false)
+                    ChatBubble("Freya Knox", "Aku sudah memeriksa berkasmu. Aku melihat potensi. Sementara itu, mungkin kamu melihat daftar panjang hal-hal yang belum kamu kuasai. Penilaian yang sangat masuk akal.", false)
+                    if (reply.isNotBlank()) {
+                        ChatBubble("KAMU", reply, true)
+                        ChatBubble("Freya Knox", "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham.", false)
+                        ChatBubble("Freya Knox", "Luar biasa. Kamu telah memilih mentor dengan kecerdasan yang tak tertandingi. Sebaiknya catat itu sebelum aku kembali rendah hati.", false)
+                    }
+                    listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?").forEach { choice ->
+                        OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
+                    }
+                } else {
+                    ChatBubble("NEXUS", "Kanal komunikasi A.E.G.I.S. aktif. Status personel: rekrut. Seluruh tugas latihan berjalan secara lokal pada perangkat ini.", false)
+                    ChatBubble("NEXUS", "Aku dapat menjelaskan status operasi, menyimpan konteks teknis, dan meneruskan instruksi yang telah disahkan mentor.", false)
+                    if (reply.isNotBlank()) {
+                        ChatBubble("KAMU", reply, true)
+                        ChatBubble("NEXUS", "Permintaan diterima. Untuk saat ini, gunakan panel Operasi dan Berkas untuk meninjau informasi yang tersedia.", false)
+                    }
+                    listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?").forEach { choice ->
+                        OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
+                    }
+                }
+                Text("Pilihan dialog awal hanya memengaruhi balasan saat ini. Pilihan tersebut tidak mengubah cabang kampanye atau nilai hubungan.",
+                    color = CyberPalette.SteelGray, fontSize = 10.sp)
             }
-            listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?").forEach { choice ->
-                OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
-            }
-            Text("Pilihan dialog awal hanya memengaruhi balasan saat ini. Pilihan tersebut tidak mengubah cabang kampanye atau nilai hubungan.",
-                color = CyberPalette.SteelGray, fontSize = 10.sp)
         }
     }
 }
