@@ -29,7 +29,7 @@ class RunnerTests(unittest.TestCase):
     def test_mission_03_requires_variables(self):
         source = 'agent = "MARA"\nstatus = "ONLINE"\nprint(agent)\nprint(status)'
         self.assertTrue(self.submit(source, 3)["passed"])
-        self.assertFalse(self.submit('print("MARA\\nONLINE")', 3)["passed"])
+        self.assertFalse(self.submit('print("MARA\nONLINE")', 3)["passed"])
 
     def test_mission_04_arithmetic(self):
         self.assertTrue(self.submit("print(6 * 7)", 4)["passed"])
@@ -47,7 +47,7 @@ class RunnerTests(unittest.TestCase):
     def test_mission_07_requires_loop(self):
         source = 'for step in range(1, 5):\n    print("SCAN", step)'
         self.assertTrue(self.submit(source, 7)["passed"])
-        self.assertFalse(self.submit('print("SCAN 1\\nSCAN 2\\nSCAN 3\\nSCAN 4")', 7)["passed"])
+        self.assertFalse(self.submit('print("SCAN 1\nSCAN 2\nSCAN 3\nSCAN 4")', 7)["passed"])
 
     def test_mission_08_changing_fixtures(self):
         source = 'count = 0\nfor event in events:\n    if "ERROR" in event:\n        count += 1\nprint(count)'
@@ -78,7 +78,7 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse(self.submit("print(len(records))", 11)["passed"])
 
     def test_mission_run_receives_read_only_input_variables(self):
-        source = 'count = 0\\nfor event in events:\\n    if "ERROR" in event:\\n        count += 1\\nprint(count)'
+        source = 'count = 0\nfor event in events:\n    if "ERROR" in event:\n        count += 1\nprint(count)'
         result = json.loads(runner.run_code_json(
             source, "{}", "[]", json.dumps({"events": ["INFO: ready", "ERROR: denied"]})
         ))
@@ -93,7 +93,7 @@ class RunnerTests(unittest.TestCase):
 
     def test_mission_input_lists_are_read_only(self):
         result = json.loads(runner.run_code_json(
-            'events[0] = "CHANGED"\\nprint(events[0])',
+            'events[0] = "CHANGED"\nprint(events[0])',
             "{}", "[]", json.dumps({"events": ["ERROR: original"]})
         ))
         self.assertIn("does not support item assignment", result["error"])
