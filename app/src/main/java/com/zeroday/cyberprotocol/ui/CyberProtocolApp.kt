@@ -135,8 +135,15 @@ fun CyberProtocolApp() {
             when (screen) {
                 Screen.HOME -> {
                     CPPanel {
-                        CPSectionHeader(chapter.title, eyebrow = "CURRENT CHAPTER")
-                        Text(chapter.opening, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Row(verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                            Image(painterResource(CyberAssets.operative), "Operative",
+                                Modifier.size(64.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                CPSectionHeader(chapter.title, eyebrow = "CURRENT CHAPTER")
+                                Text(chapter.opening, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        }
                     }
                     CPPanel {
                         Row(
@@ -155,25 +162,35 @@ fun CyberProtocolApp() {
                             fontSize = 12.sp
                         )
                     }
-                    Button(onClick = { screen = Screen.LEARN }, Modifier.fillMaxWidth()) { Text(tr("learn", language)) }
-                    Button(onClick = { screen = Screen.PRACTICE }, Modifier.fillMaxWidth()) { Text(tr("practice", language)) }
-                    Button(onClick = { screen = Screen.MISSIONS }, Modifier.fillMaxWidth()) { Text(tr("missions", language)) }
-                    OutlinedButton(onClick = { screen = Screen.SETTINGS }, Modifier.fillMaxWidth()) { Text(tr("settings", language)) }
+                    AssetNavigationButton(CyberAssets.learn, tr("learn", language)) { screen = Screen.LEARN }
+                    AssetNavigationButton(CyberAssets.practice, tr("practice", language)) { screen = Screen.PRACTICE }
+                    AssetNavigationButton(CyberAssets.intelligence, tr("missions", language)) { screen = Screen.MISSIONS }
+                    AssetNavigationButton(CyberAssets.settings, tr("settings", language), outlined = true) { screen = Screen.SETTINGS }
                 }
                 Screen.LEARN -> {
-                    PageTitle(tr("learn", language), tr("learn_sub", language))
+                    PageTitle(tr("learn", language), tr("learn_sub", language), CyberAssets.learn)
                     chapter.lessons.forEach { lesson ->
-                        Text(lesson.title, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                        Text(lesson.concept, color = MaterialTheme.colorScheme.secondary)
-                        Text(lesson.explanation)
-                        CodePanel(lesson.example)
-                        Text("OUTPUT\n${lesson.expectedOutput}", color = MaterialTheme.colorScheme.secondary,
-                            fontFamily = FontFamily.Monospace)
+                        CPPanel {
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Image(painterResource(CyberAssets.code), "Lesson concept",
+                                    Modifier.size(38.dp))
+                                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                                    Text(lesson.title, color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold)
+                                    Text(lesson.concept, color = MaterialTheme.colorScheme.secondary)
+                                }
+                            }
+                            Text(lesson.explanation)
+                            CodePanel(lesson.example)
+                            Text("OUTPUT\n${lesson.expectedOutput}", color = MaterialTheme.colorScheme.secondary,
+                                fontFamily = FontFamily.Monospace)
+                        }
                     }
                     BackButton(language) { screen = Screen.HOME; }
                 }
                 Screen.PRACTICE -> {
-                    PageTitle(tr("practice", language), tr("practice_sub", language))
+                    PageTitle(tr("practice", language), tr("practice_sub", language), CyberAssets.practice)
                     Text(if (language == UiLanguage.ID) "Eksekusi latihan tidak meluluskan misi." else "Practice execution does not award mission completion.")
                     CodeEditor(source, { source = it }, tr("practice_editor", language), 190)
                     Button(enabled = !busy, onClick = {
@@ -191,19 +208,28 @@ fun CyberProtocolApp() {
                     BackButton(language) { screen = Screen.HOME }
                 }
                 Screen.MISSIONS -> {
-                    PageTitle(tr("missions", language), tr("mission_sub", language))
+                    PageTitle(tr("missions", language), tr("mission_sub", language), CyberAssets.intelligence)
                     chapter.missions.forEach { mission ->
                         val unlocked = mission.id == 1 || (mission.id - 1) in progress.completedMissions
                         Button(enabled = unlocked, onClick = { selectMission(mission) },
                             modifier = Modifier.fillMaxWidth()) {
-                            val marker = if (mission.id in progress.completedMissions) "✓" else if (unlocked) "OPEN" else "LOCKED"
-                            Text("$marker  M${mission.id.toString().padStart(2, '0')} — ${mission.title}")
+                            val completed = mission.id in progress.completedMissions
+                            val marker = if (completed) "✓" else if (unlocked) "OPEN" else "LOCKED"
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Image(
+                                    painter = painterResource(if (completed) CyberAssets.missionCompleted else CyberAssets.evidenceFile),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(34.dp)
+                                )
+                                Text("$marker  M${mission.id.toString().padStart(2, '0')} — ${mission.title}")
+                            }
                         }
                     }
                     BackButton(language) { screen = Screen.HOME }
                 }
                 Screen.MISSION -> {
-                    PageTitle("MISSION ${selectedMission.id.toString().padStart(2, '0')}", selectedMission.title)
+                    PageTitle("MISSION ${selectedMission.id.toString().padStart(2, '0')}", selectedMission.title, CyberAssets.investigation)
                     Text(selectedMission.briefing, color = Color.LightGray)
                     Text(tr("objective", language), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                     Text(selectedMission.objective)
@@ -244,7 +270,7 @@ fun CyberProtocolApp() {
                     BackButton(language) { screen = Screen.MISSIONS }
                 }
                 Screen.SETTINGS -> {
-                    PageTitle(tr("settings", language), if (language == UiLanguage.ID) "Atur preferensi antarmuka." else "Configure interface preferences.")
+                    PageTitle(tr("settings", language), if (language == UiLanguage.ID) "Atur preferensi antarmuka." else "Configure interface preferences.", CyberAssets.settings)
                     Text(tr("language", language), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                     Box {
                         OutlinedButton(onClick = { languageMenu = true }) { Text(language.label + "  ▾") }
@@ -267,9 +293,43 @@ fun CyberProtocolApp() {
 }
 
 @Composable
-private fun PageTitle(title: String, subtitle: String) {
-    Text(title, color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Black)
-    Text(subtitle, color = MaterialTheme.colorScheme.secondary)
+private fun AssetNavigationButton(
+    asset: Int,
+    label: String,
+    outlined: Boolean = false,
+    onClick: () -> Unit
+) {
+    val content: @Composable RowScope.() -> Unit = {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Image(painterResource(asset), contentDescription = null, modifier = Modifier.size(34.dp))
+            Text(label, fontWeight = FontWeight.Bold)
+        }
+    }
+    if (outlined) {
+        OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth(), content = content)
+    } else {
+        Button(onClick = onClick, modifier = Modifier.fillMaxWidth(), content = content)
+    }
+}
+
+@Composable
+private fun PageTitle(title: String, subtitle: String, asset: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Image(painterResource(asset), contentDescription = null, modifier = Modifier.size(42.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            Text(title, color = MaterialTheme.colorScheme.primary,
+                fontSize = 20.sp, fontWeight = FontWeight.Black)
+            Text(subtitle, color = MaterialTheme.colorScheme.secondary)
+        }
+    }
 }
 
 @Composable
