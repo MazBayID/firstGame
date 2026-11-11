@@ -33,7 +33,7 @@ class LegacyProgressMigrationTest {
         assertEquals(1, migrated.clearance)
         assertEquals("RECRUIT", migrated.rank)
         assertEquals(
-            setOf("MESSENGER", "DATABASE", "DOSSIER", "TERMINAL", "ANALYSIS", "OPERATIONS"),
+            setOf("MESSENGER", "DATABASE", "DOSSIER", "BROWSER", "TERMINAL", "ANALYSIS", "OPERATIONS"),
             migrated.unlockedApps
         )
         val lead = migrated.evidence.single { it.id == "transmission_timestamp_discrepancy" }
