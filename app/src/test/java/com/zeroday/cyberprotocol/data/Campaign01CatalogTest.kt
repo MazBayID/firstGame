@@ -11,7 +11,7 @@ class Campaign01CatalogTest {
     @Test
     fun openingMissionsHaveStableUniqueIdentifiers() {
         val missions = Campaign01Catalog.missions
-        assertEquals(6, missions.size)
+        assertEquals(8, missions.size)
         assertEquals(missions.size, missions.map { it.id }.distinct().size)
         assertNotNull(Campaign01Catalog.find("first_contact.signal"))
         assertTrue(!Campaign01Catalog.find("first_contact.signal")!!.briefing.contains("Freya", ignoreCase = true))
@@ -20,6 +20,8 @@ class Campaign01CatalogTest {
         assertNotNull(Campaign01Catalog.find("first_contact.inventory"))
         assertNotNull(Campaign01Catalog.find("first_contact.trace"))
         assertNotNull(Campaign01Catalog.find("first_contact.compare"))
+        assertNotNull(Campaign01Catalog.find("first_contact.normalize"))
+        assertNotNull(Campaign01Catalog.find("first_contact.validate_delta"))
         assertNull(Campaign01Catalog.find("unapproved_case"))
     }
 
@@ -38,6 +40,10 @@ class Campaign01CatalogTest {
         assertEquals(3, Campaign01Catalog.find("first_contact.inventory")!!.runtimeVariables["records"]!!.size)
         assertEquals(12, Campaign01Catalog.find("first_contact.trace")!!.evaluatorId)
         assertEquals(13, Campaign01Catalog.find("first_contact.compare")!!.evaluatorId)
+        assertEquals(14, Campaign01Catalog.find("first_contact.normalize")!!.evaluatorId)
+        assertEquals(15, Campaign01Catalog.find("first_contact.validate_delta")!!.evaluatorId)
+        assertEquals(2, Campaign01Catalog.find("first_contact.normalize")!!.runtimeVariables["receipt_seconds"]!!.size)
+        assertEquals(2, Campaign01Catalog.find("first_contact.validate_delta")!!.runtimeVariables["receipt_seconds"]!!.size)
         assertEquals(2, Campaign01Catalog.find("first_contact.trace")!!.runtimeVariables["receipts"]!!.size)
         assertEquals(2, Campaign01Catalog.find("first_contact.compare")!!.runtimeVariables["receipts"]!!.size)
         assertEquals(Campaign01Catalog.CAMPAIGN_ID, signal.campaignId)
