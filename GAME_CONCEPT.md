@@ -368,6 +368,18 @@ Potential progression:
 
 This is a candidate learning map, not a requirement to teach every topic in a fixed order. The campaign should determine when a concept is introduced. Do not overload early missions.
 
+## 8.1 Hybrid Mission Evaluation
+
+Mission evaluation uses a **hybrid approach**. The evaluator selects checks appropriate to the task rather than requiring every task to use one exact-answer rule.
+
+- **Technical tasks:** validate required behavior, relevant concept use, execution results, and task constraints. Where multiple implementations satisfy the requirements, accept them; do not demand identical source code unless a specific syntax form is itself the learning objective.
+- **Investigative tasks:** assess whether the player's conclusion is supported by the available evidence and whether uncertainty is represented responsibly. Accept different defensible conclusions or wording when they meet the evidence criteria.
+- **Combined tasks:** evaluate both technical correctness and investigative reasoning as distinct dimensions. A program can work correctly while the interpretation of its data is weak, and a sound observation does not excuse a failed technical requirement.
+- **Feedback:** explain which criteria were met, which need attention, and why. Offer contextual hints or another attempt where appropriate instead of a generic pass/fail message.
+- **Mission configuration:** define explicit criteria and acceptable outcomes for each task. Do not use an AI model or unconstrained subjective judgment as the authority for core mission completion.
+
+Keep **Run** and **Submit** separate: Run executes the player's work; Submit evaluates it against the mission's defined criteria.
+
 ## 8.1 Teaching and evaluation principles
 
 - LEARN explains concepts, syntax, examples, and expected behavior.
