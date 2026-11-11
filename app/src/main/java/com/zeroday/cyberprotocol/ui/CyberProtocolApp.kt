@@ -146,7 +146,15 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
     var terminalBusy by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
-    var messengerReply by rememberSaveable { mutableStateOf("") }
+    val messengerPreferences = remember { context.getSharedPreferences("cp_messenger_v1", 0) }
+    var freyaReplies by remember {
+        mutableStateOf(messengerPreferences.getString("freya_replies", "").orEmpty()
+            .split("\u001F").filter { it.isNotBlank() })
+    }
+    var nexusReplies by remember {
+        mutableStateOf(messengerPreferences.getString("nexus_replies", "").orEmpty()
+            .split("\u001F").filter { it.isNotBlank() })
+    }
     var messengerContact by rememberSaveable { mutableStateOf("") }
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
@@ -364,10 +372,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         )
         GameScreen.MESSENGER -> MessengerScreen(
             selectedContact = messengerContact,
-            onSelectContact = { messengerContact = it; messengerReply = "" },
+            onSelectContact = { messengerContact = it },
             onClose = { screenName = GameScreen.APP_HUB.name },
-            reply = messengerReply,
-            onReply = { messengerReply = it }
+            replies = if (messengerContact == "FREYA") freyaReplies else nexusReplies,
+            onReply = { reply ->
+                if (messengerContact == "FREYA") {
+                    freyaReplies = (freyaReplies + reply).takeLast(50)
+                    messengerPreferences.edit().putString("freya_replies", freyaReplies.joinToString("\u001F")).apply()
+                } else {
+                    nexusReplies = (nexusReplies + reply).takeLast(50)
+                    messengerPreferences.edit().putString("nexus_replies", nexusReplies.joinToString("\u001F")).apply()
+                }
+            }
         )
         GameScreen.TERMINAL -> TerminalScreen(
             currentDirectory = currentDirectory,
@@ -705,7 +721,7 @@ private fun MessengerScreen(
     selectedContact: String,
     onSelectContact: (String) -> Unit,
     onClose: () -> Unit,
-    reply: String,
+    replies: List<String>,
     onReply: (String) -> Unit
 ) {
     val contactName = when (selectedContact) {
@@ -766,10 +782,12 @@ private fun MessengerScreen(
                 if (selectedContact == "FREYA") {
                     ChatBubble("Freya Knox", "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.", false)
                     ChatBubble("Freya Knox", "Aku sudah memeriksa berkasmu. Aku melihat potensi. Sementara itu, mungkin kamu melihat daftar panjang hal-hal yang belum kamu kuasai. Penilaian yang sangat masuk akal.", false)
-                    if (reply.isNotBlank()) {
-                        ChatBubble("KAMU", reply, true)
-                        ChatBubble("Freya Knox", "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham.", false)
-                        ChatBubble("Freya Knox", "Luar biasa. Kamu telah memilih mentor dengan kecerdasan yang tak tertandingi. Sebaiknya catat itu sebelum aku kembali rendah hati.", false)
+                    replies.forEachIndexed { index, message ->
+                        ChatBubble("KAMU", message, true)
+                        ChatBubble("Freya Knox",
+                            if (index % 2 == 0) "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham."
+                            else "Pertanyaan bagus. Aku akan menjawabnya saat konteks operasinya tersedia. Jangan khawatir, aku jarang kehabisan kata-kata.",
+                            false)
                     }
                     listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?").forEach { choice ->
                         OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
@@ -777,8 +795,8 @@ private fun MessengerScreen(
                 } else {
                     ChatBubble("NEXUS", "Kanal komunikasi A.E.G.I.S. aktif. Status personel: rekrut. Seluruh tugas latihan berjalan secara lokal pada perangkat ini.", false)
                     ChatBubble("NEXUS", "Aku dapat menjelaskan status operasi, menyimpan konteks teknis, dan meneruskan instruksi yang telah disahkan mentor.", false)
-                    if (reply.isNotBlank()) {
-                        ChatBubble("KAMU", reply, true)
+                    replies.forEach { message ->
+                        ChatBubble("KAMU", message, true)
                         ChatBubble("NEXUS", "Permintaan diterima. Untuk saat ini, gunakan panel Operasi dan Berkas untuk meninjau informasi yang tersedia.", false)
                     }
                     listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?").forEach { choice ->
