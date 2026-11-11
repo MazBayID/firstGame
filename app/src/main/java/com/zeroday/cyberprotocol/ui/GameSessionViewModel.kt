@@ -42,6 +42,17 @@ internal class GameSessionViewModel(
         }
     }
 
+    fun openRecruitmentInvitation() {
+        updateState { current ->
+            if (current.recruitmentNotificationOpened) current
+            else current.copy(
+                recruitmentNotificationOpened = true,
+                storyBeat = maxOf(current.storyBeat, 2),
+                lastCheckpoint = "recruitment_invitation_opened"
+            )
+        }
+    }
+
     fun startMission(missionId: String) {
         if (missionId.isBlank()) return
         updateState { current ->
