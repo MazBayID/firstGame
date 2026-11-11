@@ -188,6 +188,20 @@ Current story beats:
 
 These beats are the initial narrative outline and can be expanded into dialogue, environmental storytelling, documents, choices, and cinematic transitions.
 
+## 6.2 Campaign Experience and Navigation
+
+The Campaign uses a **hybrid story-driven + mission-driven structure**. Cinematic narrative is the primary experience, while a mission/operation selection interface provides a clear sense of player progress and available assignments.
+
+- Entering Campaign should feel like entering an intelligence operation, not opening a lesson list.
+- Use a deliberate transition from the main menu into the campaign experience, with A.E.G.I.S. system/secure-connection presentation where appropriate.
+- Present the campaign title, current operation status, and story progress.
+- Offer **Continue** and **New Campaign** when applicable.
+- Do not expose every chapter and mission immediately. Reveal chapters and operations progressively as the story advances and prerequisites are met.
+- Each chapter may have its own title, cinematic artwork, short synopsis, and completion/availability state.
+- Story scenes, dialogue, encrypted messages, briefings, and discoveries should lead naturally into operation selection or the next mission.
+- The player may choose among operations that are already unlocked, but the main narrative should retain a deliberate sequence and pacing.
+- The first campaign begins with **FIRST CONTACT** and the established recruitment sequence; do not skip directly to a mission list or coding lesson.
+
 ## 6.2 Narrative principles
 
 - Story must not feel pasted onto unrelated coding questions.
