@@ -49,7 +49,7 @@ These foundations are not automatically production-ready. Python file access is 
 
 ### 3. Complete player experience
 - Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list messenger, and App Hub interactions.
-- Continue expanding Dossier, Intelligence Database, Analysis, and Operations from their current data-backed opening implementations into full operational workspaces.
+- Continue expanding Analysis and Operations into deeper review/operational workflows. Dossier and Intelligence Database now have dedicated data-backed screens; remaining work is broader cross-linking, archive navigation, and audited evidence review.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
 - Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
 
@@ -155,6 +155,8 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 - Replaced the read-only Operations summary with a mission-control screen showing verified mission count, campaign XP/rank/clearance, each mission's current state, and a contextual resume action for the currently active mission.
 - Replaced the static Analysis text dump with a searchable evidence workspace: status filters, case-insensitive search across title/summary/source/mission, newest-first ordering, and source/provenance cards. The view is intentionally read-only; evidence classification cannot be changed without an audited review workflow.
+- Rebuilt the Intelligence Database into two linked indexes: authored mission files and persisted evidence records. Both are searchable; mission detail shows objectives/workspace metadata, while evidence detail preserves status, source, mission provenance, timestamp, and the related mission briefing.
+- Replaced the text-only Personnel Dossier with a data-backed record showing recruitment/contact status, mentor and NEXUS access, campaign qualification, clearance, verified mission history, evidence count, and XP progress toward the next rank. The rank threshold calculation is now exposed by the progression domain rule and covered by tests.
 - Added unit tests for evidence ordering, status isolation, combined search/filter behavior, and provenance-field search.
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
