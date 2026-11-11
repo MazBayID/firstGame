@@ -32,7 +32,7 @@ internal class GameSessionViewModel(
             it.copy(
                 storyBeat = beat,
                 clearance = if (beat >= 10) maxOf(it.clearance, 1) else it.clearance,
-                unlockedApps = ProgressionRules.unlockedAppsForStoryBeat(beat),
+                unlockedApps = it.unlockedApps + ProgressionRules.unlockedAppsForStoryBeat(beat),
                 lastCheckpoint = "story_beat_" + beat
             )
         }
