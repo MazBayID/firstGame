@@ -88,6 +88,13 @@ object Campaign01Catalog {
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/audit",
             allowedFiles = setOf("briefing.txt", "audit.py"),
             writableFiles = setOf("audit.py"),
+            runtimeVariables = mapOf("events" to listOf(
+                "INFO: training channel initialized",
+                "ERROR: receipt checksum mismatch",
+                "WARNING: retry scheduled",
+                "ERROR: timestamp offset detected",
+                "INFO: archive write completed"
+            )),
             objectives = listOf(
                 MissionObjective("scan_events", "Periksa setiap entri", "Gunakan for untuk memeriksa semua item dalam events."),
                 MissionObjective("count_errors", "Hitung entri ERROR", "Gunakan if untuk menghitung item yang memuat teks ERROR.")
@@ -111,6 +118,7 @@ object Campaign01Catalog {
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/inventory",
             allowedFiles = setOf("briefing.txt", "inventory.py"),
             writableFiles = setOf("inventory.py"),
+            runtimeVariables = mapOf("records" to listOf("RX-14", "RX-19", "RX-21")),
             objectives = listOf(
                 MissionObjective("count_records", "Hitung referensi", "Gunakan len(records) untuk memperoleh jumlah item."),
                 MissionObjective("display_count", "Tampilkan jumlah", "Simpan hasil pada record_count dan tampilkan dengan print().")
