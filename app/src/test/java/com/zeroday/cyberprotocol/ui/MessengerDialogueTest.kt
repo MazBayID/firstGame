@@ -23,6 +23,41 @@ class MessengerDialogueTest {
     }
 
     @Test
+    fun freyaExplainsTheInGameTerminalIsNotTheAndroidShell() {
+        val response = MessengerDialogue.freyaResponse("Apa fungsi Terminal?")
+
+        assertTrue(response.contains("bukan shell Android"))
+        assertTrue(response.contains("help"))
+        assertTrue(response.contains("cat"))
+    }
+
+    @Test
+    fun freyaExplainsHowToReadTheFirstMissionFile() {
+        val response = MessengerDialogue.freyaResponse("Bagaimana membaca berkas misi?")
+
+        assertTrue(response.contains("cat message_fragment.txt"))
+        assertTrue(response.contains("tidak menjalankan kode Python"))
+    }
+
+    @Test
+    fun freyaExplainsPythonVariablesAndStringQuotes() {
+        val response = MessengerDialogue.freyaResponse("Apa itu variabel Python?")
+
+        assertTrue(response.contains("signal ="))
+        assertTrue(response.contains("print(signal)"))
+        assertTrue(response.contains("tanda kutip"))
+    }
+
+    @Test
+    fun freyaExplainsTerminalRunAndBrowserSubmissionSeparation() {
+        val response = MessengerDialogue.freyaResponse("Bagaimana menjalankan dan mengirim kode?")
+
+        assertTrue(response.contains("python signal.py"))
+        assertTrue(response.contains("Browser > Mission Control"))
+        assertTrue(response.contains("kodenya tidak berubah"))
+    }
+
+    @Test
     fun nexusReportsCurrentLocalProgressWithoutInventingAnActiveMission() {
         val response = MessengerDialogue.nexusResponse(
             "Tampilkan status personel.",
