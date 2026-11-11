@@ -51,6 +51,16 @@ class Campaign01CatalogTest {
     }
 
     @Test
+    fun operationsResumeMappingTargetsEveryAuthoredMissionCheckpoint() {
+        assertEquals(
+            listOf(4, 5, 8, 9, 11, 12, 13, 14),
+            Campaign01Catalog.missions.mapNotNull { Campaign01Catalog.storyStageForMission(it.id) }
+        )
+        assertNull(Campaign01Catalog.storyStageForMission("unapproved_case"))
+        assertEquals(8, Campaign01Catalog.missions.size)
+    }
+
+    @Test
     fun missionWorkspaceRejectsWritesOutsideItsAllowlist() {
         val mission = Campaign01Catalog.find("first_contact.signal")!!
         assertEquals(setOf("signal.py"), mission.writableFiles)
