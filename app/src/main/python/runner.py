@@ -4,10 +4,12 @@ import contextlib
 import io
 import json
 import sys
+import time
 
 MAX_SOURCE_LENGTH = 12000
 MAX_OUTPUT_LENGTH = 8000
 MAX_TRACE_EVENTS = 50000
+MAX_EXECUTION_SECONDS = 3.0
 MAX_AST_NODES = 2500
 MAX_RANGE_ITEMS = 5000
 MAX_INTEGER_ABS = 1_000_000
@@ -157,12 +159,15 @@ def _execute(source, variables=None, workspace_files=None, writable_files=None):
     namespace = dict(variables or {})
     output = LimitedTextWriter(MAX_OUTPUT_LENGTH)
     counter = {"events": 0}
+    deadline = time.monotonic() + MAX_EXECUTION_SECONDS
 
     def trace(frame, event, arg):
         if event == "line":
             counter["events"] += 1
             if counter["events"] > MAX_TRACE_EVENTS:
                 raise RunnerError("Execution budget exceeded. Check for an unbounded loop.")
+            if time.monotonic() > deadline:
+                raise RunnerError("Execution time limit exceeded. Simplify the operation and try again.")
         return trace
 
     previous_trace = sys.gettrace()
