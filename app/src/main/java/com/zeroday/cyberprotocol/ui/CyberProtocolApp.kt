@@ -140,6 +140,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     var debriefTitle by rememberSaveable { mutableStateOf("") }
     var debriefFeedback by rememberSaveable { mutableStateOf("") }
     var debriefXp by rememberSaveable { mutableIntStateOf(0) }
+    var debriefClue by rememberSaveable { mutableStateOf("") }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(screen, storyStage) {
@@ -353,6 +354,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                             debriefTitle = authoredMission?.title ?: "MISI SELESAI"
                             debriefFeedback = result.feedback
                             debriefXp = rewardGranted
+                            debriefClue = authoredMission?.nextClue.orEmpty()
                             navigate(GameScreen.DEBRIEF)
                         } else {
                             codeFeedback = result.feedback.ifBlank {
@@ -392,6 +394,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             xpAwarded = debriefXp,
             rank = currentGameState.rank.replace('_', ' '),
             totalExperience = currentGameState.experience,
+            nextClue = debriefClue,
             onContinue = {
                 navigate(GameScreen.STORY)
             }
@@ -959,6 +962,7 @@ private fun MissionDebriefScreen(
     xpAwarded: Int,
     rank: String,
     totalExperience: Int,
+    nextClue: String?,
     onContinue: () -> Unit
 ) {
     GamePage("DEBRIEF MISI", "A.E.G.I.S. / HASIL VERIFIKASI", onContinue, null) {
@@ -970,6 +974,12 @@ private fun MissionDebriefScreen(
             Text("REWARD  /  +$xpAwarded XP", color = Color(0xFF83C7D0), fontWeight = FontWeight.Bold)
             Text("TOTAL PENGALAMAN  /  $totalExperience XP", color = Color.White, fontSize = 12.sp)
             Text("RANK SAAT INI  /  $rank", color = Color.White, fontSize = 12.sp)
+            if (!nextClue.isNullOrBlank()) {
+                HorizontalDivider(color = CyberPalette.Divider)
+                Text("PETUNJUK BERIKUTNYA", color = Color(0xFF83C7D0),
+                    fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                Text(nextClue, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
+            }
         }
         CPPrimaryButton("LANJUTKAN OPERASI", onContinue)
     }
