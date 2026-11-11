@@ -48,6 +48,7 @@ internal object LegacyProgressMigration {
         }
         return GameState(
             storyBeat = beat,
+            recruitmentNotificationOpened = beat >= 2,
             completedMissionIds = completed,
             rank = ProgressionRules.rankForExperience(experience),
             experience = experience,
