@@ -206,7 +206,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 terminalBusy = true
                 scope.launch {
                     val missionWorkspace = activeMission?.let { fileSystem.openMissionWorkspace(it) }
-                    val result = withContext(Dispatchers.IO) { python.run(source, missionWorkspace) }
+                    val result = withContext(Dispatchers.IO) {
+                        python.run(source, missionWorkspace, activeMission?.runtimeVariables.orEmpty())
+                    }
                     appendTerminalOutput((result.output.ifBlank { "(tidak ada keluaran)" }) + "\n")
                     if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
                     terminalBusy = false
@@ -302,7 +304,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     scope.launch {
                         codeFeedback = "MENJALANKAN — hanya eksekusi; belum ada evaluasi misi."
                         val workspace = authoredMission?.let { fileSystem.openMissionWorkspace(it) }
-                        val result = withContext(Dispatchers.IO) { python.run(code.text, workspace) }
+                        val result = withContext(Dispatchers.IO) {
+                            python.run(code.text, workspace, authoredMission?.runtimeVariables.orEmpty())
+                        }
                         codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                         codeFeedback = "JALANKAN SELESAI — progres kampanye belum berubah."
