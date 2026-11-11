@@ -249,7 +249,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 hintLevel = hintLevel,
                 onRequestHint = { hintLevel = (hintLevel + 1).coerceAtMost(3) },
                 code = code,
-                onCodeChange = { code = it; savedCodeStatus = "PERUBAHAN BELUM DISIMPAN" },
+                onCodeChange = { if (it.text.length <= 12_000) { code = it; savedCodeStatus = "PERUBAHAN BELUM DISIMPAN" } },
                 output = codeOutput,
                 feedback = codeFeedback,
                 saveStatus = savedCodeStatus,
