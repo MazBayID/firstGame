@@ -36,14 +36,25 @@ object Campaign01Story {
             "BUKA INVENTARIS"),
         StoryBeat("LAPORAN AWAL", "A.E.G.I.S.  /  HASIL PEMERIKSAAN",
             "Audit menemukan sejumlah entri ERROR dan inventaris menunjukkan jumlah rekaman yang diterima oleh sumber kedua. Kedua hasil tersebut kini tercatat dengan asal data masing-masing.\n\nBelum ada bukti yang cukup untuk menyimpulkan bahwa seseorang mengubah waktu penerimaan transmisi. Freya meminta agar laporan tetap menyebutkan batas temuan: apa yang benar-benar terlihat, apa yang baru dugaan, dan apa yang belum diketahui.\n\nKasus pertama belum selesai. Namun, kamu sudah belajar satu hal penting: data yang tampak sederhana dapat memberi kesimpulan berbeda jika konteks sumbernya diabaikan.",
-            "TUTUP LAPORAN")
+            "LANJUTKAN PENELUSURAN"),
+        StoryBeat("PENELUSURAN REFERENSI", "OPERASI 001-C  /  RECEIPT TRACE",
+            "Freya mengirimkan potongan daftar tanda terima dari beberapa sumber. Temukan baris yang merujuk pada RX-14 dan pertahankan nomor posisi setiap baris. Gunakan enumerate() bersama for untuk memperoleh indeks dan isi item. Kondisi if membantu memilih referensi yang tepat. Jangan menyimpulkan penyebab perbedaan waktu hanya dari urutan daftar.",
+            "TELUSURI REFERENSI"),
+        StoryBeat("PERBANDINGAN DUA SUMBER", "OPERASI 001-D  /  SOURCE COMPARISON",
+            "Dua catatan yang relevan kini berhasil ditemukan. Ambil catatan pertama dan kedua dari list receipts menggunakan indexing, simpan ke variabel primary dan archive, lalu tampilkan keduanya. Perhatikan sumber dan waktu yang tertulis. Tugas ini hanya memastikan bahwa dua catatan memang dapat dibandingkan—belum menentukan mengapa keduanya berbeda.",
+            "BANDINGKAN CATATAN"),
+        StoryBeat("LAPORAN INVESTIGASI", "A.E.G.I.S.  /  FIRST CONTACT REVIEW",
+            "Dua sumber mencatat referensi transmisi yang sama dengan waktu penerimaan berbeda empat detik. Selisih tersebut kini dapat ditunjukkan melalui catatan yang memiliki sumber dan indeks jelas. Temuan ini tetap belum membuktikan manipulasi. Perbedaan dapat berasal dari antrean pemrosesan, sinkronisasi jam, atau mekanisme pencatatan. Freya menerima laporanmu dan menandai anomali ini untuk pemeriksaan lanjutan setelah bukti tambahan tersedia. Kamu menyelesaikan orientasi First Contact bukan karena semua pertanyaan sudah terjawab, tetapi karena kamu telah belajar membedakan fakta, dugaan, dan hal yang belum diketahui.",
+            "SELESAIKAN FIRST CONTACT")
     )
 
     val codeTemplates = listOf(
         "signal = \"ACCESS GRANTED\"\nprint(signal)",
         "message = \"IDENTITY VERIFIED\"\nprint(message)",
         "count = 0\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\nprint(count)",
-        "record_count = len(records)\nprint(record_count)"
+        "record_count = len(records)\nprint(record_count)",
+        "for index, receipt in enumerate(receipts):\n    if \"RX-14\" in receipt:\n        print(index, receipt)",
+        "primary = receipts[0]\narchive = receipts[1]\nprint(primary)\nprint(archive)"
     )
 
     fun codeTemplateForStage(stage: Int): String = when (stage) {
@@ -51,6 +62,8 @@ object Campaign01Story {
         5 -> codeTemplates[1]
         8 -> codeTemplates[2]
         9 -> codeTemplates[3]
+        11 -> codeTemplates[4]
+        12 -> codeTemplates[5]
         else -> ""
     }
 }
