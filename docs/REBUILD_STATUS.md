@@ -93,3 +93,39 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 **Phase 4 — Progression, archives, and release quality gates:** not started.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists.
+
+## Implementation ledger — current branch
+
+Branch: `rebuild/full-game`  
+Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/firstGame/pull/1)
+
+### Completed in this implementation increment
+- Added `GameState`, evidence models, and a repository interface independent of Android storage APIs.
+- Added versioned local campaign-state persistence, including migration of the previous story-stage preference.
+- Added checkpoint and idempotent mission-completion use cases with clearance and XP rules.
+- Connected the opening campaign's story checkpoints and explicit code saves to the versioned state store.
+- Routed the two First Contact code submissions through the Python mission evaluator; RUN remains execution-only.
+- Added mission evaluator fixtures for both First Contact code stages.
+- Added Python runner limits for AST size, range iteration, integer literals, collection literals, and captured stdout. These are teaching-runtime guardrails, **not a hardened sandbox**.
+- Added the entry-only WebP loading animation. It decodes one frame at a time and releases the previous bitmap instead of loading all 240 frames into memory.
+- Added Python regression tests and Kotlin domain-use-case tests.
+- Updated CI configuration to run Android unit tests before APK assembly.
+
+### Verification observed so far
+- Python runner suite passed on the latest observed run.
+- Android debug APK assembly passed on a commit containing the entry loading integration.
+- A prior failure was traced to a missing loading composable during an intermediate commit; the subsequent commit containing that composable built successfully.
+- The latest state-store and UI cleanup commits still require their own completed CI result.
+- Kotlin unit tests have been added; confirmation that CI executes them is pending.
+
+### Remaining before this can be called a complete game
+- Finish modularizing navigation, UI state, campaign/story content, and data ownership.
+- Implement the mission-scoped permission model and a controlled Python-to-virtual-filesystem bridge.
+- Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
+- Replace the remaining placeholder Database, Dossier, Analysis, and Operations surfaces with working, story-linked systems.
+- Implement complete campaign operations, evidence lifecycle/provenance, hybrid evaluation, hints, debriefs, and progression unlocks.
+- Complete checkpoint recovery, save migration/recovery behavior, and archive retention.
+- Complete the App Hub, messenger history, and the remaining player-facing systems.
+- Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
+
+The branch is deliberately kept as a draft. Phases 1–5 are being developed as one integrated rebuild, but are not yet complete and must not be represented as release-ready.
