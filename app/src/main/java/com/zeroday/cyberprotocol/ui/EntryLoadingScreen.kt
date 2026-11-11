@@ -43,7 +43,8 @@ fun EntryLoadingScreen(
     onRetry: () -> Unit
 ) {
     val context = LocalContext.current
-    var currentBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val bitmapState = remember { mutableStateOf<Bitmap?>(null) }
+    var currentBitmap by bitmapState
     var frameIndex by remember { mutableIntStateOf(1) }
 
     LaunchedEffect(ready) {
@@ -69,7 +70,7 @@ fun EntryLoadingScreen(
     }
 
     DisposableEffect(Unit) {
-        onDispose { currentBitmap?.recycle() }
+        onDispose { bitmapState.value?.recycle() }
     }
 
     Box(
