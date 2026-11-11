@@ -113,13 +113,14 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
 - Redesigned Secure Messenger toward a familiar smartphone chat experience with searchable conversations, contact previews, distinct incoming/outgoing bubbles, and predefined quick replies.
 - Added the first-entry Campaign notification sequence: black screen, ordinary-looking in-game Pesan Aman notification from A.E.G.I.S. / Recruitment Office, and explicit tap-through to the official organization's invitation conversation.
-- Added a persisted recruitment-opening checkpoint in GameState schema 3; the notification tap is idempotent, and older save/legacy migration paths preserve whether the invitation has already been opened.
+- Added persisted recruitment, Freya-introduction, and NEXUS-unlock checkpoints in the versioned GameState; the current schema is 5. The notification taps are idempotent, and the schema-4 completed-chapter migration reopens the two newly added timestamp missions without replaying the opening.
 - Removed the Unknown Sender prologue from the playable First Contact story sequence. The official invitation is authored by A.E.G.I.S.; its interactive mission link opens the orientation sequence. Freya's separate notification appears when the first mission becomes active, and NEXUS remains hidden until the player taps Freya's in-chat link.
 - Rewrote the Story_Line opening sequence to match the approved notification → Secure Messenger → recruitment invitation flow.
 - Reworked the Campaign overview into a chapter-focused hero panel with a fourteen-beat progression timeline.
 - Added distinct cinematic gradient treatments and scene identifiers to First Contact story cards, with different visual palettes for organization, dossier, training, and recruitment scenes.
 - Added a mission-success debrief screen before the story advances, with authored forward clues for each of the eight missions.
 - Added two final First Contact technical missions: timestamp-string conversion with `int()` and signed subtraction, followed by `abs()`-based magnitude validation across multiple fixtures. The final report now follows these missions and still does not infer a cause for the four-second discrepancy.
+- Extended the chapter's achievement archive with dedicated completion awards for timestamp normalization and absolute-delta validation.
 - Corrected mentor introduction continuity: the official A.E.G.I.S. invitation is separate from Freya's notification; Freya is attributed as mentor only after her notification is opened, and NEXUS remains gated behind her in-chat link.
 
 - Extracted First Contact narrative content and game destination definitions from the main Compose shell.
