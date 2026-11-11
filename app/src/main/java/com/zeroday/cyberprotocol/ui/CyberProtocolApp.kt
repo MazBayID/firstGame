@@ -35,6 +35,7 @@ import com.zeroday.cyberprotocol.data.StoryBeat
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.data.VirtualFileSystem
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
+import com.zeroday.cyberprotocol.domain.usecase.MissionSubmissionPolicy
 import com.zeroday.cyberprotocol.ui.theme.CyberPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -196,7 +197,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             codeFeedback = "TIDAK ADA MISI AKTIF UNTUK DIKIRIM."
         } else if (sourceToVerify.isBlank()) {
             codeFeedback = "BELUM ADA KODE — tulis solusi terlebih dahulu."
-        } else if (lastSuccessfulRunSource != sourceToVerify) {
+        } else if (!MissionSubmissionPolicy.canSubmit(sourceToVerify, lastSuccessfulRunSource)) {
             codeFeedback = "JALANKAN KODE TERLEBIH DAHULU. Verifikasi hanya menerima kode yang sama dengan eksekusi terakhir yang berhasil."
         } else {
             scope.launch {
@@ -525,7 +526,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             },
             onSubmitMission = { submitMission(activeMission) },
             canSubmitMission = activeMission != null &&
-                code.text.isNotBlank() && lastSuccessfulRunSource == code.text,
+                MissionSubmissionPolicy.canSubmit(code.text, lastSuccessfulRunSource),
             submissionStatus = codeFeedback,
             onClose = {
                 navigate(runCatching { GameScreen.valueOf(browserReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
