@@ -17,7 +17,7 @@ data class GameState(
     val updatedAtEpochMillis: Long = 0L
 ) {
     companion object {
-        const val CURRENT_SCHEMA_VERSION = 1
+        const val CURRENT_SCHEMA_VERSION = 2
     }
 }
 
@@ -29,7 +29,8 @@ data class EvidenceRecord(
     val summary: String,
     val source: String,
     val status: EvidenceStatus = EvidenceStatus.UNVERIFIED,
-    val missionId: String
+    val missionId: String,
+    val recordedAtEpochMillis: Long = System.currentTimeMillis()
 )
 
 enum class FilePermission { READ_ONLY, READ_WRITE }
