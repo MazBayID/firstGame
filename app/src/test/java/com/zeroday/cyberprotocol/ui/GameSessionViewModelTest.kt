@@ -72,6 +72,8 @@ class GameSessionViewModelTest {
         viewModel.unlockNexusContact()
         assertFalse(viewModel.gameState.nexusContactUnlocked)
 
+        viewModel.saveStoryBeat(4)
+        viewModel.startMission("first_contact.signal")
         viewModel.openFreyaIntroduction()
         assertTrue(viewModel.gameState.freyaContactOpened)
         viewModel.unlockNexusContact()
