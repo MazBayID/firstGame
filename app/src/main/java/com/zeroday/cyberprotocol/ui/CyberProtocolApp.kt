@@ -377,7 +377,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         GameScreen.APP_HUB -> AppHubScreen(
             gameState = currentGameState,
             onClose = { navigate(navigation.hubReturnScreen) },
-            onOpen = { target -> navigate(target) }
+            onOpen = { target ->
+                if (target == GameScreen.MESSENGER) messengerReturnScreen = GameScreen.APP_HUB.name
+                navigate(target)
+            }
         )
         GameScreen.MESSENGER -> MessengerScreen(
             selectedContact = messengerContact,
