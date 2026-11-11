@@ -1,42 +1,95 @@
-# Cyber Protocol — Reconstruction Status
+# Cyber Protocol — Full Rebuild Status
 
-**Current foundation:** Android 0.6.0  
-**Status:** Initial playable vertical slice under reconstruction  
-**Canonical references:** `GAME_CONCEPT.md` and `Story_Line.md`
+**Development direction:** Full Rebuild (Option A)  
+**Canonical product reference:** `GAME_CONCEPT.md`  
+**Canonical narrative reference:** `Story_Line.md`  
+**Product target:** Complete Android-first story RPG and controlled intelligence simulator—not a disposable prototype.
 
-## Implemented in this reconstruction
+## Rebuild contract
 
-- Classic mobile-game-inspired main menu using the provisional dark-cyan direction.
-- Campaign 01 — THE RECRUITMENT and Chapter 001 — FIRST CONTACT story checkpoints.
-- Local persistence of campaign story stage.
-- Two guided Python tasks: variable assignment and `print()`, followed by separate Run and Submit actions.
-- Code draft saving at explicit save action and successful task checkpoint.
-- A.E.G.I.S. app hub with six applications and stage-based locked/unlocked presentation.
-- Secure Messenger introduction to Freya Knox with predefined cosmetic response choices.
-- Game-managed virtual filesystem persisted locally, with basic `pwd`, `ls`, `cd`, `cat`, `mkdir`, `touch`, `rm`, `echo ... > file`, `whoami`, `help`, and `clear` commands.
-- Local Python script execution from a saved virtual-workspace file using `python <file.py>`.
-- Existing raster UI assets, vector emblem, and launcher artwork retained.
+- Treat `GAME_CONCEPT.md` as the default and authoritative product specification. Where implementation details are open, choose the simplest robust design that preserves its player experience.
+- Preserve `GAME_CONCEPT.md`, `README.md`, `Story_Line.md`, and all user-supplied assets.
+- Audit before replacement. Reuse existing components only after checking correctness, integration boundaries, and testability.
+- Build coherent, integrated systems. A screen or menu item is not a completed feature unless its behavior, persistence, and connections to the game loop work.
+- Keep the core campaign offline-first. Do not make network access, account sign-in, or an external AI API a prerequisite.
+- Maintain strict separation between game-managed virtual data and the Android host environment.
+- Keep RUN (execution) separate from SUBMIT (mission evaluation).
+- Prefer a smaller complete and dependable first campaign over broad but nonfunctional feature coverage.
+- Do not claim production readiness, perfect behavior, or device validation based solely on a successful CI build.
 
-## Deliberate limitations of this first slice
+## Repository audit — baseline
 
-- The current campaign contains the recruitment introduction and two guided code checks, not the full Chapter 001 operation sequence or later campaigns.
-- Intelligence Database, Dossier, Analysis, and Operations currently establish their app surfaces; their complete data and gameplay systems are future work.
-- Virtual filesystem commands are a functional initial subset, not full Linux compatibility. File-level mission permissions, archive lifecycle, and robust command autocomplete remain to be implemented.
-- The Python runner uses an AST allowlist and execution-event guard in the app process. This is a learning prototype, **not a hardened security sandbox**. Do not execute hostile or untrusted code.
-- Python scripts can be launched from virtual files, but Python's own file APIs are not yet connected to the game-managed virtual filesystem.
-- A full Code Runner isolation boundary, CPU/memory/wall-clock enforcement, cancellation, and adversarial testing remain required.
-- The final A.E.G.I.S. headquarters cinematic artwork and character artwork have not been produced; the current interface uses existing assets and native Compose UI.
+The current repository is a playable vertical slice, not a blank project. It already contains reusable foundations:
 
-## Next engineering priorities
+- Kotlin + Jetpack Compose Android application.
+- Chaquopy Python 3.13 integration.
+- A game-managed virtual filesystem with local persistence.
+- A Python execution adapter and AST-restricted teaching runner.
+- A code editor with basic Python syntax highlighting and editing helpers.
+- A campaign/story-stage flow, basic code RUN/SUBMIT actions, and a six-app hub.
+- UI icon assets, launcher artwork, and 240 WebP loading frames.
+- GitHub Actions for Python unit tests and Android debug APK assembly.
 
-1. Complete and validate the Android build on GitHub Actions.
-2. Add automated tests for virtual filesystem path confinement, command behavior, persistence, and invalid input.
-3. Introduce a language-neutral Code Runner contract and harden the Python execution boundary before expanding supported syntax.
-4. Build the first complete story-driven operation with evidence, mission workspace, structured evaluator, debrief, and next-mission code clue.
-5. Replace placeholder app surfaces with real story-linked data and functionality.
-6. Implement checkpoint recovery, code-draft ownership, mission archive access, and granular permissions.
-7. Test portrait Android layouts, keyboard behavior, and small-screen usability on physical devices.
+These foundations are not automatically production-ready. In particular, the current Python runner explicitly describes itself as a prototype guardrail, Python file access is not integrated with the virtual filesystem, the app state/navigation is concentrated in a large Compose file, several App Hub surfaces are placeholders, and the campaign is only an opening slice.
 
-## Safety and scope
+## Production rebuild workstreams
 
-All A.E.G.I.S. records, people, organizations, cases, and operational targets are fictional. Terminal commands execute only inside the game's virtual environment; they do not invoke Android/Linux shell commands or access arbitrary device files. Core campaign progression must remain playable offline.
+### 1. Engineering foundation
+- Establish clear domain, data, execution, presentation, and platform boundaries.
+- Move campaign state and navigation decisions out of the monolithic UI composable.
+- Define versioned local persistence, migrations, checkpoint recovery, and corruption handling.
+- Add deterministic tests for domain rules and storage behavior.
+
+### 2. Runtime and terminal
+- Replace prototype-only assumptions with an explicit execution contract and documented capability limits.
+- Connect Python file I/O only through a game-owned, permission-checked virtual filesystem interface.
+- Enforce source/output/resource limits, cancellation where feasible, and safe error reporting.
+- Implement authentic standard command conventions in an allowlisted virtual terminal; never invoke the Android/Linux host shell.
+- Test path traversal, malformed input, resource exhaustion, and permission boundaries.
+
+### 3. Complete player experience
+- Implement the approved main menu, campaign selection/progress, first-contact story, contact-list messenger, and App Hub.
+- Implement real Dossier, Intelligence Database, Analysis, and Operations data flows rather than placeholder surfaces.
+- Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
+- Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
+
+### 4. Mission and learning systems
+- Build mission definitions, objectives, evidence provenance, workspace permissions, RUN/SUBMIT separation, hybrid evaluation, graduated hints, and debriefs.
+- Complete Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as a cohesive playable narrative.
+- Ensure each mission provides a fair, level-appropriate code/syntax clue for the next mission.
+- Introduce SQL, networking, C++, and IoT progressively; Python is the first complete technical track.
+
+### 5. Progression and persistence
+- Implement rank, XP, clearance, unlock rules, archives, personal workspace, mission workspaces, explicit code saving, and meaningful autosave checkpoints.
+- Preserve evidence provenance and mission state across interruption and restart.
+- Keep initial dialogue choices cosmetic as specified; do not invent relationship meters or branching consequences.
+
+### 6. Quality and release readiness
+- Unit-test domain logic, evaluators, command parsing, virtual filesystem, save migrations, and runtime boundaries.
+- Add integration tests for campaign transitions, persistence, mission completion, and App Hub navigation.
+- Build debug and release variants in CI; verify manifest, package, ABI, and dependency configuration.
+- Run static checks and dependency/security review where supported.
+- Validate layouts and keyboard behavior on representative Android screen sizes.
+- Produce a release candidate only after the complete campaign path and core systems pass the defined quality gates.
+
+## Acceptance gates
+
+A workstream is not complete merely because its code compiles. It must have:
+1. A documented behavior contract.
+2. Automated tests for its critical logic and failure cases.
+3. Integration with the relevant game flow.
+4. Persistence and recovery behavior where applicable.
+5. No known critical crash, data-loss, permission-bypass, or progression-blocking defect.
+6. A successful CI build.
+
+Physical-device acceptance remains a separate final validation step. A CI build cannot replace it.
+
+## Current status
+
+**Phase 0 — Audit and specification alignment:** in progress.  
+**Phase 1 — Architecture and persistence foundation:** not started.  
+**Phase 2 — Runtime and terminal:** existing prototype foundation; production hardening required.  
+**Phase 3 — Complete campaign and operational systems:** not started.  
+**Phase 4 — Progression, archives, and release quality gates:** not started.
+
+No feature is marked production-complete solely because a prior prototype screen or partial test exists.
