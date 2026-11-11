@@ -1,6 +1,4 @@
-"""Offline mission runner with a small Python teaching surface.
-This is a local educational runner, NOT a security sandbox for hostile code.
-"""
+"""Offline educational mission runner. This is NOT a security sandbox for hostile code."""
 import ast
 import contextlib
 import io
@@ -22,11 +20,6 @@ ALLOWED_NODES = (
     ast.FloorDiv, ast.Mod, ast.Call, ast.Attribute, ast.Subscript, ast.Slice,
     ast.IfExp, ast.With, ast.withitem, ast.Pass, ast.Break, ast.Continue,
 )
-ALLOWED_CALLS = {
-    "print", "len", "range", "str", "int", "float", "bool", "list", "dict",
-    "tuple", "set", "enumerate", "sorted", "sum", "min", "max", "abs", "zip", "open",
-}
-ALLOWED_ATTRIBUTES = {"append", "strip", "lower", "upper", "read", "readlines", "close"}
 
 
 class VirtualFile:
@@ -99,6 +92,11 @@ def _validate(source):
     nodes = list(ast.walk(tree))
     if len(nodes) > MAX_AST_NODES:
         raise ValueError("Code is too complex for this training mission.")
+    allowed_calls = {
+        "print", "len", "range", "str", "int", "float", "bool", "list", "dict",
+        "tuple", "set", "enumerate", "sorted", "sum", "min", "max", "abs", "zip", "open",
+    }
+    allowed_attributes = {"append", "strip", "lower", "upper", "read", "readlines", "close"}
     for node in nodes:
         if not isinstance(node, ALLOWED_NODES):
             raise ValueError("Unsupported syntax: " + type(node).__name__)
@@ -110,13 +108,13 @@ def _validate(source):
             if isinstance(node.value, (str, bytes)) and len(node.value) > 4096:
                 raise ValueError("Text literal is too long.")
         if isinstance(node, ast.Attribute):
-            if node.attr.startswith("_") or node.attr not in ALLOWED_ATTRIBUTES:
+            if node.attr.startswith("_") or node.attr not in allowed_attributes:
                 raise ValueError("This attribute is not available: " + node.attr)
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            if node.func.id not in ALLOWED_CALLS:
+            if node.func.id not in allowed_calls:
                 raise ValueError("Function is not available: " + node.func.id)
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            if node.func.attr not in ALLOWED_ATTRIBUTES:
+            if node.func.attr not in allowed_attributes:
                 raise ValueError("This method is not available.")
 
 
@@ -160,15 +158,44 @@ def run_code(source, access_log):
         sys.settrace(previous_trace)
 
 
-def evaluate_mission(source):
-    """Run the player's program against three different evidence files."""
-    cases = (
-        ("INFO: booted\nERROR: invalid token\nWARNING: retry\nERROR: denied\n", "2"),
-        ("ERROR: suspicious login\nINFO: audit complete\n", "1"),
-        ("INFO: service started\nWARNING: retry scheduled\n", "0"),
-    )
+MISSIONS = {
+    1: {
+        "cases": (
+            ("INFO: booted\\nERROR: invalid token\\nWARNING: retry\\nERROR: denied\\n", "2"),
+            ("ERROR: suspicious login\\nINFO: audit complete\\n", "1"),
+            ("INFO: service started\\nWARNING: retry scheduled\\n", "0"),
+        ),
+        "feedback": "All evidence tests passed. The ERROR counter works on different log files.",
+    },
+    2: {
+        "cases": (
+            ("INFO: booted\\nWARNING: retry\\nERROR: denied\\nWARNING: timeout\\n", "2"),
+            ("WARNING: disk usage high\\nINFO: audit complete\\n", "1"),
+            ("ERROR: invalid token\\nINFO: service started\\n", "0"),
+        ),
+        "feedback": "All evidence tests passed. The WARNING counter works on different log files.",
+    },
+    3: {
+        "cases": (
+            ("FAILED login user=admin\\nOK login user=guest\\nFAILED login user=root\\n", "2"),
+            ("FAILED login user=analyst\\nOK login user=operator\\n", "1"),
+            ("OK login user=guest\\nINFO audit complete\\n", "0"),
+        ),
+        "feedback": "All evidence tests passed. The failed-login detector handles different evidence files.",
+    },
+}
+
+
+def evaluate_mission(source, mission_id=1):
+    """Run the player's program against varied evidence files for a chapter mission."""
+    mission = MISSIONS.get(int(mission_id))
+    if mission is None:
+        return json.dumps({
+            "output": "", "error": "Unknown mission. Select an available mission.",
+            "passed": False, "feedback": "Mission not found.",
+        })
     outputs = []
-    for log_text, expected in cases:
+    for log_text, expected in mission["cases"]:
         result = run_code(source, log_text)
         if result["error"]:
             return json.dumps({
@@ -184,5 +211,5 @@ def evaluate_mission(source):
             })
     return json.dumps({
         "output": outputs[0], "error": "", "passed": True,
-        "feedback": "All evidence tests passed. The ERROR counter works on different log files.",
+        "feedback": mission["feedback"],
     })
