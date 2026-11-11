@@ -98,7 +98,7 @@ class VirtualFileSystem(context: Context) {
                 files[target] ?: return TerminalResponse("File tidak ditemukan: $target", cwd)
             }
             "mkdir" -> {
-                val target = resolve(rest.firstOrNull() ?: "", cwd)
+                val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: mkdir <name>", cwd)
                 if (directories.contains(target) || files.containsKey(target)) return TerminalResponse("Already exists: $target", cwd)
                 if (!directories.contains(parent(target))) return TerminalResponse("Parent directory does not exist.", cwd)
@@ -107,7 +107,7 @@ class VirtualFileSystem(context: Context) {
                 ""
             }
             "touch" -> {
-                val target = resolve(rest.firstOrNull() ?: "", cwd)
+                val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: touch <file>", cwd)
                 if (directories.contains(target)) return TerminalResponse("A directory already exists at that path.", cwd)
                 if (!directories.contains(parent(target))) return TerminalResponse("Parent directory does not exist.", cwd)
