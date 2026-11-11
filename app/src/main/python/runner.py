@@ -8,8 +8,45 @@ import sys
 MAX_SOURCE_LENGTH = 12000
 MAX_OUTPUT_LENGTH = 8000
 MAX_TRACE_EVENTS = 50000
+MAX_AST_NODES = 2500
+MAX_RANGE_ITEMS = 5000
+MAX_INTEGER_ABS = 1_000_000_000
+
+
+class LimitedTextWriter:
+    """Capture stdout without allowing unbounded output accumulation."""
+    def __init__(self, limit):
+        self.limit = limit
+        self.parts = []
+        self.length = 0
+
+    def write(self, value):
+        text = str(value)
+        remaining = self.limit - self.length
+        if remaining > 0:
+            accepted = text[:remaining]
+            self.parts.append(accepted)
+            self.length += len(accepted)
+        return len(text)
+
+    def flush(self):
+        return None
+
+    def getvalue(self):
+        return "".join(self.parts)
+
+
+def _bounded_range(*args):
+    value = range(*args)
+    if len(value) > MAX_RANGE_ITEMS:
+        raise RunnerError(
+            f"Range is limited to {MAX_RANGE_ITEMS} steps in this training environment."
+        )
+    return value
+
+
 SAFE_BUILTINS = {
-    "print": print, "range": range, "len": len, "str": str, "int": int,
+    "print": print, "range": _bounded_range, "len": len, "str": str, "int": int,
     "float": float, "bool": bool, "enumerate": enumerate, "min": min,
     "max": max, "sum": sum, "abs": abs,
 }
@@ -28,7 +65,10 @@ class RunnerError(Exception):
 
 
 def _validate(tree):
-    for node in ast.walk(tree):
+    nodes = list(ast.walk(tree))
+    if len(nodes) > MAX_AST_NODES:
+        raise RunnerError("This program is too complex for the current training environment.")
+    for node in nodes:
         if not isinstance(node, ALLOWED_NODES):
             raise RunnerError(f"Unsupported syntax: {type(node).__name__}")
         if isinstance(node, ast.Name) and (node.id.startswith("_") or "__" in node.id):
@@ -38,6 +78,11 @@ def _validate(tree):
                 raise RunnerError("Only approved built-in functions may be called.")
         if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, complex)):
             raise RunnerError("This value type is not available in the training runner.")
+        if isinstance(node, ast.Constant) and isinstance(node.value, int):
+            if abs(node.value) > MAX_INTEGER_ABS:
+                raise RunnerError("Integer constants are limited in this training environment.")
+        if isinstance(node, (ast.List, ast.Tuple)) and len(node.elts) > 1000:
+            raise RunnerError("Collection literals are limited to 1000 items.")
 
 
 def _execute(source, variables=None):
@@ -55,7 +100,7 @@ def _execute(source, variables=None):
         return {"output": "", "error": str(error)}
 
     namespace = dict(variables or {})
-    output = io.StringIO()
+    output = LimitedTextWriter(MAX_OUTPUT_LENGTH)
     counter = {"events": 0}
 
     def trace(frame, event, arg):
@@ -72,13 +117,13 @@ def _execute(source, variables=None):
             exec(compile(tree, "<training-mission>", "exec"),
                  {"__builtins__": SAFE_BUILTINS}, namespace)
     except RunnerError as error:
-        return {"output": output.getvalue()[:MAX_OUTPUT_LENGTH], "error": str(error)}
+        return {"output": output.getvalue(), "error": str(error)}
     except Exception as error:
-        return {"output": output.getvalue()[:MAX_OUTPUT_LENGTH],
+        return {"output": output.getvalue(),
                 "error": f"{type(error).__name__}: {error}"}
     finally:
         sys.settrace(previous_trace)
-    return {"output": output.getvalue()[:MAX_OUTPUT_LENGTH], "error": ""}
+    return {"output": output.getvalue(), "error": ""}
 
 
 def run_code_json(source):
