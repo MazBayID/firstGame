@@ -635,3 +635,29 @@ The player uses a **real, functional terminal environment built inside Cyber Pro
 - Execution results must be available to the Mission Engine and Evaluator through structured, testable interfaces. This allows genuine command/program output to become evidence, satisfy objectives, or reveal story information without allowing terminal code to modify campaign state arbitrarily.
 - Implement strict command permissions, controlled virtual files, execution/resource limits, input validation, and isolation between player code and privileged game logic. Chaquopy or an in-game terminal interface alone does not automatically provide a secure sandbox.
 - The terminal is a core gameplay tool, not a decorative screen. Its command behavior, output, errors, and available capabilities must be consistent, learnable, and testable.
+
+
+## 16.7 Terminal Input — Hybrid Command Interface
+
+The in-game Terminal uses a **Hybrid Command Interface**.
+
+- Players may type supported commands directly, preserving the feel of working in a real terminal.
+- Provide discoverable assistance such as a command reference, contextual help, command suggestions, and autocomplete where practical.
+- Assistance should make the terminal approachable to beginners without replacing the player's ability to enter commands independently.
+- Suggestions and autocomplete must reflect the commands and permissions actually available in the current mission and the player's current clearance.
+- Invalid commands should produce understandable terminal errors or help, not silently perform a different action.
+- The interface must remain usable on Android touch keyboards and small screens.
+
+## 16.8 Python 3 — Embedded On-Device Runtime
+
+Cyber Protocol will include an embedded **Python 3 runtime** so players can execute real Python programs without leaving the game or installing a separate terminal application.
+
+- Use Chaquopy as the initial Android integration path, subject to compatibility checks against the project's Android Gradle Plugin, minimum Android version, device ABIs, and required Python packages.
+- Python executes locally on the Android device and remains available for core missions offline.
+- The Code Editor is where players write Python. The in-game Terminal provides the execution interaction and displays standard output, errors, and supported input/results.
+- The runtime must integrate with the game-managed workspace and mission data only through explicitly designed interfaces. It must not expose the unrestricted Android/Linux shell or unrestricted access to the device.
+- Provide controlled input/output handling, execution time and output limits, cancellation where feasible, and isolation from privileged game state and unrelated player data.
+- Do not assume every package available on desktop Python is available on Android. Validate each dependency for the selected Chaquopy/Python version and supported Android ABI before adopting it.
+- Keep the Python runtime modular behind a Code Runner interface so the game can evolve its execution implementation without coupling mission logic or UI directly to Chaquopy APIs.
+- RUN executes the player's program and presents its actual result. SUBMIT remains a separate action that evaluates the mission criteria.
+- The exact Python 3 minor version and package set are implementation decisions to be selected after inspecting the repository's current build configuration and testing compatibility; do not hard-code a version in the design bible prematurely.
