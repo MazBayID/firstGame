@@ -1,12 +1,8 @@
 package com.zeroday.cyberprotocol.data
 
 import android.content.Context
-import com.zeroday.cyberprotocol.core.model.EvidenceRecord
-import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
-import com.zeroday.cyberprotocol.domain.usecase.ProgressionRules
-import org.json.JSONArray
 import org.json.JSONObject
 
 /**
