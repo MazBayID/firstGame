@@ -36,10 +36,11 @@ The closing report records a four-second difference between two fictional receip
 - **First-person player identity:** the player is the operative; no player-avatar portrait is required.
 - **In-world learning:** programming concepts appear when the story gives the player a reason to use them.
 - **Local Python execution:** CPython 3.13 through Chaquopy on Android.
-- **Separate RUN and SUBMIT:** RUN executes code against the active mission data; SUBMIT evaluates the authored mission criteria.
+- **Separate RUN and SUBMIT:** RUN executes code against the active mission data; Browser Mission Control submits the exact source that completed the latest successful RUN to the authored mission evaluator.
 - **Mission datasets:** deterministic, fictional, read-only inputs with multiple evaluator fixtures where appropriate.
-- **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence.
-- **Virtual terminal and workspaces:** Linux-like commands operate within a game-managed virtual filesystem, never the Android host shell.
+- **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence; Freya provides the intranet link, fictional credentials, and the first mission attachment.
+- **A.E.G.I.S. Browser:** an offline intranet with local fictional login, Mission Control, File Repository, Intelligence Reports, and Agent Profile. Browser downloads and Messenger attachments resolve to the same mission file.
+- **Virtual terminal and workspaces:** Linux-like commands operate within a game-managed virtual filesystem, never the Android host shell. The first signal fragment is downloaded into its mission workspace and read through the Terminal.
 - **Evidence and progression:** mission checkpoints, provenance-aware evidence, XP, rank, clearance, archives, and achievements.
 - **Narrative clues:** each mission's successful debrief surfaces a short authored clue that points toward the next story or technical step.
 - **Offline-first foundation:** core story, mission execution, evaluation, and progression do not require an account, server, external AI, or API key.
