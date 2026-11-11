@@ -438,7 +438,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 "BAB: " + currentGameState.storyBeat.coerceAtMost(7) + "/7\n" +
                 "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\n" +
                 "BUKTI TERCATAT: " + currentGameState.evidence.size + "\n\n" +
-                "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi.",
+                "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi." +
+                if (currentGameState.storyBeat >= 7) "\n\nCATATAN TERBATAS / ANOMALI WAKTU\nDua sistem internal mencatat waktu penerimaan transmisi yang berbeda. Penyebab belum diketahui. Status: BELUM TERVERIFIKASI." else "",
             CyberAssets.document, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.ANALYSIS -> InfoAppScreen(
