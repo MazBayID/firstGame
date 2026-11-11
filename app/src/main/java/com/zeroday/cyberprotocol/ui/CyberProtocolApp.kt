@@ -31,6 +31,7 @@ import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.data.VirtualFileSystem
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
 import com.zeroday.cyberprotocol.domain.usecase.CompleteMissionUseCase
+import com.zeroday.cyberprotocol.domain.usecase.RecordEvidenceUseCase
 import com.zeroday.cyberprotocol.ui.theme.CyberPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,6 +110,7 @@ private fun CyberProtocolGameContent() {
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
     val gameStateRepository = remember { LocalGameStateRepository(context) }
     val initialGameState = remember { gameStateRepository.load() }
+    var currentGameState by remember { mutableStateOf(initialGameState) }
     val fileSystem = remember { VirtualFileSystem(context) }
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
@@ -139,6 +141,10 @@ private fun CyberProtocolGameContent() {
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
+    LaunchedEffect(screenName, storyStage) {
+        currentGameState = gameStateRepository.load()
+    }
+
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 7)
         preferences.edit().putInt("story_stage", storyStage).apply()
@@ -147,6 +153,7 @@ private fun CyberProtocolGameContent() {
             storyBeat = storyStage,
             lastCheckpoint = "story_beat_$storyStage"
         ))
+        currentGameState = gameStateRepository.load()
         val savedDraft = gameStateRepository.load().savedCode["story_$storyStage"]
             ?: preferences.getString("saved_code_$storyStage",
                 storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }).orEmpty()
@@ -244,6 +251,7 @@ private fun CyberProtocolGameContent() {
                         savedCode = previousState.savedCode + ("story_$storyStage" to code.text),
                         lastCheckpoint = "code_saved_story_$storyStage"
                     ))
+                    currentGameState = gameStateRepository.load()
                     savedCodeStatus = "TERSIMPAN"
                 },
                 onRun = {
@@ -270,6 +278,16 @@ private fun CyberProtocolGameContent() {
                                 CompleteMissionUseCase(gameStateRepository).complete(
                                     mission.id, mission.rewardXp, mission.requiredClearance
                                 )
+                                RecordEvidenceUseCase(gameStateRepository).record(
+                                    com.zeroday.cyberprotocol.core.model.EvidenceRecord(
+                                        id = "evidence_" + mission.id,
+                                        title = mission.title,
+                                        summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
+                                        source = "NEXUS / Python evaluator " + mission.evaluatorId,
+                                        status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
+                                        missionId = mission.id
+                                    )
+                                )
                             }
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
                             val previousState = gameStateRepository.load()
@@ -277,6 +295,7 @@ private fun CyberProtocolGameContent() {
                                 savedCode = previousState.savedCode + ("story_$storyStage" to code.text),
                                 lastCheckpoint = "code_checkpoint_story_$storyStage"
                             ))
+                            currentGameState = gameStateRepository.load()
                             savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
                             codeFeedback = result.feedback
                             saveStage(storyStage + 1)
@@ -302,6 +321,7 @@ private fun CyberProtocolGameContent() {
         }
         GameScreen.APP_HUB -> AppHubScreen(
             storyStage = storyStage,
+            gameState = currentGameState,
             onClose = { screenName = returnScreen },
             onOpen = { target -> screenName = target.name }
         )
