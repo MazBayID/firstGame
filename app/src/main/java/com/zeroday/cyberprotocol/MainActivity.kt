@@ -61,9 +61,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 CyberProtocolApp(
-                    onRunCode = { code, callback ->
+                    onRunCode = { missionId, code, callback ->
                         lifecycleScope.launch {
-                            val result = withContext(Dispatchers.IO) { runPythonMission(code) }
+                            val result = withContext(Dispatchers.IO) { runPythonMission(missionId, code) }
                             callback(result.first, result.second)
                         }
                     }
@@ -72,8 +72,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun runPythonMission(code: String): Pair<String, Boolean> = try {
-        val raw = Python.getInstance().getModule("runner").callAttr("evaluate_mission", code).toString()
+    private fun runPythonMission(missionId: Int, code: String): Pair<String, Boolean> = try {
+        val raw = Python.getInstance().getModule("runner").callAttr("evaluate_mission", code, missionId).toString()
         val result = JSONObject(raw)
         val error = result.optString("error")
         val feedback = result.optString("feedback")
@@ -90,17 +90,41 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> Unit) {
+private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit) -> Unit) {
     val context = LocalContext.current
     val prefs = remember { context.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
     var xp by remember { mutableIntStateOf(prefs.getInt("xp", 0)) }
     var credits by remember { mutableIntStateOf(prefs.getInt("credits", 0)) }
-    var missionComplete by remember { mutableStateOf(prefs.getBoolean("chapter_01_mission_01", false)) }
-    var editor by remember {
-        mutableStateOf(TextFieldValue(
-            "errors = []\n\n# Count every line containing ERROR\n\nprint(len(errors))"
-        ))
+    var completedMissions by remember {
+        mutableStateOf((1..3).filter { prefs.getBoolean("mission_$it", false) }.toSet())
     }
+    var selectedMission by remember { mutableIntStateOf(1) }
+    val missionTitle = when (selectedMission) {
+        1 -> "01 — THE CORRUPTED ACCESS LOG"
+        2 -> "02 — THE WARNING SIGNAL"
+        else -> "03 — THE FAILED LOGIN TRAIL"
+    }
+    val missionObjective = when (selectedMission) {
+        1 -> "OBJECTIVE: count every ERROR entry using Python."
+        2 -> "OBJECTIVE: count every WARNING entry using Python."
+        else -> "OBJECTIVE: count every FAILED login entry using Python."
+    }
+    val missionLog = when (selectedMission) {
+        1 -> "INFO: service started\\nERROR: invalid token\\nWARNING: retry scheduled\\nERROR: permission denied"
+        2 -> "INFO: service started\\nWARNING: retry scheduled\\nERROR: invalid token\\nWARNING: timeout"
+        else -> "FAILED login user=admin\\nOK login user=guest\\nFAILED login user=root"
+    }
+    val missionHint = when (selectedMission) {
+        1 -> "HINT: use open(), with, for, if, in, append(), and len()."
+        2 -> "HINT: reuse the file-reading pattern. Look for the word WARNING."
+        else -> "HINT: inspect each line for FAILED, then count matching entries."
+    }
+    fun starterCode(mission: Int) = when (mission) {
+        1 -> "errors = []\\n\\n# Count every line containing ERROR\\n\\nprint(len(errors))"
+        2 -> "warnings = []\\n\\n# Count every line containing WARNING\\n\\nprint(len(warnings))"
+        else -> "failed = []\\n\\n# Count every line containing FAILED\\n\\nprint(len(failed))"
+    }
+    var editor by remember { mutableStateOf(TextFieldValue(starterCode(1))) }
     var output by remember { mutableStateOf("SYSTEM READY\nAwaiting analyst input...") }
     var status by remember { mutableStateOf("TRAINING SIMULATION  /  CASE OPEN") }
     var isRunning by remember { mutableStateOf(false) }
@@ -121,6 +145,28 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
             }
         }
 
+        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+            (1..3).forEach { mission ->
+                val unlocked = mission == 1 || (mission - 1) in completedMissions
+                val active = selectedMission == mission
+                Text(
+                    text = if (!unlocked) "🔒  M0$mission" else "M0$mission",
+                    color = if (active) Bg else if (unlocked) Cyan else Muted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .background(if (active) Neon else PanelAlt, RoundedCornerShape(8.dp))
+                        .clickable(enabled = unlocked && !isRunning) {
+                            selectedMission = mission
+                            editor = TextFieldValue(starterCode(mission))
+                            output = "MISSION 0$mission READY\\nWrite your solution and run the evidence tests."
+                            status = if (mission in completedMissions) "MISSION VERIFIED  /  REPLAY AVAILABLE" else "TRAINING SIMULATION  /  CASE OPEN"
+                        }
+                        .padding(horizontal = 14.dp, vertical = 9.dp)
+                )
+            }
+        }
+
         Column(
             Modifier.fillMaxWidth().weight(0.88f).background(Panel, RoundedCornerShape(14.dp))
                 .border(1.dp, Color(0xFF243844), RoundedCornerShape(14.dp)).padding(12.dp),
@@ -132,9 +178,13 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                 Spacer(Modifier.weight(1f))
                 Text("OFFLINE LAB", color = Muted, fontSize = 9.sp)
             }
-            Text("01 — THE CORRUPTED ACCESS LOG", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(missionTitle, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(
-                "Mara, Senior Security Analyst: “The night audit found suspicious access attempts. Recover the evidence before the trail disappears.”",
+                when (selectedMission) {
+                    1 -> "Mara, Senior Security Analyst: “The night audit found suspicious access attempts. Recover the evidence before the trail disappears.”"
+                    2 -> "Mara: “A monitoring node raised repeated warnings before the outage. Separate warnings from routine log noise.”"
+                    else -> "Mara: “Someone tried to enter the admin console. Count failed logins and preserve the evidence for incident response.”"
+                },
                 color = Muted, fontSize = 11.sp, lineHeight = 16.sp
             )
             Box(
@@ -144,15 +194,15 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                     Text("root@helix-node:~$ cat access.log", color = Neon, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        "INFO: service started\nERROR: invalid token\nWARNING: retry scheduled\nERROR: permission denied",
+                        missionLog,
                         color = Color(0xFFB7C7D1), fontFamily = FontFamily.Monospace, fontSize = 10.sp, lineHeight = 15.sp
                     )
                     Spacer(Modifier.height(7.dp))
-                    Text("OBJECTIVE: count every ERROR entry using Python.", color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(missionObjective, color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(status, color = if (missionComplete) Neon else Muted, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(status, color = if (selectedMission in completedMissions) Neon else Muted, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                 Text("BRIEFING", color = Cyan, fontSize = 9.sp, fontWeight = FontWeight.Bold,
                     modifier = Modifier.clickable { showBriefing = true }.padding(4.dp))
             }
@@ -216,13 +266,18 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
                 onClick = {
                     isRunning = true
                     status = "EXECUTING PYTHON..."
-                    onRunCode(editor.text) { result, passed ->
+                    val runningMission = selectedMission
+                    onRunCode(runningMission, editor.text) { result, passed ->
                         output = result
-                        if (passed && !missionComplete) {
-                            missionComplete = true
+                        if (passed && runningMission !in completedMissions) {
+                            completedMissions = completedMissions + runningMission
                             xp += 100
                             credits += 50
-                            prefs.edit().putBoolean("chapter_01_mission_01", true).putInt("xp", xp).putInt("credits", credits).apply()
+                            prefs.edit()
+                                .putBoolean("mission_$runningMission", true)
+                                .putInt("xp", xp)
+                                .putInt("credits", credits)
+                                .apply()
                             status = "MISSION COMPLETE  /  +100 XP"
                         } else if (passed) {
                             status = "MISSION VERIFIED  /  REWARD ALREADY CLAIMED"
@@ -256,9 +311,16 @@ private fun CyberProtocolApp(onRunCode: (String, (String, Boolean) -> Unit) -> U
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("MARA / SENIOR SECURITY ANALYST", color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    Text("“Welcome to Helix Dynamics, analyst. A damaged access log contains traces of unauthorized activity. Your task is to write a Python program that reads access.log and counts every line containing ERROR.”", color = Color.White, fontSize = 13.sp, lineHeight = 19.sp)
-                    Text("HINT: use open(), with, for, if, in, append(), and len(). Your code will be tested against different log files.", color = Muted, fontSize = 11.sp)
-                    Text("REWARD: 100 XP  •  50 CREDITS", color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        when (selectedMission) {
+                            1 -> "“Read access.log and count every line containing ERROR. The test system will swap the evidence file to verify your logic.”"
+                            2 -> "“Read access.log and count every line containing WARNING. Do not count ERROR or INFO entries.”"
+                            else -> "“Read access.log and count every line containing FAILED. The evidence will include successful logins too.”"
+                        },
+                        color = Color.White, fontSize = 13.sp, lineHeight = 19.sp
+                    )
+                    Text(missionHint + " Your code is tested against three evidence files.", color = Muted, fontSize = 11.sp)
+                    Text(if (selectedMission in completedMissions) "REWARD CLAIMED  •  REPLAY FOR PRACTICE" else "REWARD: 100 XP  •  50 CREDITS", color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             },
             confirmButton = {
