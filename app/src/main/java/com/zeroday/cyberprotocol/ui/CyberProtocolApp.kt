@@ -666,6 +666,19 @@ private fun StoryScreen(
                     Text("${index + 1}. ${objective.title}", color = Color.White, fontWeight = FontWeight.SemiBold)
                     Text(objective.description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
+                if (mission != null) {
+                    Text("RUANG KERJA MISI", color = CyberPalette.SteelGray, fontSize = 9.sp, letterSpacing = 1.2.sp)
+                    mission.allowedFiles.sorted().forEach { fileName ->
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                            Text(fileName, color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+                            Text(
+                                if (fileName in mission.writableFiles) "BACA / TULIS" else "HANYA BACA",
+                                color = if (fileName in mission.writableFiles) CyberPalette.Success else CyberPalette.SteelGray,
+                                fontSize = 9.sp
+                            )
+                        }
+                    }
+                }
                 if (hintLevel > 0) {
                     val hint = mission?.hints?.firstOrNull { it.level == hintLevel }
                     if (hint != null) Text("PETUNJUK $hintLevel/3\n${hint.message}", color = Color(0xFF83C7D0), fontSize = 12.sp)
