@@ -202,6 +202,17 @@ The Campaign uses a **hybrid story-driven + mission-driven structure**. Cinemati
 - The player may choose among operations that are already unlocked, but the main narrative should retain a deliberate sequence and pacing.
 - The first campaign begins with **FIRST CONTACT** and the established recruitment sequence; do not skip directly to a mission list or coding lesson.
 
+## 6.3 First Contact — Progressive Message Decryption
+
+The opening recruitment story should introduce decryption as part of the narrative and as the player's first practical learning experience.
+
+- The first incoming message should be presented as an encrypted/obscured transmission, creating curiosity without demanding advanced knowledge.
+- NEXUS (or the appropriate guide in the story) teaches the player a very simple first step, tied to a beginner Python concept such as storing and displaying a message with a variable and `print()`.
+- The first interaction is guided: the player learns the basic tool or syntax before being asked to solve anything independently.
+- A subsequent message becomes a beginner decryption task. The player applies what was just learned to reveal the next part of the recruitment story.
+- Increase complexity gradually as the player's technical skills grow. Early “decryption” may use fictional, deliberately simple transformations; do not present it as real cryptographic security.
+- Preserve the distinction between narrative suspense and learning fairness: provide contextual clues and graduated hints, and never require an unexplained advanced syntax from a beginner.
+
 ## 6.2 Narrative principles
 
 - Story must not feel pasted onto unrelated coding questions.
