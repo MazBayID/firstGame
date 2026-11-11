@@ -958,20 +958,24 @@ private fun MessengerScreen(
     onSelectContact: (String) -> Unit,
     onClose: () -> Unit,
     recruitmentInvitation: Boolean,
-    storyBeat: Int,
+    freyaContactUnlocked: Boolean,
+    nexusUnlocked: Boolean,
+    onOpenMissionLink: () -> Unit,
+    onOpenNexusLink: () -> Unit,
     replies: List<String>,
     onReply: (String) -> Unit
 ) {
     var search by rememberSaveable { mutableStateOf("") }
     val contactName = when (selectedContact) {
+        "AEGIS" -> "A.E.G.I.S. / Recruitment Office"
         "FREYA" -> "Freya Knox"
         "NEXUS" -> "NEXUS"
         else -> "Pesan Aman"
     }
-    val quickReplies = if (selectedContact == "FREYA") {
-        listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?")
-    } else {
-        listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?")
+    val quickReplies = when (selectedContact) {
+        "FREYA" -> listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?")
+        "NEXUS" -> listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?")
+        else -> emptyList()
     }
 
     Column(Modifier.fillMaxSize().background(Color(0xFF0B141A))) {
@@ -982,21 +986,25 @@ private fun MessengerScreen(
         ) {
             TextButton(onClick = {
                 if (selectedContact.isBlank()) onClose() else onSelectContact("")
-            }) {
-                Text("‹", color = Color.White, fontSize = 30.sp)
-            }
+            }) { Text("‹", color = Color.White, fontSize = 30.sp) }
             if (selectedContact.isNotBlank()) {
-                Surface(color = Color(0xFF315448), shape = RoundedCornerShape(50)) {
-                    Text(if (selectedContact == "FREYA") "FK" else "NX",
-                        Modifier.padding(10.dp), color = Color.White, fontWeight = FontWeight.Bold)
+                Surface(color = if (selectedContact == "FREYA") Color(0xFF315448) else Color(0xFF35434B),
+                    shape = RoundedCornerShape(50)) {
+                    Text(
+                        when (selectedContact) { "AEGIS" -> "A"; "FREYA" -> "FK"; else -> "NX" },
+                        Modifier.padding(10.dp), color = Color.White, fontWeight = FontWeight.Bold
+                    )
                 }
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(contactName, color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                Text(contactName, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                 Text(
-                    if (selectedContact == "FREYA") "tersedia melalui kanal aman"
-                    else if (selectedContact == "NEXUS") "sistem komunikasi aktif"
-                    else "A.E.G.I.S.  ·  komunikasi terenkripsi",
+                    when (selectedContact) {
+                        "AEGIS" -> "kanal rekrutmen resmi"
+                        "FREYA" -> "mentor  ·  tersedia melalui kanal aman"
+                        "NEXUS" -> "sistem komunikasi aktif"
+                        else -> "A.E.G.I.S.  ·  komunikasi aman"
+                    },
                     color = Color(0xFFB4C2C8), fontSize = 10.sp
                 )
             }
@@ -1024,37 +1032,49 @@ private fun MessengerScreen(
                 Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
-                if ("FREYA KNOX".contains(search, ignoreCase = true) ||
-                    "FREYA".contains(search, ignoreCase = true) ||
-                    "Seseorang meminta kami untuk merekrutmu.".contains(search, ignoreCase = true) && recruitmentInvitation
+                if (recruitmentInvitation &&
+                    ("A.E.G.I.S.".contains(search, true) || "recruitment".contains(search, true) ||
+                        "perintah untuk merekrutmu".contains(search, true))
+                ) {
+                    MessengerContactRow(
+                        initials = "A",
+                        name = "A.E.G.I.S. / Recruitment Office",
+                        preview = "Seseorang telah memberikan perintah kepada A.E.G.I.S. untuk merekrutmu.",
+                        status = "RESMI",
+                        onClick = { onSelectContact("AEGIS") }
+                    )
+                }
+                if (freyaContactUnlocked &&
+                    ("FREYA KNOX".contains(search, true) || "FREYA".contains(search, true) ||
+                        "mentor".contains(search, true))
                 ) {
                     MessengerContactRow(
                         initials = "FK",
                         name = "Freya Knox",
-                        preview = if (recruitmentInvitation) "Seseorang meminta kami untuk merekrutmu."
-                            else "Kanal ini aman. Kita bisa mulai berbicara.",
-                        status = if (recruitmentInvitation) "BARU" else "MENTOR",
+                        preview = "Halo. Aku Freya. Aku akan mendampingimu selama orientasi.",
+                        status = "MENTOR",
                         onClick = { onSelectContact("FREYA") }
                     )
                 }
-                if ("NEXUS".contains(search, ignoreCase = true) ||
-                    "sistem komunikasi".contains(search, ignoreCase = true)
+                if (nexusUnlocked &&
+                    ("NEXUS".contains(search, true) || "sistem komunikasi".contains(search, true))
                 ) {
                     MessengerContactRow(
                         initials = "NX",
                         name = "NEXUS",
-                        preview = "Sistem komunikasi A.E.G.I.S. aktif.",
+                        preview = "Kanal sistem A.E.G.I.S. telah diaktifkan.",
                         status = "SISTEM",
                         onClick = { onSelectContact("NEXUS") }
                     )
                 }
-                if (search.isNotBlank() &&
-                    !"FREYA KNOX".contains(search, true) &&
-                    !"FREYA".contains(search, true) &&
-                    !"NEXUS".contains(search, true) &&
-                    !"sistem komunikasi".contains(search, true) &&
-                    !(recruitmentInvitation && "Seseorang meminta kami untuk merekrutmu.".contains(search, true))
-                ) {
+                val visibleTerms = listOf(
+                    "A.E.G.I.S.", "recruitment", "perintah untuk merekrutmu",
+                    "FREYA KNOX", "FREYA", "mentor", "NEXUS", "sistem komunikasi"
+                )
+                val visible = (recruitmentInvitation && visibleTerms.take(3).any { it.contains(search, true) }) ||
+                    (freyaContactUnlocked && visibleTerms.slice(3..5).any { it.contains(search, true) }) ||
+                    (nexusUnlocked && visibleTerms.slice(6..7).any { it.contains(search, true) })
+                if (search.isNotBlank() && !visible) {
                     Text("Tidak ada percakapan yang cocok.", color = Color(0xFF9BAEB4),
                         modifier = Modifier.fillMaxWidth().padding(18.dp), fontSize = 12.sp)
                 }
@@ -1068,59 +1088,101 @@ private fun MessengerScreen(
                 Text("PESAN TERENKRIPSI  ·  A.E.G.I.S.",
                     Modifier.align(Alignment.CenterHorizontally),
                     color = Color(0xFF91A5AC), fontSize = 9.sp, letterSpacing = 1.sp)
-                if (selectedContact == "FREYA") {
-                    if (recruitmentInvitation) {
+                when (selectedContact) {
+                    "AEGIS" -> {
                         ChatBubble(
-                            "Freya Knox",
-                            "Seseorang meminta kami untuk merekrutmu.\n\nKami tahu kamu bukan agen terlatih. Justru karena itulah pesan ini mungkin mengejutkanmu.\n\nSebuah organisasi bernama A.E.G.I.S. ingin berbicara denganmu melalui kanal ini.",
+                            "A.E.G.I.S. / Recruitment Office",
+                            "PEMBERITAHUAN REKRUTMEN RESMI\n\nAtas nama A.E.G.I.S., kami menghubungimu untuk menyampaikan bahwa seseorang telah memberikan perintah kepada organisasi ini untuk merekrutmu. Identitas pemberi perintah tidak disertakan dalam undangan ini.\n\nA.E.G.I.S. adalah organisasi intelijen internasional independen yang berkedudukan di Manila. Rangkaian awal ini dirancang untuk memperkenalkan prosedur, menguji ketelitian, dan menilai kesiapanmu sebelum akses yang lebih luas diberikan.\n\nJika kamu bersedia melanjutkan, buka tautan resmi di bawah untuk melihat rangkaian misi orientasi.",
                             false
                         )
-                        if (storyBeat >= 7) {
+                        Surface(
+                            onClick = onOpenMissionLink,
+                            color = Color(0xFF174C40),
+                            shape = RoundedCornerShape(14.dp),
+                            border = BorderStroke(1.dp, Color(0xFF3A806B)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                Text("TAUTAN RESMI  ·  A.E.G.I.S.", color = Color(0xFF9ED9C1),
+                                    fontSize = 9.sp, letterSpacing = 1.sp)
+                                Text("BUKA RANGKAIAN MISI  ↗", color = Color.White,
+                                    fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                Text("Orientasi dan tugas awal", color = Color(0xFFC2D9D0), fontSize = 10.sp)
+                            }
+                        }
+                    }
+                    "FREYA" -> {
+                        ChatBubble(
+                            "Freya Knox",
+                            "Halo. Aku Freya Knox. Selamat datang. Aku akan mendampingimu selama rangkaian misi awal A.E.G.I.S. dan membantu menjelaskan apa yang perlu kamu lakukan. Kita jalani satu per satu—tidak ada alasan untuk berpura-pura sudah memahami sesuatu yang baru kamu temui.",
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            "Untuk tugas teknis, ada satu sistem internal yang bisa membantu memeriksa informasi dan menjelaskan perangkat kerja. Namanya NEXUS. Aku sertakan tautan kanalnya di bawah. Kamu bisa membukanya saat siap.",
+                            false
+                        )
+                        replies.forEachIndexed { index, message ->
+                            ChatBubble("Kamu", message, true)
                             ChatBubble(
                                 "Freya Knox",
-                                "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.",
+                                if (index % 2 == 0) "Dimengerti. Fokus pada instruksi dan periksa hasilmu. Aku akan tetap mendampingi."
+                                else "Pertanyaan bagus. Kita akan membahasnya sesuai konteks misi. Satu langkah pada satu waktu.",
                                 false
                             )
                         }
-                    } else {
-                        ChatBubble("Freya Knox", "Kanal ini aman. Aku Freya Knox, mentor yang akan mendampingimu.", false)
                     }
-                    replies.forEachIndexed { index, message ->
-                        ChatBubble("Kamu", message, true)
-                        ChatBubble(
-                            "Freya Knox",
-                            if (index % 2 == 0) "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham."
-                            else "Pertanyaan bagus. Aku akan menjawabnya saat konteks operasinya tersedia. Jangan khawatir, aku jarang kehabisan kata-kata.",
-                            false
-                        )
-                    }
-                } else {
-                    ChatBubble("NEXUS", "Kanal komunikasi A.E.G.I.S. aktif. Status personel: rekrut. Seluruh tugas latihan berjalan secara lokal pada perangkat ini.", false)
-                    ChatBubble("NEXUS", "Aku dapat menjelaskan status operasi, menyimpan konteks teknis, dan meneruskan instruksi yang telah disahkan mentor.", false)
-                    replies.forEach { message ->
-                        ChatBubble("Kamu", message, true)
-                        ChatBubble("NEXUS", "Permintaan diterima. Untuk saat ini, gunakan panel Operasi dan Berkas untuk meninjau informasi yang tersedia.", false)
+                    else -> {
+                        ChatBubble("NEXUS", "Kanal komunikasi A.E.G.I.S. aktif. Status personel: Recruit. Aku adalah sistem pendukung analisis dan komunikasi, bukan pengambil keputusan operasional.", false)
+                        ChatBubble("NEXUS", "Aku dapat menjelaskan data yang diizinkan, membantu memeriksa hasil teknis, dan meneruskan instruksi yang telah disahkan mentor.", false)
+                        replies.forEach { message ->
+                            ChatBubble("Kamu", message, true)
+                            ChatBubble("NEXUS", "Permintaan diterima. Aku akan merujuk pada data dan izin yang tersedia di dalam misi aktif.", false)
+                        }
                     }
                 }
             }
-            Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                    verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                    Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
-                    quickReplies.forEach { choice ->
+            if (selectedContact == "FREYA") {
+                Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                        Text("TAUTAN DARI FREYA", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
                         Surface(
-                            onClick = { onReply(choice) },
+                            onClick = onOpenNexusLink,
                             color = Color(0xFF263A34),
                             shape = RoundedCornerShape(18.dp),
                             border = BorderStroke(1.dp, Color(0xFF36564A)),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(choice, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
-                                color = Color(0xFFE2ECE7), fontSize = 12.sp)
+                            Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text("NEXUS  /  KANAL SISTEM", color = Color.White,
+                                    fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text("Ketuk untuk membuka kontak NEXUS", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                            }
+                        }
+                        Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
+                        quickReplies.forEach { choice ->
+                            Surface(onClick = { onReply(choice) }, color = Color(0xFF263A34),
+                                shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
+                                Text(choice, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+                                    color = Color(0xFFE2ECE7), fontSize = 12.sp)
+                            }
                         }
                     }
-                    Text("Balasan menggunakan pilihan dialog yang disediakan.",
-                        color = Color(0xFF84979D), fontSize = 9.sp)
+                }
+            } else if (selectedContact == "NEXUS") {
+                Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                        Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
+                        quickReplies.forEach { choice ->
+                            Surface(onClick = { onReply(choice) }, color = Color(0xFF263A34),
+                                shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
+                                Text(choice, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+                                    color = Color(0xFFE2ECE7), fontSize = 12.sp)
+                            }
+                        }
+                    }
                 }
             }
         }
