@@ -34,6 +34,7 @@ import com.zeroday.cyberprotocol.data.Campaign01Story
 import com.zeroday.cyberprotocol.data.StoryBeat
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.data.VirtualFileSystem
+import com.zeroday.cyberprotocol.data.MissionWorkspacePolicy
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
 import com.zeroday.cyberprotocol.domain.usecase.MissionSubmissionPolicy
 import com.zeroday.cyberprotocol.ui.theme.CyberPalette
@@ -331,13 +332,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             codeFeedback = "MISI INI BELUM MENYEDIAKAN FILE KODE YANG DAPAT DITULIS."
             return
         }
+        val invocation = MissionWorkspacePolicy.pythonCommand(fileName)
+        if (invocation == null) {
+            codeFeedback = "NAMA FILE MISI TIDAK VALID UNTUK DIJALANKAN."
+            return
+        }
         val workspace = fileSystem.openMissionWorkspace(mission)
         if (!workspace.writeFile(fileName, source)) {
             codeFeedback = "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI."
             return
         }
         currentDirectory = mission.workspaceDirectory
-        command = "python $fileName"
+        command = invocation
         lastSuccessfulRunSource = null
         codeFeedback = "MENJALANKAN MELALUI A.E.G.I.S. TERMINAL..."
         terminalReturnScreen = GameScreen.STORY.name
