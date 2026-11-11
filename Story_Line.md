@@ -280,6 +280,15 @@ NEXUS may have a recognizable communication style, but should not be written as 
 
 # 10. Mission Narrative Structure
 
+The initial campaign uses a **hybrid mission system**. Each operation gives the player clear objectives and guided stages, while allowing meaningful interaction with relevant in-game tools. The player should not be forced through a rigid chain of tutorial screens, nor dropped into an unrestricted workspace without direction.
+
+- Present the current objective and enough context to understand the task.
+- Let the player use appropriate unlocked tools—such as Terminal, Intelligence Database, Dossier, or Analysis—when they are relevant to the operation.
+- Preserve room for the player to inspect evidence, experiment, compare findings, and decide what to submit.
+- Use contextual explanations and graduated hints for unfamiliar concepts; do not automatically solve the task.
+- Introduce tools and complexity progressively. A mission should only require the tools and knowledge appropriate to its stage in the campaign.
+- Preserve mission progress and working context when the player moves between an operation and its applications.
+
 Every case should follow a coherent investigative rhythm:
 
 1. **Inciting event:** a discrepancy, report, request, or unexpected discovery.
