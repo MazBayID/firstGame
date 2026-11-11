@@ -19,6 +19,18 @@ object ProgressionRules {
         return ranks.lastOrNull { safeExperience >= it.first }?.second ?: "CIVILIAN"
     }
 
+    fun unlockedAppsForStoryBeat(storyBeat: Int): Set<String> = buildSet {
+        val beat = storyBeat.coerceAtLeast(0)
+        add("MESSENGER")
+        if (beat >= 3) {
+            add("DATABASE")
+            add("DOSSIER")
+        }
+        if (beat >= 4) add("TERMINAL")
+        if (beat >= 5) add("ANALYSIS")
+        if (beat >= 7) add("OPERATIONS")
+    }
+
     fun nextRankThreshold(experience: Int): Int? {
         val safeExperience = experience.coerceAtLeast(0)
         return ranks.firstOrNull { safeExperience < it.first }?.first
