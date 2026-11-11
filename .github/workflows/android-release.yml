@@ -1,0 +1,89 @@
+name: Android Signed Release APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_release:
+        description: Type SIGN to authorize a signed release build
+        required: true
+        type: choice
+        options:
+          - SIGN
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    if: github.ref == 'refs/heads/rebuild/full-game' && inputs.confirm_release == 'SIGN'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Test Python runner
+        run: python -m unittest discover -s tests -v
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: "platform-tools"
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Restore and validate signing keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$ANDROID_KEYSTORE_BASE64"
+          test -n "$ANDROID_KEYSTORE_PASSWORD"
+          test -n "$ANDROID_KEY_ALIAS"
+
+          KEYSTORE_PATH="$RUNNER_TEMP/cyberprotocol-release.jks"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
+          chmod 600 "$KEYSTORE_PATH"
+
+          keytool -list -keystore "$KEYSTORE_PATH" \
+            -alias "$ANDROID_KEY_ALIAS" \
+            -storepass:env ANDROID_KEYSTORE_PASSWORD >/dev/null
+
+          echo "ANDROID_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
+
+      - name: Build signed release APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: gradle --no-daemon testDebugUnitTest assembleRelease
+
+      - name: Verify APK signature
+        run: |
+          apksigner verify --verbose --print-certs \
+            app/build/outputs/apk/release/app-release.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cyber-protocol-release
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Remove temporary signing keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/cyberprotocol-release.jks"
