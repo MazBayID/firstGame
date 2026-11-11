@@ -321,7 +321,6 @@ private fun CyberProtocolGameContent() {
         }
         GameScreen.APP_HUB -> AppHubScreen(
             storyStage = storyStage,
-            gameState = currentGameState,
             onClose = { screenName = returnScreen },
             onOpen = { target -> screenName = target.name }
         )
@@ -564,7 +563,7 @@ private fun StoryScreen(
 }
 
 @Composable
-private fun AppHubScreen(storyStage: Int, gameState: GameState, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
+private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
     GamePage("PUSAT APLIKASI", "PERANGKAT AMAN A.E.G.I.S.", onClose, null) {
         GamePanel {
             Text("APLIKASI YANG DIIZINKAN", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
