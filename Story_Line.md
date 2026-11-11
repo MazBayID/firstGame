@@ -215,7 +215,7 @@ The receipt discrepancy and its four-mission learning sequence are approved Firs
 
 ## 6.4 Receipt Trace and Source Comparison — Final First Contact Missions
 
-The initial discrepancy remains the same unresolved training case. These two missions deepen the investigation without introducing a new case, real-world target, or unapproved antagonist.
+The initial discrepancy remains the same unresolved training case. These four follow-up missions deepen the investigation without introducing a new case, real-world target, or unapproved antagonist.
 
 3. **Penelusuran Referensi:** Freya supplies a small, fictional receipt list containing source labels, record references, and timestamps. The player uses `enumerate()`, `for`, and `if` to locate entries for `RX-14` while preserving each entry's original index. The evaluator checks more than one fixture so a hard-coded output cannot pass.
 4. **Perbandingan Dua Sumber:** the player uses list indexing to assign `receipts[0]` to `primary` and `receipts[1]` to `archive`, then prints both records. The evaluator supplies more than one pair to ensure the program reads the actual list rather than printing fixed text.
