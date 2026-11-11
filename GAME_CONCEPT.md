@@ -742,3 +742,19 @@ The in-game terminal will use recognizable, standard Linux-like command conventi
 - Python scripts are written in the Code Editor and executed through the in-game terminal using the supported Python runtime and a clearly documented invocation.
 
 The goal is a functional, approachable terminal that builds useful real-world command-line familiarity while remaining safely contained within the game's virtual workspace.
+
+
+## 18. Approved Implementation Strategy — Full Rebuild
+
+The approved development direction is **Option A: Full Rebuild**.
+
+- Reconstruct the application architecture and user interface around this design document rather than treating the current prototype structure as binding.
+- Retain and maintain the project’s authoritative design and narrative documents: `GAME_CONCEPT.md`, `README.md`, and `Story_Line.md`.
+- Preserve existing user-supplied assets, including the optimized loading animation at `app/src/main/assets/loading/`, and reuse suitable assets after inspection.
+- Audit the current repository before rebuilding. Existing code may be reused only when it is sound, tested, and consistent with the approved design; otherwise replace it.
+- Build the new implementation in coherent, testable milestones. Do not claim a feature is complete merely because its screen exists; verify behavior and integration.
+- The rebuild must follow the decisions in this document and the approved narrative in `Story_Line.md`. Do not silently promote unapproved story proposals or assistant suggestions into canon.
+- Prioritize a cohesive, attractive Android game experience and functioning gameplay systems over superficial feature count.
+- Keep the game offline-first and preserve the safety boundaries, local Python runtime constraints, and game-managed virtual environment defined above.
+
+This approval establishes the rebuild strategy. It does not authorize deleting the authoritative design documents or user-supplied assets.
