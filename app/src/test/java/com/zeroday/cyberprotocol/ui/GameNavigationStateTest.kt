@@ -17,6 +17,12 @@ class GameNavigationStateTest {
     }
 
     @Test
+    fun browserReturnsToTheAppHub() {
+        val state = GameNavigationState(currentScreen = GameScreen.BROWSER)
+        assertEquals(GameScreen.APP_HUB, state.back(4, false).currentScreen)
+    }
+
+    @Test
     fun backFromDebriefReturnsToStoryUntilRecruitmentIsComplete() {
         val state = GameNavigationState(currentScreen = GameScreen.DEBRIEF)
 
