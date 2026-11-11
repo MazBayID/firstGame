@@ -1109,10 +1109,13 @@ private fun MessengerScreen(
     completedMissionCount: Int,
     onOpenMissionLink: () -> Unit,
     onOpenNexusLink: () -> Unit,
+    onOpenIntranetLink: () -> Unit,
+    onDownloadMissionFile: (String) -> Boolean,
     replies: List<String>,
     onReply: (String) -> Unit
 ) {
     var search by rememberSaveable { mutableStateOf("") }
+    var attachmentFeedback by rememberSaveable { mutableStateOf("") }
     val contactName = when (selectedContact) {
         "AEGIS" -> "A.E.G.I.S. / Recruitment Office"
         "FREYA" -> "Freya Knox"
@@ -1280,7 +1283,17 @@ private fun MessengerScreen(
                         )
                         ChatBubble(
                             "Freya Knox",
-                            "Untuk tugas teknis, ada satu sistem internal yang bisa membantu memeriksa informasi dan menjelaskan perangkat kerja. Namanya NEXUS. Aku sertakan tautan kanalnya di bawah. Kamu bisa membukanya saat siap.",
+                            "Sebelum mulai bekerja, buka A.E.G.I.S. Intranet melalui Browser internal. Gunakan ID personel RECRUIT-014 dan kode akses FIRSTCONTACT. Portal ini berjalan lokal di perangkatmu.",
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            "Untuk tugas Sinyal Pertama, aku juga melampirkan message_fragment.txt. Simpan berkas itu ke ruang kerja misi, lalu baca melalui Terminal. Browser Repository dan lampiran ini menunjuk berkas yang sama.",
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            "Untuk tugas teknis, NEXUS adalah sistem pendukung analisis dan komunikasi. Aku sertakan tautan kanalnya di bawah setelah akses intranet tersedia.",
                             false
                         )
                         replies.forEach { message ->
@@ -1310,7 +1323,46 @@ private fun MessengerScreen(
                 Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                        Text("TAUTAN DARI FREYA", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
+                        Text("TAUTAN DAN LAMPIRAN DARI FREYA", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
+                        Surface(
+                            onClick = onOpenIntranetLink,
+                            color = Color(0xFF263A34),
+                            shape = RoundedCornerShape(18.dp),
+                            border = BorderStroke(1.dp, Color(0xFF36564A)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text("A.E.G.I.S. INTRANET  /  BROWSER", color = Color.White,
+                                    fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text("ID: RECRUIT-014  ·  KODE: FIRSTCONTACT", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                Text("Ketuk untuk membuka portal internal offline", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                            }
+                        }
+                        if (activeMissionTitle == "Sinyal Pertama") {
+                            Surface(
+                                onClick = {
+                                    attachmentFeedback = if (onDownloadMissionFile("message_fragment.txt")) {
+                                        "message_fragment.txt tersimpan di ruang kerja misi."
+                                    } else {
+                                        "Lampiran belum dapat diunduh. Pastikan Sinyal Pertama masih aktif."
+                                    }
+                                },
+                                color = Color(0xFF202E3B),
+                                shape = RoundedCornerShape(14.dp),
+                                border = BorderStroke(1.dp, Color(0xFF3B5265)),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text("LAMPIRAN  /  message_fragment.txt", color = Color.White,
+                                        fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                    Text("Fragmen pesan A.E.G.I.S. · hanya baca", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                    Text("Ketuk untuk menyimpan ke ruang kerja misi", color = Color(0xFF83C7D0), fontSize = 10.sp)
+                                }
+                            }
+                            if (attachmentFeedback.isNotBlank()) {
+                                Text(attachmentFeedback, color = Color(0xFF83C7D0), fontSize = 10.sp)
+                            }
+                        }
                         Surface(
                             onClick = onOpenNexusLink,
                             color = Color(0xFF263A34),
