@@ -35,7 +35,7 @@ class Campaign01CatalogTest {
         assertEquals(25, signal.rewardXp)
         assertEquals(35, identity.rewardXp)
         assertEquals(setOf("message_fragment.txt"), signal.initialFiles.keys)
-        assertEquals("ACCESS GRANTED\\n", signal.initialFiles["message_fragment.txt"])
+        assertEquals("ACCESS GRANTED\n", signal.initialFiles["message_fragment.txt"])
         assertTrue("message_fragment.txt" in signal.allowedFiles)
         assertTrue("message_fragment.txt" !in signal.writableFiles)
         assertEquals(8, Campaign01Catalog.find("first_contact.audit")!!.evaluatorId)
