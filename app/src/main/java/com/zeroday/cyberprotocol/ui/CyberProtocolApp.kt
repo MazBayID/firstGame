@@ -95,6 +95,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     val initialGameState = sessionViewModel.gameState
     val currentGameState = sessionViewModel.gameState
     val fileSystem = remember { VirtualFileSystem(context) }
+    val activeMission = currentGameState.activeMissionId?.let(Campaign01Catalog::find)
+    val activeWorkspace = remember(activeMission?.id) {
+        activeMission?.let(fileSystem::openMissionWorkspace)
+    }
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
 
@@ -130,6 +134,14 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     var terminalBusy by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
     val messengerPreferences = remember { context.getSharedPreferences("cp_messenger_v1", 0) }
+    val browserPreferences = remember { context.getSharedPreferences("cp_browser_session_v1", 0) }
+    var browserAuthenticated by rememberSaveable {
+        mutableStateOf(browserPreferences.getBoolean("authenticated", false))
+    }
+    var browserPage by rememberSaveable {
+        mutableStateOf(if (browserAuthenticated) "home" else "login")
+    }
+    var browserReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
     var freyaReplies by remember {
         mutableStateOf(messengerPreferences.getString("freya_replies", "").orEmpty()
             .split("\u001F").filter { it.isNotBlank() })
@@ -173,6 +185,67 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
 
     fun appendTerminalOutput(value: String) {
         terminalOutput = (terminalOutput + value).takeLast(24_000)
+    }
+
+    fun downloadMissionFile(fileName: String): Boolean =
+        activeWorkspace?.downloadAsset(fileName) == true
+
+    fun submitMission(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?) {
+        val sourceToVerify = code.text
+        if (mission == null) {
+            codeFeedback = "TIDAK ADA MISI AKTIF UNTUK DIKIRIM."
+        } else if (sourceToVerify.isBlank()) {
+            codeFeedback = "BELUM ADA KODE — tulis solusi terlebih dahulu."
+        } else if (lastSuccessfulRunSource != sourceToVerify) {
+            codeFeedback = "JALANKAN KODE TERLEBIH DAHULU. Verifikasi hanya menerima kode yang sama dengan eksekusi terakhir yang berhasil."
+        } else {
+            scope.launch {
+                codeFeedback = "MEMVERIFIKASI..."
+                val result = withContext(Dispatchers.IO) {
+                    python.submit(mission.evaluatorId ?: -1, sourceToVerify)
+                }
+                if (code.text != sourceToVerify) {
+                    lastSuccessfulRunSource = null
+                    codeFeedback = "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."
+                } else {
+                    codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                    if (result.error.isNotBlank()) codeOutput += "\n" + result.error
+                    if (result.passed) {
+                        val firstCompletion = sessionViewModel.completeMission(
+                            mission.id, mission.rewardXp, mission.requiredClearance
+                        )
+                        sessionViewModel.recordEvidence(
+                            com.zeroday.cyberprotocol.core.model.EvidenceRecord(
+                                id = "evidence_" + mission.id,
+                                title = mission.title,
+                                summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
+                                source = "A.E.G.I.S. / Python evaluator " + mission.evaluatorId,
+                                status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
+                                missionId = mission.id
+                            )
+                        )
+                        mission.writableFiles.firstOrNull()?.let { fileName ->
+                            fileSystem.openMissionWorkspace(mission).writeFile(fileName, sourceToVerify)
+                        }
+                        preferences.edit().putString("saved_code_$storyStage", sourceToVerify).apply()
+                        sessionViewModel.saveCode(
+                            "story_$storyStage", sourceToVerify, "code_checkpoint_story_$storyStage"
+                        )
+                        savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
+                        saveStage(storyStage + 1)
+                        debriefTitle = mission.title
+                        debriefFeedback = result.feedback
+                        debriefXp = if (firstCompletion) mission.rewardXp else 0
+                        debriefClue = mission.nextClue.orEmpty()
+                        navigate(GameScreen.DEBRIEF)
+                    } else {
+                        codeFeedback = result.feedback.ifBlank {
+                            "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun executeTerminalCommand() {
@@ -225,7 +298,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
 
     BackHandler(enabled = screen != GameScreen.MAIN_MENU) {
-        if (screen == GameScreen.MESSENGER) {
+        if (screen == GameScreen.BROWSER) {
+            navigate(runCatching { GameScreen.valueOf(browserReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+        } else if (screen == GameScreen.MESSENGER) {
             if (messengerContact.isNotBlank()) {
                 messengerContact = ""
             } else {
@@ -344,66 +419,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                         }
                     }
                 },
-                onSubmit = {
-                    val sourceToVerify = code.text
-                    if (sourceToVerify.isBlank()) {
-                        codeFeedback = "BELUM ADA KODE — tulis solusi terlebih dahulu."
-                    } else if (lastSuccessfulRunSource != sourceToVerify) {
-                        codeFeedback = "JALANKAN KODE TERLEBIH DAHULU. Verifikasi hanya menerima kode yang sama dengan eksekusi terakhir yang berhasil."
-                    } else {
-                        val missionId = authoredMission?.evaluatorId ?: -1
-                        scope.launch {
-                            codeFeedback = "MEMVERIFIKASI..."
-                            val result = withContext(Dispatchers.IO) {
-                                python.submit(missionId, sourceToVerify)
-                            }
-                            if (code.text != sourceToVerify) {
-                                lastSuccessfulRunSource = null
-                                codeFeedback = "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."
-                            } else {
-                                codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
-                                if (result.error.isNotBlank()) codeOutput += "\n" + result.error
-                                if (result.passed) {
-                                    var rewardGranted = 0
-                                    authoredMission?.let { mission ->
-                                        val firstCompletion = sessionViewModel.completeMission(
-                                            mission.id, mission.rewardXp, mission.requiredClearance
-                                        )
-                                        if (firstCompletion) rewardGranted = mission.rewardXp
-                                        sessionViewModel.recordEvidence(
-                                            com.zeroday.cyberprotocol.core.model.EvidenceRecord(
-                                                id = "evidence_" + mission.id,
-                                                title = mission.title,
-                                                summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
-                                                source = "A.E.G.I.S. / Python evaluator " + mission.evaluatorId,
-                                                status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
-                                                missionId = mission.id
-                                            )
-                                        )
-                                    }
-                                    authoredMission?.let { mission ->
-                                        fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), sourceToVerify)
-                                    }
-                                    preferences.edit().putString("saved_code_$storyStage", sourceToVerify).apply()
-                                    sessionViewModel.saveCode(
-                                        "story_$storyStage", sourceToVerify, "code_checkpoint_story_$storyStage"
-                                    )
-                                    savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
-                                    saveStage(storyStage + 1)
-                                    debriefTitle = authoredMission?.title ?: "MISI SELESAI"
-                                    debriefFeedback = result.feedback
-                                    debriefXp = rewardGranted
-                                    debriefClue = authoredMission?.nextClue.orEmpty()
-                                    navigate(GameScreen.DEBRIEF)
-                                } else {
-                                    codeFeedback = result.feedback.ifBlank {
-                                        "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
+                onSubmit = { submitMission(authoredMission) },
                 onContinue = {
                     if (storyStage >= 15) {
                         saveStage(16)
@@ -445,6 +461,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             onClose = { navigate(navigation.hubReturnScreen) },
             onOpen = { target ->
                 if (target == GameScreen.MESSENGER) messengerReturnScreen = GameScreen.APP_HUB.name
+                if (target == GameScreen.BROWSER) browserReturnScreen = GameScreen.APP_HUB.name
                 navigate(target)
             }
         )
@@ -468,6 +485,12 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 sessionViewModel.unlockNexusContact()
                 messengerContact = "NEXUS"
             },
+            onOpenIntranetLink = {
+                browserReturnScreen = GameScreen.MESSENGER.name
+                browserPage = if (browserAuthenticated) "home" else "login"
+                navigate(GameScreen.BROWSER)
+            },
+            onDownloadMissionFile = ::downloadMissionFile,
             replies = if (messengerContact == "FREYA") freyaReplies else nexusReplies,
             onReply = { reply ->
                 if (messengerContact == "FREYA") {
@@ -477,6 +500,36 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     nexusReplies = (nexusReplies + reply).takeLast(50)
                     messengerPreferences.edit().putString("nexus_replies", nexusReplies.joinToString("\u001F")).apply()
                 }
+            }
+        )
+        GameScreen.BROWSER -> AegisBrowserScreen(
+            authenticated = browserAuthenticated,
+            page = browserPage,
+            mission = activeMission,
+            gameState = currentGameState,
+            evidence = currentGameState.evidence,
+            downloadedFiles = activeWorkspace?.listFiles()?.toSet().orEmpty(),
+            onPageChange = { browserPage = it },
+            onAuthenticate = { agentId, accessCode ->
+                val accepted = AegisIntranetAccess.authenticate(agentId, accessCode)
+                if (accepted) {
+                    browserAuthenticated = true
+                    browserPreferences.edit().putBoolean("authenticated", true).apply()
+                    browserPage = "home"
+                }
+                accepted
+            },
+            onDownloadFile = ::downloadMissionFile,
+            onOpenEditor = {
+                activeMission?.id?.let(Campaign01Catalog::storyStageForMission)?.let(::saveStage)
+                navigate(GameScreen.STORY)
+            },
+            onSubmitMission = { submitMission(activeMission) },
+            canSubmitMission = activeMission != null &&
+                code.text.isNotBlank() && lastSuccessfulRunSource == code.text,
+            submissionStatus = codeFeedback,
+            onClose = {
+                navigate(runCatching { GameScreen.valueOf(browserReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
             }
         )
         GameScreen.TERMINAL -> TerminalScreen(
@@ -1014,6 +1067,7 @@ private fun AppHubScreen(gameState: GameState, onClose: () -> Unit, onOpen: (Gam
         data class HubApp(val id: String, val title: String, val icon: Int, val target: GameScreen)
         val apps = listOf(
             HubApp("MESSENGER", "PESAN AMAN", CyberAssets.connection, GameScreen.MESSENGER),
+            HubApp("BROWSER", "A.E.G.I.S. BROWSER", CyberAssets.network, GameScreen.BROWSER),
             HubApp("TERMINAL", "TERMINAL", CyberAssets.terminal, GameScreen.TERMINAL),
             HubApp("DATABASE", "DATABASE INTELIJEN", CyberAssets.database, GameScreen.DATABASE),
             HubApp("DOSSIER", "BERKAS PERSONEL", CyberAssets.document, GameScreen.DOSSIER),
