@@ -114,6 +114,14 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Extracted the versioned GameState JSON codec from Android storage and added regression tests for complete state/evidence round trips, legacy defaults, unknown evidence statuses, and unsupported future schemas.
 - Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; added Profile, Archives, Achievements, and a persistent reduced-motion setting to the main menu.
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
+- Added the offline A.E.G.I.S. Browser with locally validated fictional credentials, persistent login/navigation state, Mission Control, File Repository, Intelligence Reports, Operations Archive, and Agent Profile.
+- Connected Freya's Messenger intranet link and credentials to the Browser; added the first mission's shared `message_fragment.txt` attachment.
+- Added authored read-only mission file assets and a permission-checked VFS download capability. The Messenger attachment and Browser File Repository install the same underlying asset into the active mission workspace.
+- Corrected the first mission's missing-input defect: the `ACCESS GRANTED` fragment is now provided as `message_fragment.txt`, and the briefing/hints explain how to download and read it with `cat`.
+- Moved mission SUBMIT to Browser Mission Control. The Browser sends the player's actual editor source to the evaluator and only enables submission after that exact source completes a successful RUN.
+- Routed Code Editor RUN through the mission's writable script and the dedicated Terminal screen using the normal `python <script>.py` command path; terminal return navigation preserves the editor context.
+- Added the Browser unlock at the first active mission and backfilled it into existing saves without removing previously unlocked apps.
+
 - Redesigned Secure Messenger toward a familiar smartphone chat experience with searchable conversations, contact previews, distinct incoming/outgoing bubbles, and predefined quick replies.
 - Added the first-entry Campaign notification sequence: black screen, ordinary-looking in-game Pesan Aman notification from A.E.G.I.S. / Recruitment Office, and explicit tap-through to the official organization's invitation conversation.
 - Added persisted recruitment, Freya-introduction, and NEXUS-unlock checkpoints in the versioned GameState; the current schema is 5. The notification taps are idempotent, and the schema-4 completed-chapter migration reopens the two newly added timestamp missions without replaying the opening.
