@@ -572,7 +572,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         )
         GameScreen.TERMINAL -> TerminalScreen(
             currentDirectory = currentDirectory,
-            workspaceLabel = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it)?.title }
+            workspaceLabel = activeMission?.title
                 ?.let { "MISSION WORKSPACE  /  $it" } ?: "PERSONAL WORKSPACE  /  A.E.G.I.S.",
             command = command,
             onCommandChange = { command = it },
