@@ -287,6 +287,8 @@ The default presentation for conversations between the player and characters is 
 - The conversation system may later gain optional AI-assisted interaction through an external API such as the OpenAI API. This is a future possibility, not a launch requirement. Core story events, mission progression, relationship state, and consequential decisions must remain controlled by the game and must work without an AI service.
 - The exact visual layout and optional messaging features remain open for later UI design.
 
+The opening mentor conversation uses authored, cosmetic responses rather than free-text or relationship branching. Freya's initial replies should reinforce the player's learning process: begin with the current briefing, normalize asking questions, and preserve the unanswered question of why the player was selected. When the player asks why Freya chose them, she must not reveal that she initiated the recruitment order. NEXUS replies should remain system-oriented and factual: report local personnel progress, direct the player to authorized in-game records, and explain that core campaign functions operate offline. These replies may acknowledge current mission progress, but must not invent evidence or unlock access outside the explicit game-state rules.
+
 
 ## 7.3 Relationship portrayal
 
