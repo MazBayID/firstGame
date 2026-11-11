@@ -11,13 +11,19 @@ Cyber Protocol is an Android-first Hacker RPG and coding simulation. You play a 
 - Split mission, target-terminal, and code-editor layout.
 - On-screen cursor navigation controls (left/right/up/down and line start/end) for touch editing.
 - Python syntax coloring, line numbers, auto-indent, and editor shortcut keys.
-- Beginner-friendly progression: M01 uses a prepared `logs` list and a guided `pass` placeholder; M02 introduces reading `access.log`; M03 reinforces file iteration and filtering.
-- Chapter 1 campaign with three playable Python investigations:
-  - M01 — The Corrupted Access Log (count ERROR entries).
-  - M02 — The Warning Signal (count WARNING entries).
-  - M03 — The Failed Login Trail (count FAILED login entries).
-- Each mission runs actual player-written Python against three different evidence fixtures. M01's `logs` variable comes from the active evidence file, keeping the player's input aligned with validation.
-- Mission feedback identifies the failed evidence test and shows expected versus actual output.
+- Hybrid Learning flow: story briefing → concept lesson → worked demonstration → safe experimentation → code practice → mission evaluation.
+- Chapter 01 contains eight progressive Python missions, designed for players with no coding experience:
+  - M01 — First Contact: `print()` and first output.
+  - M02 — Signal Online: multiple output lines and comments.
+  - M03 — Analyst Identity: variables and strings.
+  - M04 — Power Calibration: numbers and arithmetic operators.
+  - M05 — Repair the Shield: variables combined with arithmetic.
+  - M06 — Power Decision: `if`, `else`, and comparisons with changing test values.
+  - M07 — Signal Sweep: `for` loops and `range()`.
+  - M08 — Threat Triage: lists, iteration, filtering, and counters.
+- Beginner output missions are checked against their requested output; behavior-based missions use changing fixtures to verify that the player's logic works beyond one fixed answer.
+- Every mission includes a concept explanation, a worked example, an experiment prompt, a starter program, and progressive practice feedback.
+- File reading and access-log investigations are intentionally moved to the next learning stage after Chapter 01 foundations.
 - Mission unlocks are sequential; completed missions can be replayed without farming rewards.
 - XP, credits, unlocked/completed missions, and legacy M01 progress are saved locally.
 - GitHub Actions builds a debug APK and uploads it as an artifact.
