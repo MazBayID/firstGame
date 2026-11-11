@@ -6,6 +6,8 @@ data class GameState(
     val campaignId: String = "campaign_01_recruitment",
     val storyBeat: Int = 0,
     val recruitmentNotificationOpened: Boolean = false,
+    val freyaContactOpened: Boolean = false,
+    val nexusContactUnlocked: Boolean = false,
     val activeMissionId: String? = null,
     val completedMissionIds: Set<String> = emptySet(),
     val rank: String = "CIVILIAN",
@@ -18,7 +20,7 @@ data class GameState(
     val updatedAtEpochMillis: Long = 0L
 ) {
     companion object {
-        const val CURRENT_SCHEMA_VERSION = 3
+        const val CURRENT_SCHEMA_VERSION = 4
     }
 }
 
