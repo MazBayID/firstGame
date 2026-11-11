@@ -6,12 +6,11 @@ import unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "app/src/main/python"))
 import runner
 
-ERROR_SOLUTION = '''errors = []
-with open("access.log", "r") as log_file:
-    for line in log_file:
-        if "ERROR" in line:
-            errors.append(line.strip())
-print(len(errors))'''
+ERROR_SOLUTION = '''count = 0
+for line in logs:
+    if "ERROR" in line:
+        count += 1
+print(count)'''
 
 WARNING_SOLUTION = '''warnings = []
 with open("access.log", "r") as log_file:
@@ -37,6 +36,11 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(result["output"], "2")
         self.assertTrue(result["passed"])
 
+    def test_mission_01_logs_are_available(self):
+        result = self.evaluate(ERROR_SOLUTION, 1)
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["output"], "2")
+
     def test_mission_02_warning_counter_passes(self):
         result = self.evaluate(WARNING_SOLUTION, 2)
         self.assertEqual(result["output"], "2")
@@ -50,7 +54,7 @@ class RunnerTests(unittest.TestCase):
     def test_hardcoded_answer_does_not_pass(self):
         result = self.evaluate("print(2)", 1)
         self.assertFalse(result["passed"])
-        self.assertIn("hardcode", result["feedback"])
+        self.assertIn("Evidence test 2/3", result["feedback"])
 
     def test_mission_specific_solution_does_not_pass_other_mission(self):
         result = self.evaluate(ERROR_SOLUTION, 2)
