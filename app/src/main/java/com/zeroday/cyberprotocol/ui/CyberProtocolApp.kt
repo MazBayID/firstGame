@@ -493,7 +493,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             buildString {
                 append("CAMPAIGN 01  /  THE RECRUITMENT\n")
                 append("CHAPTER 001  /  FIRST CONTACT\n")
-                append("PROGRES CERITA: ").append((currentGameState.storyBeat - 2).coerceIn(0, 12)).append("/14\n\n")
+                append("PROGRES CERITA: ").append((currentGameState.storyBeat - 2).coerceIn(0, 14)).append("/14\n\n")
                 Campaign01Catalog.missions.forEach { mission ->
                     val completed = mission.id in currentGameState.completedMissionIds
                     val active = mission.id == currentGameState.activeMissionId
