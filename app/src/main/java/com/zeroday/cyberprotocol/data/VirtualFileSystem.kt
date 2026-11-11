@@ -165,7 +165,7 @@ class VirtualFileSystem(context: Context) {
         }
         val briefingPath = "${definition.workspaceDirectory}/briefing.txt"
         if ("briefing.txt" in definition.allowedFiles && !files.containsKey(briefingPath)) {
-            files[briefingPath] = "${definition.title.uppercase()}\\n\\n${definition.briefing}\\n"
+            files[briefingPath] = "${definition.title.uppercase()}\n\n${definition.briefing}\n"
         }
         persist()
         return MissionWorkspace(
