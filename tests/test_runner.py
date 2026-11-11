@@ -70,7 +70,7 @@ class RunnerTests(unittest.TestCase):
         self.assertIn("Write some Python code", self.run_code("   ")["error"])
 
     def test_range_budget_is_enforced(self):
-        result = self.run_code("for item in range(5001):\\n    print(item)")
+        result = self.run_code("for item in range(5001):\n    print(item)")
         self.assertIn("Range is limited", result["error"])
 
     def test_output_is_bounded(self):
