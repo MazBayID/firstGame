@@ -23,7 +23,7 @@ object Campaign01Story {
             "Sinyal pertama membuka pesan verifikasi. Gunakan kembali konsep variabel dan output, tetapi simpan pesan kedua pada variabel message.\n\nFreya akan membantu menjelaskan tujuan tugas. Setelah itu, kamu harus menulis dan memeriksa kode sendiri sebelum mengirim hasilnya untuk diverifikasi.",
             "VERIFIKASI PESAN"),
         StoryBeat("REKRUTMEN RESMI", "A.E.G.I.S.  /  PERSONEL",
-            "Dua tugas orientasi selesai diverifikasi. A.E.G.I.S. kini menawarkan status Recruit dengan akses terbatas. Kamu menerima profil personel dan izin awal untuk ruang kerja latihan.\n\nFreya tidak membahas siapa yang mengeluarkan perintah perekrutan. Ia hanya memastikan bahwa pelatihanmu akan berlanjut dan setiap tugas memiliki alasan yang jelas.",
+            "Dua tugas orientasi selesai diverifikasi. A.E.G.I.S. kini menawarkan status Recruit dengan akses terbatas. Kamu menerima profil personel dan izin awal untuk ruang kerja latihan.\n\nFreya memastikan bahwa pelatihanmu akan berlanjut dan setiap tugas memiliki alasan yang jelas.",
             "LANJUTKAN ORIENTASI"),
         StoryBeat("SELISIH PERTAMA", "CATATAN INTERNAL  /  BELUM TERVERIFIKASI",
             "Dalam pemeriksaan rutin, kamu menemukan dua catatan penerimaan untuk satu transmisi latihan. Isi pesannya sama, tetapi waktu yang dicatat oleh dua sistem berbeda beberapa detik.\n\nSelisih itu belum membuktikan manipulasi. Zona waktu, antrean pemrosesan, atau sinkronisasi jam dapat menghasilkan perbedaan. Tugasmu bukan menebak penyebabnya—melainkan memeriksa data yang tersedia.",
