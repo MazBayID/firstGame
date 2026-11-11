@@ -190,6 +190,57 @@ object Campaign01Catalog {
                 MissionHint(3, "Simpan masing-masing item sebelum memanggil print().")
             )
         ),
+        MissionDefinition(
+            id = "first_contact.normalize",
+            campaignId = CAMPAIGN_ID,
+            chapterId = CHAPTER_ID,
+            title = "Normalisasi Waktu",
+            nextClue = "Nilai bertanda sudah menunjukkan arah selisih. Tahap terakhir akan menghitung besar selisih tanpa tanda.",
+            briefing = "Dua waktu penerimaan disediakan sebagai string angka detik sejak tengah malam. Gunakan int() untuk mengubah keduanya menjadi integer, simpan pada first_time dan second_time, lalu hitung delta = second_time - first_time. Pertahankan urutan sumber; nilai negatif tetap merupakan hasil yang sah.",
+            kind = MissionKind.STORY_CODE,
+            evaluatorId = 14,
+            rewardXp = 65,
+            requiredClearance = 1,
+            workspaceDirectory = "/A.E.G.I.S/missions/first_contact/normalize",
+            allowedFiles = setOf("briefing.txt", "normalize.py"),
+            writableFiles = setOf("normalize.py"),
+            runtimeVariables = mapOf("receipt_seconds" to listOf("34872", "34876")),
+            objectives = listOf(
+                MissionObjective("convert_first", "Konversi waktu pertama", "Gunakan int() untuk mengubah receipt_seconds[0] menjadi first_time."),
+                MissionObjective("convert_second", "Konversi waktu kedua", "Ubah receipt_seconds[1] menjadi second_time."),
+                MissionObjective("calculate_delta", "Hitung selisih bertanda", "Kurangi second_time dengan first_time dan simpan pada delta.")
+            ),
+            hints = listOf(
+                MissionHint(1, "Nilai dari input masih berupa teks; int() mengubah teks angka menjadi integer."),
+                MissionHint(2, "Ambil dua item dengan receipt_seconds[0] dan receipt_seconds[1]."),
+                MissionHint(3, "Hitung delta = second_time - first_time, lalu print(delta).")
+            )
+        ),
+        MissionDefinition(
+            id = "first_contact.validate_delta",
+            campaignId = CAMPAIGN_ID,
+            chapterId = CHAPTER_ID,
+            title = "Validasi Selisih",
+            nextClue = "Laporan akhir First Contact siap disusun. Catat angka yang teramati, sumbernya, dan hal-hal yang masih belum dapat disimpulkan.",
+            briefing = "Hitung besar selisih dua waktu dalam receipt_seconds. Konversikan nilai teks menjadi integer, kurangi satu dengan yang lain, lalu gunakan abs() agar hasil difference selalu non-negatif. Nilai ini adalah ukuran jarak waktu, bukan penjelasan penyebab.",
+            kind = MissionKind.STORY_CODE,
+            evaluatorId = 15,
+            rewardXp = 70,
+            requiredClearance = 1,
+            workspaceDirectory = "/A.E.G.I.S/missions/first_contact/validate_delta",
+            allowedFiles = setOf("briefing.txt", "validate_delta.py"),
+            writableFiles = setOf("validate_delta.py"),
+            runtimeVariables = mapOf("receipt_seconds" to listOf("34872", "34876")),
+            objectives = listOf(
+                MissionObjective("absolute_delta", "Hitung besar selisih", "Gunakan abs() pada hasil pengurangan dua waktu yang sudah dikonversi dengan int()."),
+                MissionObjective("display_delta", "Tampilkan hasil", "Simpan hasil pada difference dan tampilkan dengan print().")
+            ),
+            hints = listOf(
+                MissionHint(1, "abs(nilai) mengembalikan besar nilai tanpa tanda negatif."),
+                MissionHint(2, "Gunakan int() pada kedua item sebelum melakukan pengurangan."),
+                MissionHint(3, "Simpan bentuk abs(int(receipt_seconds[1]) - int(receipt_seconds[0])) pada difference.")
+            )
+        ),
     )
 
     private val byId = missions.associateBy { it.id }
