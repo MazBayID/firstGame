@@ -217,6 +217,18 @@ internal fun AegisBrowserScreen(
                     Text("CLEARANCE  /  ${gameState.clearance}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text("MISI SELESAI  /  ${gameState.completedMissionIds.size}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
+                "archive" -> BrowserPanel {
+                    Text("OPERATIONS ARCHIVE", color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    if (gameState.completedMissionIds.isEmpty()) {
+                        Text("Belum ada operasi yang diarsipkan.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    } else {
+                        gameState.completedMissionIds.sorted().forEach { missionId ->
+                            val archivedMission = com.zeroday.cyberprotocol.data.Campaign01Catalog.find(missionId)
+                            Text(archivedMission?.title ?: missionId, color = Color.White, fontWeight = FontWeight.Bold)
+                            Text("TERVERIFIKASI  /  ${missionId}", color = Color(0xFF83C7D0), fontSize = 9.sp)
+                        }
+                    }
+                }
                 else -> BrowserPanel {
                     Text("SELAMAT DATANG DI A.E.G.I.S.", color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Text("Internal Operations Network", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
@@ -228,6 +240,7 @@ internal fun AegisBrowserScreen(
                     BrowserLink("MISSION CONTROL", "Briefing dan status operasi aktif") { onPageChange("mission") }
                     BrowserLink("FILE REPOSITORY", "Berkas pendukung yang diizinkan") { onPageChange("repository") }
                     BrowserLink("INTELLIGENCE REPORTS", "Catatan bukti dan sumber") { onPageChange("reports") }
+                    BrowserLink("OPERATIONS ARCHIVE", "Riwayat operasi yang telah diverifikasi") { onPageChange("archive") }
                     BrowserLink("AGENT PROFILE", "Identitas dan akses personel") { onPageChange("profile") }
                 }
             }
@@ -246,6 +259,7 @@ private fun BrowserNavigation(page: String, onPageChange: (String) -> Unit) {
             "mission" to "MISI",
             "repository" to "BERKAS",
             "reports" to "LAPORAN",
+            "archive" to "ARSIP",
             "profile" to "PROFIL"
         ).forEach { (target, label) ->
             if (page == target) {
