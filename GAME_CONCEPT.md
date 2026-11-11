@@ -599,3 +599,24 @@ The initial version is **offline-first**. An internet connection must not be req
 - Future online capabilities—such as optional AI-assisted conversation, cloud backup/synchronization, or downloadable content—are supplemental and must fail gracefully when unavailable.
 - No online account, external API key, or continuous network connection is required for the initial campaign.
 - Offline-first does not permanently prohibit online features; any future online feature must preserve the core offline experience.
+
+## 16.4 Code Editor — Progressive Editor
+
+The mission code editor uses a **Progressive Editor** approach. It begins with a focused, beginner-friendly interface and introduces more capable editing features as the player advances.
+
+- Early operations should present only the essentials needed to write and understand short programs. Avoid overwhelming new players with a dense, professional IDE interface.
+- As the player progresses through the campaign, rank, or demonstrated learning milestones, the editor may introduce features such as syntax highlighting, line numbers, automatic indentation, bracket assistance, and other quality-of-life tools.
+- Unlocking editor features should support learning and reflect growing operational capability; it must not arbitrarily block a player from writing valid code.
+- The editor remains the place where the player writes and edits mission code. Its available features must remain readable and practical on Android screens.
+- Preserve the established code-draft saving rules in §16.2: campaign progress autosaves, while code drafts use deliberate Save actions and defined mission checkpoints.
+
+## 16.5 Terminal and Mission Code Editor — Separate Roles
+
+The **Terminal** and **Code Editor** are distinct tools with complementary roles.
+
+- **Terminal** is a separate application available through the in-game App Hub. It is used to run programs and inspect execution output, errors, and relevant simulated system responses.
+- **Code Editor** is part of the operation/mission interface. It is where the player writes and modifies the Python code required by the current task.
+- The mission flow connects the two: the player edits code in the operation interface, runs it through the Terminal, reviews the result, makes corrections, and submits the work for evaluation when ready.
+- Running code and submitting a mission remain separate actions. RUN executes and displays results; SUBMIT evaluates the mission requirements.
+- Moving between the operation interface and Terminal should preserve the player's current mission context and unsaved editor contents during that active session. Persistence across app closure follows the explicit code-saving rules in §16.2.
+- Other App Hub tools may provide evidence, records, analysis, or operational context, but should not blur the distinct purpose of the editor and Terminal.
