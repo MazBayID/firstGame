@@ -49,6 +49,8 @@ internal object LegacyProgressMigration {
         return GameState(
             storyBeat = beat,
             recruitmentNotificationOpened = beat >= 2,
+            freyaContactOpened = false,
+            nexusContactUnlocked = false,
             completedMissionIds = completed,
             rank = ProgressionRules.rankForExperience(experience),
             experience = experience,
