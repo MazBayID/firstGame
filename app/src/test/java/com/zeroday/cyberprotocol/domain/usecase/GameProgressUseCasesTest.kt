@@ -1,6 +1,8 @@
 package com.zeroday.cyberprotocol.domain.usecase
 
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.core.model.EvidenceRecord
+import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -66,6 +68,47 @@ class GameProgressUseCasesTest {
         assertEquals("ELITE_OPERATIVE", ProgressionRules.rankForExperience(2500))
         assertEquals(25, ProgressionRules.nextRankThreshold(0))
         assertEquals(null, ProgressionRules.nextRankThreshold(2500))
+    }
+
+    @Test
+    fun evidenceIsStoredWithMissionProvenanceAndUpdatedWithoutDuplicates() {
+        val repository = MemoryGameStateRepository()
+        val useCase = RecordEvidenceUseCase(repository)
+        val evidence = EvidenceRecord(
+            id = "signal_fragment",
+            title = "Fragmen Sinyal",
+            summary = "Pesan latihan berhasil diverifikasi.",
+            source = "NEXUS / First Contact evaluator",
+            status = EvidenceStatus.CONFIRMED,
+            missionId = "first_contact.signal"
+        )
+
+        useCase.record(evidence)
+        useCase.record(evidence.copy(summary = "Pesan latihan terverifikasi."))
+        assertEquals(1, repository.load().evidence.size)
+        assertEquals("first_contact.signal", repository.load().evidence.single().missionId)
+
+        val updated = useCase.updateStatus("signal_fragment", EvidenceStatus.DISPUTED)
+        assertEquals(EvidenceStatus.DISPUTED, updated.evidence.single().status)
+        assertEquals("evidence_status_updated:signal_fragment", updated.lastCheckpoint)
+    }
+
+    @Test
+    fun evidenceCannotBeMovedBetweenMissions() {
+        val repository = MemoryGameStateRepository()
+        val useCase = RecordEvidenceUseCase(repository)
+        val evidence = EvidenceRecord(
+            id = "same_id",
+            title = "Record",
+            summary = "Summary",
+            source = "Source",
+            missionId = "mission_a"
+        )
+        useCase.record(evidence)
+        assertThrows(IllegalArgumentException::class.java) {
+            useCase.record(evidence.copy(missionId = "mission_b"))
+        }
+        assertEquals("mission_a", repository.load().evidence.single().missionId)
     }
 
     @Test
