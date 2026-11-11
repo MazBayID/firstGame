@@ -17,6 +17,15 @@ class MissionWorkspacePolicyTest {
     }
 
     @Test
+    fun pythonInvocationAcceptsOnlySimpleMissionScriptNames() {
+        assertEquals("python signal.py", MissionWorkspacePolicy.pythonCommand("signal.py"))
+        assertEquals("python audit-v2.py", MissionWorkspacePolicy.pythonCommand("audit-v2.py"))
+        assertFalse(MissionWorkspacePolicy.pythonCommand("../outside.py") != null)
+        assertFalse(MissionWorkspacePolicy.pythonCommand("signal.py;rm") != null)
+        assertFalse(MissionWorkspacePolicy.pythonCommand("my script.py") != null)
+    }
+
+    @Test
     fun repositoryAssetsCanOnlyBeInstalledAsDeclaredReadOnlyFiles() {
         val allowed = setOf("briefing.txt", "message_fragment.txt", "signal.py")
         val writable = setOf("signal.py")
