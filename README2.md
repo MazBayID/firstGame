@@ -71,6 +71,27 @@ The main menu background should be a cinematic view of the A.E.G.I.S. headquarte
 - Do not make the player avatar the focal point. The scene is about the headquarters and its atmosphere.
 - Exact architecture, camera angle, lighting, animation, and menu placement remain open for discussion; do not treat unapproved details as final canon.
 
+
+## 3.2 A.E.G.I.S. Operative Application Hub
+
+The operational interface should provide a compact, elegant way to access the player's in-game tools without turning the experience into a generic dashboard.
+
+- Place a small application-hub control in the **upper-right corner** of the relevant operational interface.
+- Selecting it opens a **smartphone-style application panel** containing the operative's available in-game applications. This is the approved hybrid approach: a discreet top-right entry point with a familiar app-panel experience.
+- The application panel should feel like a secure A.E.G.I.S. device interface and remain visually consistent with the game's cinematic intelligence atmosphere.
+- The initial application set consists of:
+  1. **Secure Messenger** — communication with NEXUS and other agents.
+  2. **Terminal** — the player's coding and command-line workspace for supported learning and mission tasks.
+  3. **Intelligence Database** — access to authorized records and structured intelligence data.
+  4. **Dossier** — mission briefings, classified documents, evidence, and case files.
+  5. **Analysis** — tools for examining evidence, connecting clues, and organizing findings.
+  6. **Operations** — current objectives, mission status, and operational progress.
+- Do not expose every application or capability from the beginning. Availability may expand through campaign progress, rank, clearance, and story events.
+- Opening an application should present its relevant focused workspace. Closing it should return the player to the previous operation or screen without losing the current context.
+- Keep the hub focused and purposeful. Additional applications may be considered later, but should only be added when they serve a clear gameplay or narrative need; do not add icons merely to make the panel look busy.
+- Exact icon design, panel layout, transitions, and application-specific interactions remain open for later design.
+
+
 # 4. Fictional Intelligence Organization: A.E.G.I.S.
 
 ## 4.1 Identity
