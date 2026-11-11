@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private enum class GameScreen {
-    MAIN_MENU, CAMPAIGN, STORY, APP_HUB, MESSENGER, TERMINAL,
+    MAIN_MENU, CAMPAIGN, STORY, DEBRIEF, APP_HUB, MESSENGER, TERMINAL,
     DATABASE, DOSSIER, ANALYSIS, OPERATIONS, PROFILE, ARCHIVES, ACHIEVEMENTS, SETTINGS, LANGUAGE
 }
 
@@ -157,6 +157,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
     var messengerContact by rememberSaveable { mutableStateOf("") }
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
+    var debriefTitle by rememberSaveable { mutableStateOf("") }
+    var debriefFeedback by rememberSaveable { mutableStateOf("") }
+    var debriefXp by rememberSaveable { mutableIntStateOf(0) }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
     LaunchedEffect(screenName, storyStage) {
@@ -227,6 +230,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         screenName = when (screen) {
             GameScreen.CAMPAIGN -> GameScreen.MAIN_MENU.name
             GameScreen.STORY -> GameScreen.CAMPAIGN.name
+            GameScreen.DEBRIEF -> if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
             GameScreen.APP_HUB -> returnScreen
             GameScreen.MESSENGER -> if (messengerContact.isNotBlank()) {
                 messengerContact = ""
@@ -343,9 +347,11 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                             ))
                             currentGameState = gameStateRepository.load()
                             savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
-                            codeFeedback = result.feedback
                             saveStage(storyStage + 1)
-                            screenName = if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
+                            debriefTitle = authoredMission?.title ?: "MISI SELESAI"
+                            debriefFeedback = result.feedback
+                            debriefXp = authoredMission?.rewardXp ?: 0
+                            screenName = GameScreen.DEBRIEF.name
                         } else {
                             codeFeedback = result.feedback.ifBlank {
                                 "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
@@ -365,6 +371,16 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 onHub = { openHub(GameScreen.STORY) }
             )
         }
+        GameScreen.DEBRIEF -> MissionDebriefScreen(
+            title = debriefTitle,
+            feedback = debriefFeedback,
+            xpAwarded = debriefXp,
+            rank = currentGameState.rank.replace('_', ' '),
+            totalExperience = currentGameState.experience,
+            onContinue = {
+                screenName = if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
+            }
+        )
         GameScreen.APP_HUB -> AppHubScreen(
             gameState = currentGameState,
             onClose = { screenName = returnScreen },
@@ -673,6 +689,29 @@ private fun StoryScreen(
             CPPrimaryButton(beat.button, onContinue)
         }
         Text("TITIK SIMPAN " + (stage + 1) + " / 7", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+    }
+}
+
+@Composable
+private fun MissionDebriefScreen(
+    title: String,
+    feedback: String,
+    xpAwarded: Int,
+    rank: String,
+    totalExperience: Int,
+    onContinue: () -> Unit
+) {
+    GamePage("DEBRIEF MISI", "A.E.G.I.S. / HASIL VERIFIKASI", onContinue, null) {
+        GamePanel {
+            Text("MISI TERVERIFIKASI", color = CyberPalette.Success, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            Text(title, color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
+            Text(feedback, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 22.sp)
+            HorizontalDivider(color = CyberPalette.Divider)
+            Text("REWARD  /  +$xpAwarded XP", color = Color(0xFF83C7D0), fontWeight = FontWeight.Bold)
+            Text("TOTAL PENGALAMAN  /  $totalExperience XP", color = Color.White, fontSize = 12.sp)
+            Text("RANK SAAT INI  /  $rank", color = Color.White, fontSize = 12.sp)
+        }
+        CPPrimaryButton("LANJUTKAN OPERASI", onContinue)
     }
 }
 
