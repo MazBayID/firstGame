@@ -58,7 +58,8 @@ class GameProgressUseCasesTest {
     @Test
     fun progressionThresholdsFollowApprovedRankOrder() {
         assertEquals("CIVILIAN", ProgressionRules.rankForExperience(0))
-        assertEquals("RECRUIT", ProgressionRules.rankForExperience(25))
+        assertEquals("CIVILIAN", ProgressionRules.rankForExperience(25))
+        assertEquals("RECRUIT", ProgressionRules.rankForExperience(60))
         assertEquals("INITIATE", ProgressionRules.rankForExperience(100))
         assertEquals("JUNIOR_ANALYST", ProgressionRules.rankForExperience(250))
         assertEquals("FIELD_ANALYST", ProgressionRules.rankForExperience(500))
@@ -66,7 +67,7 @@ class GameProgressUseCasesTest {
         assertEquals("SENIOR_OPERATIVE", ProgressionRules.rankForExperience(1250))
         assertEquals("SPECIAL_AGENT", ProgressionRules.rankForExperience(1800))
         assertEquals("ELITE_OPERATIVE", ProgressionRules.rankForExperience(2500))
-        assertEquals(25, ProgressionRules.nextRankThreshold(0))
+        assertEquals(60, ProgressionRules.nextRankThreshold(0))
         assertEquals(null, ProgressionRules.nextRankThreshold(2500))
     }
 
