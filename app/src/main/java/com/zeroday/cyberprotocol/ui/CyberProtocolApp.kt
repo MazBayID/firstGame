@@ -328,6 +328,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                                     )
                                 )
                             }
+                            authoredMission?.let { mission ->
+                                fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
+                            }
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
                             val previousState = gameStateRepository.load()
                             gameStateRepository.save(previousState.copy(
