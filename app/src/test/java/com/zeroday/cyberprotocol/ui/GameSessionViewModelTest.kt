@@ -4,6 +4,7 @@ import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -27,7 +28,7 @@ class GameSessionViewModelTest {
 
         assertEquals(25, viewModel.gameState.experience)
         assertEquals("CIVILIAN", viewModel.gameState.rank)
-        assertEquals(null, viewModel.gameState.activeMissionId)
+        assertNull(viewModel.gameState.activeMissionId)
         assertEquals("signal = \"ACCESS GRANTED\"", viewModel.gameState.savedCode["story_4"])
     }
 
