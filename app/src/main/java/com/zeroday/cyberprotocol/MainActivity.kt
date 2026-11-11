@@ -114,7 +114,7 @@ class MainActivity : ComponentActivity() {
         val output = result.optString("output")
         val message = when {
             error.isNotBlank() -> error
-            feedback.isNotBlank() -> "$feedback\nOutput (original log): $output"
+            feedback.isNotBlank() -> "$feedback\nOutput: $output"
             else -> output.ifBlank { "(no output)" }
         }
         message to result.optBoolean("passed")
