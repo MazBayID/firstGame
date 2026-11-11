@@ -31,6 +31,9 @@ object ProgressionRules {
         if (beat >= 7) add("OPERATIONS")
     }
 
+    fun rankThreshold(rank: String): Int =
+        ranks.firstOrNull { it.second == rank }?.first ?: 0
+
     fun nextRankThreshold(experience: Int): Int? {
         val safeExperience = experience.coerceAtLeast(0)
         return ranks.firstOrNull { safeExperience < it.first }?.first
