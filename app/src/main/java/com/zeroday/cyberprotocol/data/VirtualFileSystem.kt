@@ -230,7 +230,7 @@ class VirtualFileSystem(context: Context) {
 
     private fun resolve(input: String, cwd: String, workspaceRoot: String): String? {
         if (input.isBlank()) return null
-        if (input == "/") return root
+        if (input == "/") return null
         val parts = if (input.startsWith("/")) mutableListOf<String>() else
             cwd.trim('/').split('/').filter { it.isNotEmpty() }.toMutableList()
         input.split('/').forEach { part ->
