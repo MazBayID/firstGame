@@ -101,6 +101,20 @@ The operational interface should provide a compact, elegant way to access the pl
 - Exact icon design, panel layout, transitions, and application-specific interactions remain open for later design.
 
 
+## 3.3 Character Dialogue — Chat Interface
+
+Character conversations are presented through an in-game **chat interface**, rather than a visual-novel dialogue box as the default dialogue format.
+
+- The player communicates with Freya, NEXUS, and other characters through a secure A.E.G.I.S.-style messaging experience.
+- Messages appear as distinct chat bubbles with clear sender identity. Player replies and character messages must be visually distinguishable.
+- At appropriate moments, the player may choose from authored reply options. Choices should feel like messages the player is actually sending, not detached menu commands.
+- Conversation history should remain reviewable, and new messages or important updates may use restrained unread indicators or notifications.
+- The interface should support both ordinary conversation and operational communication, while keeping sender identity and context clear.
+- Dialogue presentation must remain readable and usable on Android screens. Avoid clutter, excessive decoration, and unnecessary chat animations.
+- This is the approved default for character dialogue. Do not assume visual-novel character portraits or dialogue boxes are required. Other story presentation methods may be considered separately when a scene genuinely needs them.
+- Detailed chat layout, message timing, typing indicators, attachments, and interaction behavior remain open for later UI design.
+
+
 # 4. Fictional Intelligence Organization: A.E.G.I.S.
 
 ## 4.1 Identity
