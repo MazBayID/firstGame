@@ -30,7 +30,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
 - GitHub Actions for Python unit tests and Android debug APK assembly.
 
-These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the First Contact opening rather than a later investigative case.
+These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the expanded First Contact investigation; a later investigative case remains unapproved.
 
 ## Production rebuild workstreams
 
@@ -48,15 +48,15 @@ These foundations are not automatically production-ready. Python file access is 
 - Test path traversal, malformed input, resource exhaustion, and permission boundaries.
 
 ### 3. Complete player experience
-- Complete the approved main menu, campaign selection/progress, first-contact story, contact-list messenger, and App Hub interactions.
+- Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list messenger, and App Hub interactions.
 - Continue expanding Dossier, Intelligence Database, Analysis, and Operations from their current data-backed opening implementations into full operational workspaces.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
 - Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
 
 ### 4. Mission and learning systems
 - Build mission definitions, objectives, evidence provenance, workspace permissions, RUN/SUBMIT separation, hybrid evaluation, graduated hints, and debriefs.
-- Complete Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as a cohesive playable narrative.
-- Ensure each mission provides a fair, level-appropriate code/syntax clue for the next mission.
+- Complete Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as a cohesive playable narrative; the current authored scope has fourteen beats and eight evaluated missions.
+- Ensure each mission provides a fair, level-appropriate code/syntax clue for the next mission, including integer conversion, signed arithmetic, and absolute difference.
 - Introduce SQL, networking, C++, and IoT progressively; Python is the first complete technical track.
 
 ### 5. Progression and persistence
@@ -89,7 +89,7 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 **Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
 **Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, and a ViewModel-owned campaign state/progression layer exist; broader UI state/navigation extraction and storage recovery tests remain.  
 **Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
-**Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has authored story beats, two evaluated coding missions, graduated hints, debriefs, contact-list messaging, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
+**Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has fourteen authored story beats and eight evaluated Python missions, graduated hints, debriefs, contact-list messaging, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
 **Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists.
@@ -112,13 +112,16 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; added Profile, Archives, Achievements, and a persistent reduced-motion setting to the main menu.
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
 - Redesigned Secure Messenger toward a familiar smartphone chat experience with searchable conversations, contact previews, distinct incoming/outgoing bubbles, and predefined quick replies.
-- Added the first-entry Campaign notification sequence: black screen, ordinary-looking in-game Pesan Aman notification, and explicit tap-through to Freya's recruitment conversation.
+- Added the first-entry Campaign notification sequence: black screen, ordinary-looking in-game Pesan Aman notification from A.E.G.I.S. / Recruitment Office, and explicit tap-through to the official organization's invitation conversation.
 - Added a persisted recruitment-opening checkpoint in GameState schema 3; the notification tap is idempotent, and older save/legacy migration paths preserve whether the invitation has already been opened.
-- Removed the Unknown Sender prologue from the playable First Contact story sequence. The campaign now begins its story beats with A.E.G.I.S. organization after the invitation conversation.
+- Removed the Unknown Sender prologue from the playable First Contact story sequence. The official invitation is authored by A.E.G.I.S.; its interactive mission link opens the orientation sequence. Freya's separate notification appears when the first mission becomes active, and NEXUS remains hidden until the player taps Freya's in-chat link.
 - Rewrote the Story_Line opening sequence to match the approved notification → Secure Messenger → recruitment invitation flow.
-- Reworked the Campaign overview into a chapter-focused hero panel with a visible five-beat progression timeline.
+- Reworked the Campaign overview into a chapter-focused hero panel with a fourteen-beat progression timeline.
 - Added distinct cinematic gradient treatments and scene identifiers to First Contact story cards, with different visual palettes for organization, dossier, training, and recruitment scenes.
-- Added a mission-success debrief screen before the story advances.
+- Added a mission-success debrief screen before the story advances, with authored forward clues for each of the eight missions.
+- Added two final First Contact technical missions: timestamp-string conversion with `int()` and signed subtraction, followed by `abs()`-based magnitude validation across multiple fixtures. The final report now follows these missions and still does not infer a cause for the four-second discrepancy.
+- Corrected mentor introduction continuity: the official A.E.G.I.S. invitation is separate from Freya's notification; Freya is attributed as mentor only after her notification is opened, and NEXUS remains gated behind her in-chat link.
+
 - Extracted First Contact narrative content and game destination definitions from the main Compose shell.
 - Added a `GameSessionViewModel` to own campaign state refreshes, mission completion, code checkpoints, recruitment clearance, and progression/evidence mutations outside the main Compose screen.
 - Added end-to-end domain coverage for First Contact progression and ViewModel-level checkpoint tests.
@@ -133,9 +136,9 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Added `GameState`, evidence models, and a repository interface independent of Android storage APIs.
 - Added versioned local campaign-state persistence, including migration of the previous story-stage preference.
 - Added checkpoint and idempotent mission-completion use cases with clearance and XP rules.
-- Connected the opening campaign's story checkpoints and explicit code saves to the versioned state store.
-- Routed the two First Contact code submissions through the Python mission evaluator; RUN remains execution-only.
-- Added mission evaluator fixtures for both First Contact code stages.
+- Connected the opening campaign's fourteen story checkpoints and explicit code saves to the versioned state store.
+- Routed all eight First Contact code submissions through the Python mission evaluator; RUN remains execution-only.
+- Added multi-fixture mission evaluator coverage for all eight First Contact tasks, including reversed timestamp ordering and signed/absolute delta checks.
 - Added Python runner limits for AST size, range iteration, integer literals, collection literals, and captured stdout. These are teaching-runtime guardrails, **not a hardened sandbox**.
 - Added the entry-only WebP loading animation. It decodes one frame at a time and releases the previous bitmap instead of loading all 240 frames into memory.
 - Added Python regression tests and Kotlin domain-use-case tests.
