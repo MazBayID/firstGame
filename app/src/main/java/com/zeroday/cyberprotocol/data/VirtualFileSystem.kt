@@ -34,6 +34,9 @@ class VirtualFileSystem(context: Context) {
 
     @Synchronized
     fun execute(commandLine: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): TerminalResponse {
+        if (commandLine.length > MAX_COMMAND_LENGTH) {
+            return TerminalResponse("Command exceeds the 12000-character training limit.", currentDirectory)
+        }
         val line = commandLine.trim()
         if (line.isEmpty()) return TerminalResponse("", currentDirectory)
         if (line == "clear") return TerminalResponse("", currentDirectory, clearScreen = true)
@@ -42,6 +45,7 @@ class VirtualFileSystem(context: Context) {
         if (redirect != null) {
             val target = resolve(redirect.groupValues[3], currentDirectory, workspaceRoot)
                 ?: return TerminalResponse("Invalid path: access is restricted to the A.E.G.I.S. workspace.", currentDirectory)
+            if (redirect.groupValues[2].length > MAX_PERSONAL_FILE_LENGTH) return TerminalResponse("File content exceeds the workspace limit.", currentDirectory)
             if (directories.contains(target)) return TerminalResponse("Cannot write to a directory.", currentDirectory)
             if (!directories.contains(parent(target))) return TerminalResponse("Folder induk tidak ditemukan.", currentDirectory)
             files[target] = redirect.groupValues[2] + "\n"
@@ -132,6 +136,7 @@ class VirtualFileSystem(context: Context) {
     @Synchronized
     fun writeFile(path: String, content: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): Boolean {
         val resolved = resolve(path, currentDirectory, workspaceRoot) ?: return false
+        if (content.length > MAX_PERSONAL_FILE_LENGTH) return false
         if (directories.contains(resolved) || !directories.contains(parent(resolved))) return false
         files[resolved] = content
         persist()
@@ -248,7 +253,11 @@ class VirtualFileSystem(context: Context) {
 
     private fun parent(path: String): String = path.substringBeforeLast("/", "")
 
-    companion object { private const val MAX_MISSION_FILE_LENGTH = 50_000 }
+    companion object {
+        private const val MAX_MISSION_FILE_LENGTH = 50_000
+        private const val MAX_PERSONAL_FILE_LENGTH = 50_000
+        private const val MAX_COMMAND_LENGTH = 12_000
+    }
     private fun tokenize(line: String): List<String> =
         Regex(""""([^"]*)"|'([^']*)'|(\S+)""").findAll(line).map { match ->
             match.groups[1]?.value ?: match.groups[2]?.value ?: match.groups[3]?.value.orEmpty()
