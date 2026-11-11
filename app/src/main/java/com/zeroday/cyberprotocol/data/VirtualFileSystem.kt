@@ -215,8 +215,26 @@ class VirtualFileSystem(context: Context) {
             owner = this,
             directory = definition.workspaceDirectory,
             allowedFiles = definition.allowedFiles,
-            writableFiles = definition.writableFiles
+            writableFiles = definition.writableFiles,
+            initialFiles = definition.initialFiles
         )
+    }
+
+    @Synchronized
+    internal fun installMissionAsset(
+        directory: String,
+        allowedFiles: Set<String>,
+        writableFiles: Set<String>,
+        initialFiles: Map<String, String>,
+        name: String
+    ): Boolean {
+        val content = initialFiles[name] ?: return false
+        if (!MissionWorkspacePolicy.canInstallAsset(name, content.length, allowedFiles, writableFiles)) return false
+        val path = "$directory/$name"
+        if (files.containsKey(path)) return true
+        files[path] = content
+        persist()
+        return true
     }
 
     @Synchronized
@@ -292,10 +310,15 @@ class MissionWorkspace internal constructor(
     private val owner: VirtualFileSystem,
     val directory: String,
     private val allowedFiles: Set<String>,
-    private val writableFiles: Set<String>
+    private val writableFiles: Set<String>,
+    private val initialFiles: Map<String, String>
 ) {
     val allowedFileNames: Set<String> get() = allowedFiles.toSet()
     val writableFileNames: Set<String> get() = writableFiles.toSet()
+    val downloadableFileNames: Set<String> get() = initialFiles.keys.toSet()
+
+    fun downloadAsset(name: String): Boolean =
+        owner.installMissionAsset(directory, allowedFiles, writableFiles, initialFiles, name)
 
     fun listFiles(): List<String> = owner.listMissionFiles(directory, allowedFiles)
 
