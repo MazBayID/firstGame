@@ -758,3 +758,17 @@ The approved development direction is **Option A: Full Rebuild**.
 - Keep the game offline-first and preserve the safety boundaries, local Python runtime constraints, and game-managed virtual environment defined above.
 
 This approval establishes the rebuild strategy. It does not authorize deleting the authoritative design documents or user-supplied assets.
+
+
+### 16.12 — Progressive Technical Tracks
+
+The initial campaign introduces Python as the player's first executable programming language. Additional technical disciplines are introduced through the story, authorized tools, and optional learning content.
+
+- Python is available from the beginning of the technical training experience and is the primary language for the initial recruitment chapter.
+- SQL, networking, C++, and IoT are introduced progressively when the campaign provides a credible operational reason and the player has the necessary context.
+- The LEARN area may provide optional explanations and foundational study material beyond the current mission, so curious players are not forced to wait for the main story to read ahead.
+- Access to operational tools, datasets, simulators, and mission execution capabilities remains governed by story progression, rank, clearance, and the relevant safety boundaries.
+- Optional learning must not expose unrestricted device capabilities or undermine mission authorization. Learning a concept and receiving permission to use an operational system are separate things.
+- The first release should prioritize a complete, polished Python learning and mission experience. Additional languages and technical tracks must be implemented as real, integrated systems—not decorative locked cards or promises of future functionality.
+
+This hybrid approach keeps the opening accessible, rewards campaign progression, and gives motivated players room to explore without turning the game into an unstructured course catalogue.
