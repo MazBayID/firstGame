@@ -97,6 +97,8 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         put("campaignId", state.campaignId)
         put("storyBeat", state.storyBeat)
         put("recruitmentNotificationOpened", state.recruitmentNotificationOpened)
+        put("freyaContactOpened", state.freyaContactOpened)
+        put("nexusContactUnlocked", state.nexusContactUnlocked)
         put("activeMissionId", state.activeMissionId)
         put("completedMissionIds", JSONArray(state.completedMissionIds.sorted()))
         put("rank", state.rank)
@@ -154,6 +156,8 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
             recruitmentNotificationOpened = json.optBoolean(
                 "recruitmentNotificationOpened", json.optInt("storyBeat", 0) >= 2
             ),
+            freyaContactOpened = json.optBoolean("freyaContactOpened", false),
+            nexusContactUnlocked = json.optBoolean("nexusContactUnlocked", false),
             activeMissionId = json.optString("activeMissionId").takeIf { it.isNotBlank() && it != "null" },
             completedMissionIds = json.stringSet("completedMissionIds"),
             rank = json.optString("rank", "CIVILIAN"),
