@@ -111,11 +111,15 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
     var code by remember {
         mutableStateOf(TextFieldValue(
-            initialGameState.savedCode["story_$storyStage"]
-                ?: preferences.getString("saved_code_$storyStage",
-                    Campaign01Story.codeTemplateForStage(storyStage)).orEmpty()
+            Campaign01Story.draftForStage(
+                storyStage,
+                initialGameState.savedCode["story_$storyStage"]
+                    ?: preferences.getString("saved_code_$storyStage", null)
+            )
         ))
     }
+    // A submission is accepted only for the exact source that completed RUN successfully.
+    var lastSuccessfulRunSource by rememberSaveable { mutableStateOf<String?>(null) }
     var codeOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
     var command by rememberSaveable { mutableStateOf("") }
@@ -152,9 +156,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         preferences.edit().putInt("story_stage", storyStage).apply()
         sessionViewModel.saveStoryBeat(storyStage)
         val savedDraft = sessionViewModel.gameState.savedCode["story_$storyStage"]
-            ?: preferences.getString("saved_code_$storyStage",
-                Campaign01Story.codeTemplateForStage(storyStage)).orEmpty()
-        code = TextFieldValue(savedDraft)
+            ?: preferences.getString("saved_code_$storyStage", null)
+        code = TextFieldValue(Campaign01Story.draftForStage(storyStage, savedDraft))
+        lastSuccessfulRunSource = null
         codeOutput = "KELUARAN AKAN MUNCUL DI SINI"
         codeFeedback = ""
         hintLevel = 0
@@ -292,7 +296,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 hintLevel = hintLevel,
                 onRequestHint = { hintLevel = (hintLevel + 1).coerceAtMost(3) },
                 code = code,
-                onCodeChange = { if (it.text.length <= 12_000) { code = it; savedCodeStatus = "PERUBAHAN BELUM DISIMPAN" } },
+                onCodeChange = {
+                    if (it.text.length <= 12_000) {
+                        code = it
+                        lastSuccessfulRunSource = null
+                        savedCodeStatus = "PERUBAHAN BELUM DISIMPAN"
+                    }
+                },
                 output = codeOutput,
                 feedback = codeFeedback,
                 saveStatus = savedCodeStatus,
@@ -307,61 +317,89 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     savedCodeStatus = "TERSIMPAN"
                 },
                 onRun = {
-                    scope.launch {
-                        codeFeedback = "MENJALANKAN — hanya eksekusi; belum ada evaluasi misi."
-                        val workspace = authoredMission?.let { fileSystem.openMissionWorkspace(it) }
-                        val result = withContext(Dispatchers.IO) {
-                            python.run(code.text, workspace, authoredMission?.runtimeVariables.orEmpty())
+                    val sourceToRun = code.text
+                    if (sourceToRun.isBlank()) {
+                        lastSuccessfulRunSource = null
+                        codeFeedback = "EDITOR KOSONG — tulis kode terlebih dahulu."
+                    } else {
+                        scope.launch {
+                            lastSuccessfulRunSource = null
+                            codeFeedback = "MENJALANKAN — hanya eksekusi; belum ada evaluasi misi."
+                            val workspace = authoredMission?.let { fileSystem.openMissionWorkspace(it) }
+                            val result = withContext(Dispatchers.IO) {
+                                python.run(sourceToRun, workspace, authoredMission?.runtimeVariables.orEmpty())
+                            }
+                            codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                            if (result.error.isNotBlank()) codeOutput += "\n" + result.error
+                            if (result.error.isBlank() && code.text == sourceToRun) {
+                                lastSuccessfulRunSource = sourceToRun
+                                codeFeedback = "EKSEKUSI BERHASIL — kode ini siap dikirim untuk verifikasi."
+                            } else {
+                                codeFeedback = if (result.error.isNotBlank()) {
+                                    "EKSEKUSI GAGAL — perbaiki kesalahan sebelum verifikasi."
+                                } else {
+                                    "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                                }
+                            }
                         }
-                        codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
-                        if (result.error.isNotBlank()) codeOutput += "\n" + result.error
-                        codeFeedback = "JALANKAN SELESAI — progres kampanye belum berubah."
                     }
                 },
                 onSubmit = {
-                    val missionId = authoredMission?.evaluatorId ?: -1
-                    scope.launch {
-                        codeFeedback = "MEMVERIFIKASI..."
-                        val result = withContext(Dispatchers.IO) {
-                            python.submit(missionId, code.text)
-                        }
-                        codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
-                        if (result.error.isNotBlank()) codeOutput += "\n" + result.error
-                        if (result.passed) {
-                            var rewardGranted = 0
-                            authoredMission?.let { mission ->
-                                val firstCompletion = sessionViewModel.completeMission(
-                                    mission.id, mission.rewardXp, mission.requiredClearance
-                                )
-                                if (firstCompletion) rewardGranted = mission.rewardXp
-                                sessionViewModel.recordEvidence(
-                                    com.zeroday.cyberprotocol.core.model.EvidenceRecord(
-                                        id = "evidence_" + mission.id,
-                                        title = mission.title,
-                                        summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
-                                        source = "A.E.G.I.S. / Python evaluator " + mission.evaluatorId,
-                                        status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
-                                        missionId = mission.id
+                    val sourceToVerify = code.text
+                    if (sourceToVerify.isBlank()) {
+                        codeFeedback = "BELUM ADA KODE — tulis solusi terlebih dahulu."
+                    } else if (lastSuccessfulRunSource != sourceToVerify) {
+                        codeFeedback = "JALANKAN KODE TERLEBIH DAHULU. Verifikasi hanya menerima kode yang sama dengan eksekusi terakhir yang berhasil."
+                    } else {
+                        val missionId = authoredMission?.evaluatorId ?: -1
+                        scope.launch {
+                            codeFeedback = "MEMVERIFIKASI..."
+                            val result = withContext(Dispatchers.IO) {
+                                python.submit(missionId, sourceToVerify)
+                            }
+                            if (code.text != sourceToVerify) {
+                                lastSuccessfulRunSource = null
+                                codeFeedback = "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."
+                            } else {
+                                codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                                if (result.error.isNotBlank()) codeOutput += "\n" + result.error
+                                if (result.passed) {
+                                    var rewardGranted = 0
+                                    authoredMission?.let { mission ->
+                                        val firstCompletion = sessionViewModel.completeMission(
+                                            mission.id, mission.rewardXp, mission.requiredClearance
+                                        )
+                                        if (firstCompletion) rewardGranted = mission.rewardXp
+                                        sessionViewModel.recordEvidence(
+                                            com.zeroday.cyberprotocol.core.model.EvidenceRecord(
+                                                id = "evidence_" + mission.id,
+                                                title = mission.title,
+                                                summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
+                                                source = "A.E.G.I.S. / Python evaluator " + mission.evaluatorId,
+                                                status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
+                                                missionId = mission.id
+                                            )
+                                        )
+                                    }
+                                    authoredMission?.let { mission ->
+                                        fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), sourceToVerify)
+                                    }
+                                    preferences.edit().putString("saved_code_$storyStage", sourceToVerify).apply()
+                                    sessionViewModel.saveCode(
+                                        "story_$storyStage", sourceToVerify, "code_checkpoint_story_$storyStage"
                                     )
-                                )
-                            }
-                            authoredMission?.let { mission ->
-                                fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
-                            }
-                            preferences.edit().putString("saved_code_$storyStage", code.text).apply()
-                            sessionViewModel.saveCode(
-                                "story_$storyStage", code.text, "code_checkpoint_story_$storyStage"
-                            )
-                            savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
-                            saveStage(storyStage + 1)
-                            debriefTitle = authoredMission?.title ?: "MISI SELESAI"
-                            debriefFeedback = result.feedback
-                            debriefXp = rewardGranted
-                            debriefClue = authoredMission?.nextClue.orEmpty()
-                            navigate(GameScreen.DEBRIEF)
-                        } else {
-                            codeFeedback = result.feedback.ifBlank {
-                                "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
+                                    savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
+                                    saveStage(storyStage + 1)
+                                    debriefTitle = authoredMission?.title ?: "MISI SELESAI"
+                                    debriefFeedback = result.feedback
+                                    debriefXp = rewardGranted
+                                    debriefClue = authoredMission?.nextClue.orEmpty()
+                                    navigate(GameScreen.DEBRIEF)
+                                } else {
+                                    codeFeedback = result.feedback.ifBlank {
+                                        "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
+                                    }
+                                }
                             }
                         }
                     }
