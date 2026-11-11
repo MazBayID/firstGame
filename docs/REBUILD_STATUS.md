@@ -154,6 +154,8 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Extracted Freya and NEXUS authored replies into a deterministic dialogue model with unit tests for recruitment-mystery continuity, beginner-support tone, live mission status, and offline-first messaging.
 
 - Replaced the read-only Operations summary with a mission-control screen showing verified mission count, campaign XP/rank/clearance, each mission's current state, and a contextual resume action for the currently active mission.
+- Replaced the static Analysis text dump with a searchable evidence workspace: status filters, case-insensitive search across title/summary/source/mission, newest-first ordering, and source/provenance cards. The view is intentionally read-only; evidence classification cannot be changed without an audited review workflow.
+- Added unit tests for evidence ordering, status isolation, combined search/filter behavior, and provenance-field search.
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
 
@@ -167,9 +169,9 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 ### Remaining before this can be called a complete game
 - Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state. Operations now has a dedicated mission-control surface, while broader hub and terminal state extraction remains.
-- Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations.
+- Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations. The Operations control screen can resume the story-authorized active mission; full terminal-session integration remains.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
-- Expand the current data-backed Database, Dossier, Analysis, and Operations surfaces into fully interactive, story-linked workspaces.
+- Expand the current data-backed Database and Dossier surfaces into fully interactive, story-linked workspaces. Analysis now supports evidence search/filter and Operations now supports active-mission resume; additional review workflows and data navigation remain.
 - Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
 - Add automated tests for previous-snapshot recovery, save-schema migration, and archive retention; expand clearance progression.
 - Finish ViewModel-driven state ownership and remaining App Hub interactions; implement complete Indonesian/English localization and the cinematic Campaign presentation overhaul; add audio/control settings when their runtime systems exist.
