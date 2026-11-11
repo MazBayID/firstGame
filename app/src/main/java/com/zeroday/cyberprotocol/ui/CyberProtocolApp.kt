@@ -419,7 +419,6 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                         }
                     }
                 },
-                onSubmit = { submitMission(authoredMission) },
                 onContinue = {
                     if (storyStage >= 15) {
                         saveStage(16)
@@ -927,7 +926,7 @@ private fun StoryScreen(
     hintLevel: Int, onRequestHint: () -> Unit,
     code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
     output: String, feedback: String, saveStatus: String, onSaveCode: () -> Unit,
-    onRun: () -> Unit, onSubmit: () -> Unit, onContinue: () -> Unit,
+    onRun: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
 ) {
     GamePage("KONTAK PERTAMA", "BAB 001  /  REKRUTMEN", onBack, onHub) {
@@ -1015,9 +1014,11 @@ private fun StoryScreen(
                     }
                 }
                 if (feedback.isNotBlank()) Text(feedback, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
-                CPPrimaryButton("KIRIM UNTUK VERIFIKASI", onSubmit)
-                Text("JALANKAN hanya menjalankan kode. SUBMIT memeriksa tujuan dan melanjutkan cerita hanya jika hasilnya terverifikasi.",
-                    color = CyberPalette.SteelGray, fontSize = 10.sp)
+                Text(
+                    "JALANKAN hanya mengeksekusi kode. Setelah berhasil, buka A.E.G.I.S. Browser > Mission Control untuk mengirim hasil ke evaluator.",
+                    color = CyberPalette.SteelGray,
+                    fontSize = 10.sp
+                )
             }
         } else {
             CPPrimaryButton(beat.button, onContinue)
