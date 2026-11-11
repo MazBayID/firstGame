@@ -18,6 +18,7 @@ object Campaign01Catalog {
             campaignId = CAMPAIGN_ID,
             chapterId = CHAPTER_ID,
             title = "Sinyal Pertama",
+            nextClue = "Fragmen berikutnya memakai nama variabel message. Perhatikan nama yang diminta sebelum menampilkan nilainya."
             briefing = "Freya memberikan satu fragmen pesan pada kanal latihan. Simpan fragmen itu ke variabel signal, lalu tampilkan nilainya agar A.E.G.I.S. dapat memverifikasi respons awalmu.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 9,
@@ -49,6 +50,7 @@ object Campaign01Catalog {
             campaignId = CAMPAIGN_ID,
             chapterId = CHAPTER_ID,
             title = "Verifikasi Identitas",
+            nextClue = "Dua sistem latihan menyimpan tanda terima untuk satu transmisi. Perhatikan sumber dan waktu pencatatannya."
             briefing = "Sinyal pertama membuka pesan verifikasi. Gunakan kembali konsep variabel dan output, tetapi simpan pesan kedua pada variabel message. Freya akan memeriksa hasilnya.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 10,
@@ -80,6 +82,7 @@ object Campaign01Catalog {
             campaignId = CAMPAIGN_ID,
             chapterId = CHAPTER_ID,
             title = "Audit Jejak Sistem",
+            nextClue = "Log bukan satu-satunya sumber. Sebuah inventaris terpisah menyimpan daftar referensi rekaman."
             briefing = "Periksa log latihan yang disediakan A.E.G.I.S. Hitung hanya baris yang memuat ERROR. Gunakan for dan if; jangan mengubah sumber data.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 8,
@@ -110,6 +113,7 @@ object Campaign01Catalog {
             campaignId = CAMPAIGN_ID,
             chapterId = CHAPTER_ID,
             title = "Inventaris Rekaman",
+            nextClue = "Referensi RX-14 muncul pada lebih dari satu catatan. Telusuri daftar tanpa menghilangkan posisi setiap item."
             briefing = "Sumber kedua menyediakan list bernama records. Hitung jumlah referensi yang tersedia menggunakan len(), simpan pada record_count, lalu tampilkan.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 11,
@@ -134,6 +138,7 @@ object Campaign01Catalog {
             campaignId = CAMPAIGN_ID,
             chapterId = CHAPTER_ID,
             title = "Penelusuran Referensi",
+            nextClue = "Indeks 0 dan 1 menunjuk dua catatan yang perlu dibaca berdampingan."
             briefing = "Gunakan enumerate() untuk menemukan baris yang memuat RX-14. Tampilkan indeks dan isi baris agar setiap temuan tetap memiliki posisi sumber.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 12,
@@ -161,6 +166,7 @@ object Campaign01Catalog {
             campaignId = CAMPAIGN_ID,
             chapterId = CHAPTER_ID,
             title = "Perbandingan Dua Sumber",
+            nextClue = "Selisih empat detik telah teramati. Waktu saja belum menjelaskan penyebabnya; tulis batas kesimpulanmu."
             briefing = "Ambil catatan pertama dan kedua dari list receipts dengan indexing. Simpan pada primary dan archive, lalu tampilkan keduanya tanpa mengubah sumber.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 13,
