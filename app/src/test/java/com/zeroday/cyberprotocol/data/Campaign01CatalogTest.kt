@@ -62,6 +62,7 @@ class Campaign01CatalogTest {
             assertTrue(mission.workspaceDirectory.startsWith("/A.E.G.I.S/missions/first_contact/"))
             assertTrue(mission.allowedFiles.none { it.contains("..") || it.startsWith("/") })
             assertTrue(mission.objectives.all { it.required })
+            assertTrue("Every campaign mission should carry a forward clue", !mission.nextClue.isNullOrBlank())
         }
 
         assertTrue(
