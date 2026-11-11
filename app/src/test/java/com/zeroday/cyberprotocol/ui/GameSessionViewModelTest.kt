@@ -48,17 +48,30 @@ class GameSessionViewModelTest {
     }
 
     @Test
+    fun freyaContactMustBeOpenedBeforeNexusCanBeUnlocked() {
+        val viewModel = GameSessionViewModel(MemoryRepository())
+        viewModel.unlockNexusContact()
+        assertFalse(viewModel.gameState.nexusContactUnlocked)
+
+        viewModel.openFreyaIntroduction()
+        assertTrue(viewModel.gameState.freyaContactOpened)
+        viewModel.unlockNexusContact()
+        assertTrue(viewModel.gameState.nexusContactUnlocked)
+        assertEquals("nexus_contact_unlocked", viewModel.gameState.lastCheckpoint)
+    }
+
+    @Test
     fun recruitmentCheckpointGrantsClearanceAndRecordsUnverifiedLead() {
         val viewModel = GameSessionViewModel(MemoryRepository())
-        viewModel.saveStoryBeat(7)
+        viewModel.saveStoryBeat(10)
 
-        assertEquals(7, viewModel.gameState.storyBeat)
+        assertEquals(10, viewModel.gameState.storyBeat)
         assertEquals(1, viewModel.gameState.clearance)
         assertTrue(viewModel.gameState.unlockedApps.contains("OPERATIONS"))
         assertEquals(
             "UNVERIFIED",
             viewModel.gameState.evidence.single { it.id == "transmission_timestamp_discrepancy" }.status.name
         )
-        assertEquals("story_beat_7", viewModel.gameState.lastCheckpoint)
+        assertEquals("story_beat_10", viewModel.gameState.lastCheckpoint)
     }
 }
