@@ -43,6 +43,12 @@ object Campaign01Story {
         StoryBeat("PERBANDINGAN DUA SUMBER", "OPERASI 001-D  /  SOURCE COMPARISON",
             "Dua catatan yang relevan kini berhasil ditemukan. Ambil catatan pertama dan kedua dari list receipts menggunakan indexing, simpan ke variabel primary dan archive, lalu tampilkan keduanya. Perhatikan sumber dan waktu yang tertulis. Tugas ini hanya memastikan bahwa dua catatan memang dapat dibandingkan—belum menentukan mengapa keduanya berbeda.",
             "BANDINGKAN CATATAN"),
+        StoryBeat("NORMALISASI WAKTU", "OPERASI 001-E  /  TIMESTAMP NORMALIZATION",
+            "Dua catatan kini dapat dibaca berdampingan, tetapi waktu masih berupa teks. A.E.G.I.S. menyediakan nilai detik sejak tengah malam dalam bentuk string angka dengan panjang yang seragam. Ubah dua nilai itu menjadi integer menggunakan int(), simpan sebagai first_time dan second_time, lalu hitung delta dengan urutan sumber yang sama. Nilai positif, nol, atau negatif hanya menunjukkan arah selisih pencatatan—bukan penyebabnya.",
+            "NORMALISASI TIMESTAMP"),
+        StoryBeat("UKURAN SELISIH", "OPERASI 001-F  /  DELTA VALIDATION",
+            "Laporan membutuhkan besar selisih tanpa bergantung pada sumber mana yang mencatat lebih dahulu. Gunakan abs() pada hasil pengurangan dua waktu yang telah diubah menjadi integer. Simpan nilai pada difference dan tampilkan. Nilai absolut membantu membandingkan jarak waktu; ia tidak menjelaskan apakah ada manipulasi, keterlambatan antrean, atau perbedaan sinkronisasi.",
+            "VALIDASI SELISIH"),
         StoryBeat("LAPORAN INVESTIGASI", "A.E.G.I.S.  /  FIRST CONTACT REVIEW",
             "Dua sumber mencatat referensi transmisi yang sama dengan waktu penerimaan berbeda empat detik. Selisih tersebut kini dapat ditunjukkan melalui catatan yang memiliki sumber dan indeks jelas. Temuan ini tetap belum membuktikan manipulasi. Perbedaan dapat berasal dari antrean pemrosesan, sinkronisasi jam, atau mekanisme pencatatan. Freya menerima laporanmu dan menandai anomali ini untuk pemeriksaan lanjutan setelah bukti tambahan tersedia. Kamu menyelesaikan orientasi First Contact bukan karena semua pertanyaan sudah terjawab, tetapi karena kamu telah belajar membedakan fakta, dugaan, dan hal yang belum diketahui.",
             "SELESAIKAN FIRST CONTACT")
@@ -54,7 +60,9 @@ object Campaign01Story {
         "count = 0\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\nprint(count)",
         "record_count = len(records)\nprint(record_count)",
         "for index, receipt in enumerate(receipts):\n    if \"RX-14\" in receipt:\n        print(index, receipt)",
-        "primary = receipts[0]\narchive = receipts[1]\nprint(primary)\nprint(archive)"
+        "primary = receipts[0]\narchive = receipts[1]\nprint(primary)\nprint(archive)",
+        "first_time = int(receipt_seconds[0])\nsecond_time = int(receipt_seconds[1])\ndelta = second_time - first_time\nprint(delta)",
+        "difference = abs(int(receipt_seconds[1]) - int(receipt_seconds[0]))\nprint(difference)"
     )
 
     fun codeTemplateForStage(stage: Int): String = when (stage) {
@@ -64,6 +72,8 @@ object Campaign01Story {
         9 -> codeTemplates[3]
         11 -> codeTemplates[4]
         12 -> codeTemplates[5]
+        13 -> codeTemplates[6]
+        14 -> codeTemplates[7]
         else -> ""
     }
 }
