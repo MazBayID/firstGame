@@ -40,16 +40,22 @@ import kotlinx.coroutines.withContext
 fun EntryLoadingScreen(
     ready: Boolean,
     error: String?,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    reducedMotion: Boolean = false
 ) {
     val context = LocalContext.current
     val bitmapState = remember { mutableStateOf<Bitmap?>(null) }
     var currentBitmap by bitmapState
     var frameIndex by remember { mutableIntStateOf(1) }
 
-    LaunchedEffect(ready) {
+    LaunchedEffect(ready, reducedMotion) {
+        var staticFrameLoaded = false
         while (!ready) {
-            val index = frameIndex
+            if (reducedMotion && staticFrameLoaded) {
+                delay(120L)
+                continue
+            }
+            val index = if (reducedMotion) 1 else frameIndex
             val nextBitmap = withContext(Dispatchers.IO) {
                 val name = "loading/frame_${index.toString().padStart(3, '0')}.webp"
                 runCatching {
@@ -59,13 +65,14 @@ fun EntryLoadingScreen(
             if (nextBitmap != null) {
                 val previous = currentBitmap
                 currentBitmap = nextBitmap
-                frameIndex = if (index >= FRAME_COUNT) 1 else index + 1
+                if (!reducedMotion) frameIndex = if (index >= FRAME_COUNT) 1 else index + 1
+                else staticFrameLoaded = true
                 withFrameNanos { }
                 previous?.recycle()
             } else {
                 frameIndex = if (index >= FRAME_COUNT) 1 else index + 1
             }
-            delay(FRAME_DELAY_MS)
+            delay(if (reducedMotion) 120L else FRAME_DELAY_MS)
         }
     }
 
