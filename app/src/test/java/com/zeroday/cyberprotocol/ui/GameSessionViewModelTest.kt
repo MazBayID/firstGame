@@ -33,6 +33,21 @@ class GameSessionViewModelTest {
     }
 
     @Test
+    fun openingRecruitmentInvitationIsPersistedAndIdempotent() {
+        val viewModel = GameSessionViewModel(MemoryRepository())
+
+        viewModel.openRecruitmentInvitation()
+
+        assertTrue(viewModel.gameState.recruitmentNotificationOpened)
+        assertEquals(2, viewModel.gameState.storyBeat)
+        assertEquals("recruitment_invitation_opened", viewModel.gameState.lastCheckpoint)
+
+        viewModel.openRecruitmentInvitation()
+        assertEquals(2, viewModel.gameState.storyBeat)
+        assertEquals("recruitment_invitation_opened", viewModel.gameState.lastCheckpoint)
+    }
+
+    @Test
     fun recruitmentCheckpointGrantsClearanceAndRecordsUnverifiedLead() {
         val viewModel = GameSessionViewModel(MemoryRepository())
         viewModel.saveStoryBeat(7)
