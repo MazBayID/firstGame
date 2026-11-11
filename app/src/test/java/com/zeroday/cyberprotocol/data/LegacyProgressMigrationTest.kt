@@ -41,6 +41,14 @@ class LegacyProgressMigrationTest {
     }
 
     @Test
+    fun completedPreviousChapterUnlocksTheNewTimestampFollowUpMissions() {
+        assertEquals(13, LegacyProgressMigration.migrateExpandedChapterBeat(4, 14))
+        assertEquals(13, LegacyProgressMigration.migrateExpandedChapterBeat(3, 14))
+        assertEquals(12, LegacyProgressMigration.migrateExpandedChapterBeat(4, 12))
+        assertEquals(16, LegacyProgressMigration.migrateExpandedChapterBeat(5, 16))
+    }
+
+    @Test
     fun legacyProgressIsClampedToCampaignBounds() {
         assertEquals(0, LegacyProgressMigration.fromStoryBeat(-5).storyBeat)
         assertEquals(7, LegacyProgressMigration.fromStoryBeat(99).storyBeat)
