@@ -87,7 +87,7 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 ## Current status
 
 **Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
-**Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, and a ViewModel-owned campaign state/progression layer exist; broader UI state/navigation extraction and storage recovery tests remain.  
+**Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, a ViewModel-owned campaign state/progression layer, and isolated snapshot serialization with codec regression tests exist; broader UI state/navigation extraction and Android storage recovery tests remain.  
 **Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
 **Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has fourteen authored story beats and eight evaluated Python missions, graduated hints, debriefs, contact-list messaging, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
 **Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
@@ -111,6 +111,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Added an evidence lifecycle use case for idempotent recording and explicit status updates.
 - Added deterministic rank thresholds for the approved rank ladder and story-gated App Hub unlock rules; legacy story-stage migration now restores the matching app access.
 - Added a previous-good-snapshot backup and corrupt-snapshot preservation path for local campaign save recovery.
+- Extracted the versioned GameState JSON codec from Android storage and added regression tests for complete state/evidence round trips, legacy defaults, unknown evidence statuses, and unsupported future schemas.
 - Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; added Profile, Archives, Achievements, and a persistent reduced-motion setting to the main menu.
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
 - Redesigned Secure Messenger toward a familiar smartphone chat experience with searchable conversations, contact previews, distinct incoming/outgoing bubbles, and predefined quick replies.
