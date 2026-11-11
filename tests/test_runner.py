@@ -91,6 +91,13 @@ class RunnerTests(unittest.TestCase):
         ))
         self.assertIn("Invalid mission input variable", result["error"])
 
+    def test_mission_input_lists_are_read_only(self):
+        result = json.loads(runner.run_code_json(
+            'events[0] = "CHANGED"\\nprint(events[0])',
+            "{}", "[]", json.dumps({"events": ["ERROR: original"]})
+        ))
+        self.assertIn("does not support item assignment", result["error"])
+
     def test_mission_workspace_reads_only_allowlisted_files(self):
         source = 'print(read_text("briefing.txt"))'
         result = json.loads(runner.run_code_json(
