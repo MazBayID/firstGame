@@ -238,6 +238,15 @@ def _concept_check(source, mission_id):
                                  and any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
                                          and node.func.id == "len" for node in ast.walk(tree))):
         return "Use len(records), assign the result to record_count, and display it."
+    if mission_id == 12 and not (_has_node(tree, ast.For)
+                                 and _has_node(tree, ast.If)
+                                 and any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                                         and node.func.id == "enumerate" for node in ast.walk(tree))):
+        return "Use for, enumerate(), and if to filter the receipt list while keeping each source index."
+    if mission_id == 13 and not (_has_assigned_name(tree, "primary")
+                                 and _has_assigned_name(tree, "archive")
+                                 and sum(isinstance(node, ast.Subscript) for node in ast.walk(tree)) >= 2):
+        return "Use list indexing to assign receipts[0] to primary and receipts[1] to archive."
     return ""
 
 
@@ -260,6 +269,18 @@ MISSIONS = {
         ({"records": ["RX-14", "RX-19", "RX-21"]}, "3"),
         ({"records": ["RX-14"]}, "1"),
         ({"records": []}, "0"),
+    ]},
+    12: {"cases": [
+        ({"receipts": ["A.E.G.I.S. | RX-14 | 09:41:12", "ARCHIVE | RX-14 | 09:41:16"]},
+         "0 A.E.G.I.S. | RX-14 | 09:41:12\n1 ARCHIVE | RX-14 | 09:41:16"),
+        ({"receipts": ["A.E.G.I.S. | RX-19 | 10:05:02", "ARCHIVE | RX-14 | 10:05:06", "CACHE | RX-14 | 10:05:07"]},
+         "1 ARCHIVE | RX-14 | 10:05:06\n2 CACHE | RX-14 | 10:05:07"),
+    ]},
+    13: {"cases": [
+        ({"receipts": ["A.E.G.I.S. | RX-14 | 09:41:12", "ARCHIVE | RX-14 | 09:41:16"]},
+         "A.E.G.I.S. | RX-14 | 09:41:12\nARCHIVE | RX-14 | 09:41:16"),
+        ({"receipts": ["A.E.G.I.S. | RX-19 | 10:05:02", "ARCHIVE | RX-19 | 10:05:02"]},
+         "A.E.G.I.S. | RX-19 | 10:05:02\nARCHIVE | RX-19 | 10:05:02"),
     ]},
 }
 
