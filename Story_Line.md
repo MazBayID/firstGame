@@ -71,7 +71,7 @@ Sedikit demi sedikit, sesuatu yang awalnya terasa asing mulai dapat dipahami. Pe
 
 ## 3.4 Pintu Menuju A.E.G.I.S.
 
-Setelah pengenalan awal, Freya mengarahkan pemain ke situs internal A.E.G.I.S. melalui sebuah tautan. Di sana pemain menerima kredensial fiktif dan memasuki intranet organisasi.
+Setelah pengenalan awal, Freya mengarahkan pemain ke situs internal A.E.G.I.S. melalui sebuah tautan. Ia memberikan ID personel fiktif RECRUIT-014 dan kode akses FIRSTCONTACT. Pemain memasukkan keduanya untuk memasuki intranet organisasi.
 
 Halaman-halaman internal memperlihatkan bahwa A.E.G.I.S. jauh lebih besar daripada percakapan singkat yang membawa pemain ke sana. Ada catatan operasi, arsip, laporan, dan informasi yang hanya dapat dilihat oleh anggota dengan kewenangan tertentu.
 
