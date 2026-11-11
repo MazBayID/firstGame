@@ -55,7 +55,12 @@ internal class GameSessionViewModel(
 
     fun openFreyaIntroduction() {
         updateState { current ->
-            if (current.freyaContactOpened) current
+            // Freya's introduction is a story-gated notification, not an inbox shortcut.
+            // It may only be acknowledged after the first mission has actually become active.
+            if (current.freyaContactOpened ||
+                current.storyBeat < 4 ||
+                current.activeMissionId != "first_contact.signal"
+            ) current
             else current.copy(freyaContactOpened = true, lastCheckpoint = "freya_introduction_opened")
         }
     }
