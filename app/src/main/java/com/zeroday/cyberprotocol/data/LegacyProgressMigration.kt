@@ -7,6 +7,10 @@ import com.zeroday.cyberprotocol.domain.usecase.ProgressionRules
 
 /** Converts the previous story_stage preference into the versioned campaign model. */
 internal object LegacyProgressMigration {
+    /** Reopens the two new follow-up missions for players who completed the previous 12-beat chapter. */
+    fun migrateExpandedChapterBeat(schemaVersion: Int, storyBeat: Int): Int =
+        if (schemaVersion < 5 && storyBeat >= 14) 13 else storyBeat
+
     fun fromStoryBeat(rawStoryBeat: Int): GameState {
         val beat = rawStoryBeat.coerceIn(0, 7)
         val completed = buildSet {
