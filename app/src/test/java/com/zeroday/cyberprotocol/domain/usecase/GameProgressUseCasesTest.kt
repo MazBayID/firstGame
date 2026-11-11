@@ -127,7 +127,11 @@ class GameProgressUseCasesTest {
             ProgressionRules.unlockedAppsForStoryBeat(3)
         )
         assertEquals(
-            setOf("MESSENGER", "DATABASE", "DOSSIER", "TERMINAL", "ANALYSIS", "OPERATIONS"),
+            setOf("MESSENGER", "DATABASE", "DOSSIER", "BROWSER", "TERMINAL"),
+            ProgressionRules.unlockedAppsForStoryBeat(4)
+        )
+        assertEquals(
+            setOf("MESSENGER", "DATABASE", "DOSSIER", "BROWSER", "TERMINAL", "ANALYSIS", "OPERATIONS"),
             ProgressionRules.unlockedAppsForStoryBeat(7)
         )
     }
