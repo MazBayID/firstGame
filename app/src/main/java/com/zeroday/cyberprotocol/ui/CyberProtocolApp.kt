@@ -96,7 +96,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
 
-    var navigation by rememberSaveable(saver = GameNavigationState.Saver) {
+    var navigation by rememberSaveable(stateSaver = GameNavigationState.Saver) {
         mutableStateOf(GameNavigationState())
     }
     val screen = navigation.currentScreen
