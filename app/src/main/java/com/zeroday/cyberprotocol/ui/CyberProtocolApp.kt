@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -454,10 +455,10 @@ private fun MessengerScreen(onBack: () -> Unit, reply: String, onReply: (String)
             }
             ChatBubble("Freya Knox", "Good. Your recruitment is official. I will supervise your initial training and make sure you understand every system you are authorized to use.", false)
             ChatBubble("Freya Knox", "I have reviewed your file. I see potential. You, on the other hand, probably see a very long list of things you do not know yet. That is a perfectly reasonable assessment.", false)
-            ChatBubble("Freya Knox", "Do not worry. I am exceptionally good at this. Some would say astonishingly good. I would say that, actually.", false)
             if (reply.isNotBlank()) {
                 ChatBubble("YOU", reply, true)
                 ChatBubble("Freya Knox", "Acknowledged. We will take this one operation at a time. Questions are welcome; pretending to understand is not required.", false)
+                ChatBubble("Freya Knox", "Excellent. You have chosen a mentor of extraordinary brilliance. I recommend writing that down before I become modest again.", false)
             }
             listOf("Understood. Where do we begin?", "I have a lot to learn.", "Why did you choose me?").forEach { choice ->
                 OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
@@ -501,6 +502,21 @@ private fun TerminalScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = { onExecute() }))
                 Button(onClick = onExecute, enabled = !busy) { Text(if (busy) "…" else "RUN") }
+            }
+            val availableCommands = listOf("help", "pwd", "ls", "cd", "cat", "mkdir", "touch", "rm", "echo", "whoami", "python", "clear")
+            val query = command.trim().lowercase()
+            val suggestions = if (query.isBlank()) listOf("help", "pwd", "ls", "whoami")
+                else availableCommands.filter { it.startsWith(query) }.take(5)
+            if (suggestions.isNotEmpty()) {
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    suggestions.forEach { suggestion ->
+                        OutlinedButton(onClick = { onCommandChange(suggestion) },
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)) {
+                            Text(suggestion, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
+                        }
+                    }
+                }
             }
             Text("Linux-like commands • isolated virtual filesystem • no Android shell access",
                 color = CyberPalette.SteelGray, fontSize = 10.sp)
