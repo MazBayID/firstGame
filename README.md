@@ -1,65 +1,63 @@
 # CYBER PROTOCOL
 
-**Cyber Intelligence RPG · Educational Programming Game**
+**Cinematic Cyber-Intelligence RPG · Android-first · Educational Programming Game**
 
-Cyber Protocol is an Android-first, story-driven programming RPG. The player begins as an ordinary person and is gradually recruited into a fictional intelligence organization headquartered in the Philippines. Through fictional investigations across Southeast Asia, the player learns programming by writing, running, debugging, and submitting real code.
+Cyber Protocol is a story-driven Android RPG in which an ordinary person is unexpectedly recruited into A.E.G.I.S., a fictional independent intelligence organization headquartered in Manila. The player learns programming and technical skills by using them to investigate fictional cases, examine evidence, and complete authorized simulated operations.
 
-Programming is core gameplay—not a quiz attached to a story.
-
-## Design pillars
-- **Story with consequences:** fictional cases connect into a larger transnational network.
-- **Learn by doing:** LEARN explains, PRACTICE invites experimentation, and MISSION asks players to solve story-driven coding challenges.
-- **Real execution:** Python code runs locally in the training environment.
-- **Meaningful evaluation:** RUN only executes; SUBMIT checks mission requirements and programming concepts.
-- **Progressive growth:** technical competence, organizational trust, and character relationships.
-- **Expandable architecture:** Python is the first language, not a permanent architectural limit.
-- **Safety first:** fictional simulations only. The embedded runner is a teaching prototype, not a hardened hostile-code sandbox.
+Programming is part of the world and the gameplay—not a detached course or a quiz with a story skin.
 
 ## Story
 
-You are not a trained operative. You are an ordinary person whose device receives a message from an unknown sender—one containing information that should never have reached you.
+A device you rarely use receives an encrypted message from an unknown sender. The sender claims to represent A.E.G.I.S. and appears to know something about you. The organization is investigating anomalies in records, financial trails, and disconnected systems. Before the player can understand the larger mystery, one question must be answered:
 
-The sender claims to represent **A.E.G.I.S.**, an independent intelligence organization headquartered in Manila. They have been following a trail of anomalies: records that do not match, financial traces that disappear, and systems whose answers seem correct until they are compared.
+**Why were you contacted?**
 
-Your first task is not to save the world. It is to answer a simple question: **why were you contacted?**
+The player begins Chapter 001 — FIRST CONTACT with a guided introduction to A.E.G.I.S., a classified recruitment file, and two progressive Python decryption exercises. After recruitment, the player is assigned **Freya Knox**, a highly capable mentor whose outrageous confidence and playful teaching style gradually become part of the team's dynamic.
 
-As you enter A.E.G.I.S., you are assigned a primary mentor: a brilliant, easygoing, and unexpectedly goofy agent whose decision to recruit a complete programming beginner for an urgent operation raises more than a few eyebrows. They insist there is a reason—and that they have seen potential in you that you have not seen in yourself. NEXUS, the organization's AI communication system, keeps you connected, while specialists step in when an operation demands their expertise. You will examine dossiers, question evidence, uncover connections, and use programming as a practical tool—not as a detached classroom exercise.
+## Core design
 
-Every case reveals another fragment. Every mission leaves a clue. And the deeper you investigate, the harder it becomes to tell whether the information in front of you is incomplete by accident—or arranged that way.
+- **Story-driven campaign:** cinematic narrative beats and progressively unlocked operations.
+- **First-person player identity:** the player is the operative; no player-avatar portrait is required.
+- **In-world learning:** Python concepts are introduced when the story gives the player a reason to use them.
+- **Real local Python execution:** CPython 3.13 through Chaquopy on Android.
+- **Separate Run and Submit:** RUN executes code; SUBMIT evaluates the current objective.
+- **In-game terminal:** recognizable Linux-like commands operate inside a game-managed virtual filesystem, never the Android host shell.
+- **Two workspaces:** persistent Personal Workspace and mission-scoped working areas.
+- **A.E.G.I.S. application hub:** Secure Messenger, Terminal, Intelligence Database, Dossier, Analysis, and Operations unlock progressively.
+- **Offline-first foundation:** the opening campaign flow and core training do not require a server or external AI API.
+- **Safety boundary:** fictional cases and controlled training data only. The current Python runner is a restricted teaching prototype, not a hardened sandbox for hostile code.
 
-**Cyber Protocol is an intelligence RPG, not a sword-and-sorcery adventure.** Your growth comes from technical skill, investigation, trust, judgment, relationships, and the consequences of your decisions.
+## Current playable foundation
 
-*The message was meant for someone. The question is why it found you.*
+The current reconstruction establishes the Android app shell and an initial vertical slice:
 
-### Story and design references
+- Classic mobile-game-inspired main menu with the provisional dark-cyan headquarters identity.
+- Campaign 01 — THE RECRUITMENT and Chapter 001 — FIRST CONTACT.
+- Persistent story checkpoints and two guided Python tasks using variables and `print()`.
+- A secure-message interface introducing Freya Knox.
+- Six-app A.E.G.I.S. hub with progressive access states.
+- Local virtual filesystem with basic Linux-like file and directory commands.
+- Python script execution from files saved in the virtual workspace.
+- Existing UI artwork and emblem retained in the Android resource folders.
 
-- [Story Line — Narrative Blueprint](Story_Line.md): campaign direction, story mysteries, character roles, mission structure, and continuity rules.
-- [Game Concept — Design Bible](GAME_CONCEPT.md): canonical product vision, gameplay, UI, learning, progression, and development principles.
+Several systems remain foundational prototypes. The full campaign, complete operational simulations, granular filesystem permissions, Python-to-virtual-filesystem APIs, robust execution isolation, and final cinematic art are not yet complete. See [Rebuild Status](docs/REBUILD_STATUS.md).
 
-## Visual foundation
-- Cinematic Red Intelligence art direction: Obsidian / Charcoal / Crimson palette with anime character artwork direction.
-- Material 3 semantic color tokens and reusable Compose UI components.
-- Vector emblem and navigation icon starter set; runtime asset pipeline documented in docs/ASSET_PIPELINE.md.
-- Visual rules documented in docs/VISUAL_IDENTITY.md.
+## Canonical design references
 
-## Reconstructed foundation
-- Kotlin, Jetpack Compose, Material 3, Android-first.
-- CPython 3.13 through Chaquopy.
-- Separate models, repositories, domain rules, execution adapter, and UI.
-- LEARN, PRACTICE, MISSION entry points.
-- Separate Run and Submit actions.
-- Chapter 01 content loaded from JSON assets.
-- Local progress and one-time mission rewards.
-- Python unit tests and GitHub Actions Android build.
+- [GAME_CONCEPT.md](GAME_CONCEPT.md) — canonical product and game-design bible.
+- [Story_Line.md](Story_Line.md) — narrative blueprint and continuity reference.
+- [Visual Identity](docs/VISUAL_IDENTITY.md) — approved visual direction.
+- [Asset Catalog](docs/ASSET_CATALOG.md) — semantic UI asset registry.
 
 ## Build
-Requirements: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, Python 3.13.
+
+Requirements: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13 for the standalone runner tests.
 
 ```bash
 python -m unittest discover -s tests -v
 gradle --no-daemon assembleDebug
 ```
 
-APK: `app/build/outputs/apk/debug/app-debug.apk`.
+APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
-See [docs/PROJECT_BIBLE.md](docs/PROJECT_BIBLE.md) for design, story, architecture, security, and roadmap. The current scope is a modular playable foundation—not the complete v1.0 campaign.
+The project is an evolving game foundation, not a claim that the complete v1.0 campaign is already implemented.
