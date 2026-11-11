@@ -814,7 +814,10 @@ The first time the player opens the Campaign, the game must begin with a restrai
 - After a deliberate pause, display a notification card styled like an ordinary smartphone notification. It should feel as if a normal phone has just received a message, not like a game mission banner or a dramatic classified-system alert.
 - The notification is the opening story hook: familiar and understated on the surface, mysterious in context.
 - Use a subtle arrival animation and optional restrained notification sound/haptic feedback where supported and enabled. The notification must remain readable and tappable.
-- Tapping or continuing from the notification leads naturally into the recruitment invitation and the approved opening story sequence.
+- The player must explicitly tap the notification card to open it. Merely displaying the notification must not advance the story or open the message automatically.
+- When tapped, the notification must automatically launch the in-game **Pesan Aman / Secure Messenger** and open the specific recruitment conversation directly, rather than taking the player to the generic inbox or a separate prologue screen.
+- The recruitment invitation is displayed as the first message in that conversation. The player can then read and continue the conversation through the normal Messenger interface.
+- The transition from the black notification scene into Messenger should feel seamless, as though the player tapped a real phone notification. Preserve the campaign's first-entry state if the app is interrupted during this transition, so the sequence can resume safely without duplicating the invitation or skipping the player's tap.
 - This is an in-game cinematic simulation only. It must not request Android notification permission, create a real system notification, or imply access to the player's real messages or device data.
 - Play the opening sequence only on the first campaign entry for a new story. Persist its completion so returning to Campaign resumes the campaign normally and does not replay the surprise notification unexpectedly.
 - Do not insert a separate prologue titled or framed as **"Pengirim tidak dikenal" / "Unknown Sender"**. The mysterious quality should come from the ordinary-looking notification and the content/context of the invitation, not from an extra unknown-sender prologue.
