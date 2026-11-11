@@ -129,6 +129,61 @@ object Campaign01Catalog {
                 MissionHint(3, "Tampilkan hasilnya dengan print(record_count).")
             )
         )
+        MissionDefinition(
+            id = "first_contact.trace",
+            campaignId = CAMPAIGN_ID,
+            chapterId = CHAPTER_ID,
+            title = "Penelusuran Referensi",
+            briefing = "Gunakan enumerate() untuk menemukan baris yang memuat RX-14. Tampilkan indeks dan isi baris agar setiap temuan tetap memiliki posisi sumber.",
+            kind = MissionKind.STORY_CODE,
+            evaluatorId = 12,
+            rewardXp = 55,
+            requiredClearance = 1,
+            workspaceDirectory = "/A.E.G.I.S/missions/first_contact/trace",
+            allowedFiles = setOf("briefing.txt", "trace.py"),
+            writableFiles = setOf("trace.py"),
+            runtimeVariables = mapOf("receipts" to listOf(
+                "A.E.G.I.S. | RX-14 | 09:41:12",
+                "ARCHIVE | RX-14 | 09:41:16"
+            )),
+            objectives = listOf(
+                MissionObjective("enumerate_receipts", "Telusuri daftar", "Gunakan enumerate(receipts) untuk memperoleh indeks dan isi setiap item."),
+                MissionObjective("filter_reference", "Pilih referensi", "Gunakan if untuk hanya menampilkan baris yang memuat RX-14.")
+            ),
+            hints = listOf(
+                MissionHint(1, "Bentuk dasarnya: for index, receipt in enumerate(receipts):"),
+                MissionHint(2, "Di dalam perulangan, periksa apakah \"RX-14\" ada di dalam receipt."),
+                MissionHint(3, "Gunakan print(index, receipt) saat kondisi benar.")
+            )
+        ),
+        MissionDefinition(
+            id = "first_contact.compare",
+            campaignId = CAMPAIGN_ID,
+            chapterId = CHAPTER_ID,
+            title = "Perbandingan Dua Sumber",
+            briefing = "Ambil catatan pertama dan kedua dari list receipts dengan indexing. Simpan pada primary dan archive, lalu tampilkan keduanya tanpa mengubah sumber.",
+            kind = MissionKind.STORY_CODE,
+            evaluatorId = 13,
+            rewardXp = 60,
+            requiredClearance = 1,
+            workspaceDirectory = "/A.E.G.I.S/missions/first_contact/compare",
+            allowedFiles = setOf("briefing.txt", "compare.py"),
+            writableFiles = setOf("compare.py"),
+            runtimeVariables = mapOf("receipts" to listOf(
+                "A.E.G.I.S. | RX-14 | 09:41:12",
+                "ARCHIVE | RX-14 | 09:41:16"
+            )),
+            objectives = listOf(
+                MissionObjective("read_primary", "Ambil catatan utama", "Gunakan receipts[0] dan simpan pada variabel primary."),
+                MissionObjective("read_archive", "Ambil catatan arsip", "Gunakan receipts[1] dan simpan pada variabel archive."),
+                MissionObjective("display_sources", "Tampilkan kedua sumber", "Tampilkan primary dan archive secara berurutan.")
+            ),
+            hints = listOf(
+                MissionHint(1, "Index list dimulai dari 0, jadi item pertama adalah receipts[0]."),
+                MissionHint(2, "Gunakan receipts[1] untuk item kedua."),
+                MissionHint(3, "Simpan masing-masing item sebelum memanggil print().")
+            )
+        ),
     )
 
     private val byId = missions.associateBy { it.id }
