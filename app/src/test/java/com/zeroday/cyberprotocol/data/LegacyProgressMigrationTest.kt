@@ -10,6 +10,8 @@ class LegacyProgressMigrationTest {
     fun openingStoryStagesRestoreOnlyCompletedMissions() {
         val beforeFirstTask = LegacyProgressMigration.fromStoryBeat(4)
         assertTrue(beforeFirstTask.completedMissionIds.isEmpty())
+        assertTrue(!beforeFirstTask.freyaContactOpened)
+        assertTrue(!beforeFirstTask.nexusContactUnlocked)
         assertEquals(0, beforeFirstTask.experience)
 
         val afterFirstTask = LegacyProgressMigration.fromStoryBeat(5)
