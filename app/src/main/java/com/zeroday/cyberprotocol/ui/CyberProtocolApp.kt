@@ -161,6 +161,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         val previousState = gameStateRepository.load()
         gameStateRepository.save(previousState.copy(
             storyBeat = storyStage,
+            unlockedApps = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.unlockedAppsForStoryBeat(storyStage),
             lastCheckpoint = "story_beat_$storyStage"
         ))
         currentGameState = gameStateRepository.load()
@@ -354,6 +355,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         }
         GameScreen.APP_HUB -> AppHubScreen(
             storyStage = storyStage,
+            gameState = currentGameState,
             onClose = { screenName = returnScreen },
             onOpen = { target -> screenName = target.name }
         )
@@ -656,26 +658,26 @@ private fun StoryScreen(
 }
 
 @Composable
-private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
+private fun AppHubScreen(storyStage: Int, gameState: GameState, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
     GamePage("PUSAT APLIKASI", "PERANGKAT AMAN A.E.G.I.S.", onClose, null) {
         GamePanel {
             Text("APLIKASI YANG DIIZINKAN", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
             Text("Pilih aplikasi. Menutupnya akan mengembalikanmu ke operasi sebelumnya.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         }
-        data class HubApp(val title: String, val icon: Int, val target: GameScreen, val unlockAt: Int)
+        data class HubApp(val id: String, val title: String, val icon: Int, val target: GameScreen)
         val apps = listOf(
-            HubApp("PESAN AMAN", CyberAssets.connection, GameScreen.MESSENGER, 7),
-            HubApp("TERMINAL", CyberAssets.terminal, GameScreen.TERMINAL, 4),
-            HubApp("DATABASE INTELIJEN", CyberAssets.database, GameScreen.DATABASE, 3),
-            HubApp("BERKAS PERSONEL", CyberAssets.document, GameScreen.DOSSIER, 3),
-            HubApp("ANALISIS", CyberAssets.dataAnalysis, GameScreen.ANALYSIS, 5),
-            HubApp("OPERASI", CyberAssets.investigation, GameScreen.OPERATIONS, 7)
+            HubApp("MESSENGER", "PESAN AMAN", CyberAssets.connection, GameScreen.MESSENGER),
+            HubApp("TERMINAL", "TERMINAL", CyberAssets.terminal, GameScreen.TERMINAL),
+            HubApp("DATABASE", "DATABASE INTELIJEN", CyberAssets.database, GameScreen.DATABASE),
+            HubApp("DOSSIER", "BERKAS PERSONEL", CyberAssets.document, GameScreen.DOSSIER),
+            HubApp("ANALYSIS", "ANALISIS", CyberAssets.dataAnalysis, GameScreen.ANALYSIS),
+            HubApp("OPERATIONS", "OPERASI", CyberAssets.investigation, GameScreen.OPERATIONS)
         )
         apps.chunked(2).forEach { rowApps ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 rowApps.forEach { app ->
-                    val unlocked = storyStage >= app.unlockAt
+                    val unlocked = app.id in gameState.unlockedApps
                     Surface(onClick = { if (unlocked) onOpen(app.target) }, modifier = Modifier.weight(1f),
                         color = if (unlocked) MaterialTheme.colorScheme.surface else Color(0xFF101216),
                         shape = RoundedCornerShape(12.dp),
