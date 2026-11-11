@@ -26,7 +26,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - A game-managed virtual filesystem with local persistence.
 - A Python execution adapter and AST-restricted teaching runner.
 - A code editor with basic Python syntax highlighting and editing helpers.
-- A campaign/story-stage flow, basic code RUN/SUBMIT actions, and a six-app hub.
+- A campaign/story-stage flow, code RUN/SUBMIT actions, and a seven-app hub including the offline A.E.G.I.S. Browser.
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
 - GitHub Actions with a test-only Android Tests workflow and a separate permanently signed Release APK workflow for device testing.
 
