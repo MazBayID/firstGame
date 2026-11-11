@@ -38,7 +38,7 @@ internal data class GameNavigationState(
     }
 
     companion object {
-        val Saver: Saver<GameNavigationState, List<String>> = listSaver(
+        val Saver: Saver<GameNavigationState, Any> = listSaver(
             save = { listOf(it.currentScreen.name, it.hubReturnScreen.name) },
             restore = {
                 GameNavigationState(
