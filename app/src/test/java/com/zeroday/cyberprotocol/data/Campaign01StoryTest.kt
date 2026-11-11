@@ -13,6 +13,7 @@ class Campaign01StoryTest {
         assertEquals("LAPORAN INVESTIGASI", Campaign01Story.beats.last().title)
         assertFalse(Campaign01Story.beats.any { it.title.contains("PENGIRIM", ignoreCase = true) })
         assertFalse(Campaign01Story.beats[2].body.contains("Freya", ignoreCase = true))
+        assertFalse(Campaign01Story.beats[4].body.contains("perintah perekrutan", ignoreCase = true))
         assertTrue(Campaign01Story.beats[5].body.contains("dua catatan penerimaan"))
         assertTrue(Campaign01Story.beats.last().body.contains("belum membuktikan manipulasi"))
     }
