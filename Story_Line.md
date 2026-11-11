@@ -304,6 +304,19 @@ Every case should follow a coherent investigative rhythm:
 
 Not every mission needs all ten stages as separate screens. The rhythm should guide pacing, not force repetitive UI.
 
+## 10.1 Hybrid Mission Evaluation
+
+Evaluate each operation according to the kind of work the player is asked to do:
+
+- **Technical tasks:** check required behavior, execution results, relevant concept use, and stated constraints. Accept different valid implementations unless the task specifically teaches a required syntax form.
+- **Investigative tasks:** check whether conclusions are supported by the case evidence and whether the player distinguishes confirmed facts from inference or uncertainty. Accept different defensible wording and conclusions when they satisfy the evidence criteria.
+- **Combined tasks:** assess technical performance and investigative reasoning separately. Correct code does not automatically make an interpretation reliable, and a plausible interpretation does not make a failed technical task successful.
+- **Debrief:** explain what the player did well, what remains unsupported or incorrect, and how to improve. Use criteria defined for the operation rather than arbitrary judgment.
+- **Authored outcomes:** mission completion and story progression must be determined by explicit, testable criteria authored for the mission. They must not depend on an AI service.
+
+Keep RUN (execute and inspect) separate from SUBMIT (evaluate against mission criteria). A run is not itself a submission or a guarantee of mission completion.
+
+
 # 11. Code and Story Clues
 
 Every mission should contain a code- or syntax-based clue that points toward the next mission, as established in `GAME_CONCEPT.md`.
