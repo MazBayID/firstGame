@@ -191,7 +191,7 @@ The mentor is a recurring character—not a tutorial menu, mission dispatcher, o
 
 ## 7.1 Role and personality
 
-The primary mentor is **a highly intelligent, relaxed, playful, and very goofy woman**. Her humor can be so unexpected or absurd that other agents sometimes wonder whether she is taking the situation seriously.
+The primary mentor is **Freya Knox, a highly intelligent, relaxed, playful, and very goofy woman**. Her humor can be so unexpected or absurd that other agents sometimes wonder whether she is taking the situation seriously.
 
 That first impression is deliberately misleading: she is exceptionally capable and understands the work, the evidence, and the risks.
 
@@ -231,7 +231,7 @@ The mentor-player relationship may develop through:
 
 Do not reduce the relationship to a simplistic meter that dictates every line. Use dialogue, remembered events, changed behavior, optional conversations, and consequential scenes. Romance is not assumed or required.
 
-The mentor's name, appearance, age, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. Her gender, broad personality direction, humor-as-teaching approach, and recruitment rationale above are established story decisions.
+The mentor's appearance, age, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. Her gender, broad personality direction, humor-as-teaching approach, and recruitment rationale above are established story decisions.
 
 # 8. Specialists and Recurring Characters
 
