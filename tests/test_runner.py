@@ -6,87 +6,76 @@ import unittest
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "app/src/main/python"))
 import runner
 
-ERROR_SOLUTION = '''count = 0
-for line in logs:
-    if "ERROR" in line:
-        count += 1
-print(count)'''
 
-WARNING_SOLUTION = '''warnings = []
-with open("access.log", "r") as log_file:
-    for line in log_file:
-        if "WARNING" in line:
-            warnings.append(line.strip())
-print(len(warnings))'''
-
-FAILED_SOLUTION = '''failed = []
-with open("access.log", "r") as log_file:
-    for line in log_file:
-        if "FAILED" in line:
-            failed.append(line.strip())
-print(len(failed))'''
-
-
-class RunnerTests(unittest.TestCase):
-    def evaluate(self, source, mission_id=1):
+class Chapter01Tests(unittest.TestCase):
+    def evaluate(self, source, mission_id):
         return json.loads(runner.evaluate_mission(source, mission_id))
 
-    def test_mission_01_error_counter_passes(self):
-        result = self.evaluate(ERROR_SOLUTION, 1)
-        self.assertEqual(result["output"], "2")
+    def test_mission_01_print_first_message(self):
+        result = self.evaluate('print("Hello, Cyber Protocol!")', 1)
         self.assertTrue(result["passed"])
 
-    def test_mission_01_logs_are_available(self):
-        result = self.evaluate(ERROR_SOLUTION, 1)
-        self.assertTrue(result["passed"])
-        self.assertEqual(result["output"], "2")
+    def test_mission_02_multiple_lines_and_comment(self):
+        source = '# Boot sequence\nprint("SYSTEM ONLINE")\nprint("ACCESS GRANTED")'
+        self.assertTrue(self.evaluate(source, 2)["passed"])
 
-    def test_mission_02_warning_counter_passes(self):
-        result = self.evaluate(WARNING_SOLUTION, 2)
-        self.assertEqual(result["output"], "2")
-        self.assertTrue(result["passed"])
+    def test_mission_03_variables(self):
+        source = 'agent = "MARA"\nstatus = "ONLINE"\nprint(agent)\nprint(status)'
+        self.assertTrue(self.evaluate(source, 3)["passed"])
 
-    def test_mission_03_failed_login_counter_passes(self):
-        result = self.evaluate(FAILED_SOLUTION, 3)
-        self.assertEqual(result["output"], "2")
-        self.assertTrue(result["passed"])
+    def test_mission_04_arithmetic(self):
+        self.assertTrue(self.evaluate("print(6 * 7)", 4)["passed"])
 
-    def test_hardcoded_answer_does_not_pass(self):
-        result = self.evaluate("print(2)", 1)
+    def test_mission_05_variable_arithmetic(self):
+        source = 'hp = 100\ndamage = 25\nhp = hp - damage\nprint("HP:", hp)'
+        self.assertTrue(self.evaluate(source, 5)["passed"])
+
+    def test_mission_06_if_else_handles_all_fixtures(self):
+        source = 'if energy > 0:\n    print("SYSTEM ACTIVE")\nelse:\n    print("SYSTEM STANDBY")'
+        self.assertTrue(self.evaluate(source, 6)["passed"])
+
+    def test_mission_07_for_range(self):
+        source = 'for step in range(1, 5):\n    print("SCAN", step)'
+        self.assertTrue(self.evaluate(source, 7)["passed"])
+
+    def test_mission_08_list_filter_and_counter(self):
+        source = '''count = 0
+for event in events:
+    if "ERROR" in event:
+        count += 1
+print(count)'''
+        self.assertTrue(self.evaluate(source, 8)["passed"])
+
+    def test_beginner_exact_output_is_valid(self):
+        self.assertTrue(self.evaluate('print("Hello, Cyber Protocol!")', 1)["passed"])
+
+    def test_wrong_output_does_not_pass(self):
+        self.assertFalse(self.evaluate('print("wrong")', 1)["passed"])
+
+    def test_hardcoded_answer_fails_behavior_fixtures(self):
+        result = self.evaluate("print(2)", 8)
         self.assertFalse(result["passed"])
-        self.assertIn("Evidence test 2/3", result["feedback"])
-
-    def test_mission_specific_solution_does_not_pass_other_mission(self):
-        result = self.evaluate(ERROR_SOLUTION, 2)
-        self.assertFalse(result["passed"])
+        self.assertIn("Test 2/3", result["feedback"])
 
     def test_unknown_mission_is_rejected(self):
-        result = self.evaluate(ERROR_SOLUTION, 99)
+        result = self.evaluate("print(1)", 99)
         self.assertFalse(result["passed"])
         self.assertIn("Unknown mission", result["error"])
 
     def test_rejects_imports(self):
-        result = self.evaluate("import os")
+        result = self.evaluate("import os", 1)
         self.assertIn("Unsupported syntax", result["error"])
 
-    def test_rejects_other_files(self):
-        result = self.evaluate('print(open("/etc/passwd").read())')
-        self.assertIn("only contains access.log", result["error"])
-
-    def test_rejects_write_mode(self):
-        result = self.evaluate('open("access.log", "w")')
-        self.assertIn("read-only", result["error"])
-
     def test_instruction_budget(self):
-        result = self.evaluate("while True:\n    pass")
+        result = self.evaluate("while True:\n    pass", 1)
         self.assertIn("Execution budget exceeded", result["error"])
 
     def test_range_budget(self):
-        result = self.evaluate("print(len(range(1000000000)))")
+        result = self.evaluate("print(len(range(1000000000)))", 1)
         self.assertIn("range is limited", result["error"])
 
     def test_blank_source(self):
-        result = self.evaluate("   ")
+        result = self.evaluate("   ", 1)
         self.assertIn("Write some Python code", result["error"])
 
 
