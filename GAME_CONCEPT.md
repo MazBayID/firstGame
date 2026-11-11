@@ -378,6 +378,20 @@ Mission evaluation uses a **hybrid approach**. The evaluator selects checks appr
 - **Feedback:** explain which criteria were met, which need attention, and why. Offer contextual hints or another attempt where appropriate instead of a generic pass/fail message.
 - **Mission configuration:** define explicit criteria and acceptable outcomes for each task. Do not use an AI model or unconstrained subjective judgment as the authority for core mission completion.
 
+## 8.2 Failure and Retry
+
+The initial version uses a **retry-first, learning-oriented failure model**.
+
+- When a submission fails, explain which requirement was not met and why, using feedback appropriate to the player's current skill level.
+- Let the player correct the work and submit again. Failure does not immediately end the operation or impose a narrative punishment.
+- Provide graduated hints when useful: begin with a reminder about the relevant concept, then a more specific direction, and only provide stronger guidance when the player needs it. Hints should support learning rather than automatically reveal the complete answer.
+- Preserve the player's working context and relevant progress between attempts so a failed submission does not force them to restart the entire operation.
+- A failed attempt does not reduce rank, XP, relationship values, mission access, or story progress in the initial version. Do not add a retry counter penalty or consequence-based failure branch at this stage.
+- A mission is completed only when its authored evaluation criteria are met. RUN remains available for experimentation, while SUBMIT checks the current work.
+- Explain success as well as failure: show which requirements were satisfied and what the player has demonstrated.
+
+The goal is to make experimentation safe and mistakes useful. More consequential failure systems may be considered in a later design phase, but they are not part of the initial version.
+
 Keep **Run** and **Submit** separate: Run executes the player's work; Submit evaluates it against the mission's defined criteria.
 
 ## 8.1 Teaching and evaluation principles
