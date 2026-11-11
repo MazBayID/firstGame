@@ -805,40 +805,50 @@ Cyber Protocol must support **Bahasa Indonesia** and **English** as selectable g
 - Avoid mixing Indonesian and English unintentionally within the same selected-language experience. Code, standard programming syntax, and established technical command names remain unchanged where translation would be misleading.
 - English localization must read naturally rather than being a literal, awkward translation. Preserve character voice, especially Freya's professional first impression and gradually revealed mischievous humor.
 
-# 21. Campaign Opening — Mysterious Recruitment Notification
+# 21. Campaign Opening — Official Recruitment and Mentor Contact
 
-The first time the player opens the Campaign, the game must begin with a restrained, mysterious phone-notification sequence rather than immediately displaying the ordinary campaign interface.
+The Campaign opening uses two distinct in-game notification events. They must never be collapsed into one conversation.
 
-**Approved opening direction:**
-- Transition to a fully black screen.
-- After a deliberate pause, display a notification card styled like an ordinary smartphone notification. It should feel as if a normal phone has just received a message, not like a game mission banner or a dramatic classified-system alert.
-- The notification is the opening story hook: familiar and understated on the surface, mysterious in context.
-- Use a subtle arrival animation and optional restrained notification sound/haptic feedback where supported and enabled. The notification must remain readable and tappable.
-- The player must explicitly tap the notification card to open it. Merely displaying the notification must not advance the story or open the message automatically.
-- When tapped, the notification must automatically launch the in-game **Pesan Aman / Secure Messenger** and open the specific recruitment conversation directly, rather than taking the player to the generic inbox or a separate prologue screen.
-- The recruitment invitation is displayed as the first message in that conversation. The player can then read and continue the conversation through the normal Messenger interface.
-- The transition from the black notification scene into Messenger should feel seamless, as though the player tapped a real phone notification. Preserve the campaign's first-entry state if the app is interrupted during this transition, so the sequence can resume safely without duplicating the invitation or skipping the player's tap.
-- This is an in-game cinematic simulation only. It must not request Android notification permission, create a real system notification, or imply access to the player's real messages or device data.
-- Play the opening sequence only on the first campaign entry for a new story. Persist its completion so returning to Campaign resumes the campaign normally and does not replay the surprise notification unexpectedly.
-- Do not insert a separate prologue titled or framed as **"Pengirim tidak dikenal" / "Unknown Sender"**. The mysterious quality should come from the ordinary-looking notification and the content/context of the invitation, not from an extra unknown-sender prologue.
-- Preserve the first-person perspective and avoid showing a player-character portrait.
+**First notification — Official A.E.G.I.S. recruitment**
+- Transition to a fully black screen on the first Campaign entry.
+- After a deliberate pause, show an understated, ordinary-looking **Pesan Aman** notification from **A.E.G.I.S. / Recruitment Office**.
+- The player must tap the notification. It opens Secure Messenger directly to the official A.E.G.I.S. recruitment conversation—not to Freya, a generic inbox, or an unknown-sender prologue.
+- The official message explains that someone has given A.E.G.I.S. an order to recruit the player. Approved Indonesian core wording: **"Seseorang telah memberikan perintah kepada A.E.G.I.S. untuk merekrutmu."**
+- The sender does not disclose the identity of the person behind the order.
+- The message contains an interactive in-game link labelled **BUKA RANGKAIAN MISI**. The player must tap it to enter the orientation and mission sequence.
+- The A.E.G.I.S. Recruitment Office remains in the Messenger inbox after the invitation is opened.
 
-**Recruitment invitation wording:**
-- Replace the previous sentence **"Seorang melihat potensi dalam dirimu...."** with the exact approved Indonesian wording: **"Seseorang meminta kami untuk merekrutmu."**
-- English localization: **"Someone has asked us to recruit you."**
-- Preserve the intended mystery. Do not explain who made the request or reveal the source of the recommendation in the opening; that information remains a story mystery to be developed and approved later.
+**Second notification — Freya Knox**
+- When the first mission becomes active, a second Pesan Aman notification appears over the mission screen. Its sender is **Freya Knox**.
+- The player must tap it to open Freya's conversation. The notification must not automatically open the conversation.
+- Freya greets the player, introduces herself as the mentor, and explains that she will guide the missions assigned by A.E.G.I.S.
+- Freya must not say that she issued the recruitment order, and her dialogue must not reveal or strongly imply that connection.
+- Persist the notification state. If the app is interrupted before the player taps it, present it again when the first mission resumes. After it is opened, do not replay it unexpectedly.
+
+**NEXUS contact unlock**
+- During her conversation, Freya introduces NEXUS as an internal A.E.G.I.S. communication and technical-support system.
+- Freya provides an interactive **NEXUS / KANAL SISTEM** link.
+- Only after the player taps that link may the NEXUS conversation/contact become visible in the Messenger inbox. Do not show NEXUS as an available contact before this unlock.
+- NEXUS is a system, not a human mentor. Freya remains the player's primary human mentor.
+
+**Narrative continuity — author-only**
+- Freya is the person who initiated the recruitment order. This is a hidden story fact and must not be revealed in the official A.E.G.I.S. invitation or Freya's initial greeting. Reserve the reveal for a later, deliberately authored story moment.
+- Do not add a separate **"Pengirim tidak dikenal" / "Unknown Sender"** prologue.
+- The notifications and links are in-game simulations only. Do not request Android notification permission, create real system notifications, access real messages/contacts, or require external messaging services.
+- Save each meaningful tap/checkpoint so app interruption cannot duplicate messages, skip a required action, or reveal a contact prematurely.
 
 # 22. Secure Messenger — Familiar Smartphone Messaging Experience
 
-The in-game application currently referred to as **Pesan Aman / Secure Messenger** should be redesigned as a familiar, polished smartphone messaging application inspired by the usability and interaction patterns of apps such as WhatsApp, while retaining Cyber Protocol and A.E.G.I.S. branding.
+The in-game **Pesan Aman / Secure Messenger** should feel like a familiar, polished smartphone messaging application inspired by common messaging usability patterns, while retaining Cyber Protocol and A.E.G.I.S. branding.
 
-- The contact/conversation list should feel like a real messaging inbox, with clear contact identity, latest-message preview, timestamp, unread count/indicator, and search where practical.
-- Individual conversations should use a recognizable chat layout with distinct incoming and outgoing message bubbles, readable timestamps, and a clear conversation header.
-- Provide a familiar message-composer area at the bottom. In the initial authored-dialogue system, player replies may remain predefined choices; do not introduce free-text consequential dialogue unless separately approved.
-- Support appropriate in-world messaging affordances such as attachment/document cards, message status, typing/arrival cues, and conversation history when they serve gameplay.
-- Messages from Freya, NEXUS, and other unlocked contacts must retain distinct voices and sender identities. NEXUS remains a system, not a human character.
-- Important mission briefings, evidence attachments, and operational updates may be delivered through the messaging interface and should link to the relevant in-game context where appropriate.
-- Maintain the existing navigation rule: opening a conversation from the inbox and returning from it should preserve the inbox; closing Messenger should return to the game screen that opened it without losing context.
-- The interface should be familiar and easy to use, but must not copy WhatsApp logos, proprietary visual assets, or imply that it is the real WhatsApp service. Use original A.E.G.I.S. visual identity.
+- The inbox should feel like a real messaging list, with clear sender identity, latest-message preview, timestamp, unread indicator, and search where practical.
+- The official **A.E.G.I.S. / Recruitment Office** conversation is the first visible contact after the opening notification is tapped.
+- **Freya Knox** appears in the inbox only after the player taps her second notification during the first mission.
+- **NEXUS** appears in the inbox only after the player taps the NEXUS link provided inside Freya's conversation.
+- Individual conversations use a recognizable chat layout with distinct incoming and outgoing message bubbles, timestamps, and a clear conversation header.
+- Authored dialogue and predefined player replies are acceptable for the initial campaign. Do not introduce free-text consequential dialogue unless separately approved.
+- Important mission links, briefings, and evidence attachments should use tappable in-world cards that open the relevant game context.
+- Freya's voice is that of the primary human mentor. NEXUS is an AI system and must not be presented as a human character or as the person who recruited the player.
+- Returning from a conversation should preserve the inbox; closing Messenger should return to the game screen that opened it without losing campaign context.
+- Use original A.E.G.I.S. visual identity. Do not copy WhatsApp logos or proprietary assets, or imply that this is the real WhatsApp service.
 - Keep the experience offline-first and locally persisted. No real phone contacts, SMS, notifications, or external messaging account access is required.
-
