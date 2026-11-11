@@ -1228,16 +1228,7 @@ private fun MessengerScreen(
                             ChatBubble("Kamu", message, true)
                             ChatBubble(
                                 "Freya Knox",
-                                when (message) {
-                                    "Dimengerti. Kita mulai dari mana?" ->
-                                        "Mulai dari briefing yang sedang terbuka. Baca tujuan pertama, periksa data yang disediakan, lalu coba tulis kode kecil. Kamu tidak harus menyelesaikan semuanya dalam sekali jalan."
-                                    "Masih banyak yang harus kupelajari." ->
-                                        "Bagus. Aku justru lebih khawatir kalau kamu berpura-pura sudah paham. Kita akan membangun kemampuanmu dari tugas yang benar-benar kamu kerjakan."
-                                    "Mengapa kamu memilihku?" ->
-                                        "Aku tahu pertanyaan itu akan muncul. Untuk sekarang, anggap saja ada alasan yang belum bisa kubagikan lewat kanal ini. Tunjukkan dulu bagaimana kamu menghadapi hal yang belum kamu ketahui."
-                                    else ->
-                                        "Aku mengerti. Periksa briefing dan bukti yang tersedia, lalu kita bahas hasilnya bersama. Jangan menyimpulkan sesuatu sebelum datanya mendukung."
-                                },
+                                MessengerDialogue.freyaResponse(message),
                                 false
                             )
                         }
@@ -1249,16 +1240,7 @@ private fun MessengerScreen(
                             ChatBubble("Kamu", message, true)
                             ChatBubble(
                                 "NEXUS",
-                                when (message) {
-                                    "Tampilkan status personel." ->
-                                        "STATUS PERSONEL: RECRUIT. Misi terverifikasi: $completedMissionCount. Misi aktif: ${activeMissionTitle ?: "tidak ada"}. Clearance mengikuti checkpoint kampanye yang tersimpan."
-                                    "Di mana catatan operasiku?" ->
-                                        "Catatan personel tersedia melalui BERKAS PERSONEL. Bukti dan sumber pemeriksaan dapat ditinjau melalui ANALISIS. Akses aplikasi mengikuti izin akun lokal."
-                                    "Apakah sistem ini berjalan offline?" ->
-                                        "Benar. Kampanye inti, runtime Python lokal, evaluasi misi, dan penyimpanan progres dirancang berjalan pada perangkat ini tanpa layanan AI atau server eksternal."
-                                    else ->
-                                        "Permintaan diterima. Aku hanya akan merujuk pada data dan izin yang tersedia di dalam misi aktif."
-                                },
+                                MessengerDialogue.nexusResponse(message, activeMissionTitle, completedMissionCount),
                                 false
                             )
                         }
