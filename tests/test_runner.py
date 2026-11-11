@@ -66,6 +66,17 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print("IDENTITY VERIFIED")', 10)["passed"])
 
+    def test_first_contact_audit_uses_loop_and_condition(self):
+        source = 'count = 0\nfor event in events:\n    if "ERROR" in event:\n        count += 1\nprint(count)'
+        self.assertTrue(self.submit(source, 8)["passed"])
+        self.assertFalse(self.submit("print(2)", 8)["passed"])
+
+    def test_first_contact_inventory_requires_len_and_named_result(self):
+        source = "record_count = len(records)\nprint(record_count)"
+        result = self.submit(source, 11)
+        self.assertTrue(result["passed"], result)
+        self.assertFalse(self.submit("print(len(records))", 11)["passed"])
+
     def test_mission_workspace_reads_only_allowlisted_files(self):
         source = 'print(read_text("briefing.txt"))'
         result = json.loads(runner.run_code_json(
