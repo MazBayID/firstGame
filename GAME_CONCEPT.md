@@ -655,6 +655,7 @@ The **Terminal** and **Code Editor** are distinct tools with complementary roles
 - **Terminal** is a separate application available through the in-game App Hub. It is used to run programs and inspect execution output, errors, and relevant simulated system responses.
 - **Code Editor** is part of the operation/mission interface. It is where the player writes and modifies the Python code required by the current task.
 - The mission flow connects the two: the player edits code in the operation interface, runs it through the Terminal, reviews the result, makes corrections, and submits the work for evaluation when ready.
+- The Code Editor's RUN action saves the current source into the mission's authorized writable script, switches to the dedicated Terminal screen, and invokes the normal `python <script>.py` command path. It must not call the Python runtime directly from the editor UI or bypass Terminal command validation.
 - Running code and submitting a mission remain separate actions. RUN executes and displays results; SUBMIT evaluates the mission requirements.
 - Moving between the operation interface and Terminal should preserve the player's current mission context and unsaved editor contents during that active session. Persistence across app closure follows the explicit code-saving rules in §16.2.
 - Other App Hub tools may provide evidence, records, analysis, or operational context, but should not blur the distinct purpose of the editor and Terminal.
