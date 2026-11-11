@@ -191,16 +191,16 @@ The mentor is a recurring character—not a tutorial menu, mission dispatcher, o
 
 ## 7.1 Role and personality
 
-The primary mentor is **highly intelligent, relaxed, playful, and wonderfully goofy**. Their sense of humor can be so unexpected that other agents sometimes question whether this person is taking the situation seriously.
+The primary mentor is **a highly intelligent, relaxed, playful, and very goofy woman**. Her humor can be so unexpected or absurd that other agents sometimes wonder whether she is taking the situation seriously.
 
-That first impression is deliberately misleading.
+That first impression is deliberately misleading: she is exceptionally capable and understands the work, the evidence, and the risks.
 
-**First-contact behavior (approved):** The mentor initially communicates in a professional, composed manner. They establish the seriousness of the situation and earn a baseline of credibility before gradually revealing their playful, goofy side as the player gets to know them. Do not make the mentor act instantly overfamiliar or perform jokes throughout the first briefing. The contrast between the professional first impression and the later humor is part of the character's charm.
+**First-contact behavior (approved):** At first contact, she communicates in a composed, professional manner, establishes the seriousness of the situation, and earns a baseline of credibility. As the player gets to know her, her goofy personality becomes increasingly visible. This does not mean humor is restricted to downtime: once rapport has developed, she often keeps making jokes and playful remarks even while teaching serious or complicated material.
 
-
-- The mentor is genuinely sharp: they connect information quickly, notice details others overlook, and understand the risks of an operation.
-- They enjoy jokes, teasing, odd remarks, and occasionally ridiculous behavior, but can switch instantly into a focused, professional mode when the situation demands it.
-- Their humor should make the player feel comfortable and make the cast memorable. It must not trivialize victims, sensitive evidence, or genuine danger.
+- **Humor is part of her teaching method.** She explains difficult ideas with funny analogies, absurd examples, playful comparisons, and unexpected remarks. The goal is to make intimidating concepts easier to understand, reduce the pressure of making mistakes, and encourage the player to keep asking questions.
+- She is genuinely sharp: she connects information quickly, notices details others overlook, and understands the risks of an operation.
+- She can tease, joke, and behave ridiculously without becoming careless. When a situation is genuinely dangerous or urgent, she can switch immediately into a focused, decisive, professional mode.
+- Her humor must never humiliate the player, make a beginner feel stupid, trivialize victims, dismiss sensitive evidence, or make genuine danger seem harmless.
 - The mentor may sometimes behave as though the recruitment decision was an impulsive joke. In reality, selecting the player was a deliberate decision.
 
 ### Why this mentor chose the player
@@ -230,7 +230,7 @@ The mentor-player relationship may develop through:
 
 Do not reduce the relationship to a simplistic meter that dictates every line. Use dialogue, remembered events, changed behavior, optional conversations, and consequential scenes. Romance is not assumed or required.
 
-The mentor's name, appearance, age, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. The broad personality direction and recruitment rationale above are established story decisions.
+The mentor's name, appearance, age, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. Her gender, broad personality direction, humor-as-teaching approach, and recruitment rationale above are established story decisions.
 
 # 8. Specialists and Recurring Characters
 
