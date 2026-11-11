@@ -428,13 +428,15 @@ The initial campaign uses a **local Python runtime on the Android device**. Miss
 - The game must not imply that using Chaquopy alone automatically makes arbitrary Python code safe. Isolation and restrictions require deliberate implementation and testing.
 - RUN displays execution output or errors; SUBMIT separately evaluates mission requirements.
 
-## 17.2 Autosave and Local Progress
+## 17.2 Autosave, Code Drafts, and Local Progress
 
-The campaign uses autosave rather than manual save slots in the initial version.
+The initial version uses **autosave for campaign progress**, but player-written mission code is saved at **deliberate save points and mission checkpoints**, not on every keystroke.
 
-- Save at meaningful story and gameplay checkpoints, including story beats, mission-stage transitions, successful submissions, debriefs, and progression or unlock changes.
-- Preserve campaign position, active mission stage, completed objectives, relevant mission work, rank/XP, unlocked applications/content, and collected evidence.
-- Resume from the latest valid checkpoint after interruption or app restart.
+- Automatically save campaign progress at meaningful story and gameplay checkpoints, including story beats, mission-stage transitions, successful submissions, debriefs, and progression or unlock changes.
+- Give the player a deliberate **Save** action for the current code draft. Also save the code when a mission stage is successfully completed or another clearly defined mission checkpoint is reached.
+- Do not write every code-editor change to persistent storage. Clearly communicate whether the latest edits have been saved.
+- Preserve saved code drafts with their campaign, mission, and stage context so the player can resume the correct work.
+- After interruption or app restart, restore the latest valid campaign checkpoint and the most recently saved code draft.
 - Avoid unnecessary writes for every small interaction; temporary presentation state does not need to persist by default.
 
 ## 17.3 Offline-first Campaign
