@@ -181,15 +181,21 @@ def _execute(source, variables=None, workspace_files=None, writable_files=None):
     return {"output": output.getvalue(), "error": "", "files": workspace}
 
 
-def run_code_json(source, workspace_json="{}", writable_json="[]"):
+def run_code_json(source, workspace_json="{}", writable_json="[]", variables_json="{}"):
     try:
         workspace_files = json.loads(workspace_json)
         writable_files = json.loads(writable_json)
-        if not isinstance(workspace_files, dict) or not isinstance(writable_files, list):
+        variables = json.loads(variables_json)
+        if not isinstance(workspace_files, dict) or not isinstance(writable_files, list) or not isinstance(variables, dict):
             raise RunnerError("Invalid mission workspace contract.")
+        for name, values in variables.items():
+            if (not isinstance(name, str) or not name.isidentifier() or name.startswith("_") or "__" in name
+                    or not isinstance(values, list) or len(values) > 1000
+                    or any(not isinstance(value, str) or len(value) > 1000 for value in values)):
+                raise RunnerError("Invalid mission input variable.")
         if any(not isinstance(k, str) or not isinstance(v, str) for k, v in workspace_files.items()):
             raise RunnerError("Mission workspace only supports named text files.")
-        return json.dumps(_execute(source, workspace_files=workspace_files,
+        return json.dumps(_execute(source, variables=variables, workspace_files=workspace_files,
                                    writable_files=writable_files))
     except RunnerError as error:
         return json.dumps({"output": "", "error": str(error), "files": {}})
