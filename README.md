@@ -23,7 +23,7 @@ The sender claims to represent **A.E.G.I.S.**, an independent intelligence organ
 
 Your first task is not to save the world. It is to answer a simple question: **why were you contacted?**
 
-As you enter A.E.G.I.S., a primary mentor guides your recruitment and development. NEXUS, the organization's AI communication system, keeps you connected, while specialists step in when an operation demands their expertise. You will examine dossiers, question evidence, uncover connections, and use programming as a practical tool—not as a detached classroom exercise.
+As you enter A.E.G.I.S., you are assigned a primary mentor: a brilliant, easygoing, and unexpectedly goofy agent whose decision to recruit a complete programming beginner for an urgent operation raises more than a few eyebrows. They insist there is a reason—and that they have seen potential in you that you have not seen in yourself. NEXUS, the organization's AI communication system, keeps you connected, while specialists step in when an operation demands their expertise. You will examine dossiers, question evidence, uncover connections, and use programming as a practical tool—not as a detached classroom exercise.
 
 Every case reveals another fragment. Every mission leaves a clue. And the deeper you investigate, the harder it becomes to tell whether the information in front of you is incomplete by accident—or arranged that way.
 
