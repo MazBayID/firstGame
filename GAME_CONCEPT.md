@@ -453,6 +453,25 @@ XP, skill development, rank, clearance, mission completion, achievements, and st
 
 The existing launcher icon may have its own Neo Dark Cyan background treatment; that does not change the core in-game crimson/obsidian visual identity.
 
+## 10.4 Game Entry Loading Animation
+
+The game will use the user's supplied 10-second animation as the initial loading presentation when Cyber Protocol is launched.
+
+**Approved source asset specification**
+- Source folder on the user's Android device: `~/storage/downloads/LOADING/frames/`
+- Numbered PNG sequence: `frame_001.png` through `frame_240.png`
+- Frame resolution: 1080 × 1920 pixels (portrait)
+- Intended duration: 10 seconds
+- Intended playback rate: 24 frames per second
+
+**Initial use**
+- Play this animation during the initial game-entry loading phase, before the player reaches the main menu.
+- This is the approved use for the current implementation; it is not yet designated as the main-menu background or a story cutscene.
+- The same animation may be considered for other loading transitions in the future, but each additional use must be evaluated in its own context rather than assumed.
+- Preserve the portrait composition and aspect ratio. Do not stretch or crop important visual content.
+- The implementation must consider APK size, memory use, decoding cost, and smooth playback on supported Android devices. Do not assume that bundling all 240 full-resolution PNG files directly is the final packaging strategy.
+- The exact playback controls, skip behavior, transition into the main menu, and optimized asset format remain implementation decisions to be tested.
+
 ## 10.3 Visual rules
 
 - Use strong hierarchy, readable text, and consistent spacing.
