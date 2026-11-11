@@ -310,10 +310,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                         codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                         if (result.passed) {
+                            var rewardGranted = 0
                             authoredMission?.let { mission ->
+                                val alreadyCompleted = mission.id in gameStateRepository.load().completedMissionIds
                                 CompleteMissionUseCase(gameStateRepository).complete(
                                     mission.id, mission.rewardXp, mission.requiredClearance
                                 )
+                                if (!alreadyCompleted) rewardGranted = mission.rewardXp
                                 RecordEvidenceUseCase(gameStateRepository).record(
                                     com.zeroday.cyberprotocol.core.model.EvidenceRecord(
                                         id = "evidence_" + mission.id,
@@ -336,7 +339,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                             saveStage(storyStage + 1)
                             debriefTitle = authoredMission?.title ?: "MISI SELESAI"
                             debriefFeedback = result.feedback
-                            debriefXp = authoredMission?.rewardXp ?: 0
+                            debriefXp = rewardGranted
                             screenName = GameScreen.DEBRIEF.name
                         } else {
                             codeFeedback = result.feedback.ifBlank {
