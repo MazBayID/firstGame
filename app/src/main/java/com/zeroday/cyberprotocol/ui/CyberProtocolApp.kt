@@ -133,6 +133,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             .split("\u001F").filter { it.isNotBlank() })
     }
     var messengerContact by rememberSaveable { mutableStateOf("") }
+    var messengerReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
     var debriefTitle by rememberSaveable { mutableStateOf("") }
     var debriefFeedback by rememberSaveable { mutableStateOf("") }
@@ -215,9 +216,15 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     }
 
     BackHandler(enabled = screen != GameScreen.MAIN_MENU) {
-        val hasSelectedContact = messengerContact.isNotBlank()
-        navigation = navigation.back(storyStage, hasSelectedContact)
-        if (screen == GameScreen.MESSENGER && hasSelectedContact) messengerContact = ""
+        if (screen == GameScreen.MESSENGER) {
+            if (messengerContact.isNotBlank()) {
+                messengerContact = ""
+            } else {
+                navigate(runCatching { GameScreen.valueOf(messengerReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+            }
+        } else {
+            navigation = navigation.back(storyStage, messengerHasSelectedContact = false)
+        }
     }
 
     when (screen) {
@@ -231,14 +238,29 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             onSettings = { navigate(GameScreen.SETTINGS) },
             onLanguage = { navigate(GameScreen.LANGUAGE) }
         )
-        GameScreen.CAMPAIGN -> CampaignScreen(
-            storyStage = storyStage,
-            onBack = { navigate(GameScreen.MAIN_MENU) },
-            onContinue = { navigate(if (storyStage < 7) GameScreen.STORY else GameScreen.APP_HUB) },
-            onHub = { openHub(GameScreen.CAMPAIGN) }
-        )
+        GameScreen.CAMPAIGN -> {
+            if (!currentGameState.recruitmentNotificationOpened && storyStage < 2) {
+                RecruitmentNotificationScreen(
+                    onOpenMessage = {
+                        sessionViewModel.openRecruitmentInvitation()
+                        storyStage = 2
+                        preferences.edit().putInt("story_stage", 2).apply()
+                        messengerContact = "FREYA"
+                        messengerReturnScreen = GameScreen.CAMPAIGN.name
+                        navigate(GameScreen.MESSENGER)
+                    }
+                )
+            } else {
+                CampaignScreen(
+                    storyStage = storyStage,
+                    onBack = { navigate(GameScreen.MAIN_MENU) },
+                    onContinue = { navigate(if (storyStage < 7) GameScreen.STORY else GameScreen.APP_HUB) },
+                    onHub = { openHub(GameScreen.CAMPAIGN) }
+                )
+            }
+        }
         GameScreen.STORY -> {
-            val beatIndex = storyStage.coerceIn(0, 6)
+            val beatIndex = storyStage.coerceIn(2, 6)
             val authoredMission = when (beatIndex) {
                 4 -> Campaign01Catalog.find("first_contact.signal")
                 5 -> Campaign01Catalog.find("first_contact.identity")
@@ -253,7 +275,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 }
             }
             StoryScreen(
-                beat = Campaign01Story.beats[beatIndex],
+                beat = Campaign01Story.beats[beatIndex - 2],
                 stage = beatIndex,
                 mission = authoredMission,
                 hintLevel = hintLevel,
@@ -360,7 +382,11 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         GameScreen.MESSENGER -> MessengerScreen(
             selectedContact = messengerContact,
             onSelectContact = { messengerContact = it },
-            onClose = { navigate(GameScreen.APP_HUB) },
+            onClose = {
+                navigate(runCatching { GameScreen.valueOf(messengerReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+            },
+            recruitmentInvitation = currentGameState.recruitmentNotificationOpened,
+            storyBeat = storyStage,
             replies = if (messengerContact == "FREYA") freyaReplies else nexusReplies,
             onReply = { reply ->
                 if (messengerContact == "FREYA") {
@@ -585,6 +611,48 @@ private fun MenuButton(title: String, subtitle: String, onClick: () -> Unit, pri
 }
 
 @Composable
+private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxSize().background(Color.Black).padding(horizontal = 22.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(top = 76.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            Text(" ", color = Color.White, fontSize = 20.sp)
+            Surface(
+                onClick = onOpenMessage,
+                color = Color(0xFF20242A),
+                shape = RoundedCornerShape(18.dp),
+                border = BorderStroke(1.dp, Color(0xFF343A42)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Surface(color = Color(0xFF285C4B), shape = RoundedCornerShape(9.dp)) {
+                            Text("P", Modifier.padding(horizontal = 11.dp, vertical = 8.dp),
+                                color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                        }
+                        Text("PESAN AMAN", color = Color(0xFFE6E9ED), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        Spacer(Modifier.weight(1f))
+                        Text("sekarang", color = Color(0xFF9AA2AC), fontSize = 10.sp)
+                    }
+                    Text("Pesan baru", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    Text("Ada undangan yang menunggumu.", color = Color(0xFFD0D5DC), fontSize = 13.sp)
+                }
+            }
+            Text(
+                "Ketuk notifikasi untuk membuka pesan.",
+                modifier = Modifier.fillMaxWidth(),
+                color = Color(0xFF69727E),
+                fontSize = 11.sp
+            )
+        }
+    }
+}
+
+@Composable
 private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -> Unit, onHub: () -> Unit) {
     GamePage("KAMPANYE", "A.E.G.I.S. / OPERASI CERITA", onBack, onHub) {
         GamePanel {
@@ -745,6 +813,8 @@ private fun MessengerScreen(
     selectedContact: String,
     onSelectContact: (String) -> Unit,
     onClose: () -> Unit,
+    recruitmentInvitation: Boolean,
+    storyBeat: Int,
     replies: List<String>,
     onReply: (String) -> Unit
 ) {
@@ -804,8 +874,22 @@ private fun MessengerScreen(
         } else {
             GamePanel {
                 if (selectedContact == "FREYA") {
-                    ChatBubble("Freya Knox", "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.", false)
-                    ChatBubble("Freya Knox", "Aku sudah memeriksa berkasmu. Aku melihat potensi. Sementara itu, mungkin kamu melihat daftar panjang hal-hal yang belum kamu kuasai. Penilaian yang sangat masuk akal.", false)
+                    if (recruitmentInvitation) {
+                        ChatBubble(
+                            "Freya Knox",
+                            "Seseorang meminta kami untuk merekrutmu.\\n\\nKami tahu kamu bukan agen terlatih. Justru karena itulah pesan ini mungkin mengejutkanmu.\\n\\nSebuah organisasi bernama A.E.G.I.S. ingin berbicara denganmu melalui kanal ini.",
+                            false
+                        )
+                        if (storyBeat >= 7) {
+                            ChatBubble(
+                                "Freya Knox",
+                                "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.",
+                                false
+                            )
+                        }
+                    } else {
+                        ChatBubble("Freya Knox", "Kanal ini aman. Aku Freya Knox, mentor yang akan mendampingimu.", false)
+                    }
                     replies.forEachIndexed { index, message ->
                         ChatBubble("KAMU", message, true)
                         ChatBubble("Freya Knox",
