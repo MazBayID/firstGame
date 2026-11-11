@@ -341,15 +341,15 @@ private fun CyberProtocolGameContent() {
         GameScreen.DATABASE -> InfoAppScreen(
             "DATABASE INTELIJEN", "A.E.G.I.S. / INDEKS TERBATAS",
             buildString {
-                append("ORGANISASI  /  A.E.G.I.S.\\n")
-                append("Advanced Espionage & Global Intelligence Service\\n")
-                append("MARKAS PUSAT  /  MANILA, FILIPINA\\n\\n")
-                append("INDEKS MISI TERDAFTAR\\n")
+                append("ORGANISASI  /  A.E.G.I.S.\n")
+                append("Advanced Espionage & Global Intelligence Service\n")
+                append("MARKAS PUSAT  /  MANILA, FILIPINA\n\n")
+                append("INDEKS MISI TERDAFTAR\n")
                 Campaign01Catalog.missions.forEach { mission ->
                     val status = if (mission.id in currentGameState.completedMissionIds) "TERVERIFIKASI" else "BELUM SELESAI"
-                    append("• ").append(mission.title).append("  /  ").append(status).append("\\n")
-                    append("  ID: ").append(mission.id).append("\\n")
-                    append("  TUJUAN: ").append(mission.objectives.size).append("  /  XP: ").append(mission.rewardXp).append("\\n\\n")
+                    append("• ").append(mission.title).append("  /  ").append(status).append("\n")
+                    append("  ID: ").append(mission.id).append("\n")
+                    append("  TUJUAN: ").append(mission.objectives.size).append("  /  XP: ").append(mission.rewardXp).append("\n\n")
                 }
                 append("Seluruh data pada indeks ini merupakan bagian dari simulasi fiktif A.E.G.I.S.")
             },
@@ -357,31 +357,31 @@ private fun CyberProtocolGameContent() {
         )
         GameScreen.DOSSIER -> InfoAppScreen(
             "BERKAS PERSONEL", "CATATAN PERSONEL / REKRUT",
-            "IDENTITAS: AGEN MAGANG\\n" +
-                "ORGANISASI: A.E.G.I.S.\\n" +
-                "MENTOR: FREYA KNOX\\n" +
-                "RANK: " + currentGameState.rank.replace('_', ' ') + "\\n" +
-                "XP: " + currentGameState.experience + "\\n" +
-                "CLEARANCE: " + currentGameState.clearance + "\\n" +
-                "BAB: " + currentGameState.storyBeat.coerceAtMost(7) + "/7\\n" +
-                "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\\n" +
-                "BUKTI TERCATAT: " + currentGameState.evidence.size + "\\n\\n" +
+            "IDENTITAS: AGEN MAGANG\n" +
+                "ORGANISASI: A.E.G.I.S.\n" +
+                "MENTOR: FREYA KNOX\n" +
+                "RANK: " + currentGameState.rank.replace('_', ' ') + "\n" +
+                "XP: " + currentGameState.experience + "\n" +
+                "CLEARANCE: " + currentGameState.clearance + "\n" +
+                "BAB: " + currentGameState.storyBeat.coerceAtMost(7) + "/7\n" +
+                "MISI SELESAI: " + currentGameState.completedMissionIds.size + "\n" +
+                "BUKTI TERCATAT: " + currentGameState.evidence.size + "\n\n" +
                 "CATATAN: Akses personel dan arsip berkembang melalui operasi yang berhasil diverifikasi.",
             CyberAssets.document, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.ANALYSIS -> InfoAppScreen(
             "ANALISIS", "RUANG KERJA INTELIJEN",
             buildString {
-                append("CATATAN BUKTI  /  ").append(currentGameState.evidence.size).append("\\n\\n")
+                append("CATATAN BUKTI  /  ").append(currentGameState.evidence.size).append("\n\n")
                 if (currentGameState.evidence.isEmpty()) {
                     append("Belum ada bukti yang dicatat. Selesaikan tugas dan verifikasi hasilnya untuk menambahkan rekaman dengan sumber yang jelas.")
                 } else {
                     currentGameState.evidence.forEach { evidence ->
-                        append(evidence.title.uppercase()).append("\\n")
-                        append("STATUS: ").append(evidence.status.name.replace('_', ' ')).append("\\n")
-                        append("SUMBER: ").append(evidence.source).append("\\n")
-                        append("MISI: ").append(evidence.missionId).append("\\n")
-                        append(evidence.summary).append("\\n\\n")
+                        append(evidence.title.uppercase()).append("\n")
+                        append("STATUS: ").append(evidence.status.name.replace('_', ' ')).append("\n")
+                        append("SUMBER: ").append(evidence.source).append("\n")
+                        append("MISI: ").append(evidence.missionId).append("\n")
+                        append(evidence.summary).append("\n\n")
                     }
                 }
                 append("Status: TERKONFIRMASI, DISIMPULKAN, DIPERSELISIHKAN, BELUM TERVERIFIKASI.")
@@ -391,15 +391,15 @@ private fun CyberProtocolGameContent() {
         GameScreen.OPERATIONS -> InfoAppScreen(
             "OPERASI", "AKSES MISI / PEMERIKSAAN IZIN",
             buildString {
-                append("CAMPAIGN 01  /  THE RECRUITMENT\\n")
-                append("CHAPTER 001  /  FIRST CONTACT\\n")
-                append("PROGRES CERITA: ").append(currentGameState.storyBeat.coerceAtMost(7)).append("/7\\n\\n")
+                append("CAMPAIGN 01  /  THE RECRUITMENT\n")
+                append("CHAPTER 001  /  FIRST CONTACT\n")
+                append("PROGRES CERITA: ").append(currentGameState.storyBeat.coerceAtMost(7)).append("/7\n\n")
                 Campaign01Catalog.missions.forEach { mission ->
                     val completed = mission.id in currentGameState.completedMissionIds
                     val active = mission.id == currentGameState.activeMissionId
                     append(if (completed) "[SELESAI] " else if (active) "[AKTIF] " else "[TERCATAT] ")
-                    append(mission.title).append("\\n")
-                    append("XP: ").append(mission.rewardXp).append("  /  CLEARANCE: ").append(mission.requiredClearance).append("\\n\\n")
+                    append(mission.title).append("\n")
+                    append("XP: ").append(mission.rewardXp).append("  /  CLEARANCE: ").append(mission.requiredClearance).append("\n\n")
                 }
                 append("Operasi lanjutan belum dibuka. Kasus berikutnya tidak akan ditampilkan sebelum konten dan otorisasinya siap.")
             },
