@@ -33,10 +33,27 @@ class VirtualFileSystem(context: Context) {
     fun initialDirectory(): String = "$root/personal"
 
     @Synchronized
-    fun execute(commandLine: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): TerminalResponse {
+    fun execute(
+        commandLine: String,
+        currentDirectory: String,
+        workspaceRoot: String = "$root/personal",
+        allowedFiles: Set<String>? = null,
+        writableFiles: Set<String>? = null
+    ): TerminalResponse {
         if (commandLine.length > MAX_COMMAND_LENGTH) {
             return TerminalResponse("Command exceeds the 12000-character training limit.", currentDirectory)
         }
+        fun canReadPath(path: String): Boolean =
+            allowedFiles == null || (
+                parent(path) == workspaceRoot &&
+                    MissionWorkspacePolicy.canRead(path.substringAfterLast("/"), allowedFiles)
+            )
+        fun canWritePath(path: String, contentLength: Int): Boolean =
+            writableFiles == null || (
+                parent(path) == workspaceRoot &&
+                    MissionWorkspacePolicy.canWrite(path.substringAfterLast("/"), contentLength, writableFiles)
+            )
+
         val line = commandLine.trim()
         if (line.isEmpty()) return TerminalResponse("", currentDirectory)
         if (line == "clear") return TerminalResponse("", currentDirectory, clearScreen = true)
@@ -46,6 +63,7 @@ class VirtualFileSystem(context: Context) {
             val target = resolve(redirect.groupValues[3], currentDirectory, workspaceRoot)
                 ?: return TerminalResponse("Invalid path: access is restricted to the A.E.G.I.S. workspace.", currentDirectory)
             if (redirect.groupValues[2].length > MAX_PERSONAL_FILE_LENGTH) return TerminalResponse("File content exceeds the workspace limit.", currentDirectory)
+            if (!canWritePath(target, redirect.groupValues[2].length + 1)) return TerminalResponse("Permission denied: this mission file is read-only or outside its allowlist.", currentDirectory)
             if (directories.contains(target)) return TerminalResponse("Cannot write to a directory.", currentDirectory)
             if (!directories.contains(parent(target))) return TerminalResponse("Folder induk tidak ditemukan.", currentDirectory)
             files[target] = redirect.groupValues[2] + "\n"
@@ -83,9 +101,10 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: ".", cwd, workspaceRoot)
                     ?: return TerminalResponse("Jalur tidak valid.", cwd)
                 if (!directories.contains(target)) return TerminalResponse("Not a directory: $target", cwd)
-                val childDirs = directories.filter { it != target && parent(it) == target }
-                    .map { it.substringAfterLast("/") + "/" }
-                val childFiles = files.keys.filter { parent(it) == target }
+                if (allowedFiles != null && target != workspaceRoot) return TerminalResponse("Mission workspace does not expose subdirectories.", cwd)
+                val childDirs = if (allowedFiles == null) directories.filter { it != target && parent(it) == target }
+                    .map { it.substringAfterLast("/") + "/" } else emptyList()
+                val childFiles = files.keys.filter { parent(it) == target && canReadPath(it) }
                     .map { it.substringAfterLast("/") }
                 (childDirs + childFiles).sorted().joinToString("\n").ifBlank { "(empty)" }
             }
@@ -93,15 +112,18 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: initialDirectory(), cwd, workspaceRoot)
                     ?: return TerminalResponse("Jalur tidak valid: akses keluar dari ruang kerja virtual ditolak.", cwd)
                 if (!directories.contains(target)) return TerminalResponse("Folder tidak ditemukan: $target", cwd)
+                if (allowedFiles != null && target != workspaceRoot) return TerminalResponse("Mission workspace does not expose subdirectories.", cwd)
                 cwd = target
                 ""
             }
             "cat" -> {
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: cat <file>", cwd)
+                if (!canReadPath(target)) return TerminalResponse("Permission denied: file is outside this mission workspace.", cwd)
                 files[target] ?: return TerminalResponse("File tidak ditemukan: $target", cwd)
             }
             "mkdir" -> {
+                if (allowedFiles != null) return TerminalResponse("Folder creation is disabled in mission workspaces.", cwd)
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: mkdir <name>", cwd)
                 if (directories.contains(target) || files.containsKey(target)) return TerminalResponse("Already exists: $target", cwd)
@@ -114,6 +136,7 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: touch <file>", cwd)
                 if (directories.contains(target)) return TerminalResponse("A directory already exists at that path.", cwd)
+                if (!canWritePath(target, 0)) return TerminalResponse("Permission denied: file is read-only or outside its allowlist.", cwd)
                 if (!directories.contains(parent(target))) return TerminalResponse("Parent directory does not exist.", cwd)
                 if (!files.containsKey(target)) files[target] = ""
                 persist()
@@ -123,20 +146,31 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: rm <file>", cwd)
                 if (directories.contains(target)) return TerminalResponse("Penghapusan folder belum tersedia. Hapus file satu per satu.", cwd)
+                if (!canWritePath(target, 0)) return TerminalResponse("Permission denied: file is read-only or outside its allowlist.", cwd)
                 if (files.remove(target) == null) return TerminalResponse("File not found: $target", cwd)
                 persist()
                 ""
             }
-            "python" -> "PYTHON_LAUNCH:" + (rest.firstOrNull() ?: "")
+            "python" -> {
+                val script = rest.firstOrNull() ?: return TerminalResponse("Usage: python <file.py>", cwd)
+                val target = resolve(script, cwd, workspaceRoot) ?: return TerminalResponse("Invalid script path.", cwd)
+                if (!canReadPath(target)) return TerminalResponse("Permission denied: script is outside this workspace.", cwd)
+                if (!files.containsKey(target)) return TerminalResponse("File not found: $script", cwd)
+                "PYTHON_LAUNCH:" + script
+            }
             else -> "Perintah tidak dikenal: $name\nKetik 'help' untuk melihat daftar perintah."
         }
         return TerminalResponse(output, cwd)
     }
 
     @Synchronized
-    fun writeFile(path: String, content: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): Boolean {
+    fun writeFile(
+        path: String, content: String, currentDirectory: String,
+        workspaceRoot: String = "$root/personal", writableFiles: Set<String>? = null
+    ): Boolean {
         val resolved = resolve(path, currentDirectory, workspaceRoot) ?: return false
         if (content.length > MAX_PERSONAL_FILE_LENGTH) return false
+        if (writableFiles != null && !MissionWorkspacePolicy.canWrite(resolved.substringAfterLast("/"), content.length, writableFiles)) return false
         if (directories.contains(resolved) || !directories.contains(parent(resolved))) return false
         files[resolved] = content
         persist()
@@ -144,8 +178,12 @@ class VirtualFileSystem(context: Context) {
     }
 
     @Synchronized
-    fun readFile(path: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): String? {
+    fun readFile(
+        path: String, currentDirectory: String, workspaceRoot: String = "$root/personal",
+        allowedFiles: Set<String>? = null
+    ): String? {
         val resolved = resolve(path, currentDirectory, workspaceRoot) ?: return null
+        if (allowedFiles != null && (parent(resolved) != workspaceRoot || !MissionWorkspacePolicy.canRead(resolved.substringAfterLast("/"), allowedFiles))) return null
         return files[resolved]
     }
 
