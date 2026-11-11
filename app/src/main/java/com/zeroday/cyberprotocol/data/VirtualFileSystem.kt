@@ -187,7 +187,7 @@ class VirtualFileSystem(context: Context) {
 
     @Synchronized
     internal fun readMissionFile(directory: String, allowedFiles: Set<String>, name: String): String? {
-        if (name !in allowedFiles) return null
+        if (!MissionWorkspacePolicy.canRead(name, allowedFiles)) return null
         return files["$directory/$name"]
     }
 
@@ -198,7 +198,7 @@ class VirtualFileSystem(context: Context) {
         name: String,
         content: String
     ): Boolean {
-        if (name !in writableFiles || content.length > MAX_MISSION_FILE_LENGTH) return false
+        if (!MissionWorkspacePolicy.canWrite(name, content.length, writableFiles)) return false
         files["$directory/$name"] = content
         persist()
         return true
@@ -239,7 +239,6 @@ class VirtualFileSystem(context: Context) {
     private fun parent(path: String): String = path.substringBeforeLast("/", "")
 
     companion object {
-        private const val MAX_MISSION_FILE_LENGTH = 50_000
         private const val MAX_PERSONAL_FILE_LENGTH = 50_000
         private const val MAX_COMMAND_LENGTH = 12_000
     }
