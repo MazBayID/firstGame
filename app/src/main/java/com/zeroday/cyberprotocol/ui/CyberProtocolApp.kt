@@ -37,24 +37,24 @@ private enum class GameScreen {
     DATABASE, DOSSIER, ANALYSIS, OPERATIONS
 }
 
-private data class StoryBeat(val title: String, val eyebrow: String, val body: String, val button: String = "CONTINUE")
+private data class StoryBeat(val title: String, val eyebrow: String, val body: String, val button: String = "LANJUTKAN")
 
 private val firstContactBeats = listOf(
-    StoryBeat("UNKNOWN SENDER", "CHAPTER 001  /  FIRST CONTACT",
-        "Late in the evening, a device you rarely use wakes with a single encrypted notification.\n\nNo familiar name. No number. Only a secure channel requesting your attention.", "OPEN MESSAGE"),
-    StoryBeat("THE INVITATION", "INCOMING TRANSMISSION",
-        "“We know you are not a trained operative. That is precisely why this message may surprise you. Someone has identified a possibility in you that you have not yet had a reason to recognize.”\n\n“An organization called A.E.G.I.S. requests a confidential conversation.”", "ACCEPT CONTACT"),
-    StoryBeat("THE ORGANIZATION", "A.E.G.I.S.  /  MANILA",
-        "A.E.G.I.S. is an independent international intelligence organization. Its work spans intelligence analysis, investigation, cyber operations, technical research, and field operations.\n\nIts headquarters are not listed on public maps. Access is restricted. Its cases are classified. The organization does not recruit casually.", "REVIEW CLASSIFIED FILE"),
-    StoryBeat("CLASSIFIED FILE 001", "RECRUITMENT RECORD  /  RESTRICTED",
-        "The file contains a short assessment prepared before this contact. It does not explain why you were selected. Several sections are withheld.\n\nOne line remains visible:\n\n“Potential is not the same as experience. The candidate has the former. The latter can be taught.”", "BEGIN FIRST ASSIGNMENT"),
-    StoryBeat("FIRST ASSIGNMENT", "GUIDED DECRYPTION  /  LAYER 01",
-        "A short message is hidden behind a simple instruction. NEXUS, the A.E.G.I.S. communication-intelligence system, will guide your first step.\n\nStore the message in a variable, then use print() to reveal it. This is a fictional training cipher, not real cryptographic security.", "OPEN CODE EDITOR"),
-    StoryBeat("SYSTEM VERIFICATION", "GUIDED DECRYPTION  /  LAYER 02",
-        "A second message arrives. This time, the structure is familiar. Apply the same Python ideas without copying the first answer blindly.\n\nA correct result will verify that you can follow a basic instruction and inspect its output.", "VERIFY MESSAGE"),
-    StoryBeat("OFFICIAL RECRUITMENT", "A.E.G.I.S.  /  PERSONNEL",
-        "The secure channel confirms your recruitment as a trainee. Your access is limited, your record is new, and your training has only begun.\n\nSomewhere inside the headquarters, your assigned mentor is waiting to introduce herself.",
-        "ENTER A.E.G.I.S.")
+    StoryBeat("PENGIRIM TAK DIKENAL", "BAB 001  /  KONTAK PERTAMA",
+        "Larut malam, sebuah perangkat yang jarang kamu gunakan tiba-tiba menyala karena satu notifikasi terenkripsi.\n\nTak ada nama yang dikenal. Tak ada nomor. Hanya kanal aman yang meminta perhatianmu.", "BUKA PESAN"),
+    StoryBeat("UNDANGAN", "TRANSMISI MASUK",
+        "“Kami tahu kamu bukan agen terlatih. Justru karena itulah pesan ini mungkin mengejutkanmu. Seseorang melihat potensi dalam dirimu yang belum pernah kamu sadari.”\n\n“Sebuah organisasi bernama A.E.G.I.S. meminta percakapan rahasia.”", "TERIMA KONTAK"),
+    StoryBeat("ORGANISASI", "A.E.G.I.S.  /  MANILA",
+        "A.E.G.I.S. adalah organisasi intelijen internasional independen. Kegiatannya mencakup analisis intelijen, investigasi, operasi siber, riset teknis, dan operasi lapangan.\n\nMarkasnya tidak tercantum pada peta publik. Aksesnya dibatasi. Kasus-kasusnya bersifat rahasia. Organisasi ini tidak merekrut sembarang orang.", "PERIKSA BERKAS RAHASIA"),
+    StoryBeat("BERKAS RAHASIA 001", "CATATAN REKRUTMEN  /  TERBATAS",
+        "Berkas ini memuat penilaian singkat yang disiapkan sebelum kontak dilakukan. Tidak dijelaskan mengapa kamu dipilih. Beberapa bagian disembunyikan.\n\nSatu kalimat masih terlihat:\n\n“Potensi tidak sama dengan pengalaman. Kandidat ini memiliki yang pertama. Yang kedua bisa dipelajari.”", "MULAI TUGAS PERTAMA"),
+    StoryBeat("TUGAS PERTAMA", "DEKRIPSI TERPANDU  /  LAPIS 01",
+        "Sebuah pesan singkat tersembunyi di balik instruksi sederhana. NEXUS, sistem komunikasi dan intelijen A.E.G.I.S., akan membimbing langkah pertamamu.\n\nSimpan pesan ke dalam variable, lalu gunakan print() untuk menampilkannya. Ini adalah sandi latihan fiktif, bukan sistem keamanan kriptografi sungguhan.", "BUKA EDITOR KODE"),
+    StoryBeat("VERIFIKASI SISTEM", "DEKRIPSI TERPANDU  /  LAPIS 02",
+        "Pesan kedua tiba. Kali ini strukturnya sudah tidak asing. Terapkan konsep Python yang sama tanpa sekadar menyalin jawaban pertama.\n\nHasil yang benar membuktikan bahwa kamu dapat mengikuti instruksi dasar dan memeriksa keluarannya.", "VERIFIKASI PESAN"),
+    StoryBeat("REKRUTMEN RESMI", "A.E.G.I.S.  /  PERSONEL",
+        "Kanal aman mengonfirmasi bahwa kamu diterima sebagai agen magang. Aksesmu masih terbatas, catatan personelmu baru dibuat, dan pelatihanmu baru saja dimulai.\n\nDi suatu tempat di dalam markas, mentor yang ditugaskan untukmu sedang menunggu untuk memperkenalkan diri.",
+        "MASUK KE A.E.G.I.S.")
 )
 
 private val storyCode = listOf(
@@ -76,17 +76,17 @@ fun CyberProtocolApp() {
     var returnScreen by rememberSaveable { mutableStateOf(GameScreen.CAMPAIGN.name) }
     var storyStage by rememberSaveable { mutableIntStateOf(preferences.getInt("story_stage", 0).coerceIn(0, 7)) }
     var code by remember { mutableStateOf(TextFieldValue(preferences.getString("saved_code_$storyStage", storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }) ?: "")) }
-    var codeOutput by rememberSaveable { mutableStateOf("OUTPUT WILL APPEAR HERE") }
+    var codeOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
     var command by rememberSaveable { mutableStateOf("") }
     var currentDirectory by rememberSaveable { mutableStateOf(fileSystem.initialDirectory()) }
     var terminalOutput by rememberSaveable {
-        mutableStateOf("A.E.G.I.S. VIRTUAL TERMINAL  ·  BUILD 0.1\nGame-managed environment ready.\nType 'help' to list supported commands.\n")
+        mutableStateOf("TERMINAL VIRTUAL A.E.G.I.S.  ·  BUILD 0.1\nLingkungan game siap digunakan.\nKetik 'help' untuk melihat daftar perintah.\n")
     }
     var terminalBusy by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
     var messengerReply by rememberSaveable { mutableStateOf("") }
-    var savedCodeStatus by rememberSaveable { mutableStateOf("UNSAVED CHANGES") }
+    var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
 
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 7)
@@ -95,9 +95,9 @@ fun CyberProtocolApp() {
             preferences.getString("saved_code_$storyStage",
                 storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }) ?: ""
         )
-        codeOutput = "OUTPUT WILL APPEAR HERE"
+        codeOutput = "KELUARAN AKAN MUNCUL DI SINI"
         codeFeedback = ""
-        savedCodeStatus = "SAVED DRAFT"
+        savedCodeStatus = "DRAF TERSIMPAN"
     }
 
     fun openHub(from: GameScreen) {
@@ -112,7 +112,7 @@ fun CyberProtocolApp() {
         val response = fileSystem.execute(input, currentDirectory)
         currentDirectory = response.currentDirectory
         if (response.clearScreen) {
-            terminalOutput = "A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\n"
+            terminalOutput = "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n"
             return
         }
         terminalOutput += "\n$ $input\n"
@@ -121,13 +121,13 @@ fun CyberProtocolApp() {
             val fileName = output.removePrefix("PYTHON_LAUNCH:")
             val source = fileSystem.readFile(fileName, currentDirectory)
             if (source == null) {
-                terminalOutput += "python: cannot open '$fileName': file not found\n"
+                terminalOutput += "python: tidak dapat membuka '$fileName': file tidak ditemukan\n"
             } else {
                 terminalBusy = true
                 scope.launch {
                     val result = withContext(Dispatchers.IO) { python.run(source) }
-                    terminalOutput += (result.output.ifBlank { "(no output)" }) + "\n"
-                    if (result.error.isNotBlank()) terminalOutput += "ERROR: " + result.error + "\n"
+                    terminalOutput += (result.output.ifBlank { "(tidak ada keluaran)" }) + "\n"
+                    if (result.error.isNotBlank()) terminalOutput += "KESALAHAN: " + result.error + "\n"
                     terminalBusy = false
                 }
             }
@@ -165,40 +165,40 @@ fun CyberProtocolApp() {
                 beat = firstContactBeats[beatIndex],
                 stage = beatIndex,
                 code = code,
-                onCodeChange = { code = it; savedCodeStatus = "UNSAVED CHANGES" },
+                onCodeChange = { code = it; savedCodeStatus = "PERUBAHAN BELUM DISIMPAN" },
                 output = codeOutput,
                 feedback = codeFeedback,
                 saveStatus = savedCodeStatus,
                 onSaveCode = {
                     preferences.edit().putString("saved_code_$storyStage", code.text).apply()
-                    savedCodeStatus = "SAVED"
+                    savedCodeStatus = "TERSIMPAN"
                 },
                 onRun = {
                     scope.launch {
-                        codeFeedback = "RUNNING — execution only; no mission evaluation."
+                        codeFeedback = "MENJALANKAN — hanya eksekusi; belum ada evaluasi misi."
                         val result = withContext(Dispatchers.IO) { python.run(code.text) }
-                        codeOutput = result.output.ifBlank { "(no output)" }
+                        codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
-                        codeFeedback = "RUN COMPLETE — campaign progress has not changed."
+                        codeFeedback = "JALANKAN SELESAI — progres kampanye belum berubah."
                     }
                 },
                 onSubmit = {
                     val expected = storyExpected.getOrNull(beatIndex - 4).orEmpty()
                     scope.launch {
-                        codeFeedback = "VERIFYING..."
+                        codeFeedback = "MEMVERIFIKASI..."
                         val result = withContext(Dispatchers.IO) { python.run(code.text) }
-                        codeOutput = result.output.ifBlank { "(no output)" }
+                        codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                         val hasVariable = Regex("""(?m)^\s*[A-Za-z][A-Za-z0-9_]*\s*=""").containsMatchIn(code.text)
                         val hasPrint = Regex("""\bprint\s*\(""").containsMatchIn(code.text)
                         if (result.error.isBlank() && result.output.trim() == expected && hasVariable && hasPrint) {
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
-                            savedCodeStatus = "SAVED AT CHECKPOINT"
-                            codeFeedback = "VERIFIED — required output and variable/print concepts detected."
+                            savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
+                            codeFeedback = "TERVERIFIKASI — keluaran yang diminta serta konsep variable/print terdeteksi."
                             saveStage(storyStage + 1)
                             screenName = if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
                         } else {
-                            codeFeedback = "NOT VERIFIED — check the output, variable assignment, and print() call. You can edit and retry."
+                            codeFeedback = "BELUM TERVERIFIKASI — periksa keluaran, assignment variable, dan pemanggilan print(). Kamu bisa mengedit lalu mencoba lagi."
                         }
                     }
                 },
@@ -234,24 +234,24 @@ fun CyberProtocolApp() {
             onBack = { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.DATABASE -> InfoAppScreen(
-            "INTELLIGENCE DATABASE", "A.E.G.I.S. / RESTRICTED INDEX",
-            "No operational records are currently assigned to your clearance.\n\nTraining records and fictional case data will appear here as campaign permissions expand.",
+            "DATABASE INTELIJEN", "A.E.G.I.S. / INDEKS TERBATAS",
+            "Belum ada catatan operasi yang tersedia untuk tingkat izinmu.\n\nCatatan pelatihan dan data kasus fiktif akan muncul seiring bertambahnya izin kampanye.",
             CyberAssets.database, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.DOSSIER -> InfoAppScreen(
-            "DOSSIER", "PERSONNEL RECORD / RECRUIT",
-            "IDENTITY: TRAINEE OPERATIVE\nORGANIZATION: A.E.G.I.S.\nCLEARANCE: PROVISIONAL\nMENTOR: FREYA KNOX\nSTATUS: RECRUITMENT COMPLETE\n\nAdditional personal and operational records unlock through the campaign.",
+            "BERKAS PERSONEL", "CATATAN PERSONEL / REKRUT",
+            "IDENTITAS: AGEN MAGANG\nORGANISASI: A.E.G.I.S.\nIZIN: SEMENTARA\nMENTOR: FREYA KNOX\nSTATUS: REKRUTMEN SELESAI\n\nCatatan personel dan operasi tambahan akan terbuka seiring perkembangan kampanye.",
             CyberAssets.document, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.ANALYSIS -> InfoAppScreen(
-            "ANALYSIS", "INTELLIGENCE WORKSPACE",
-            "The analysis workspace will collect verified findings, working notes, and evidence assessments.\n\nEvidence status will distinguish CONFIRMED, INFERRED, DISPUTED, and UNVERIFIED information.",
+            "ANALISIS", "RUANG KERJA INTELIJEN",
+            "Ruang analisis akan mengumpulkan temuan terverifikasi, catatan kerja, dan penilaian bukti.\n\nStatus bukti membedakan TERKONFIRMASI, DISIMPULKAN, DIPERSELISIHKAN, dan BELUM TERVERIFIKASI.",
             CyberAssets.dataAnalysis, { screenName = GameScreen.APP_HUB.name }
         )
         GameScreen.OPERATIONS -> InfoAppScreen(
-            "OPERATIONS", "MISSION ACCESS / CLEARANCE CHECK",
-            if (storyStage >= 7) "FIRST CONTACT — RECRUITMENT\nSTATUS: COMPLETED\n\nYour next operational assignment is being prepared."
-            else "No operation is currently authorized.\nComplete the recruitment sequence to receive your first assignment.",
+            "OPERASI", "AKSES MISI / PEMERIKSAAN IZIN",
+            if (storyStage >= 7) "KONTAK PERTAMA — REKRUTMEN\nSTATUS: SELESAI\n\nPenugasan operasional berikutnya sedang disiapkan."
+            else "Belum ada operasi yang diizinkan.\nSelesaikan rangkaian rekrutmen untuk menerima penugasan pertamamu.",
             CyberAssets.investigation, { screenName = GameScreen.APP_HUB.name }
         )
     }
@@ -259,16 +259,16 @@ fun CyberProtocolApp() {
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            title = { Text("START NEW CAMPAIGN?") },
-            text = { Text("Campaign story progress will return to the beginning. Your Personal Workspace files will be preserved.") },
+            title = { Text("MULAI KAMPANYE BARU?") },
+            text = { Text("Progres cerita kampanye akan kembali ke awal. File di Ruang Kerja Pribadi akan tetap tersimpan.") },
             confirmButton = {
                 TextButton(onClick = {
                     showResetDialog = false
                     saveStage(0)
                     screenName = GameScreen.CAMPAIGN.name
-                }) { Text("START") }
+                }) { Text("MULAI") }
             },
-            dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text("CANCEL") } }
+            dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text("BATAL") } }
         )
     }
 }
@@ -294,20 +294,20 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
             Text("A.E.G.I.S.", color = Color(0xFFBCE8EA), fontSize = 15.sp, letterSpacing = 5.sp, fontWeight = FontWeight.Bold)
             Text("CYBER PROTOCOL", color = Color.White, fontSize = 29.sp, letterSpacing = 2.2.sp, fontWeight = FontWeight.Black)
             Spacer(Modifier.height(10.dp))
-            Text("KNOWLEDGE IS POWER.\nINTELLIGENCE IS RESPONSIBILITY.",
+            Text("PENGETAHUAN ADALAH KEKUATAN.\nINTELIJEN ADALAH TANGGUNG JAWAB.",
                 color = Color(0xFF8AA8AE), fontSize = 10.sp, lineHeight = 17.sp,
                 letterSpacing = 1.2.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             Spacer(Modifier.height(46.dp))
             Surface(color = Color(0xFF0B2028).copy(alpha = 0.82f), shape = RoundedCornerShape(4.dp),
                 border = BorderStroke(1.dp, Color(0xFF28515B)), modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MenuButton("CONTINUE CAMPAIGN", "Resume your recruitment file", onContinue, true)
-                    MenuButton("NEW CAMPAIGN", "Begin Chapter 001 — First Contact", onNewCampaign)
-                    MenuButton("APPLICATION HUB", "Open your A.E.G.I.S. device", onHub)
+                    MenuButton("LANJUTKAN KAMPANYE", "Lanjutkan berkas rekrutmenmu", onContinue, true)
+                    MenuButton("KAMPANYE BARU", "Mulai Bab 001 — Kontak Pertama", onNewCampaign)
+                    MenuButton("PUSAT APLIKASI", "Buka perangkat A.E.G.I.S.-mu", onHub)
                 }
             }
             Spacer(Modifier.height(30.dp))
-            Text("MANILA  /  CENTRAL COMMAND  /  SECURE ACCESS",
+            Text("MANILA  /  KOMANDO PUSAT  /  AKSES AMAN",
                 color = Color(0xFF55747A), fontSize = 9.sp, letterSpacing = 1.sp)
         }
     }
@@ -331,24 +331,24 @@ private fun MenuButton(title: String, subtitle: String, onClick: () -> Unit, pri
 
 @Composable
 private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -> Unit, onHub: () -> Unit) {
-    GamePage("CAMPAIGN", "A.E.G.I.S. / STORY OPERATIONS", onBack, onHub) {
+    GamePage("KAMPANYE", "A.E.G.I.S. / OPERASI CERITA", onBack, onHub) {
         GamePanel {
-            Text("CAMPAIGN 01", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.5.sp)
-            Text("THE RECRUITMENT", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black)
-            Text("An invitation. An unknown selection. A first step into intelligence work.",
+            Text("KAMPANYE 01", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.5.sp)
+            Text("REKRUTMEN", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black)
+            Text("Sebuah undangan. Pilihan yang tak diketahui. Langkah pertama menuju dunia intelijen.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             HorizontalDivider(color = CyberPalette.Divider)
-            Text("CHAPTER 001", color = CyberPalette.Crimson, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-            Text("FIRST CONTACT", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text("Progress: " + if (storyStage >= 7) "RECRUITMENT COMPLETE" else "$storyStage/7 story checkpoints",
+            Text("BAB 001", color = CyberPalette.Crimson, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text("KONTAK PERTAMA", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Progres: " + if (storyStage >= 7) "REKRUTMEN SELESAI" else "$storyStage/7 tahap cerita",
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             LinearProgressIndicator(progress = { storyStage.coerceAtMost(7) / 7f },
                 modifier = Modifier.fillMaxWidth(), color = CyberPalette.Crimson, trackColor = CyberPalette.Divider)
-            CPPrimaryButton(if (storyStage >= 7) "OPEN A.E.G.I.S. HUB" else "CONTINUE STORY", onContinue)
+            CPPrimaryButton(if (storyStage >= 7) "BUKA PUSAT A.E.G.I.S." else "LANJUTKAN CERITA", onContinue)
         }
         GamePanel {
-            Text("CAMPAIGN STRUCTURE", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.3.sp)
-            Text("Story scenes and discoveries lead into guided operations. New chapters remain hidden until the campaign is ready to reveal them.",
+            Text("STRUKTUR KAMPANYE", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.3.sp)
+            Text("Adegan cerita dan penemuan akan mengarah ke operasi terpandu. Bab baru tetap tersembunyi sampai waktunya terungkap.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -361,7 +361,7 @@ private fun StoryScreen(
     onRun: () -> Unit, onSubmit: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
 ) {
-    GamePage("FIRST CONTACT", "CHAPTER 001  /  THE RECRUITMENT", onBack, onHub) {
+    GamePage("KONTAK PERTAMA", "BAB 001  /  REKRUTMEN", onBack, onHub) {
         GamePanel {
             Text(beat.eyebrow, color = CyberPalette.Crimson, fontSize = 10.sp,
                 letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
@@ -370,52 +370,52 @@ private fun StoryScreen(
         }
         if (stage == 4 || stage == 5) {
             GamePanel {
-                Text("NEXUS  /  TRAINING ASSISTANCE", color = Color(0xFF83C7D0),
+                Text("NEXUS  /  BANTUAN PELATIHAN", color = Color(0xFF83C7D0),
                     fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
-                Text(if (stage == 4) "Store the message in a variable. Then display that variable with print()."
-                    else "Use the same two concepts to reveal this second message. Change the code if you need to.",
+                Text(if (stage == 4) "Simpan pesan ke dalam variable. Lalu tampilkan variable tersebut menggunakan print()."
+                    else "Gunakan dua konsep yang sama untuk mengungkap pesan kedua. Ubah kode jika diperlukan.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
-                CodeEditor(code, onCodeChange, "PYTHON 3 CODE EDITOR", 180)
+                CodeEditor(code, onCodeChange, "EDITOR KODE PYTHON 3", 180)
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SAVE CODE") }
-                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("RUN") }
+                    OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SIMPAN KODE") }
+                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN") }
                 }
                 Surface(color = Color(0xFF080D12), shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
                     Column(Modifier.fillMaxWidth().padding(12.dp)) {
-                        Text("TERMINAL OUTPUT", color = CyberPalette.SteelGray, fontSize = 9.sp)
+                        Text("KELUARAN TERMINAL", color = CyberPalette.SteelGray, fontSize = 9.sp)
                         Text(output, color = Color(0xFFB7E4C7), fontFamily = FontFamily.Monospace)
                     }
                 }
                 if (feedback.isNotBlank()) Text(feedback, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
-                CPPrimaryButton("SUBMIT FOR VERIFICATION", onSubmit)
-                Text("RUN only executes. SUBMIT checks the objective and advances the story only when verified.",
+                CPPrimaryButton("KIRIM UNTUK VERIFIKASI", onSubmit)
+                Text("JALANKAN hanya menjalankan kode. SUBMIT memeriksa tujuan dan melanjutkan cerita hanya jika hasilnya terverifikasi.",
                     color = CyberPalette.SteelGray, fontSize = 10.sp)
             }
         } else {
             CPPrimaryButton(beat.button, onContinue)
         }
-        Text("CHECKPOINT " + (stage + 1) + " / 7", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+        Text("TITIK SIMPAN " + (stage + 1) + " / 7", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
     }
 }
 
 @Composable
 private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
-    GamePage("APPLICATION HUB", "A.E.G.I.S. SECURE DEVICE", onClose, null) {
+    GamePage("PUSAT APLIKASI", "PERANGKAT AMAN A.E.G.I.S.", onClose, null) {
         GamePanel {
-            Text("AUTHORIZED APPLICATIONS", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
-            Text("Select an application. Closing it returns you to the previous operation.",
+            Text("APLIKASI YANG DIIZINKAN", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+            Text("Pilih aplikasi. Menutupnya akan mengembalikanmu ke operasi sebelumnya.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         }
         data class HubApp(val title: String, val icon: Int, val target: GameScreen, val unlockAt: Int)
         val apps = listOf(
-            HubApp("SECURE MESSENGER", CyberAssets.connection, GameScreen.MESSENGER, 7),
+            HubApp("PESAN AMAN", CyberAssets.connection, GameScreen.MESSENGER, 7),
             HubApp("TERMINAL", CyberAssets.terminal, GameScreen.TERMINAL, 4),
-            HubApp("INTELLIGENCE DATABASE", CyberAssets.database, GameScreen.DATABASE, 3),
-            HubApp("DOSSIER", CyberAssets.document, GameScreen.DOSSIER, 3),
-            HubApp("ANALYSIS", CyberAssets.dataAnalysis, GameScreen.ANALYSIS, 5),
-            HubApp("OPERATIONS", CyberAssets.investigation, GameScreen.OPERATIONS, 7)
+            HubApp("DATABASE INTELIJEN", CyberAssets.database, GameScreen.DATABASE, 3),
+            HubApp("BERKAS PERSONEL", CyberAssets.document, GameScreen.DOSSIER, 3),
+            HubApp("ANALISIS", CyberAssets.dataAnalysis, GameScreen.ANALYSIS, 5),
+            HubApp("OPERASI", CyberAssets.investigation, GameScreen.OPERATIONS, 7)
         )
         apps.chunked(2).forEach { rowApps ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -430,7 +430,7 @@ private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScre
                                 Modifier.size(42.dp), alpha = if (unlocked) 1f else 0.3f)
                             Text(app.title, color = if (unlocked) Color.White else CyberPalette.SteelGray,
                                 fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                            Text(if (unlocked) "OPEN  ›" else "LOCKED  ·  CLEARANCE REQUIRED",
+                            Text(if (unlocked) "BUKA  ›" else "TERKUNCI  ·  IZIN DIPERLUKAN",
                                 color = CyberPalette.SteelGray, fontSize = 9.sp)
                         }
                     }
@@ -442,7 +442,7 @@ private fun AppHubScreen(storyStage: Int, onClose: () -> Unit, onOpen: (GameScre
 
 @Composable
 private fun MessengerScreen(onBack: () -> Unit, reply: String, onReply: (String) -> Unit) {
-    GamePage("SECURE MESSENGER", "A.E.G.I.S. / ENCRYPTED CHANNEL", onBack, null) {
+    GamePage("PESAN AMAN", "A.E.G.I.S. / KANAL TERENKRIPSI", onBack, null) {
         GamePanel {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Surface(color = Color(0xFF24333A), shape = RoundedCornerShape(50)) {
@@ -450,20 +450,20 @@ private fun MessengerScreen(onBack: () -> Unit, reply: String, onReply: (String)
                 }
                 Column {
                     Text("FREYA KNOX", color = Color.White, fontWeight = FontWeight.Bold)
-                    Text("PRIMARY MENTOR  ·  SECURE", color = CyberPalette.Success, fontSize = 9.sp)
+                    Text("MENTOR UTAMA  ·  AMAN", color = CyberPalette.Success, fontSize = 9.sp)
                 }
             }
-            ChatBubble("Freya Knox", "Good. Your recruitment is official. I will supervise your initial training and make sure you understand every system you are authorized to use.", false)
-            ChatBubble("Freya Knox", "I have reviewed your file. I see potential. You, on the other hand, probably see a very long list of things you do not know yet. That is a perfectly reasonable assessment.", false)
+            ChatBubble("Freya Knox", "Bagus. Rekrutmenmu kini resmi. Aku akan membimbing pelatihan awalmu dan memastikan kamu memahami setiap sistem yang boleh kamu gunakan.", false)
+            ChatBubble("Freya Knox", "Aku sudah memeriksa berkasmu. Aku melihat potensi. Sementara itu, mungkin kamu melihat daftar panjang hal-hal yang belum kamu kuasai. Penilaian yang sangat masuk akal.", false)
             if (reply.isNotBlank()) {
-                ChatBubble("YOU", reply, true)
-                ChatBubble("Freya Knox", "Acknowledged. We will take this one operation at a time. Questions are welcome; pretending to understand is not required.", false)
-                ChatBubble("Freya Knox", "Excellent. You have chosen a mentor of extraordinary brilliance. I recommend writing that down before I become modest again.", false)
+                ChatBubble("KAMU", reply, true)
+                ChatBubble("Freya Knox", "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham.", false)
+                ChatBubble("Freya Knox", "Luar biasa. Kamu telah memilih mentor dengan kecerdasan yang tak tertandingi. Sebaiknya catat itu sebelum aku kembali rendah hati.", false)
             }
-            listOf("Understood. Where do we begin?", "I have a lot to learn.", "Why did you choose me?").forEach { choice ->
+            listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?").forEach { choice ->
                 OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
             }
-            Text("Initial dialogue choices affect the immediate reply only. They do not alter campaign branches or relationship values.",
+            Text("Pilihan dialog awal hanya memengaruhi balasan saat ini. Pilihan tersebut tidak mengubah cabang kampanye atau nilai hubungan.",
                 color = CyberPalette.SteelGray, fontSize = 10.sp)
         }
     }
@@ -486,7 +486,7 @@ private fun TerminalScreen(
     currentDirectory: String, command: String, onCommandChange: (String) -> Unit,
     output: String, busy: Boolean, onExecute: () -> Unit, onBack: () -> Unit
 ) {
-    GamePage("TERMINAL", "A.E.G.I.S. VIRTUAL ENVIRONMENT", onBack, null) {
+    GamePage("TERMINAL", "LINGKUNGAN VIRTUAL A.E.G.I.S.", onBack, null) {
         GamePanel {
             Text(currentDirectory, color = Color(0xFF8CC8A2), fontSize = 10.sp, fontFamily = FontFamily.Monospace)
             Surface(color = Color(0xFF070B0E), shape = RoundedCornerShape(8.dp),
@@ -497,11 +497,11 @@ private fun TerminalScreen(
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(value = command, onValueChange = onCommandChange,
-                    modifier = Modifier.weight(1f), singleLine = true, placeholder = { Text("Enter command…") },
+                    modifier = Modifier.weight(1f), singleLine = true, placeholder = { Text("Masukkan perintah…") },
                     textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace, fontSize = 12.sp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = { onExecute() }))
-                Button(onClick = onExecute, enabled = !busy) { Text(if (busy) "…" else "RUN") }
+                Button(onClick = onExecute, enabled = !busy) { Text(if (busy) "…" else "JALANKAN") }
             }
             val availableCommands = listOf("help", "pwd", "ls", "cd", "cat", "mkdir", "touch", "rm", "echo", "whoami", "python", "clear")
             val query = command.trim().lowercase()
@@ -518,9 +518,9 @@ private fun TerminalScreen(
                     }
                 }
             }
-            Text("Linux-like commands • isolated virtual filesystem • no Android shell access",
+            Text("Perintah bergaya Linux • sistem file virtual terisolasi • tanpa akses ke shell Android",
                 color = CyberPalette.SteelGray, fontSize = 10.sp)
-            TextButton(onClick = { onCommandChange("help") }) { Text("FILL COMMAND REFERENCE") }
+            TextButton(onClick = { onCommandChange("help") }) { Text("TAMPILKAN PANDUAN PERINTAH") }
         }
     }
 }
@@ -546,8 +546,8 @@ private fun GamePage(title: String, subtitle: String, onBack: () -> Unit,
                 Text(title, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
                 Text(subtitle, color = CyberPalette.SteelGray, fontSize = 9.sp, letterSpacing = 0.8.sp)
             }
-            if (onHub != null) TextButton(onClick = onHub) { Text("APPS") }
-            TextButton(onClick = onBack) { Text("BACK") }
+            if (onHub != null) TextButton(onClick = onHub) { Text("APLIKASI") }
+            TextButton(onClick = onBack) { Text("KEMBALI") }
         }
         HorizontalDivider(color = CyberPalette.Divider)
         content()

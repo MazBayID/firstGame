@@ -42,7 +42,7 @@ class VirtualFileSystem(context: Context) {
             val target = resolve(redirect.groupValues[3], currentDirectory)
                 ?: return TerminalResponse("Invalid path: access is restricted to the A.E.G.I.S. workspace.", currentDirectory)
             if (directories.contains(target)) return TerminalResponse("Cannot write to a directory.", currentDirectory)
-            if (!directories.contains(parent(target))) return TerminalResponse("Parent directory does not exist.", currentDirectory)
+            if (!directories.contains(parent(target))) return TerminalResponse("Folder induk tidak ditemukan.", currentDirectory)
             files[target] = redirect.groupValues[2] + "\n"
             persist()
             return TerminalResponse("", currentDirectory)
@@ -56,27 +56,27 @@ class VirtualFileSystem(context: Context) {
 
         val output = when (name) {
             "help" -> """
-                SUPPORTED COMMANDS
-                pwd                 Show current directory
-                ls [path]           List files and directories
-                cd <path>           Change directory
-                cat <file>          Read a text file
-                mkdir <name>        Create a directory
-                touch <file>        Create an empty file
-                rm <file>           Delete a file
-                echo "text" > file  Write text to a file
-                whoami              Show current in-game identity
-                clear               Clear terminal output
-                python <file.py>    Run a saved Python script
-                help                Show this reference
+                DAFTAR PERINTAH YANG DIDUKUNG
+                pwd                 Tampilkan direktori saat ini
+                ls [path]           Daftar file dan folder
+                cd <path>           Pindah folder
+                cat <file>          Baca file teks
+                mkdir <name>        Buat folder
+                touch <file>        Buat file kosong
+                rm <file>           Hapus file
+                echo "text" > file  Tulis teks ke file
+                whoami              Tampilkan identitas dalam game
+                clear               Bersihkan tampilan terminal
+                python <file.py>    Jalankan script Python yang tersimpan
+                help                Tampilkan panduan ini
 
-                This is an isolated A.E.G.I.S. virtual environment, not an Android shell.
+                Ini adalah lingkungan virtual A.E.G.I.S. yang terisolasi, bukan shell Android.
             """.trimIndent()
             "pwd" -> cwd
-            "whoami" -> "RECRUIT  ·  A.E.G.I.S. TRAINING ENVIRONMENT"
+            "whoami" -> "REKRUT  ·  LINGKUNGAN PELATIHAN A.E.G.I.S."
             "ls" -> {
                 val target = resolve(rest.firstOrNull() ?: ".", cwd)
-                    ?: return TerminalResponse("Invalid path.", cwd)
+                    ?: return TerminalResponse("Jalur tidak valid.", cwd)
                 if (!directories.contains(target)) return TerminalResponse("Not a directory: $target", cwd)
                 val childDirs = directories.filter { it != target && parent(it) == target }
                     .map { it.substringAfterLast("/") + "/" }
@@ -86,15 +86,15 @@ class VirtualFileSystem(context: Context) {
             }
             "cd" -> {
                 val target = resolve(rest.firstOrNull() ?: initialDirectory(), cwd)
-                    ?: return TerminalResponse("Invalid path: access outside the virtual workspace is denied.", cwd)
-                if (!directories.contains(target)) return TerminalResponse("Directory not found: $target", cwd)
+                    ?: return TerminalResponse("Jalur tidak valid: akses keluar dari ruang kerja virtual ditolak.", cwd)
+                if (!directories.contains(target)) return TerminalResponse("Folder tidak ditemukan: $target", cwd)
                 cwd = target
                 ""
             }
             "cat" -> {
                 val target = resolve(rest.firstOrNull() ?: "", cwd)
                     ?: return TerminalResponse("Usage: cat <file>", cwd)
-                files[target] ?: return TerminalResponse("File not found: $target", cwd)
+                files[target] ?: return TerminalResponse("File tidak ditemukan: $target", cwd)
             }
             "mkdir" -> {
                 val target = resolve(rest.firstOrNull() ?: "", cwd)
@@ -117,13 +117,13 @@ class VirtualFileSystem(context: Context) {
             "rm" -> {
                 val target = resolve(rest.firstOrNull() ?: "", cwd)
                     ?: return TerminalResponse("Usage: rm <file>", cwd)
-                if (directories.contains(target)) return TerminalResponse("Directory deletion is not enabled. Remove files individually.", cwd)
+                if (directories.contains(target)) return TerminalResponse("Penghapusan folder belum tersedia. Hapus file satu per satu.", cwd)
                 if (files.remove(target) == null) return TerminalResponse("File not found: $target", cwd)
                 persist()
                 ""
             }
             "python" -> "PYTHON_LAUNCH:" + (rest.firstOrNull() ?: "")
-            else -> "Command not found: $name\nType 'help' to see supported commands."
+            else -> "Perintah tidak dikenal: $name\nKetik 'help' untuk melihat daftar perintah."
         }
         return TerminalResponse(output, cwd)
     }

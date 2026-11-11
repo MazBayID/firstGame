@@ -27,7 +27,7 @@ The player begins Chapter 001 — FIRST CONTACT with a guided introduction to A.
 - **Offline-first foundation:** the opening campaign flow and core training do not require a server or external AI API.
 - **Safety boundary:** fictional cases and controlled training data only. The current Python runner is a restricted teaching prototype, not a hardened sandbox for hostile code.
 
-## Current playable foundation
+## Language\n\nBahasa Indonesia is the default language for the opening experience, including campaign story, menu navigation, mentor dialogue, app labels, and the in-game terminal guidance. Python syntax and terminal commands intentionally retain their standard technical spelling.\n\n## Current playable foundation
 
 The current reconstruction establishes the Android app shell and an initial vertical slice:
 
