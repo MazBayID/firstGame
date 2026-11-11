@@ -17,7 +17,7 @@ object Campaign01Story {
             "Berkas orientasi berisi penilaian singkat dan fragmen pesan latihan. Tidak ada penjelasan tentang siapa yang mengusulkan namamu.\n\nSatu kalimat masih terlihat:\n\n“Potensi tidak sama dengan pengalaman. Kandidat ini memiliki yang pertama. Yang kedua bisa dipelajari.”\n\nTugas awal dirancang untuk menguji ketelitian, bukan pengalaman sebagai agen.",
             "MULAI TUGAS PERTAMA"),
         StoryBeat("TUGAS PERTAMA", "DEKRIPSI TERPANDU  /  LAPIS 01",
-            "Sebuah fragmen pesan ditemukan pada kanal latihan. Freya Knox, mentor yang kini menghubungimu, akan membimbing langkah pertamamu.\n\nSimpan fragmen ke dalam variabel bernama signal, lalu gunakan print() untuk menampilkannya. Ini adalah sandi latihan fiktif, bukan sistem keamanan kriptografi sungguhan.",
+            "Sebuah fragmen pesan ditemukan pada kanal latihan. A.E.G.I.S. meminta kamu memeriksanya sebagai latihan pertamamu.\n\nSimpan fragmen ke dalam variabel bernama signal, lalu gunakan print() untuk menampilkannya. Ini adalah sandi latihan fiktif, bukan sistem keamanan kriptografi sungguhan.",
             "BUKA EDITOR KODE"),
         StoryBeat("VERIFIKASI SISTEM", "DEKRIPSI TERPANDU  /  LAPIS 02",
             "Sinyal pertama membuka pesan verifikasi. Gunakan kembali konsep variabel dan output, tetapi simpan pesan kedua pada variabel message.\n\nFreya akan membantu menjelaskan tujuan tugas. Setelah itu, kamu harus menulis dan memeriksa kode sendiri sebelum mengirim hasilnya untuk diverifikasi.",
