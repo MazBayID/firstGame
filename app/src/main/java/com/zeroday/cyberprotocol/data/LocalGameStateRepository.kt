@@ -39,7 +39,10 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         val previousRaw = preferences.getString(KEY_PREVIOUS_SNAPSHOT, null)
         val previous = previousRaw?.let { runCatching { decode(JSONObject(it)) }.getOrNull() }
         if (previous != null) {
-            val recovered = previous.copy(lastCheckpoint = "recovered_previous_snapshot")
+            val recovered = previous.copy(
+                schemaVersion = GameState.CURRENT_SCHEMA_VERSION,
+                lastCheckpoint = "recovered_previous_snapshot"
+            )
             preferences.edit().putString(KEY_SNAPSHOT, encode(recovered).toString()).apply()
             return recovered
         }
