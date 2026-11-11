@@ -6,7 +6,10 @@ Cyber Protocol is an Android-first Hacker RPG and coding simulation. You play a 
 
 - Native Android UI with Kotlin and Jetpack Compose.
 - Embedded CPython 3.13 through Chaquopy.
+- Main menu before entering the campaign, with a dedicated settings screen.
+- Indonesian and English game language selection, saved locally on the device.
 - Split mission, target-terminal, and code-editor layout.
+- On-screen cursor navigation controls (left/right/up/down and line start/end) for touch editing.
 - Python syntax coloring, line numbers, auto-indent, and editor shortcut keys.
 - Chapter 1 campaign with three playable Python investigations:
   - M01 — The Corrupted Access Log (count ERROR entries).
