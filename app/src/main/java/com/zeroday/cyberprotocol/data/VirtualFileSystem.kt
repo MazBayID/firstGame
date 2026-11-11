@@ -258,6 +258,7 @@ class MissionWorkspace internal constructor(
     private val writableFiles: Set<String>
 ) {
     val allowedFileNames: Set<String> get() = allowedFiles.toSet()
+    val writableFileNames: Set<String> get() = writableFiles.toSet()
 
     fun listFiles(): List<String> = owner.listMissionFiles(directory, allowedFiles)
 
