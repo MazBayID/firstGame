@@ -772,3 +772,70 @@ The initial campaign introduces Python as the player's first executable programm
 - The first release should prioritize a complete, polished Python learning and mission experience. Additional languages and technical tracks must be implemented as real, integrated systems—not decorative locked cards or promises of future functionality.
 
 This hybrid approach keeps the opening accessible, rewards campaign progression, and gives motivated players room to explore without turning the game into an unstructured course catalogue.
+
+---
+
+# 19. Updated Creative Direction — Adventure RPG and AAA-Level Presentation
+
+The default genre and player-facing identity of Cyber Protocol is **Adventure RPG**. The existing intelligence, investigation, and technical-simulation pillars remain central gameplay systems within that broader adventure-RPG experience; they are not a reason for the campaign to feel like a sequence of static utility screens.
+
+**Quality target:** Aim for the cohesion, atmosphere, production polish, and emotional impact associated with premium/AAA games, while treating this as a quality direction rather than a claim about budget or production scale.
+
+- The campaign must feel like an unfolding adventure with momentum, discoveries, tension, character moments, and a strong sense of place.
+- Replace repetitive, static screen-to-screen presentation with purposeful cinematic transitions, scene staging, varied composition, contextual motion, environmental details, and strong visual hierarchy.
+- Use animation and effects to communicate events and state changes, not as decoration on every screen. Respect reduced-motion settings.
+- Make story beats visually and emotionally distinct: quiet conversations, urgent alerts, classified briefings, discoveries, mission preparation, and debriefs should not all use the same layout.
+- Build atmosphere through sound design, music, interface audio cues, lighting, and visual feedback when supported by the platform and production scope. Audio must be configurable and must not be required to understand essential story information.
+- Make the player feel present in the world through first-person framing, believable in-world devices, documents, locations, and operational context. Do not turn the game into a generic dashboard or a programming lesson app.
+- Keep controls readable and responsive on Android. Cinematic presentation must never make mission objectives, dialogue, accessibility controls, or navigation unclear.
+- Prioritize a coherent, memorable campaign experience over adding many shallow screens or features. Every major interface should serve story, exploration, progression, or gameplay.
+
+These are product-quality goals. Specific story branches, characters, locations, art assets, and future cases still require approval before becoming canon.
+
+# 20. Localization — Indonesian and English
+
+Cyber Protocol must support **Bahasa Indonesia** and **English** as selectable game languages.
+
+- Provide a language selector in Settings (and an accessible first-run choice if appropriate).
+- The initial supported languages are Bahasa Indonesia and English. Do not assume additional languages without a separate decision.
+- Localize all player-facing content, including menus, settings, notifications, app names/descriptions where appropriate, campaign dialogue, mission objectives, hints, terminal help, errors, debriefs, archives, and accessibility text.
+- Keep narrative and gameplay data separate from UI code so the selected language can consistently resolve the correct text.
+- Changing language must not reset campaign progress, mission state, saved code, evidence, or settings unrelated to language.
+- Persist the selected language locally and apply it consistently after app restart.
+- Avoid mixing Indonesian and English unintentionally within the same selected-language experience. Code, standard programming syntax, and established technical command names remain unchanged where translation would be misleading.
+- English localization must read naturally rather than being a literal, awkward translation. Preserve character voice, especially Freya's professional first impression and gradually revealed mischievous humor.
+
+# 21. Campaign Opening — Mysterious Recruitment Notification
+
+The first time the player opens the Campaign, the game must begin with a restrained, mysterious phone-notification sequence rather than immediately displaying the ordinary campaign interface.
+
+**Approved opening direction:**
+- Transition to a fully black screen.
+- After a deliberate pause, display a notification card styled like an ordinary smartphone notification. It should feel as if a normal phone has just received a message, not like a game mission banner or a dramatic classified-system alert.
+- The notification is the opening story hook: familiar and understated on the surface, mysterious in context.
+- Use a subtle arrival animation and optional restrained notification sound/haptic feedback where supported and enabled. The notification must remain readable and tappable.
+- Tapping or continuing from the notification leads naturally into the recruitment invitation and the approved opening story sequence.
+- This is an in-game cinematic simulation only. It must not request Android notification permission, create a real system notification, or imply access to the player's real messages or device data.
+- Play the opening sequence only on the first campaign entry for a new story. Persist its completion so returning to Campaign resumes the campaign normally and does not replay the surprise notification unexpectedly.
+- Do not insert a separate prologue titled or framed as **"Pengirim tidak dikenal" / "Unknown Sender"**. The mysterious quality should come from the ordinary-looking notification and the content/context of the invitation, not from an extra unknown-sender prologue.
+- Preserve the first-person perspective and avoid showing a player-character portrait.
+
+**Recruitment invitation wording:**
+- Replace the previous sentence **"Seorang melihat potensi dalam dirimu...."** with the exact approved Indonesian wording: **"Seseorang meminta kami untuk merekrutmu."**
+- English localization: **"Someone has asked us to recruit you."**
+- Preserve the intended mystery. Do not explain who made the request or reveal the source of the recommendation in the opening; that information remains a story mystery to be developed and approved later.
+
+# 22. Secure Messenger — Familiar Smartphone Messaging Experience
+
+The in-game application currently referred to as **Pesan Aman / Secure Messenger** should be redesigned as a familiar, polished smartphone messaging application inspired by the usability and interaction patterns of apps such as WhatsApp, while retaining Cyber Protocol and A.E.G.I.S. branding.
+
+- The contact/conversation list should feel like a real messaging inbox, with clear contact identity, latest-message preview, timestamp, unread count/indicator, and search where practical.
+- Individual conversations should use a recognizable chat layout with distinct incoming and outgoing message bubbles, readable timestamps, and a clear conversation header.
+- Provide a familiar message-composer area at the bottom. In the initial authored-dialogue system, player replies may remain predefined choices; do not introduce free-text consequential dialogue unless separately approved.
+- Support appropriate in-world messaging affordances such as attachment/document cards, message status, typing/arrival cues, and conversation history when they serve gameplay.
+- Messages from Freya, NEXUS, and other unlocked contacts must retain distinct voices and sender identities. NEXUS remains a system, not a human character.
+- Important mission briefings, evidence attachments, and operational updates may be delivered through the messaging interface and should link to the relevant in-game context where appropriate.
+- Maintain the existing navigation rule: opening a conversation from the inbox and returning from it should preserve the inbox; closing Messenger should return to the game screen that opened it without losing context.
+- The interface should be familiar and easy to use, but must not copy WhatsApp logos, proprietary visual assets, or imply that it is the real WhatsApp service. Use original A.E.G.I.S. visual identity.
+- Keep the experience offline-first and locally persisted. No real phone contacts, SMS, notifications, or external messaging account access is required.
+
