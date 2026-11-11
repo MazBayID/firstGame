@@ -818,61 +818,112 @@ private fun MessengerScreen(
     replies: List<String>,
     onReply: (String) -> Unit
 ) {
+    var search by rememberSaveable { mutableStateOf("") }
     val contactName = when (selectedContact) {
-        "FREYA" -> "FREYA KNOX"
+        "FREYA" -> "Freya Knox"
         "NEXUS" -> "NEXUS"
-        else -> "PESAN AMAN"
+        else -> "Pesan Aman"
     }
-    GamePage(
-        contactName,
-        if (selectedContact.isBlank()) "A.E.G.I.S. / DAFTAR KONTAK" else "A.E.G.I.S. / KANAL TERENKRIPSI",
-        onBack = { if (selectedContact.isBlank()) onClose() else onSelectContact("") },
-        onHub = null
-    ) {
-        if (selectedContact.isBlank()) {
-            GamePanel {
-                Text("KONTAK TERSEDIA", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
-                Surface(
-                    onClick = { onSelectContact("FREYA") },
-                    color = Color(0xFF1A1D24),
-                    shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(1.dp, CyberPalette.Divider),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Surface(color = Color(0xFF24333A), shape = RoundedCornerShape(50)) {
-                            Text("FK", Modifier.padding(12.dp), color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                        Column(Modifier.weight(1f)) {
-                            Text("FREYA KNOX", color = Color.White, fontWeight = FontWeight.Bold)
-                            Text("MENTOR UTAMA  ·  ONLINE", color = CyberPalette.Success, fontSize = 9.sp)
-                        }
-                        Text("›", color = CyberPalette.Crimson, fontSize = 24.sp)
-                    }
+    val quickReplies = if (selectedContact == "FREYA") {
+        listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?")
+    } else {
+        listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?")
+    }
+
+    Column(Modifier.fillMaxSize().background(Color(0xFF0B141A))) {
+        Row(
+            Modifier.fillMaxWidth().background(Color(0xFF202C33)).padding(horizontal = 8.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            TextButton(onClick = {
+                if (selectedContact.isBlank()) onClose() else onSelectContact("")
+            }) {
+                Text("‹", color = Color.White, fontSize = 30.sp)
+            }
+            if (selectedContact.isNotBlank()) {
+                Surface(color = Color(0xFF315448), shape = RoundedCornerShape(50)) {
+                    Text(if (selectedContact == "FREYA") "FK" else "NX",
+                        Modifier.padding(10.dp), color = Color.White, fontWeight = FontWeight.Bold)
                 }
-                Surface(
-                    onClick = { onSelectContact("NEXUS") },
-                    color = Color(0xFF1A1D24),
-                    shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(1.dp, CyberPalette.Divider),
-                    modifier = Modifier.fillMaxWidth()
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(contactName, color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    if (selectedContact == "FREYA") "tersedia melalui kanal aman"
+                    else if (selectedContact == "NEXUS") "sistem komunikasi aktif"
+                    else "A.E.G.I.S.  ·  komunikasi terenkripsi",
+                    color = Color(0xFFB4C2C8), fontSize = 10.sp
+                )
+            }
+            Text("⋮", color = Color(0xFFB4C2C8), fontSize = 22.sp)
+        }
+
+        if (selectedContact.isBlank()) {
+            OutlinedTextField(
+                value = search,
+                onValueChange = { search = it.take(60) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
+                singleLine = true,
+                placeholder = { Text("Cari percakapan") },
+                leadingIcon = { Text("⌕", color = Color(0xFF9BAEB4), fontSize = 22.sp) },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = Color(0xFF202C33),
+                    unfocusedContainerColor = Color(0xFF202C33),
+                    focusedBorderColor = Color(0xFF315448),
+                    unfocusedBorderColor = Color(0xFF34434A),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                )
+            )
+            Column(
+                Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp)
+            ) {
+                if ("FREYA KNOX".contains(search, ignoreCase = true) ||
+                    "FREYA".contains(search, ignoreCase = true) ||
+                    "Seseorang meminta kami untuk merekrutmu.".contains(search, ignoreCase = true) && recruitmentInvitation
                 ) {
-                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Surface(color = Color(0xFF24333A), shape = RoundedCornerShape(50)) {
-                            Text("NX", Modifier.padding(12.dp), color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                        Column(Modifier.weight(1f)) {
-                            Text("NEXUS", color = Color.White, fontWeight = FontWeight.Bold)
-                            Text("SISTEM KOMUNIKASI INTELIJEN", color = CyberPalette.SteelGray, fontSize = 9.sp)
-                        }
-                        Text("›", color = CyberPalette.Crimson, fontSize = 24.sp)
-                    }
+                    MessengerContactRow(
+                        initials = "FK",
+                        name = "Freya Knox",
+                        preview = if (recruitmentInvitation) "Seseorang meminta kami untuk merekrutmu."
+                            else "Kanal ini aman. Kita bisa mulai berbicara.",
+                        status = if (recruitmentInvitation) "BARU" else "MENTOR",
+                        onClick = { onSelectContact("FREYA") }
+                    )
+                }
+                if ("NEXUS".contains(search, ignoreCase = true) ||
+                    "sistem komunikasi".contains(search, ignoreCase = true)
+                ) {
+                    MessengerContactRow(
+                        initials = "NX",
+                        name = "NEXUS",
+                        preview = "Sistem komunikasi A.E.G.I.S. aktif.",
+                        status = "SISTEM",
+                        onClick = { onSelectContact("NEXUS") }
+                    )
+                }
+                if (search.isNotBlank() &&
+                    !"FREYA KNOX".contains(search, true) &&
+                    !"FREYA".contains(search, true) &&
+                    !"NEXUS".contains(search, true) &&
+                    !"sistem komunikasi".contains(search, true) &&
+                    !(recruitmentInvitation && "Seseorang meminta kami untuk merekrutmu.".contains(search, true))
+                ) {
+                    Text("Tidak ada percakapan yang cocok.", color = Color(0xFF9BAEB4),
+                        modifier = Modifier.fillMaxWidth().padding(18.dp), fontSize = 12.sp)
                 }
             }
         } else {
-            GamePanel {
+            Column(
+                Modifier.weight(1f).fillMaxWidth().background(Color(0xFF0B141A))
+                    .verticalScroll(rememberScrollState()).padding(horizontal = 14.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text("PESAN TERENKRIPSI  ·  A.E.G.I.S.",
+                    Modifier.align(Alignment.CenterHorizontally),
+                    color = Color(0xFF91A5AC), fontSize = 9.sp, letterSpacing = 1.sp)
                 if (selectedContact == "FREYA") {
                     if (recruitmentInvitation) {
                         ChatBubble(
@@ -891,28 +942,77 @@ private fun MessengerScreen(
                         ChatBubble("Freya Knox", "Kanal ini aman. Aku Freya Knox, mentor yang akan mendampingimu.", false)
                     }
                     replies.forEachIndexed { index, message ->
-                        ChatBubble("KAMU", message, true)
-                        ChatBubble("Freya Knox",
+                        ChatBubble("Kamu", message, true)
+                        ChatBubble(
+                            "Freya Knox",
                             if (index % 2 == 0) "Dimengerti. Kita akan menjalani satu operasi demi satu operasi. Kamu boleh bertanya; tidak perlu berpura-pura paham."
                             else "Pertanyaan bagus. Aku akan menjawabnya saat konteks operasinya tersedia. Jangan khawatir, aku jarang kehabisan kata-kata.",
-                            false)
-                    }
-                    listOf("Dimengerti. Kita mulai dari mana?", "Masih banyak yang harus kupelajari.", "Mengapa kamu memilihku?").forEach { choice ->
-                        OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
+                            false
+                        )
                     }
                 } else {
                     ChatBubble("NEXUS", "Kanal komunikasi A.E.G.I.S. aktif. Status personel: rekrut. Seluruh tugas latihan berjalan secara lokal pada perangkat ini.", false)
                     ChatBubble("NEXUS", "Aku dapat menjelaskan status operasi, menyimpan konteks teknis, dan meneruskan instruksi yang telah disahkan mentor.", false)
                     replies.forEach { message ->
-                        ChatBubble("KAMU", message, true)
+                        ChatBubble("Kamu", message, true)
                         ChatBubble("NEXUS", "Permintaan diterima. Untuk saat ini, gunakan panel Operasi dan Berkas untuk meninjau informasi yang tersedia.", false)
                     }
-                    listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?").forEach { choice ->
-                        OutlinedButton(onClick = { onReply(choice) }, modifier = Modifier.fillMaxWidth()) { Text(choice) }
-                    }
                 }
-                Text("Pilihan dialog awal hanya memengaruhi balasan saat ini. Pilihan tersebut tidak mengubah cabang kampanye atau nilai hubungan.",
-                    color = CyberPalette.SteelGray, fontSize = 10.sp)
+            }
+            Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                    Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
+                    quickReplies.forEach { choice ->
+                        Surface(
+                            onClick = { onReply(choice) },
+                            color = Color(0xFF263A34),
+                            shape = RoundedCornerShape(18.dp),
+                            border = BorderStroke(1.dp, Color(0xFF36564A)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(choice, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+                                color = Color(0xFFE2ECE7), fontSize = 12.sp)
+                        }
+                    }
+                    Text("Balasan menggunakan pilihan dialog yang disediakan.",
+                        color = Color(0xFF84979D), fontSize = 9.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MessengerContactRow(
+    initials: String,
+    name: String,
+    preview: String,
+    status: String,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        color = Color(0xFF182229),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, Color(0xFF2A3940)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            Modifier.padding(horizontal = 13.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Surface(color = Color(0xFF315448), shape = RoundedCornerShape(50)) {
+                Text(initials, Modifier.padding(13.dp), color = Color.White, fontWeight = FontWeight.Bold)
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(name, color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    Spacer(Modifier.weight(1f))
+                    Text(status, color = Color(0xFF72C99B), fontSize = 8.sp, letterSpacing = 0.6.sp)
+                }
+                Text(preview, color = Color(0xFF9BAEB4), fontSize = 11.sp, maxLines = 1)
             }
         }
     }
@@ -920,12 +1020,26 @@ private fun MessengerScreen(
 
 @Composable
 private fun ChatBubble(sender: String, message: String, outgoing: Boolean) {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = if (outgoing) Alignment.End else Alignment.Start) {
-        Text(sender, color = CyberPalette.SteelGray, fontSize = 9.sp)
-        Surface(color = if (outgoing) Color(0xFF253C45) else Color(0xFF1A1D24),
-            shape = RoundedCornerShape(12.dp), border = BorderStroke(1.dp, CyberPalette.Divider),
-            modifier = Modifier.fillMaxWidth(0.92f)) {
-            Text(message, Modifier.padding(12.dp), color = Color(0xFFE4E7EA), lineHeight = 20.sp)
+    Column(
+        Modifier.fillMaxWidth(),
+        horizontalAlignment = if (outgoing) Alignment.End else Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        if (!outgoing) {
+            Text(sender, color = Color(0xFF72C99B), fontSize = 9.sp)
+        }
+        Surface(
+            color = if (outgoing) Color(0xFF005C4B) else Color(0xFF202C33),
+            shape = RoundedCornerShape(
+                topStart = 13.dp, topEnd = 13.dp,
+                bottomEnd = if (outgoing) 4.dp else 13.dp,
+                bottomStart = if (outgoing) 13.dp else 4.dp
+            ),
+            border = BorderStroke(1.dp, Color(0xFF34434A)),
+            modifier = Modifier.fillMaxWidth(0.88f)
+        ) {
+            Text(message, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+                color = Color(0xFFE4E9EC), lineHeight = 19.sp, fontSize = 12.sp)
         }
     }
 }
