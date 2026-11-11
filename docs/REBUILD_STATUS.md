@@ -116,6 +116,8 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Added a persisted recruitment-opening checkpoint in GameState schema 3; the notification tap is idempotent, and older save/legacy migration paths preserve whether the invitation has already been opened.
 - Removed the Unknown Sender prologue from the playable First Contact story sequence. The campaign now begins its story beats with A.E.G.I.S. organization after the invitation conversation.
 - Rewrote the Story_Line opening sequence to match the approved notification → Secure Messenger → recruitment invitation flow.
+- Reworked the Campaign overview into a chapter-focused hero panel with a visible five-beat progression timeline.
+- Added distinct cinematic gradient treatments and scene identifiers to First Contact story cards, with different visual palettes for organization, dossier, training, and recruitment scenes.
 - Added a mission-success debrief screen before the story advances.
 - Extracted First Contact narrative content and game destination definitions from the main Compose shell.
 - Added a `GameSessionViewModel` to own campaign state refreshes, mission completion, code checkpoints, recruitment clearance, and progression/evidence mutations outside the main Compose screen.
@@ -140,9 +142,12 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Updated CI configuration to run Android unit tests before APK assembly.
 
 ### Verification observed so far
-- CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue before the Messenger visual redesign.
-- CI run `43028842754` is the current verification for the subsequent Messenger redesign and navigation-return fix on commit `58ec024`. Python runner tests and Android SDK setup passed; Gradle setup/build were still in progress at the time this note was written.
-- The latest completed run is not yet a device acceptance test. The new notification and Messenger presentation still require final integration verification before the next cohesive device build is offered.
+- CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
+- CI run `43028768493` passed on commit `73493ac`: the Secure Messenger inbox/chat redesign compiled, Kotlin unit tests passed, and a debug APK artifact was uploaded.
+- CI run `43028842754` passed on commit `58ec024`: the Messenger return-navigation fix also compiled and passed Kotlin/Python tests.
+- CI run `43029424840` passed on commit `01d49dd`: the new Campaign chapter overview and five-beat progress timeline compiled and passed the automated checks.
+- CI run `43029676168` is verifying the subsequent cinematic story-card styling on commit `ac076ca`; Python tests and Android SDK setup passed, while APK assembly was still running at the time this note was written.
+- These CI results are automated build/test evidence, not a substitute for final physical-device acceptance.
 
 ### Remaining before this can be called a complete game
 - Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state.
