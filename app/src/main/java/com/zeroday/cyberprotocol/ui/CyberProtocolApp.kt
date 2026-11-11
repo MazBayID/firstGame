@@ -135,7 +135,7 @@ fun CyberProtocolApp() {
                         Text("OUTPUT\n${lesson.expectedOutput}", color = MaterialTheme.colorScheme.secondary,
                             fontFamily = FontFamily.Monospace)
                     }
-                    BackButton { screen = Screen.HOME; }
+                    BackButton(language) { screen = Screen.HOME; }
                 }
                 Screen.PRACTICE -> {
                     PageTitle(tr("practice", language), tr("practice_sub", language))
@@ -153,7 +153,7 @@ fun CyberProtocolApp() {
                     }, modifier = Modifier.fillMaxWidth()) { Text(if (busy) tr("loading", language) else tr("run_practice", language)) }
                     CodePanel(terminal)
                     Text(feedback, color = MaterialTheme.colorScheme.secondary)
-                    BackButton { screen = Screen.HOME }
+                    BackButton(language) { screen = Screen.HOME }
                 }
                 Screen.MISSIONS -> {
                     PageTitle(tr("missions", language), tr("mission_sub", language))
@@ -165,7 +165,7 @@ fun CyberProtocolApp() {
                             Text("$marker  M${mission.id.toString().padStart(2, '0')} — ${mission.title}")
                         }
                     }
-                    BackButton { screen = Screen.HOME }
+                    BackButton(language) { screen = Screen.HOME }
                 }
                 Screen.MISSION -> {
                     PageTitle("MISSION ${selectedMission.id.toString().padStart(2, '0')}", selectedMission.title)
@@ -206,7 +206,7 @@ fun CyberProtocolApp() {
                     }
                     if (hintLevel > 0) Text(selectedMission.hints[hintLevel - 1],
                         color = MaterialTheme.colorScheme.secondary)
-                    BackButton { screen = Screen.MISSIONS }
+                    BackButton(language) { screen = Screen.MISSIONS }
                 }
                 Screen.SETTINGS -> {
                     PageTitle(tr("settings", language), if (language == UiLanguage.ID) "Atur preferensi antarmuka." else "Configure interface preferences.")
@@ -224,7 +224,7 @@ fun CyberProtocolApp() {
                         }
                     }
                     Text(tr("language_note", language), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
-                    BackButton { screen = Screen.HOME }
+                    BackButton(language) { screen = Screen.HOME }
                 }
             }
         }
@@ -246,6 +246,6 @@ private fun CodePanel(text: String) {
 }
 
 @Composable
-private fun BackButton(onClick: () -> Unit) {
-    TextButton(onClick = onClick) { Text("←  ${tr("back", UiLanguage.EN)}") }
+private fun BackButton(language: UiLanguage, onClick: () -> Unit) {
+    TextButton(onClick = onClick) { Text("←  ${tr("back", language)}") }
 }
