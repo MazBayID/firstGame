@@ -96,7 +96,9 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
     var xp by remember { mutableIntStateOf(prefs.getInt("xp", 0)) }
     var credits by remember { mutableIntStateOf(prefs.getInt("credits", 0)) }
     var completedMissions by remember {
-        mutableStateOf((1..3).filter { prefs.getBoolean("mission_$it", false) }.toSet())
+        mutableStateOf((1..3).filter { mission ->
+            prefs.getBoolean("mission_$mission", mission == 1 && prefs.getBoolean("chapter_01_mission_01", false))
+        }.toSet())
     }
     var selectedMission by remember { mutableIntStateOf(1) }
     val missionTitle = when (selectedMission) {
