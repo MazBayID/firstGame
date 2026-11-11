@@ -205,15 +205,15 @@ fun CyberProtocolApp() {
                     }
                 },
                 onSubmit = {
-                    val expected = storyExpected.getOrNull(beatIndex - 4).orEmpty()
+                    val missionId = if (beatIndex == 4) 9 else 10
                     scope.launch {
                         codeFeedback = "MEMVERIFIKASI..."
-                        val result = withContext(Dispatchers.IO) { python.run(code.text) }
+                        val result = withContext(Dispatchers.IO) {
+                            python.submit(missionId, code.text)
+                        }
                         codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
-                        val hasVariable = Regex("""(?m)^\s*[A-Za-z][A-Za-z0-9_]*\s*=""").containsMatchIn(code.text)
-                        val hasPrint = Regex("""\bprint\s*\(""").containsMatchIn(code.text)
-                        if (result.error.isBlank() && result.output.trim() == expected && hasVariable && hasPrint) {
+                        if (result.passed) {
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
                             val previousState = gameStateRepository.load()
                             gameStateRepository.save(previousState.copy(
@@ -221,11 +221,13 @@ fun CyberProtocolApp() {
                                 lastCheckpoint = "code_checkpoint_story_$storyStage"
                             ))
                             savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
-                            codeFeedback = "TERVERIFIKASI — keluaran yang diminta serta konsep variable/print terdeteksi."
+                            codeFeedback = result.feedback
                             saveStage(storyStage + 1)
                             screenName = if (storyStage >= 7) GameScreen.CAMPAIGN.name else GameScreen.STORY.name
                         } else {
-                            codeFeedback = "BELUM TERVERIFIKASI — periksa keluaran, assignment variable, dan pemanggilan print(). Kamu bisa mengedit lalu mencoba lagi."
+                            codeFeedback = result.feedback.ifBlank {
+                                "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
+                            }
                         }
                     }
                 },
