@@ -227,6 +227,10 @@ def _concept_check(source, mission_id):
         return "Assign the first signal to a variable named signal, then display it with print()."
     if mission_id == 10 and not (_has_assigned_name(tree, "message") and _has_node(tree, ast.Call)):
         return "Assign the verified message to a variable named message, then display it with print()."
+    if mission_id == 11 and not (_has_assigned_name(tree, "record_count")
+                                 and any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                                         and node.func.id == "len" for node in ast.walk(tree))):
+        return "Use len(records), assign the result to record_count, and display it."
     return ""
 
 
@@ -245,6 +249,11 @@ MISSIONS = {
     ]},
     9: {"cases": [({}, "ACCESS GRANTED")]},
     10: {"cases": [({}, "IDENTITY VERIFIED")]},
+    11: {"cases": [
+        ({"records": ["RX-14", "RX-19", "RX-21"]}, "3"),
+        ({"records": ["RX-14"]}, "1"),
+        ({"records": []}, "0"),
+    ]},
 }
 
 
