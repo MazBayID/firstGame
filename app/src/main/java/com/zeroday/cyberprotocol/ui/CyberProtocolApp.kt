@@ -74,6 +74,8 @@ fun CyberProtocolApp() {
     var startupReady by remember { mutableStateOf(false) }
     var startupError by remember { mutableStateOf<String?>(null) }
     var startupAttempt by remember { mutableIntStateOf(0) }
+    val settingsPreferences = remember { context.getSharedPreferences("cyber_protocol_settings_v1", 0) }
+    var reducedMotion by remember { mutableStateOf(settingsPreferences.getBoolean("reduced_motion", false)) }
 
     LaunchedEffect(startupAttempt) {
         runCatching {
@@ -97,15 +99,22 @@ fun CyberProtocolApp() {
                 startupReady = false
                 startupError = null
                 startupAttempt += 1
-            }
+            },
+            reducedMotion = reducedMotion
         )
         return
     }
-    CyberProtocolGameContent()
+    CyberProtocolGameContent(
+        reducedMotion = reducedMotion,
+        onReducedMotionChange = { enabled ->
+            reducedMotion = enabled
+            settingsPreferences.edit().putBoolean("reduced_motion", enabled).apply()
+        }
+    )
 }
 
 @Composable
-private fun CyberProtocolGameContent() {
+private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChange: (Boolean) -> Unit) {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
     val gameStateRepository = remember { LocalGameStateRepository(context) }
@@ -474,7 +483,11 @@ private fun CyberProtocolGameContent() {
             },
             CyberAssets.investigation, { screenName = GameScreen.MAIN_MENU.name }
         )
-        GameScreen.SETTINGS -> SettingsScreen(onBack = { screenName = GameScreen.MAIN_MENU.name })
+        GameScreen.SETTINGS -> SettingsScreen(
+            reducedMotion = reducedMotion,
+            onReducedMotionChange = onReducedMotionChange,
+            onBack = { screenName = GameScreen.MAIN_MENU.name }
+        )
         GameScreen.LANGUAGE -> InfoAppScreen(
             "BAHASA", "PREFERENSI LOKALISASI",
             "BAHASA AKTIF: BAHASA INDONESIA\n\nPaket bahasa Inggris belum tersedia. Pilihan bahasa lain akan diaktifkan setelah seluruh dialog, misi, dan antarmuka memiliki terjemahan yang konsisten.",
@@ -535,7 +548,7 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
                     MenuButton("PROFIL AGEN", "Rank, pengalaman, dan clearance", onProfile)
                     MenuButton("ARSIP", "Bukti dan riwayat operasi", onArchives)
                     MenuButton("PENCAPAIAN", "Penghargaan dan milestone", onAchievements)
-                    MenuButton("PENGATURAN", "Audio, kontrol, dan aksesibilitas", onSettings)
+                    MenuButton("PENGATURAN", "Aksesibilitas dan preferensi tampilan", onSettings)
                     MenuButton("BAHASA", "Preferensi bahasa permainan", onLanguage)
                 }
             }
