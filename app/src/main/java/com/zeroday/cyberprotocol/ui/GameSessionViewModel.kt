@@ -27,18 +27,18 @@ internal class GameSessionViewModel(
     }
 
     fun saveStoryBeat(value: Int) {
-        val beat = value.coerceIn(0, 7)
+        val beat = value.coerceIn(0, 10)
         updateState {
             it.copy(
                 storyBeat = beat,
-                clearance = if (beat >= 7) maxOf(it.clearance, 1) else it.clearance,
+                clearance = if (beat >= 10) maxOf(it.clearance, 1) else it.clearance,
                 unlockedApps = ProgressionRules.unlockedAppsForStoryBeat(beat),
                 lastCheckpoint = "story_beat_" + beat
             )
         }
-        if (beat >= 7) {
+        if (beat >= 10) {
             recordRecruitmentLead()
-            saveCheckpoint("story_beat_7")
+            saveCheckpoint("story_beat_10")
         }
     }
 
@@ -50,6 +50,20 @@ internal class GameSessionViewModel(
                 storyBeat = maxOf(current.storyBeat, 2),
                 lastCheckpoint = "recruitment_invitation_opened"
             )
+        }
+    }
+
+    fun openFreyaIntroduction() {
+        updateState { current ->
+            if (current.freyaContactOpened) current
+            else current.copy(freyaContactOpened = true, lastCheckpoint = "freya_introduction_opened")
+        }
+    }
+
+    fun unlockNexusContact() {
+        updateState { current ->
+            if (!current.freyaContactOpened || current.nexusContactUnlocked) current
+            else current.copy(nexusContactUnlocked = true, lastCheckpoint = "nexus_contact_unlocked")
         }
     }
 
@@ -102,7 +116,7 @@ internal class GameSessionViewModel(
                 id = "transmission_timestamp_discrepancy",
                 title = "Perbedaan Waktu Penerimaan Transmisi",
                 summary = "Dua sistem internal mencatat waktu penerimaan pesan yang berbeda. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
-                source = "NEXUS / perbandingan metadata tanda terima",
+                source = "A.E.G.I.S. / perbandingan metadata tanda terima",
                 missionId = "first_contact.recruitment"
             )
         )
