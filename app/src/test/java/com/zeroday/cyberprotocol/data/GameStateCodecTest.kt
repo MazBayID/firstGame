@@ -22,7 +22,7 @@ class GameStateCodecTest {
             rank = "ANALYST",
             experience = 420,
             clearance = 1,
-            unlockedApps = setOf("MESSENGER", "TERMINAL", "DATABASE"),
+            unlockedApps = setOf("MESSENGER", "BROWSER", "TERMINAL", "DATABASE", "DOSSIER", "ANALYSIS", "OPERATIONS"),
             evidence = listOf(
                 EvidenceRecord(
                     id = "rx14_time_delta",
@@ -60,6 +60,18 @@ class GameStateCodecTest {
         assertEquals(0, decoded.experience)
         assertEquals(0, decoded.clearance)
         assertTrue(decoded.unlockedApps.isNotEmpty())
+    }
+
+    @Test
+    fun existingSnapshotReceivesNewUnlocksWithoutLosingItsStoredApps() {
+        val snapshot = JSONObject()
+            .put("schemaVersion", GameState.CURRENT_SCHEMA_VERSION)
+            .put("storyBeat", 4)
+            .put("unlockedApps", org.json.JSONArray().put("MESSENGER").put("DATABASE"))
+
+        val decoded = GameStateCodec.decode(snapshot)
+
+        assertTrue(decoded.unlockedApps.containsAll(setOf("MESSENGER", "DATABASE", "BROWSER", "TERMINAL", "DOSSIER")))
     }
 
     @Test
