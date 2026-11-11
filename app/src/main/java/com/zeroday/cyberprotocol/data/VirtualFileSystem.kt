@@ -33,14 +33,14 @@ class VirtualFileSystem(context: Context) {
     fun initialDirectory(): String = "$root/personal"
 
     @Synchronized
-    fun execute(commandLine: String, currentDirectory: String): TerminalResponse {
+    fun execute(commandLine: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): TerminalResponse {
         val line = commandLine.trim()
         if (line.isEmpty()) return TerminalResponse("", currentDirectory)
         if (line == "clear") return TerminalResponse("", currentDirectory, clearScreen = true)
 
         val redirect = Regex("""^echo\s+(['"])(.*?)\1\s*>\s*(\S+)$""").matchEntire(line)
         if (redirect != null) {
-            val target = resolve(redirect.groupValues[3], currentDirectory)
+            val target = resolve(redirect.groupValues[3], currentDirectory, workspaceRoot)
                 ?: return TerminalResponse("Invalid path: access is restricted to the A.E.G.I.S. workspace.", currentDirectory)
             if (directories.contains(target)) return TerminalResponse("Cannot write to a directory.", currentDirectory)
             if (!directories.contains(parent(target))) return TerminalResponse("Folder induk tidak ditemukan.", currentDirectory)
@@ -76,7 +76,7 @@ class VirtualFileSystem(context: Context) {
             "pwd" -> cwd
             "whoami" -> "REKRUT  ·  LINGKUNGAN PELATIHAN A.E.G.I.S."
             "ls" -> {
-                val target = resolve(rest.firstOrNull() ?: ".", cwd)
+                val target = resolve(rest.firstOrNull() ?: ".", cwd, workspaceRoot)
                     ?: return TerminalResponse("Jalur tidak valid.", cwd)
                 if (!directories.contains(target)) return TerminalResponse("Not a directory: $target", cwd)
                 val childDirs = directories.filter { it != target && parent(it) == target }
@@ -86,14 +86,14 @@ class VirtualFileSystem(context: Context) {
                 (childDirs + childFiles).sorted().joinToString("\n").ifBlank { "(empty)" }
             }
             "cd" -> {
-                val target = resolve(rest.firstOrNull() ?: initialDirectory(), cwd)
+                val target = resolve(rest.firstOrNull() ?: initialDirectory(), cwd, workspaceRoot)
                     ?: return TerminalResponse("Jalur tidak valid: akses keluar dari ruang kerja virtual ditolak.", cwd)
                 if (!directories.contains(target)) return TerminalResponse("Folder tidak ditemukan: $target", cwd)
                 cwd = target
                 ""
             }
             "cat" -> {
-                val target = resolve(rest.firstOrNull() ?: "", cwd)
+                val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: cat <file>", cwd)
                 files[target] ?: return TerminalResponse("File tidak ditemukan: $target", cwd)
             }
@@ -130,8 +130,8 @@ class VirtualFileSystem(context: Context) {
     }
 
     @Synchronized
-    fun writeFile(path: String, content: String, currentDirectory: String): Boolean {
-        val resolved = resolve(path, currentDirectory) ?: return false
+    fun writeFile(path: String, content: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): Boolean {
+        val resolved = resolve(path, currentDirectory, workspaceRoot) ?: return false
         if (directories.contains(resolved) || !directories.contains(parent(resolved))) return false
         files[resolved] = content
         persist()
@@ -139,8 +139,8 @@ class VirtualFileSystem(context: Context) {
     }
 
     @Synchronized
-    fun readFile(path: String, currentDirectory: String): String? {
-        val resolved = resolve(path, currentDirectory) ?: return null
+    fun readFile(path: String, currentDirectory: String, workspaceRoot: String = "$root/personal"): String? {
+        val resolved = resolve(path, currentDirectory, workspaceRoot) ?: return null
         return files[resolved]
     }
 
@@ -162,6 +162,10 @@ class VirtualFileSystem(context: Context) {
         segments.forEach { segment ->
             path += "/$segment"
             directories.add(path)
+        }
+        val briefingPath = "${definition.workspaceDirectory}/briefing.txt"
+        if ("briefing.txt" in definition.allowedFiles && !files.containsKey(briefingPath)) {
+            files[briefingPath] = "${definition.title.uppercase()}\\n\\n${definition.briefing}\\n"
         }
         persist()
         return MissionWorkspace(
@@ -224,7 +228,7 @@ class VirtualFileSystem(context: Context) {
             .put("files", fileJson).put("directories", dirJson).toString()).apply()
     }
 
-    private fun resolve(input: String, cwd: String): String? {
+    private fun resolve(input: String, cwd: String, workspaceRoot: String): String? {
         if (input.isBlank()) return null
         if (input == "/") return root
         val parts = if (input.startsWith("/")) mutableListOf<String>() else
@@ -237,7 +241,9 @@ class VirtualFileSystem(context: Context) {
             }
         }
         if (parts.firstOrNull() != "A.E.G.I.S") return null
-        return "/" + parts.joinToString("/")
+        val resolved = "/" + parts.joinToString("/")
+        if (resolved != workspaceRoot && !resolved.startsWith("$workspaceRoot/")) return null
+        return resolved
     }
 
     private fun parent(path: String): String = path.substringBeforeLast("/", "")
