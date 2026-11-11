@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class Campaign01CatalogTest {
@@ -28,6 +29,18 @@ class Campaign01CatalogTest {
         assertEquals(35, identity.rewardXp)
         assertEquals(Campaign01Catalog.CAMPAIGN_ID, signal.campaignId)
         assertEquals(Campaign01Catalog.CHAPTER_ID, identity.chapterId)
+    }
+
+    @Test
+    fun missionWorkspaceRejectsWritesOutsideItsAllowlist() {
+        val mission = Campaign01Catalog.find("first_contact.signal")!!
+        assertEquals(setOf("signal.py"), mission.writableFiles)
+        assertThrows(IllegalArgumentException::class.java) {
+            mission.copy(writableFiles = setOf("../outside.py"))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            mission.copy(writableFiles = setOf("briefing.txt"))
+        }
     }
 
     @Test
