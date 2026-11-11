@@ -25,7 +25,14 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         if (raw.isNullOrBlank()) return migrateLegacyProgress()
 
         val current = runCatching { decode(JSONObject(raw)) }.getOrNull()
-        if (current != null) return current
+        if (current != null) {
+            if (current.schemaVersion < GameState.CURRENT_SCHEMA_VERSION) {
+                val upgraded = current.copy(schemaVersion = GameState.CURRENT_SCHEMA_VERSION)
+                save(upgraded)
+                return upgraded
+            }
+            return current
+        }
 
         // Preserve the damaged snapshot for diagnostics before attempting recovery.
         preferences.edit().putString(KEY_CORRUPT_BACKUP, raw).apply()
@@ -106,6 +113,7 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
                     put("source", record.source)
                     put("status", record.status.name)
                     put("missionId", record.missionId)
+                    put("recordedAtEpochMillis", record.recordedAtEpochMillis)
                 })
             }
         })
@@ -130,7 +138,8 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
                     summary = item.optString("summary"),
                     source = item.optString("source"),
                     status = status,
-                    missionId = item.optString("missionId")
+                    missionId = item.optString("missionId"),
+                    recordedAtEpochMillis = item.optLong("recordedAtEpochMillis", 0L)
                 ))
             }
         }
