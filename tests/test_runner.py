@@ -77,6 +77,20 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit("print(len(records))", 11)["passed"])
 
+    def test_mission_run_receives_read_only_input_variables(self):
+        source = 'count = 0\\nfor event in events:\\n    if "ERROR" in event:\\n        count += 1\\nprint(count)'
+        result = json.loads(runner.run_code_json(
+            source, "{}", "[]", json.dumps({"events": ["INFO: ready", "ERROR: denied"]})
+        ))
+        self.assertEqual("1", result["output"].strip())
+        self.assertEqual("", result["error"])
+
+    def test_mission_run_rejects_invalid_input_variables(self):
+        result = json.loads(runner.run_code_json(
+            "print(1)", "{}", "[]", json.dumps({"__class__": ["blocked"]})
+        ))
+        self.assertIn("Invalid mission input variable", result["error"])
+
     def test_mission_workspace_reads_only_allowlisted_files(self):
         source = 'print(read_text("briefing.txt"))'
         result = json.loads(runner.run_code_json(
