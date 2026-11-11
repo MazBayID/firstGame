@@ -202,7 +202,7 @@ The following older runs predate the current test-only / signed-Release-only wor
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Expand the current data-backed Database and Dossier surfaces into fully interactive, story-linked workspaces. Analysis now supports evidence search/filter and Operations now supports active-mission resume; additional review workflows and data navigation remain.
 - Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
-- Add automated tests for previous-snapshot recovery, save-schema migration, and archive retention; expand clearance progression.
+- Save-snapshot round trips, previous-good-snapshot recovery, corrupt-snapshot preservation, legacy story migration, and previous-schema migration now have Robolectric coverage. Add archive-retention tests and expand clearance progression.
 - Finish ViewModel-driven state ownership and remaining App Hub interactions; implement complete Indonesian/English localization and the cinematic Campaign presentation overhaul; add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
 
