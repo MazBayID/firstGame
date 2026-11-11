@@ -43,6 +43,7 @@ data class MissionDefinition(
     val allowedFiles: Set<String>,
     val writableFiles: Set<String> = allowedFiles,
     val runtimeVariables: Map<String, List<String>> = emptyMap(),
+    val nextClue: String? = null,
     val objectives: List<MissionObjective>,
     val hints: List<MissionHint>
 ) {
@@ -65,6 +66,7 @@ data class MissionDefinition(
                 !name.startsWith("_") && "__" !in name && values.size <= 1000 &&
                 values.all { it.length <= 1000 }
         })
+        require(nextClue == null || nextClue.isNotBlank())
         require(objectives.isNotEmpty())
         require(objectives.map { it.id }.distinct().size == objectives.size)
         require(hints.map { it.level }.distinct().size == hints.size)
