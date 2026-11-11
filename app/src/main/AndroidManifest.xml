@@ -2,6 +2,8 @@
     <application
         android:name="com.chaquo.python.android.PyApplication"
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:label="Cyber Protocol"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:supportsRtl="true"
