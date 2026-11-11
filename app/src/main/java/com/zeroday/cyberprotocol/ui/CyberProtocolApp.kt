@@ -168,7 +168,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         currentGameState = gameStateRepository.load()
         val savedDraft = gameStateRepository.load().savedCode["story_$storyStage"]
             ?: preferences.getString("saved_code_$storyStage",
-                storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }).orEmpty()
+                Campaign01Story.codeTemplates.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }).orEmpty()
         code = TextFieldValue(savedDraft)
         codeOutput = "KELUARAN AKAN MUNCUL DI SINI"
         codeFeedback = ""
