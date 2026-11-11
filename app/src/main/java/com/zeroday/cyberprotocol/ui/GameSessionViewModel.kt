@@ -38,7 +38,7 @@ internal class GameSessionViewModel(
         }
         if (beat >= 10) {
             recordRecruitmentLead()
-            saveCheckpoint("story_beat_10")
+            saveCheckpoint("story_beat_" + beat)
         }
     }
 
