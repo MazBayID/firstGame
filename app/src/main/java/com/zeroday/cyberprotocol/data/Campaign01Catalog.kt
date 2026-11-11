@@ -19,7 +19,7 @@ object Campaign01Catalog {
             chapterId = CHAPTER_ID,
             title = "Sinyal Pertama",
             nextClue = "Fragmen berikutnya memakai nama variabel message. Perhatikan nama yang diminta sebelum menampilkan nilainya.",
-            briefing = "Freya memberikan satu fragmen pesan pada kanal latihan. Simpan fragmen itu ke variabel signal, lalu tampilkan nilainya agar A.E.G.I.S. dapat memverifikasi respons awalmu.",
+            briefing = "A.E.G.I.S. menyediakan satu fragmen pesan pada kanal latihan. Simpan fragmen itu ke variabel signal, lalu tampilkan nilainya agar A.E.G.I.S. dapat memverifikasi respons awalmu.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 9,
             rewardXp = 25,
