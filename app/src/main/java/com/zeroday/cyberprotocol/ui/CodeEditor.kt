@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private val pythonTokenPattern = Regex(
-    "\"""[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''|\\\"(?:\\\\.|[^\\\"\\\\])*\\\"|'(?:\\\\.|[^'\\\\])*'|#[^\\n]*|\\b(?:def|class|if|elif|else|for|while|in|and|or|not|is|return|import|from|as|try|except|finally|with|pass|break|continue|True|False|None|lambda|yield|async|await|raise|with|global|nonlocal)\\b|\\b\\d+(?:\\.\\d+)?\\b"
+    """("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#[^\n]*|\b(?:def|class|if|elif|else|for|while|in|and|or|not|is|return|import|from|as|try|except|finally|with|pass|break|continue|True|False|None|lambda|yield|async|await|raise|global|nonlocal)\b|\b\d+(?:\.\d+)?\b)"""
 )
 
 private fun highlightedPython(source: String) = buildAnnotatedString {
@@ -62,21 +62,21 @@ private fun moveCursor(value: TextFieldValue, direction: String): TextFieldValue
         "left" -> (cursor - 1).coerceAtLeast(0)
         "right" -> (cursor + 1).coerceAtMost(text.length)
         "up", "down" -> {
-            val lineStart = text.lastIndexOf('\\n', (cursor - 1).coerceAtLeast(0)) + 1
+            val lineStart = if (cursor == 0) 0 else text.lastIndexOf('\n', cursor - 1) + 1
             val column = cursor - lineStart
-            val currentLineEnd = text.indexOf('\\n', cursor).let { if (it < 0) text.length else it }
+            val currentLineEnd = text.indexOf('\n', cursor).let { if (it < 0) text.length else it }
             if (direction == "up") {
                 if (lineStart == 0) cursor
                 else {
                     val previousEnd = lineStart - 1
-                    val previousStart = text.lastIndexOf('\\n', (previousEnd - 1).coerceAtLeast(0)) + 1
+                    val previousStart = if (previousEnd == 0) 0 else text.lastIndexOf('\n', previousEnd - 1) + 1
                     (previousStart + column).coerceAtMost(previousEnd)
                 }
             } else {
                 if (currentLineEnd == text.length) cursor
                 else {
                     val nextStart = currentLineEnd + 1
-                    val nextEnd = text.indexOf('\\n', nextStart).let { if (it < 0) text.length else it }
+                    val nextEnd = text.indexOf('\n', nextStart).let { if (it < 0) text.length else it }
                     (nextStart + column).coerceAtMost(nextEnd)
                 }
             }
@@ -111,10 +111,10 @@ fun CodeEditor(
                 val cursor = incoming.selection.start
                 val justInsertedNewline = incoming.selection.collapsed &&
                     incoming.text.length == value.text.length + 1 &&
-                    cursor > 0 && incoming.text.getOrNull(cursor - 1) == '\\n'
+                    cursor > 0 && incoming.text.getOrNull(cursor - 1) == '\n'
                 if (justInsertedNewline) {
-                    val previousLine = incoming.text.substring(0, cursor - 1).substringAfterLast('\\n')
-                    val baseIndent = previousLine.takeWhile { it == ' ' || it == '\\t' }
+                    val previousLine = incoming.text.substring(0, cursor - 1).substringAfterLast('\n')
+                    val baseIndent = previousLine.takeWhile { it == ' ' || it == '\t' }
                     val extraIndent = if (previousLine.trimEnd().endsWith(":")) "    " else ""
                     val indent = baseIndent + extraIndent
                     val updated = incoming.text.substring(0, cursor) + indent + incoming.text.substring(cursor)
