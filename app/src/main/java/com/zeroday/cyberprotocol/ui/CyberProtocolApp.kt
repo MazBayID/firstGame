@@ -471,24 +471,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 if (currentGameState.storyBeat >= 10) "\n\nCATATAN TERBATAS / ANOMALI WAKTU\nDua sistem internal mencatat waktu penerimaan transmisi yang berbeda. Penyebab belum diketahui. Status: BELUM TERVERIFIKASI." else "",
             CyberAssets.document, { navigate(GameScreen.APP_HUB) }
         )
-        GameScreen.ANALYSIS -> InfoAppScreen(
-            "ANALISIS", "RUANG KERJA INTELIJEN",
-            buildString {
-                append("CATATAN BUKTI  /  ").append(currentGameState.evidence.size).append("\n\n")
-                if (currentGameState.evidence.isEmpty()) {
-                    append("Belum ada bukti yang dicatat. Selesaikan tugas dan verifikasi hasilnya untuk menambahkan rekaman dengan sumber yang jelas.")
-                } else {
-                    currentGameState.evidence.forEach { evidence ->
-                        append(evidence.title.uppercase()).append("\n")
-                        append("STATUS: ").append(evidence.status.name.replace('_', ' ')).append("\n")
-                        append("SUMBER: ").append(evidence.source).append("\n")
-                        append("MISI: ").append(evidence.missionId).append("\n")
-                        append(evidence.summary).append("\n\n")
-                    }
-                }
-                append("Status: TERKONFIRMASI, DISIMPULKAN, DIPERSELISIHKAN, BELUM TERVERIFIKASI.")
-            },
-            CyberAssets.dataAnalysis, { navigate(GameScreen.APP_HUB) }
+        GameScreen.ANALYSIS -> AnalysisScreen(
+            gameState = currentGameState,
+            onBack = { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.OPERATIONS -> OperationsScreen(
             gameState = currentGameState,
