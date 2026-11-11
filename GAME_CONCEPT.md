@@ -876,3 +876,20 @@ The opening chapter now contains eight technical missions across fourteen story 
 - The final report records the four-second difference between A.E.G.I.S. and ARCHIVE receipt times without asserting a cause.
 - The discrepancy remains unverified as to cause. Do not introduce a culprit, reveal manipulation, or start a separate case without approved narrative content.
 - Completion of the fourteen story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
+
+# 24. Android Release Signing and Safe Updates
+
+Cyber Protocol uses a permanent Android release-signing identity. This is a product-maintenance requirement, not merely a build convenience.
+
+- The release application must retain its existing `applicationId` across updates. Do not change the package identity after the first externally distributed signed build unless a separate migration strategy is deliberately approved.
+- Every release update must be signed with the same permanent release keystore and signing certificate used for the previous release. Never generate a replacement key for routine updates.
+- The keystore and all passwords are private release credentials. Store them only in the maintainer's secure offline backup and the repository's protected GitHub Actions Secrets. Never commit the keystore, Base64 keystore data, passwords, or signing material to Git, logs, artifacts, documentation, or this public design file.
+- The release workflow may restore the keystore only into the ephemeral CI runner, restrict its file permissions, validate the signing identity without printing secrets, verify the resulting APK signature, and remove the temporary keystore after the job.
+- Every published update must have a `versionCode` strictly greater than the previously distributed build. A version name may describe the release, but Android uses `versionCode` to determine update order.
+- A signed update should install over the existing app without uninstalling it when the application ID and signing identity match and the version code is higher. Preserve local campaign data during normal updates.
+- Database and save-state changes must use explicit, tested migrations. App updates must not silently reset campaign progress, player code, evidence, settings, or workspaces. Back up and recover local state safely when a migration fails.
+- Never recommend uninstalling a user's existing installation as the first response to an update failure. Diagnose package identity, signing-certificate mismatch, version-code ordering, device compatibility, and installer errors first. Warn about data loss before any destructive recovery step.
+- Keep release signing separate from debug signing where practical, while ensuring every externally distributed release APK uses the permanent release identity.
+- The release process is not complete until CI verifies the APK signature and a physical Android device confirms both clean installation and in-place update over the prior signed build, including preservation of local game data.
+
+The permanent release key must be backed up securely by the maintainer. Losing it may make future in-place updates impossible for installations signed with that key.
