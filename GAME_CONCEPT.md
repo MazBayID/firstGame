@@ -311,6 +311,15 @@ The primary mentor is not merely a tutorial voice or a mission dispatcher. The m
 
 # 7. Core Gameplay Loop
 
+The initial campaign uses a **hybrid mission system**: each operation has clear objectives and guided stages, while the player can interact with the relevant available in-game tools to investigate and complete the work. It is neither a rigid sequence of tutorial screens nor an unrestricted sandbox.
+
+- **Guided structure:** show the current objective, relevant context, and a clear sense of what progress is expected. Break complex operations into manageable stages.
+- **Interactive workspace:** within those stages, let the player use appropriate unlocked applications such as Terminal, Intelligence Database, Dossier, and Analysis. The available tools depend on the operation.
+- **Player agency:** allow the player to inspect evidence, run experiments, compare information, and decide what to submit rather than simply pressing Next through instructions.
+- **Contextual guidance:** provide hints and explanations when needed, especially for newly introduced concepts, without automatically solving the task.
+- **Focused scope:** do not expose every tool or require every app in every mission. Keep the workspace relevant to the current objective and beginner's skill level.
+- **Persistent context:** moving between an app and the operation should preserve the player's current mission state and work.
+
 The intended mission cycle:
 
 1. **Story / cinematic event** — a new development occurs.
