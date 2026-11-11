@@ -27,11 +27,13 @@ Programming is not a decorative minigame. It is one of the tools the player lear
 
 # 2. The Central Premise
 
-An ordinary person opens the Campaign and sees a black screen. An ordinary-looking in-game **Pesan Aman** notification appears, as if the phone had just received a normal message. The player must tap the notification; doing so opens Secure Messenger directly to a recruitment conversation with Freya Knox.
+An ordinary person opens Campaign and sees a black screen. An ordinary-looking in-game **Pesan Aman** notification appears. Tapping it opens a conversation with the official **A.E.G.I.S. / Recruitment Office** account—not Freya and not an unknown sender. The formal message explains that someone has given A.E.G.I.S. an order to recruit the player. The identity of the person behind that order is withheld.
 
-The invitation begins with the exact line: **"Seseorang meminta kami untuk merekrutmu."** The English localization is: **"Someone has asked us to recruit you."** Freya establishes a professional first impression and reveals only limited information about A.E.G.I.S., an independent international intelligence organization based in Manila. The reason the player was selected remains unexplained.
+The official invitation contains an in-game link. Tapping it opens the approved orientation and mission sequence. When the player enters the first mission, a second notification arrives from **Freya Knox**. Tapping it opens Freya's conversation, where she introduces herself as the player's mentor and offers to guide the missions. She does not say that she was the person who initiated the recruitment. Freya later provides a separate link to the **NEXUS** system; the NEXUS contact is not visible in the inbox until the player opens that link.
 
-The notification is an in-game cinematic simulation, not a real Android notification. There is no separate "Unknown Sender" prologue. The mystery comes from the unexpected invitation and the unanswered question: **why was this person asked to recruit the player?**
+**Author-only continuity:** Freya is the person who initiated the recruitment order. This is a hidden story fact, not information to disclose in the official invitation or Freya's introduction. Preserve the mystery until a later, deliberately authored reveal.
+
+Both notifications and all links are simulated inside the game. There is no real Android notification or external messaging service, and no separate "Unknown Sender" prologue. The central question is not merely who sent the invitation, but why Freya chose this person and what she knows that she has not yet shared.
 
 As the player learns, investigates, and earns access, small discrepancies begin to form a larger picture. The most important discovery is not simply who changed a record or concealed a transaction. It is that someone may be shaping what different people and institutions are able to see.
 
@@ -86,7 +88,7 @@ The following is a flexible narrative roadmap. It is not a promise that every ca
 **Player state:** Ordinary person → Recruit.  
 **Narrative question:** Why did A.E.G.I.S. contact the player, and what is hidden inside the first case?
 
-The player receives the recruitment notification, opens the invitation in Secure Messenger, encounters A.E.G.I.S., meets the primary mentor, and completes the first guided technical tasks. The first operation appears small and controlled, but a discrepancy in its evidence hints that the case is not isolated.
+The player opens the official A.E.G.I.S. recruitment invitation, follows its mission link, receives Freya's separate introduction notification during the first mission, and gradually gains access to NEXUS through Freya's link. The player completes guided technical tasks and investigates a small discrepancy between two fictional system records. The discrepancy remains unresolved and becomes the first thread of a wider mystery.
 
 The campaign ends with the player formally recruited and entrusted with a limited piece of information that the organization cannot yet explain.
 
@@ -124,51 +126,61 @@ The opening must be intimate before it becomes large-scale. Begin with the playe
 
 ### Opening sequence
 
-**Opening cinematic — The notification**
+**Opening cinematic — Official recruitment notification**
 
-The first time the player opens Campaign, the screen becomes completely black. After a deliberate pause, an understated notification card styled like an ordinary smartphone notification appears. It is branded **Pesan Aman** and uses a familiar, everyday notification treatment—not a dramatic classified alert.
+The first time the player opens Campaign, the screen becomes completely black. After a deliberate pause, an understated, ordinary-looking **Pesan Aman** notification appears. The sender is identified as **A.E.G.I.S. / Recruitment Office**. It must resemble a normal phone notification rather than a dramatic game mission banner.
 
-The player must tap the notification card. The story does not advance merely because the notification appeared. Tapping it opens the in-game Secure Messenger directly to the recruitment conversation; it must not open the generic contact list first. The notification and Messenger are simulated entirely inside the game and do not use Android's real notification service.
+The player must explicitly tap the notification. Tapping opens the in-game Secure Messenger directly to the official A.E.G.I.S. recruitment conversation. It must not open Freya's conversation, the generic inbox, or a separate unknown-sender prologue.
 
-The opening sequence is shown only once for a new campaign. The tap and transition are saved as a meaningful checkpoint so interruption cannot duplicate the invitation or silently skip the player's action.
+**Beat 1 — The official invitation**
 
-**Beat 1 — The Invitation in Secure Messenger**
+The A.E.G.I.S. Recruitment Office sends a formal message. The approved core wording is:
 
-The invitation is the first message in Freya Knox's conversation. Its opening sentence is exactly:
+> "Seseorang telah memberikan perintah kepada A.E.G.I.S. untuk merekrutmu."
 
-> "Seseorang meminta kami untuk merekrutmu."
+The message explains that a person has issued the recruitment order, but the person's identity is withheld. It gives a concise introduction to A.E.G.I.S. and includes an in-game mission link. The player must tap **BUKA RANGKAIAN MISI** to enter the orientation sequence. The link must be an actual interactive game action, not decorative text.
 
-English localization:
+The invitation is a fixed authored message from the organization. Do not attribute it to Freya. The official account remains visible in the Messenger inbox after it has been opened.
 
-> "Someone has asked us to recruit you."
+**Beat 2 — The orientation and first assignment**
 
-Freya communicates in a composed, professional manner. The message makes clear that the player is not a trained agent, but does not explain who requested the recruitment or why. The player can review the message and choose from authored replies. Do not add a separate "Pengirim tidak dikenal" / "Unknown Sender" prologue or title.
+The mission link opens the First Contact sequence. The player receives a limited A.E.G.I.S. orientation and a classified recruitment dossier, then begins a simple Python task using a variable and `print()`. The first task is designed for a beginner and does not assume prior programming experience.
 
-**Beat 2 — The Organization**
+**Beat 3 — Freya's separate notification**
 
-The player learns the minimum necessary about A.E.G.I.S. through the campaign. Freya remains the player's primary human point of contact. NEXUS is introduced as the organization's AI communication-intelligence system—not as the mentor and not as a human character.
+When the first mission becomes active, a second in-game Pesan Aman notification appears over the mission screen. Its sender is **Freya Knox**. The player must tap it to open Freya's conversation. The message is a personal greeting: Freya introduces herself as the mentor who will accompany the player through the missions assigned by A.E.G.I.S.
 
-A.E.G.I.S. explains only what a new recruit needs to know. Its divisions, procedures, and internal tensions should be revealed over time.
+Freya explains the immediate task, offers encouragement, and makes it clear that the player can ask questions. She does not disclose that she was the person who initiated the recruitment order, and the dialogue must not make that connection obvious.
 
-**Beat 3 — Classified File 001**
+The notification tap and the introduction state are persisted. If the app is interrupted before the player taps the notification, the same notification can be presented again when the first mission resumes. Once opened, it must not appear again unexpectedly.
 
-The player receives a limited dossier. It contains a small fictional information problem and a discrepancy that can be investigated safely.
+**Beat 4 — The NEXUS contact link**
 
-The dossier should teach the player how to distinguish a claim, a source, and a verified fact.
+During the Freya conversation, she introduces NEXUS as an internal A.E.G.I.S. system for communication and technical support. Freya provides an interactive **NEXUS / KANAL SISTEM** link. The player must tap it to unlock and open the NEXUS conversation.
 
-**Beat 4 — First Assignment**
+Before that action, NEXUS must not appear as a contact in the inbox, and its name must not be used as the player's apparent mentor. NEXUS is a system, not a human character. Freya remains the player's primary human mentor.
 
-The player completes a very simple Python task as part of an in-world system check. The mentor or NEXUS explains the relevant concept before expecting independent work. The first task should be achievable by a beginner.
+**Beat 5 — Official recruitment**
 
-**Beat 5 — System Verification**
+After the two introductory tasks are verified, A.E.G.I.S. offers the player Recruit status and limited access. This is a progression milestone, not the end of the campaign.
 
-The game evaluates the intended learning objective. RUN executes code and shows output or errors; SUBMIT separately checks the mission requirements. Feedback explains what happened and why.
+**Beat 6 — The first discrepancy**
 
-**Beat 6 — Official Recruitment**
+A routine review reveals two receipt records for one training transmission. Their contents match, but their recorded times differ by a few seconds. The discrepancy is initially UNVERIFIED. The player is instructed to inspect the source data rather than assume tampering.
 
-After the player completes the initial process, A.E.G.I.S. formally accepts them as a Recruit. The player receives a limited profile, access permissions, and the next narrative lead.
+**Beat 7 — Audit Jejak Sistem**
 
-The ending should feel like the beginning of a larger responsibility—not a victory screen that closes the story.
+The player receives a fictional event log containing information, warnings, and errors. A Python `for` loop and `if` condition are used to count only entries containing `ERROR`. The mission teaches iteration and conditional filtering while preserving the source log.
+
+**Beat 8 — Inventaris Rekaman**
+
+A second system provides a list of record references. The player uses `len()` to count the available items and records the result. The count is an inventory fact, not proof that every record is valid or complete.
+
+**Beat 9 — Laporan Awal**
+
+The player submits a short initial report that separates observations from interpretations. The audit count and record inventory are recorded with their sources. The time discrepancy remains unresolved; the player must not claim manipulation without evidence.
+
+The opening sequence is an in-game cinematic simulation only. It must not request Android notification permission, create real system notifications, or access real messages or contacts. Both the A.E.G.I.S. invitation and Freya's notification are shown once per relevant checkpoint, with state recovery that prevents duplicate messages or silently skipping a required tap.
 
 ## 6.2 First technical mystery — A message with two layers
 
@@ -181,13 +193,23 @@ The fictional transformation must be transparent and beginner-appropriate. Do no
 
 The reward is a story revelation: enough to establish that the contact is genuine or at least connected to a real organization, but not enough to explain why the player was selected.
 
-## 6.3 The first case — The Missing Ledger (proposed)
+## 6.3 First Contact follow-up — The Receipt Discrepancy
 
-A.E.G.I.S. provides the player with a small, controlled set of fictional records. Several entries do not agree. The immediate assignment is modest: organize the records, identify a mismatch, and report what can and cannot be concluded.
+This follow-up remains within the approved First Contact training case. It does not introduce a separate financial case, a new organization, or an unapproved antagonist.
 
-The case introduces the idea that technical correctness and investigative correctness are not the same thing. Code can process data accurately while the data itself remains incomplete or misleading.
+Two fictional A.E.G.I.S. training systems record receipt metadata for the same transmission. The payload appears identical, but the timestamps differ by a few seconds. The player is given two bounded tasks:
 
-A final discrepancy points toward a second source. It is the first indication that the recruitment exercise may be connected to a wider pattern.
+1. **Audit Jejak Sistem:** inspect a supplied event list and count entries marked `ERROR` using a `for` loop and `if` condition.
+2. **Inventaris Rekaman:** count the references supplied by a second source using `len()`.
+
+The missions intentionally teach different concepts and use deterministic, locally evaluated fixtures. The player must not modify source records or infer that the discrepancy is malicious merely because it exists.
+
+The closing report preserves three categories:
+- **Observed:** the number of error entries in the supplied log and the number of references in the second source.
+- **Not established:** whether the timestamps reflect tampering, clock drift, queue delay, or another cause.
+- **Next question:** why the two systems' receipt records differ and what additional evidence would distinguish the possible explanations.
+
+The discrepancy is an unresolved lead, not a solved case. It can support a later investigation only after new evidence and story details are deliberately authored and approved.
 
 This case title and exact evidence chain are proposed and may change during mission design.
 
