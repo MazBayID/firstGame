@@ -107,11 +107,12 @@ Character conversations are presented through an in-game **chat interface**, rat
 
 - The player communicates with Freya, NEXUS, and other characters through a secure A.E.G.I.S.-style messaging experience.
 - Messages appear as distinct chat bubbles with clear sender identity. Player replies and character messages must be visually distinguishable.
-- At appropriate moments, the player may choose from authored reply options. Choices should feel like messages the player is actually sending, not detached menu commands.
+- Player replies use **predefined response options** in the initial version. The player selects one of the authored messages; free-text replies are not part of the initial implementation. This keeps narrative branches deterministic, testable, and straightforward to implement.
 - Conversation history should remain reviewable, and new messages or important updates may use restrained unread indicators or notifications.
 - The interface should support both ordinary conversation and operational communication, while keeping sender identity and context clear.
 - Dialogue presentation must remain readable and usable on Android screens. Avoid clutter, excessive decoration, and unnecessary chat animations.
 - This is the approved default for character dialogue. Do not assume visual-novel character portraits or dialogue boxes are required. Other story presentation methods may be considered separately when a scene genuinely needs them.
+- The dialogue architecture may later support optional AI-assisted conversation through an external API such as the OpenAI API. This is a future possibility, not a current feature or dependency. Keep authored story progression, mission state, relationship flags, and consequential choices under the game's control; do not require a live AI service for the core campaign to function.
 - Detailed chat layout, message timing, typing indicators, attachments, and interaction behavior remain open for later UI design.
 
 
