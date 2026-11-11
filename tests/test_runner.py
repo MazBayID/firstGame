@@ -137,6 +137,16 @@ class RunnerTests(unittest.TestCase):
         ))
         self.assertIn("not available", denied["error"])
 
+    def test_first_contact_signal_asset_is_readable_in_mission_workspace(self):
+        source = 'signal = read_text("message_fragment.txt")\\nprint(signal)'
+        result = json.loads(runner.run_code_json(
+            source,
+            json.dumps({"message_fragment.txt": "ACCESS GRANTED\\n"}),
+            json.dumps(["signal.py"])
+        ))
+        self.assertEqual("ACCESS GRANTED", result["output"].strip())
+        self.assertEqual("", result["error"])
+
     def test_mission_workspace_writes_only_writable_files(self):
         result = json.loads(runner.run_code_json(
             'write_text("script.py", "print(42)")',
