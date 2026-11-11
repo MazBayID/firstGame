@@ -26,7 +26,10 @@ object ProgressionRules {
             add("DATABASE")
             add("DOSSIER")
         }
-        if (beat >= 4) add("TERMINAL")
+        if (beat >= 4) {
+            add("BROWSER")
+            add("TERMINAL")
+        }
         if (beat >= 5) add("ANALYSIS")
         if (beat >= 7) add("OPERATIONS")
     }
