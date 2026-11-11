@@ -48,7 +48,7 @@ These foundations are not automatically production-ready. Python file access is 
 - Test path traversal, malformed input, resource exhaustion, and permission boundaries.
 
 ### 3. Complete player experience
-- Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list messenger, and App Hub interactions.
+- Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list Messenger, offline A.E.G.I.S. Browser, and remaining App Hub interactions.
 - Continue expanding Analysis and Operations into deeper review/operational workflows. Dossier and Intelligence Database now have dedicated data-backed screens; remaining work is broader cross-linking, archive navigation, and audited evidence review.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
 - Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
@@ -89,7 +89,7 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 **Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
 **Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, a ViewModel-owned campaign state/progression layer, and isolated snapshot serialization with codec regression tests exist; broader UI state/navigation extraction and Android storage recovery tests remain.  
 **Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
-**Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has fourteen authored story beats and eight evaluated Python missions, graduated hints, debriefs, contact-list messaging, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
+**Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has fourteen authored story beats and eight evaluated Python missions, graduated hints, debriefs, contact-list messaging, an offline intranet Browser with file downloads and Mission Control submission, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
 **Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists.
