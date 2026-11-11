@@ -110,9 +110,9 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         else -> "OBJECTIVE: count every FAILED login entry using Python."
     }
     val missionLog = when (selectedMission) {
-        1 -> "INFO: service started\\nERROR: invalid token\\nWARNING: retry scheduled\\nERROR: permission denied"
-        2 -> "INFO: service started\\nWARNING: retry scheduled\\nERROR: invalid token\\nWARNING: timeout"
-        else -> "FAILED login user=admin\\nOK login user=guest\\nFAILED login user=root"
+        1 -> "INFO: service started\nERROR: invalid token\nWARNING: retry scheduled\nERROR: permission denied"
+        2 -> "INFO: service started\nWARNING: retry scheduled\nERROR: invalid token\nWARNING: timeout"
+        else -> "FAILED login user=admin\nOK login user=guest\nFAILED login user=root"
     }
     val missionHint = when (selectedMission) {
         1 -> "HINT: use open(), with, for, if, in, append(), and len()."
@@ -120,9 +120,9 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
         else -> "HINT: inspect each line for FAILED, then count matching entries."
     }
     fun starterCode(mission: Int) = when (mission) {
-        1 -> "errors = []\\n\\n# Count every line containing ERROR\\n\\nprint(len(errors))"
-        2 -> "warnings = []\\n\\n# Count every line containing WARNING\\n\\nprint(len(warnings))"
-        else -> "failed = []\\n\\n# Count every line containing FAILED\\n\\nprint(len(failed))"
+        1 -> "errors = []\n\n# Count every line containing ERROR\n\nprint(len(errors))"
+        2 -> "warnings = []\n\n# Count every line containing WARNING\n\nprint(len(warnings))"
+        else -> "failed = []\n\n# Count every line containing FAILED\n\nprint(len(failed))"
     }
     var editor by remember { mutableStateOf(TextFieldValue(starterCode(1))) }
     var output by remember { mutableStateOf("SYSTEM READY\nAwaiting analyst input...") }
@@ -159,7 +159,7 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                         .clickable(enabled = unlocked && !isRunning) {
                             selectedMission = mission
                             editor = TextFieldValue(starterCode(mission))
-                            output = "MISSION 0$mission READY\\nWrite your solution and run the evidence tests."
+                            output = "MISSION 0$mission READY\nWrite your solution and run the evidence tests."
                             status = if (mission in completedMissions) "MISSION VERIFIED  /  REPLAY AVAILABLE" else "TRAINING SIMULATION  /  CASE OPEN"
                         }
                         .padding(horizontal = 14.dp, vertical = 9.dp)
@@ -365,7 +365,7 @@ private val PythonHighlightTransformation = VisualTransformation { input ->
     Regex("\\b\\d+(\\.\\d+)?\\b").findAll(text).forEach {
         builder.addStyle(numberStyle, it.range.first, it.range.last + 1)
     }
-    Regex("#[^\\n]*").findAll(text).forEach {
+    Regex("#[^\n]*").findAll(text).forEach {
         builder.addStyle(commentStyle, it.range.first, it.range.last + 1)
     }
     TransformedText(builder.toAnnotatedString(), OffsetMapping.Identity)
