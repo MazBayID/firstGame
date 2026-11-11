@@ -280,7 +280,11 @@ def evaluate_mission(source, mission_id=1):
     outputs = []
     cases = mission["cases"]
     for index, (variables, expected) in enumerate(cases, start=1):
-        result = _execute(source, variables)
+        immutable_variables = {
+            name: tuple(value) if isinstance(value, list) else value
+            for name, value in variables.items()
+        }
+        result = _execute(source, immutable_variables)
         if result["error"]:
             return json.dumps({"output": result["output"], "error": result["error"],
                                "passed": False,
