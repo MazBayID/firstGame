@@ -19,8 +19,11 @@ class RecordEvidenceUseCase(private val repository: GameStateRepository) {
         require(existing == null || existing.missionId == record.missionId) {
             "Evidence identifiers cannot be reassigned to another mission."
         }
+        val normalizedRecord = existing?.let {
+            record.copy(recordedAtEpochMillis = it.recordedAtEpochMillis)
+        } ?: record
         val updated = current.copy(
-            evidence = current.evidence.filterNot { it.id == record.id } + record,
+            evidence = current.evidence.filterNot { it.id == record.id } + normalizedRecord,
             lastCheckpoint = "evidence_recorded:" + record.id
         )
         repository.save(updated)
