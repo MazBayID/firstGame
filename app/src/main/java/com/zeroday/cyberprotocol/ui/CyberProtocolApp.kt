@@ -26,9 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.data.VirtualFileSystem
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
+import com.zeroday.cyberprotocol.domain.usecase.CompleteMissionUseCase
 import com.zeroday.cyberprotocol.ui.theme.CyberPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -135,6 +137,7 @@ private fun CyberProtocolGameContent() {
     var showResetDialog by remember { mutableStateOf(false) }
     var messengerReply by rememberSaveable { mutableStateOf("") }
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
+    var hintLevel by rememberSaveable { mutableIntStateOf(0) }
 
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 7)
@@ -150,6 +153,7 @@ private fun CyberProtocolGameContent() {
         code = TextFieldValue(savedDraft)
         codeOutput = "KELUARAN AKAN MUNCUL DI SINI"
         codeFeedback = ""
+        hintLevel = 0
         savedCodeStatus = "DRAF TERSIMPAN"
     }
 
@@ -214,9 +218,17 @@ private fun CyberProtocolGameContent() {
         )
         GameScreen.STORY -> {
             val beatIndex = storyStage.coerceIn(0, 6)
+            val authoredMission = when (beatIndex) {
+                4 -> Campaign01Catalog.find("first_contact.signal")
+                5 -> Campaign01Catalog.find("first_contact.identity")
+                else -> null
+            }
             StoryScreen(
                 beat = firstContactBeats[beatIndex],
                 stage = beatIndex,
+                mission = authoredMission,
+                hintLevel = hintLevel,
+                onRequestHint = { hintLevel = (hintLevel + 1).coerceAtMost(3) },
                 code = code,
                 onCodeChange = { code = it; savedCodeStatus = "PERUBAHAN BELUM DISIMPAN" },
                 output = codeOutput,
@@ -241,7 +253,7 @@ private fun CyberProtocolGameContent() {
                     }
                 },
                 onSubmit = {
-                    val missionId = if (beatIndex == 4) 9 else 10
+                    val missionId = authoredMission?.evaluatorId ?: return@StoryScreen
                     scope.launch {
                         codeFeedback = "MEMVERIFIKASI..."
                         val result = withContext(Dispatchers.IO) {
@@ -250,6 +262,11 @@ private fun CyberProtocolGameContent() {
                         codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                         if (result.passed) {
+                            authoredMission?.let { mission ->
+                                CompleteMissionUseCase(gameStateRepository).complete(
+                                    mission.id, mission.rewardXp, mission.requiredClearance
+                                )
+                            }
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
                             val previousState = gameStateRepository.load()
                             gameStateRepository.save(previousState.copy(
@@ -423,7 +440,9 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
 
 @Composable
 private fun StoryScreen(
-    beat: StoryBeat, stage: Int, code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
+    beat: StoryBeat, stage: Int, mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?,
+    hintLevel: Int, onRequestHint: () -> Unit,
+    code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
     output: String, feedback: String, saveStatus: String, onSaveCode: () -> Unit,
     onRun: () -> Unit, onSubmit: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
@@ -439,9 +458,16 @@ private fun StoryScreen(
             GamePanel {
                 Text("NEXUS  /  BANTUAN PELATIHAN", color = Color(0xFF83C7D0),
                     fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
-                Text(if (stage == 4) "Simpan pesan ke dalam variable. Lalu tampilkan variable tersebut menggunakan print()."
-                    else "Gunakan dua konsep yang sama untuk mengungkap pesan kedua. Ubah kode jika diperlukan.",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(mission?.briefing.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                mission?.objectives?.forEachIndexed { index, objective ->
+                    Text("${index + 1}. ${objective.title}", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(objective.description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                }
+                if (hintLevel > 0) {
+                    val hint = mission?.hints?.firstOrNull { it.level == hintLevel }
+                    if (hint != null) Text("PETUNJUK $hintLevel/3\n${hint.message}", color = Color(0xFF83C7D0), fontSize = 12.sp)
+                }
+                if (hintLevel < 3) OutlinedButton(onClick = onRequestHint) { Text("MINTA PETUNJUK ${hintLevel + 1}/3") }
                 CodeEditor(code, onCodeChange, "EDITOR KODE PYTHON 3", 180)
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
