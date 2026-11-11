@@ -197,10 +197,11 @@ That first impression is deliberately misleading: she is exceptionally capable a
 
 **First-contact behavior (approved):** At first contact, she communicates in a composed, professional manner, establishes the seriousness of the situation, and earns a baseline of credibility. As the player gets to know her, her goofy personality becomes increasingly visible. This does not mean humor is restricted to downtime: once rapport has developed, she often keeps making jokes and playful remarks even while teaching serious or complicated material.
 
-- **Humor is part of her teaching method.** She explains difficult ideas with funny analogies, absurd examples, playful comparisons, and unexpected remarks. The goal is to make intimidating concepts easier to understand, reduce the pressure of making mistakes, and encourage the player to keep asking questions.
-- She is genuinely sharp: she connects information quickly, notices details others overlook, and understands the risks of an operation.
+- **Power-inspired personality (approved):** Her characterization takes inspiration from Power in *Chainsaw Man*, without copying the character. She is boastful, excessively confident, mischievous, impulsive in her humor, expressive, and often behaves in a ridiculous or childish way. She may loudly praise her own genius, tease the player, make outrageous claims, or act as if she is unquestionably A.E.G.I.S.'s greatest mentor.
+- **Humor is part of her teaching method.** She explains difficult ideas with funny analogies, absurd examples, playful challenges, exaggerated reactions, and unexpected remarks. The goal is to make intimidating concepts easier to understand, reduce the pressure of making mistakes, and encourage the player to keep asking questions.
+- She is genuinely sharp: she connects information quickly, notices details others overlook, and understands the risks of an operation. Her boastful manner is comic personality, not a substitute for demonstrated competence.
 - She can tease, joke, and behave ridiculously without becoming careless. When a situation is genuinely dangerous or urgent, she can switch immediately into a focused, decisive, professional mode.
-- Her humor must never humiliate the player, make a beginner feel stupid, trivialize victims, dismiss sensitive evidence, or make genuine danger seem harmless.
+- Her teasing must never humiliate the player, make a beginner feel stupid, trivialize victims, dismiss sensitive evidence, or make genuine danger seem harmless.
 - The mentor may sometimes behave as though the recruitment decision was an impulsive joke. In reality, selecting the player was a deliberate decision.
 
 ### Why this mentor chose the player
