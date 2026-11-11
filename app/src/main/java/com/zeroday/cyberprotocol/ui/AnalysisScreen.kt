@@ -1,0 +1,189 @@
+package com.zeroday.cyberprotocol.ui
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.zeroday.cyberprotocol.core.model.EvidenceRecord
+import com.zeroday.cyberprotocol.core.model.EvidenceStatus
+import com.zeroday.cyberprotocol.core.model.GameState
+
+/** Pure evidence filtering shared by the analysis surface and its tests. */
+internal object EvidenceAnalysisFilter {
+    fun filter(
+        records: List<EvidenceRecord>,
+        status: EvidenceStatus?,
+        query: String
+    ): List<EvidenceRecord> {
+        val normalizedQuery = query.trim().lowercase()
+        return records.asSequence()
+            .filter { status == null || it.status == status }
+            .filter { record ->
+                normalizedQuery.isEmpty() ||
+                    record.title.lowercase().contains(normalizedQuery) ||
+                    record.summary.lowercase().contains(normalizedQuery) ||
+                    record.source.lowercase().contains(normalizedQuery) ||
+                    record.missionId.lowercase().contains(normalizedQuery)
+            }
+            .sortedByDescending { it.recordedAtEpochMillis }
+            .toList()
+    }
+}
+
+@Composable
+internal fun AnalysisScreen(gameState: GameState, onBack: () -> Unit) {
+    var selectedStatus by rememberSaveable { mutableStateOf("ALL") }
+    var query by rememberSaveable { mutableStateOf("") }
+    val status = when (selectedStatus) {
+        "UNVERIFIED" -> EvidenceStatus.UNVERIFIED
+        "INFERRED" -> EvidenceStatus.INFERRED
+        "CONFIRMED" -> EvidenceStatus.CONFIRMED
+        "DISPUTED" -> EvidenceStatus.DISPUTED
+        else -> null
+    }
+    val filtered = EvidenceAnalysisFilter.filter(gameState.evidence, status, query)
+
+    Column(
+        Modifier.fillMaxSize()
+            .background(Brush.verticalGradient(listOf(Color(0xFF0A1D25), Color(0xFF090D13))))
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 18.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(13.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text("A.E.G.I.S.  /  INTELLIGENCE", color = Color(0xFF83C7D0),
+                    fontSize = 9.sp, letterSpacing = 1.5.sp, fontWeight = FontWeight.Bold)
+                Text("ANALISIS BUKTI", color = Color.White, fontSize = 24.sp,
+                    fontWeight = FontWeight.Black)
+            }
+            TextButton(onClick = onBack) { Text("KEMBALI", color = Color(0xFFBCE8EA)) }
+        }
+
+        OutlinedTextField(
+            value = query,
+            onValueChange = { query = it.take(120) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            label = { Text("Cari judul, sumber, atau misi") },
+            placeholder = { Text("Contoh: RX-14") },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color(0xFFD0D8DE),
+                focusedBorderColor = Color(0xFF83C7D0),
+                unfocusedBorderColor = Color(0xFF3B5158),
+                focusedLabelColor = Color(0xFF83C7D0),
+                unfocusedLabelColor = Color(0xFF8AA8AE),
+                cursorColor = Color(0xFF83C7D0)
+            )
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            listOf("ALL", "CONFIRMED", "UNVERIFIED").forEach { key ->
+                FilterChip(
+                    selected = selectedStatus == key,
+                    onClick = { selectedStatus = key },
+                    label = { Text(when (key) {
+                        "ALL" -> "SEMUA"
+                        "CONFIRMED" -> "TERKONFIRMASI"
+                        else -> "BELUM TERVERIFIKASI"
+                    }, fontSize = 9.sp) }
+                )
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            listOf("INFERRED", "DISPUTED").forEach { key ->
+                FilterChip(
+                    selected = selectedStatus == key,
+                    onClick = { selectedStatus = key },
+                    label = { Text(if (key == "INFERRED") "DISIMPULKAN" else "DIPERSELISIHKAN",
+                        fontSize = 9.sp) }
+                )
+            }
+        }
+
+        Surface(
+            color = Color(0xFF102A32),
+            shape = RoundedCornerShape(7.dp),
+            border = BorderStroke(1.dp, Color(0xFF31545B)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("REKAMAN BUKTI", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                        letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
+                    Text("${filtered.size} DARI ${gameState.evidence.size} REKAMAN",
+                        color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                }
+                Text("READ ONLY", color = Color(0xFF8AA8AE), fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold)
+            }
+        }
+
+        if (filtered.isEmpty()) {
+            Surface(
+                color = Color(0xFF111B22),
+                shape = RoundedCornerShape(7.dp),
+                border = BorderStroke(1.dp, Color(0xFF263940)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    if (gameState.evidence.isEmpty())
+                        "Belum ada bukti. Selesaikan dan verifikasi misi untuk mencatat temuan beserta sumbernya."
+                    else "Tidak ada rekaman yang cocok dengan pencarian dan filter ini.",
+                    Modifier.padding(16.dp), color = Color(0xFF9AB4B8),
+                    fontSize = 12.sp, lineHeight = 18.sp
+                )
+            }
+        } else {
+            filtered.forEach { record -> EvidenceRecordCard(record) }
+        }
+
+        Text(
+            "Status bukti tidak dapat diubah dari layar ini. Setiap perubahan klasifikasi harus berasal dari proses peninjauan yang memiliki alasan dan jejak audit.",
+            color = Color(0xFF71858B), fontSize = 10.sp, lineHeight = 16.sp
+        )
+    }
+}
+
+@Composable
+private fun EvidenceRecordCard(record: EvidenceRecord) {
+    val (label, tint) = when (record.status) {
+        EvidenceStatus.CONFIRMED -> "TERKONFIRMASI" to Color(0xFF8CD5AC)
+        EvidenceStatus.INFERRED -> "DISIMPULKAN" to Color(0xFFE3C17B)
+        EvidenceStatus.DISPUTED -> "DIPERSELISIHKAN" to Color(0xFFE09AA6)
+        EvidenceStatus.UNVERIFIED -> "BELUM TERVERIFIKASI" to Color(0xFF83C7D0)
+    }
+    Surface(
+        color = Color(0xFF111B22),
+        shape = RoundedCornerShape(7.dp),
+        border = BorderStroke(1.dp, Color(0xFF2B4149)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(label, color = tint, fontSize = 8.sp, fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.8.sp, modifier = Modifier.weight(1f))
+                Text(record.id, color = Color(0xFF71858B), fontSize = 8.sp)
+            }
+            Text(record.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(record.summary, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
+            HorizontalDivider(color = Color(0xFF293A40))
+            Text("SUMBER  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                lineHeight = 14.sp)
+            Text("MISI  /  ${record.missionId}", color = Color(0xFF8AA8AE), fontSize = 9.sp)
+        }
+    }
+}
