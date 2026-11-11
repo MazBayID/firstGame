@@ -40,10 +40,34 @@ data class PlayerProgress(val xp: Int, val credits: Int, val completedMissions: 
 
 class ProgressRepository(context: Context) {
     private val prefs = context.getSharedPreferences("cyber_protocol_player_v1", Context.MODE_PRIVATE)
+    private val legacyPrefs = context.getSharedPreferences("cyber_protocol_progress", Context.MODE_PRIVATE)
+
+    init {
+        migrateLegacyProgress()
+    }
+
+    private fun migrateLegacyProgress() {
+        if (prefs.getBoolean("migration_v1_complete", false)) return
+        val editor = prefs.edit()
+            .putInt("xp", legacyPrefs.getInt("xp", 0))
+            .putInt("credits", legacyPrefs.getInt("credits", 0))
+
+        (1..8).forEach { missionId ->
+            val legacyCompleted = legacyPrefs.getBoolean(
+                "mission_$missionId",
+                missionId == 1 && legacyPrefs.getBoolean("chapter_01_mission_01", false)
+            )
+            if (legacyCompleted) editor.putBoolean("mission_$missionId", true)
+        }
+
+        editor.putBoolean("migration_v1_complete", true).apply()
+    }
+
     fun load(): PlayerProgress {
         val completed = (1..8).filter { prefs.getBoolean("mission_$it", false) }.toSet()
         return PlayerProgress(prefs.getInt("xp", 0), prefs.getInt("credits", 0), completed)
     }
+
     /** Rewards are granted once; replaying a completed mission never farms XP. */
     fun completeMissionOnce(missionId: Int): PlayerProgress {
         if (!prefs.getBoolean("mission_$missionId", false)) {
