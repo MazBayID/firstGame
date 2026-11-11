@@ -877,7 +877,7 @@ private fun MessengerScreen(
                     if (recruitmentInvitation) {
                         ChatBubble(
                             "Freya Knox",
-                            "Seseorang meminta kami untuk merekrutmu.\\n\\nKami tahu kamu bukan agen terlatih. Justru karena itulah pesan ini mungkin mengejutkanmu.\\n\\nSebuah organisasi bernama A.E.G.I.S. ingin berbicara denganmu melalui kanal ini.",
+                            "Seseorang meminta kami untuk merekrutmu.\n\nKami tahu kamu bukan agen terlatih. Justru karena itulah pesan ini mungkin mengejutkanmu.\n\nSebuah organisasi bernama A.E.G.I.S. ingin berbicara denganmu melalui kanal ini.",
                             false
                         )
                         if (storyBeat >= 7) {
