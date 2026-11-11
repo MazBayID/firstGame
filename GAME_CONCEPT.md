@@ -870,6 +870,7 @@ The opening chapter now contains six technical missions across twelve story beat
 - All datasets are fictional, deterministic, local, and read-only during execution.
 - RUN executes the player's code against the current mission dataset; SUBMIT evaluates the solution against multiple fixtures where appropriate.
 - Mission evaluators must verify the intended programming concept as well as the expected behavior. A hard-coded answer must not pass a mission that teaches a variable, loop, condition, enumeration, or indexing.
+- Each mission carries a concise forward clue, surfaced in the mission debrief after successful verification. Clues should point toward the next story action or technical concept without revealing its full solution.
 - The final report records the four-second difference between A.E.G.I.S. and ARCHIVE receipt times without asserting a cause.
 - The discrepancy remains unverified as to cause. Do not introduce a culprit, reveal manipulation, or start a separate case without approved narrative content.
 - Completion of the twelve story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
