@@ -64,7 +64,7 @@ internal class GameSessionViewModel(
     }
 
     fun saveCode(key: String, source: String, checkpoint: String) {
-        if (key.isBlank()) return
+        if (key.isBlank() || source.length > 50_000) return
         updateState {
             it.copy(
                 savedCode = it.savedCode + (key to source),
