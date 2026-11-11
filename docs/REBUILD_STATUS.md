@@ -87,8 +87,8 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 ## Current status
 
 **Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
-**Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, and an extracted destination model exist; ViewModel/state ownership and broader recovery tests remain.  
-**Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, personal-workspace terminal confinement, path-policy tests, and resource guardrails exist; process isolation and stronger hostile-code containment remain.  
+**Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, and a ViewModel-owned campaign state/progression layer exist; broader UI state/navigation extraction and storage recovery tests remain.  
+**Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
 **Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has authored story beats, two evaluated coding missions, graduated hints, debriefs, contact-list messaging, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
 **Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
 
@@ -113,6 +113,10 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
 - Added a mission-success debrief screen before the story advances.
 - Extracted First Contact narrative content and game destination definitions from the main Compose shell.
+- Added a `GameSessionViewModel` to own campaign state refreshes, mission completion, code checkpoints, recruitment clearance, and progression/evidence mutations outside the main Compose screen.
+- Added end-to-end domain coverage for First Contact progression and ViewModel-level checkpoint tests.
+- Versioned evidence provenance timestamps and added a save-schema upgrade path for earlier snapshots.
+- Added pure mission-workspace permission tests and aligned the code editor's source limit with the Python runner.
 - Added a pure virtual path policy and regression tests for traversal, root access, and mission-directory denial from the personal terminal.
 - Added Python static limits for literal text, integer size, and string/list repetition to reduce accidental memory exhaustion. These remain teaching-runtime guardrails, not security isolation.
 - Added mission workspace handles with per-mission file allowlists, explicit writable-file sets, bounded text writes, and seeded read-only briefings.
@@ -134,16 +138,15 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Python runner suite passed on the latest observed run.
 - Android debug APK assembly passed on a commit containing the entry loading integration.
 - A prior failure was traced to a missing loading composable during an intermediate commit; the subsequent commit containing that composable built successfully.
-- The latest state-store and UI cleanup commits still require their own completed CI result.
-- Kotlin unit tests have been added; confirmation that CI executes them is pending.
+- CI run `43017431227` passed on the ViewModel integration commit: Python runner tests, Kotlin unit tests, and Android debug APK assembly succeeded. Later workspace-policy and editor-limit commits are awaiting their own CI results.
 
 ### Remaining before this can be called a complete game
-- Finish modularizing navigation, UI state, campaign/story content, and data ownership.
+- Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state.
 - Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Expand the current data-backed Database, Dossier, Analysis, and Operations surfaces into fully interactive, story-linked workspaces.
 - Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
-- Add automated tests for previous-snapshot recovery, save migration, and archive retention; expand clearance progression.
+- Add automated tests for previous-snapshot recovery, save-schema migration, and archive retention; expand clearance progression.
 - Finish ViewModel-driven state ownership, complete remaining App Hub interactions, localize all player-facing content, and add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
 
