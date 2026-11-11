@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -72,6 +72,7 @@ internal fun AegisBrowserScreen(
     var accessCode by rememberSaveable { mutableStateOf("") }
     var loginError by remember { mutableStateOf("") }
     var downloadFeedback by remember { mutableStateOf("") }
+    var downloadedInSession by remember { mutableStateOf(emptySet<String>()) }
 
     Column(
         Modifier.fillMaxSize()
@@ -171,12 +172,14 @@ internal fun AegisBrowserScreen(
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 Text(fileName, color = Color.White, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
                                 Text("A.E.G.I.S. / ${content.length} karakter / hanya baca", color = Color(0xFF9BAEB4), fontSize = 9.sp)
-                                if (fileName in downloadedFiles) {
+                                if (fileName in downloadedFiles || fileName in downloadedInSession) {
                                     Text("TERSIMPAN DI RUANG KERJA MISI", color = Color(0xFF83C7D0), fontSize = 10.sp)
                                 } else {
                                     OutlinedButton(
                                         onClick = {
-                                            downloadFeedback = if (onDownloadFile(fileName)) {
+                                            val installed = onDownloadFile(fileName)
+                                            if (installed) downloadedInSession = downloadedInSession + fileName
+                                            downloadFeedback = if (installed) {
                                                 "$fileName berhasil diunduh ke ruang kerja misi."
                                             } else {
                                                 "Unduhan ditolak oleh kebijakan ruang kerja."
@@ -235,7 +238,7 @@ internal fun AegisBrowserScreen(
 @Composable
 private fun BrowserNavigation(page: String, onPageChange: (String) -> Unit) {
     Row(
-        Modifier.fillMaxWidth(),
+        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         listOf(
