@@ -390,7 +390,7 @@ Clues may appear in:
 - A dossier annotation or evidence label.
 - A specialist's explanation or a debrief conversation.
 
-A clue should reward curiosity and memory, not require guessing an unexplained answer. The next mission must teach the new concept and provide appropriate hints.
+A clue should reward curiosity and memory, not require guessing an unexplained answer. The next mission must teach the new concept and provide appropriate hints. In the current First Contact implementation, the clue is shown in the successful mission debrief and points toward the next narrative or technical step.
 
 Track each clue in the content plan: clue source, literal fragment, intended next concept, foreshadowing purpose, and where the connection is resolved.
 
