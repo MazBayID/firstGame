@@ -34,6 +34,10 @@ class Campaign01CatalogTest {
         assertEquals(10, identity.evaluatorId)
         assertEquals(25, signal.rewardXp)
         assertEquals(35, identity.rewardXp)
+        assertEquals(setOf("message_fragment.txt"), signal.initialFiles.keys)
+        assertEquals("ACCESS GRANTED\\n", signal.initialFiles["message_fragment.txt"])
+        assertTrue("message_fragment.txt" in signal.allowedFiles)
+        assertTrue("message_fragment.txt" !in signal.writableFiles)
         assertEquals(8, Campaign01Catalog.find("first_contact.audit")!!.evaluatorId)
         assertEquals(11, Campaign01Catalog.find("first_contact.inventory")!!.evaluatorId)
         assertEquals(5, Campaign01Catalog.find("first_contact.audit")!!.runtimeVariables["events"]!!.size)
@@ -69,6 +73,12 @@ class Campaign01CatalogTest {
         }
         assertThrows(IllegalArgumentException::class.java) {
             mission.copy(writableFiles = setOf("not-allowed.py"))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            mission.copy(initialFiles = mapOf("../outside.txt" to "blocked"))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            mission.copy(initialFiles = mapOf("signal.py" to "must remain player-writable"))
         }
     }
 
