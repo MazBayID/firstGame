@@ -230,6 +230,18 @@ private fun CyberProtocolGameContent() {
                 5 -> Campaign01Catalog.find("first_contact.identity")
                 else -> null
             }
+            LaunchedEffect(authoredMission?.id) {
+                authoredMission?.let { mission ->
+                    val latest = gameStateRepository.load()
+                    if (mission.id !in latest.completedMissionIds && latest.activeMissionId != mission.id) {
+                        gameStateRepository.save(latest.copy(
+                            activeMissionId = mission.id,
+                            lastCheckpoint = "mission_started:" + mission.id
+                        ))
+                        currentGameState = gameStateRepository.load()
+                    }
+                }
+            }
             StoryScreen(
                 beat = firstContactBeats[beatIndex],
                 stage = beatIndex,
