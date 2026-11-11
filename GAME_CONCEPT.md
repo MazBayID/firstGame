@@ -1017,18 +1017,19 @@ Cyber Protocol uses a permanent Android release-signing identity. This is a prod
 - It must not create, sign, upload, publish, or retain an APK artifact.
 - It must not read, restore, or require the permanent release keystore or any release-signing secrets.
 - It runs for pushes to `main` and the active development branch, for pull requests targeting `main`, and by manual dispatch where supported.
-- A successful test run is a prerequisite for the release workflow. A failed, cancelled, or skipped test run must never produce a device-test APK.
+- A failed test run must be reported as failed; it must never create a device-test APK. Pull-request test runs never produce a Release APK.
 
 ## 24.2 — Android Release APK workflow: signed device artifact only
 
 - The **Android Release APK** workflow is the only CI workflow authorized to produce an APK for physical-device testing or distribution.
-- It may start only after the Android Tests workflow completes successfully for the exact source commit being built. It must not build an untested commit or run as a consequence of an untrusted pull-request event.
+- It runs only for pushes to `main` or the active development branch, or a manual dispatch explicitly targeting one of those branches; it must not run for pull-request events.
+- It contains a mandatory source-validation job that runs the Python runner tests and Android/Kotlin unit tests for the exact source commit. The Release build job must depend on that job's success. A failed or cancelled validation job must prevent APK production.
 - It builds the Release variant only (for example, `assembleRelease`). It must not build or publish a Debug APK.
 - The resulting `app-release.apk` must be signed with the permanent release keystore and signing certificate. No debug key, newly generated key, or temporary replacement identity may be used.
 - Restore the keystore only into the ephemeral CI runner, restrict its file permissions, validate the alias without printing secrets, and remove the temporary key material after the job.
 - Verify the APK signature and confirm that the package identity, supported ABI, and `versionCode` match the release configuration before uploading the artifact.
 - The artifact must contain only the signed Release APK intended for device testing. Keep artifact retention limited and do not upload signing material, intermediate keystores, or secret-bearing files.
-- The release workflow must build the exact commit whose Android Tests workflow succeeded. If a newer commit is pushed while tests are running, each release must still be tied to its own tested commit.
+- Both the validation job and Release build job must check out the exact same commit SHA. If a newer commit is pushed while validation is running, the in-progress release must remain tied to its own tested commit.
 
 ## 24.3 — Permanent identity and safe updates
 
