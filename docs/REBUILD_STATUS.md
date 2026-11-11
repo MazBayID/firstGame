@@ -146,7 +146,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - CI run `43028768493` passed on commit `73493ac`: the Secure Messenger inbox/chat redesign compiled, Kotlin unit tests passed, and a debug APK artifact was uploaded.
 - CI run `43028842754` passed on commit `58ec024`: the Messenger return-navigation fix also compiled and passed Kotlin/Python tests.
 - CI run `43029424840` passed on commit `01d49dd`: the new Campaign chapter overview and five-beat progress timeline compiled and passed the automated checks.
-- CI run `43029676168` is verifying the subsequent cinematic story-card styling on commit `ac076ca`; Python tests and Android SDK setup passed, while APK assembly was still running at the time this note was written.
+- CI run `43029676168` passed on commit `ac076ca`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded, including the cinematic story-card styling.
 - These CI results are automated build/test evidence, not a substitute for final physical-device acceptance.
 
 ### Remaining before this can be called a complete game
