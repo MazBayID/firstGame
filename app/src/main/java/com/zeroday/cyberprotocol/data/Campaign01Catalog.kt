@@ -6,8 +6,7 @@ import com.zeroday.cyberprotocol.core.model.MissionKind
 import com.zeroday.cyberprotocol.core.model.MissionObjective
 
 /**
- * Approved opening chapter content only. Later case concepts remain outside
- * this catalog until their story details are approved.
+ * Approved First Contact and follow-up investigation missions.
  */
 object Campaign01Catalog {
     const val CAMPAIGN_ID = "campaign_01_recruitment"
@@ -74,6 +73,52 @@ object Campaign01Catalog {
                 MissionHint(1, "Struktur dasarnya sama dengan tugas sebelumnya."),
                 MissionHint(2, "Gunakan nama variabel message, bukan signal."),
                 MissionHint(3, "Tampilkan variabel dengan print(message).")
+            )
+        ),
+        MissionDefinition(
+            id = "first_contact.audit",
+            campaignId = CAMPAIGN_ID,
+            chapterId = CHAPTER_ID,
+            title = "Audit Jejak Sistem",
+            briefing = "Periksa log latihan yang disediakan A.E.G.I.S. Hitung hanya baris yang memuat ERROR. Gunakan for dan if; jangan mengubah sumber data.",
+            kind = MissionKind.STORY_CODE,
+            evaluatorId = 8,
+            rewardXp = 45,
+            requiredClearance = 0,
+            workspaceDirectory = "/A.E.G.I.S/missions/first_contact/audit",
+            allowedFiles = setOf("briefing.txt", "audit.py"),
+            writableFiles = setOf("audit.py"),
+            objectives = listOf(
+                MissionObjective("scan_events", "Periksa setiap entri", "Gunakan for untuk memeriksa semua item dalam events."),
+                MissionObjective("count_errors", "Hitung entri ERROR", "Gunakan if untuk menghitung item yang memuat teks ERROR.")
+            ),
+            hints = listOf(
+                MissionHint(1, "Mulai dengan count = 0 sebelum perulangan."),
+                MissionHint(2, "Di dalam for, periksa apakah \"ERROR\" ada di dalam event."),
+                MissionHint(3, "Jika kondisi benar, tambahkan count dengan count += 1, lalu print(count).")
+            )
+        ),
+        MissionDefinition(
+            id = "first_contact.inventory",
+            campaignId = CAMPAIGN_ID,
+            chapterId = CHAPTER_ID,
+            title = "Inventaris Rekaman",
+            briefing = "Sumber kedua menyediakan list bernama records. Hitung jumlah referensi yang tersedia menggunakan len(), simpan pada record_count, lalu tampilkan.",
+            kind = MissionKind.STORY_CODE,
+            evaluatorId = 11,
+            rewardXp = 50,
+            requiredClearance = 0,
+            workspaceDirectory = "/A.E.G.I.S/missions/first_contact/inventory",
+            allowedFiles = setOf("briefing.txt", "inventory.py"),
+            writableFiles = setOf("inventory.py"),
+            objectives = listOf(
+                MissionObjective("count_records", "Hitung referensi", "Gunakan len(records) untuk memperoleh jumlah item."),
+                MissionObjective("display_count", "Tampilkan jumlah", "Simpan hasil pada record_count dan tampilkan dengan print().")
+            ),
+            hints = listOf(
+                MissionHint(1, "len() menerima list dan mengembalikan jumlah item."),
+                MissionHint(2, "Gunakan record_count = len(records)."),
+                MissionHint(3, "Tampilkan hasilnya dengan print(record_count).")
             )
         )
     )
