@@ -201,7 +201,7 @@ NEXUS must guide the player's thinking, not automatically solve every mission. H
 The player should have **one primary human mentor** who accompanies them from the beginning of recruitment and serves as their main point of contact throughout the RPG experience.
 
 - The primary mentor builds an ongoing relationship with the player, provides guidance, follows the player's development, and helps maintain continuity across the campaign.
-- The primary mentor is **a woman**. Her name, appearance, age, detailed history, and exact expertise remain open until separately designed and approved.
+- The primary mentor is **Freya Knox**, a woman. Her appearance, age, detailed history, and exact expertise remain open until separately designed and approved.
 - Her approved personality direction takes inspiration from **Power from Chainsaw Man**, without copying that character. She is highly intelligent, confident to the point of ridiculousness, boastful, mischievous, impulsive in her humor, expressive, and wonderfully goofy.
 - She may brag about her own brilliance, make outrageous claims, tease the player, act as though she is obviously the greatest mentor in A.E.G.I.S., or behave in an unexpectedly childish way. This is playful characterization, not evidence of incompetence.
 - Humor is part of her teaching method, not merely comic relief. She uses funny analogies, absurd examples, playful challenges, exaggerated reactions, and mischievous remarks to make difficult concepts easier to understand and help the player feel comfortable asking questions.
