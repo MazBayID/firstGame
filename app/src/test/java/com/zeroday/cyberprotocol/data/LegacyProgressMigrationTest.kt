@@ -15,7 +15,7 @@ class LegacyProgressMigrationTest {
         val afterFirstTask = LegacyProgressMigration.fromStoryBeat(5)
         assertEquals(setOf("first_contact.signal"), afterFirstTask.completedMissionIds)
         assertEquals(25, afterFirstTask.experience)
-        assertEquals("RECRUIT", afterFirstTask.rank)
+        assertEquals("CIVILIAN", afterFirstTask.rank)
 
         val afterSecondTask = LegacyProgressMigration.fromStoryBeat(6)
         assertEquals(
