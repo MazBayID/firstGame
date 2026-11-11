@@ -106,6 +106,9 @@ The operational interface should provide a compact, elegant way to access the pl
 Character conversations are presented through an in-game **chat interface**, rather than a visual-novel dialogue box as the default dialogue format.
 
 - The player communicates with Freya, NEXUS, and other characters through a secure A.E.G.I.S.-style messaging experience.
+- The Messenger opens to a **contact list**. The player selects Freya, NEXUS, or another available agent to open that contact's conversation; do not use a single shared chat as the default landing view.
+- Contacts and conversations may become available progressively as characters are introduced and the player's access grows.
+- Returning from a conversation should take the player back to the contact list, while closing Messenger should return the player to the previous game screen without losing operation context.
 - Messages appear as distinct chat bubbles with clear sender identity. Player replies and character messages must be visually distinguishable.
 - Player replies use **predefined response options** in the initial version. The player selects one of the authored messages; free-text replies are not part of the initial implementation.
 - Initial dialogue choices are **cosmetic**: they select which authored response the player sends and may change the immediate conversational reply, but they do not alter relationship values, unlock content, change mission access, or branch the main story. Do not implement a relationship meter or persistent dialogue-choice flags for this initial version.
