@@ -289,6 +289,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 appendTerminalOutput(error + "\n")
                 onPythonResult?.invoke("", error)
             } else {
+                if (activeMission != null && fileName in activeMission.writableFiles) {
+                    lastSuccessfulRunSource = null
+                }
                 terminalBusy = true
                 scope.launch {
                     val missionWorkspace = activeMission?.let { fileSystem.openMissionWorkspace(it) }
@@ -299,6 +302,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     appendTerminalOutput(visibleOutput + "\n")
                     if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
                     terminalBusy = false
+                    if (activeMission != null && fileName in activeMission.writableFiles &&
+                        result.error.isBlank() && source == code.text
+                    ) {
+                        lastSuccessfulRunSource = source
+                        codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                        codeFeedback = "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control."
+                    }
                     onPythonResult?.invoke(result.output, result.error)
                 }
             }
