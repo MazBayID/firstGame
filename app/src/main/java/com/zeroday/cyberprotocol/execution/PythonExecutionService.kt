@@ -17,7 +17,7 @@ class PythonExecutionService {
             initialFiles.forEach { (name, content) -> put(name, content) }
         }
         val writableNames = workspace?.writableFileNames.orEmpty()
-        val writableJson = JSONArray().apply { writableNames.sorted().forEach(::put) }
+        val writableJson = JSONArray().apply { writableNames.sorted().forEach { put(it) } }
         val raw = Python.getInstance().getModule("runner")
             .callAttr("run_code_json", source, workspaceJson.toString(), writableJson.toString()).toString()
         val json = JSONObject(raw)
