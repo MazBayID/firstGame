@@ -844,6 +844,36 @@ private fun TerminalScreen(
 }
 
 @Composable
+private fun SettingsScreen(
+    reducedMotion: Boolean,
+    onReducedMotionChange: (Boolean) -> Unit,
+    onBack: () -> Unit
+) {
+    GamePage("PENGATURAN", "PREFERENSI PERANGKAT A.E.G.I.S.", onBack, null) {
+        GamePanel {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("KURANGI GERAKAN", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Mengganti animasi pembukaan dengan satu frame statis untuk mengurangi gerakan visual.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp
+                    )
+                }
+                Switch(checked = reducedMotion, onCheckedChange = onReducedMotionChange)
+            }
+            HorizontalDivider(color = CyberPalette.Divider)
+            Text("Preferensi disimpan secara lokal pada perangkat ini.", color = CyberPalette.SteelGray, fontSize = 11.sp)
+            Text("Pengaturan audio dan kontrol akan tersedia setelah sistem audio dan pemetaan kontrol diimplementasikan.", color = CyberPalette.SteelGray, fontSize = 11.sp)
+        }
+    }
+}
+
+@Composable
 private fun InfoAppScreen(title: String, subtitle: String, body: String, icon: Int, onBack: () -> Unit) {
     GamePage(title, subtitle, onBack, null) {
         GamePanel {
