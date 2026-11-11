@@ -226,7 +226,7 @@ NEXUS guides the player's thinking rather than automatically solving missions. C
 The player should have **one primary human mentor** who accompanies them from the beginning of recruitment and serves as their main point of contact throughout the RPG experience.
 
 - The primary mentor provides ongoing guidance, follows the player's development, and helps maintain continuity across the campaign. In the initial version, relationship development is conveyed through authored story scenes and dialogue rather than a player-controlled relationship meter or persistent consequences from cosmetic reply selections.
-- The primary mentor is **Freya Knox**, a woman. Her approved broad appearance direction is **youthful and energetic**. Exact age, facial features, hairstyle, clothing, accessories, detailed history, and exact expertise remain open until separately designed and approved.
+- The primary mentor is **Freya Knox**, a woman. Her approved broad appearance direction is **youthful and energetic**. Her role as the player's primary beginner-level terminal and Python instructor is established. Exact age, facial features, hairstyle, clothing, accessories, detailed history, and any broader specialist expertise remain open until separately designed and approved.
 - Her approved personality direction takes inspiration from **Power from Chainsaw Man**, without copying that character. She is highly intelligent, confident to the point of ridiculousness, boastful, mischievous, impulsive in her humor, expressive, and wonderfully goofy.
 - She may brag about her own brilliance, make outrageous claims, tease the player, act as though she is obviously the greatest mentor in A.E.G.I.S., or behave in an unexpectedly childish way. This is playful characterization, not evidence of incompetence.
 - Humor is part of her teaching method, not merely comic relief. She uses funny analogies, absurd examples, playful challenges, exaggerated reactions, and mischievous remarks to make difficult concepts easier to understand and help the player feel comfortable asking questions.
@@ -319,7 +319,7 @@ Freya Knox is a major recurring character, the player's primary human mentor, an
 - Characters and agents should have consistent identities, motives, and voices.
 - In the initial version, predefined dialogue choices are cosmetic as defined in §3.3 and §6.5. Consequential choices, branching access, and relationship effects are not part of the initial implementation; they require a separate approved design decision.
 - Failure should produce meaningful feedback and learning opportunities, not merely a generic “wrong” screen.
-- Maintain continuity across chapters and preserve prior player decisions when the story system supports them.
+- Maintain continuity across chapters and preserve authored story flags and established campaign state. Initial predefined dialogue choices remain cosmetic and must not create consequential relationship or access branches.
 
 # 7. Core Gameplay Loop
 
