@@ -78,16 +78,16 @@ class RunnerTests(unittest.TestCase):
         self.assertFalse(self.submit("print(len(records))", 11)["passed"])
 
     def test_first_contact_trace_uses_enumerate_and_filtering(self):
-        source = 'for index, receipt in enumerate(receipts):\\n    if "RX-14" in receipt:\\n        print(index, receipt)'
+        source = 'for index, receipt in enumerate(receipts):\n    if "RX-14" in receipt:\n        print(index, receipt)'
         result = self.submit(source, 12)
         self.assertTrue(result["passed"], result)
-        self.assertFalse(self.submit('for receipt in receipts:\\n    if "RX-14" in receipt:\\n        print(receipt)', 12)["passed"])
+        self.assertFalse(self.submit('for receipt in receipts:\n    if "RX-14" in receipt:\n        print(receipt)', 12)["passed"])
 
     def test_first_contact_compare_uses_list_indexing(self):
-        source = 'primary = receipts[0]\\narchive = receipts[1]\\nprint(primary)\\nprint(archive)'
+        source = 'primary = receipts[0]\narchive = receipts[1]\nprint(primary)\nprint(archive)'
         result = self.submit(source, 13)
         self.assertTrue(result["passed"], result)
-        self.assertFalse(self.submit('print(receipts[0])\\nprint(receipts[1])', 13)["passed"])
+        self.assertFalse(self.submit('print(receipts[0])\nprint(receipts[1])', 13)["passed"])
 
     def test_mission_run_receives_read_only_input_variables(self):
         source = 'count = 0\nfor event in events:\n    if "ERROR" in event:\n        count += 1\nprint(count)'
