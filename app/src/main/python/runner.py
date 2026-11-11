@@ -193,6 +193,7 @@ def run_code_json(source, workspace_json="{}", writable_json="[]", variables_jso
                     or not isinstance(values, list) or len(values) > 1000
                     or any(not isinstance(value, str) or len(value) > 1000 for value in values)):
                 raise RunnerError("Invalid mission input variable.")
+            variables[name] = tuple(values)
         if any(not isinstance(k, str) or not isinstance(v, str) for k, v in workspace_files.items()):
             raise RunnerError("Mission workspace only supports named text files.")
         return json.dumps(_execute(source, variables=variables, workspace_files=workspace_files,
