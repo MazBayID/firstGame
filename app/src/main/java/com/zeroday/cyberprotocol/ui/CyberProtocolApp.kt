@@ -780,11 +780,33 @@ private fun StoryScreen(
     onBack: () -> Unit, onHub: () -> Unit
 ) {
     GamePage("KONTAK PERTAMA", "BAB 001  /  REKRUTMEN", onBack, onHub) {
-        GamePanel {
-            Text(beat.eyebrow, color = CyberPalette.Crimson, fontSize = 10.sp,
-                letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
-            Text(beat.title, color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
-            Text(beat.body, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 22.sp)
+        Box(
+            Modifier.fillMaxWidth()
+                .background(
+                    Brush.linearGradient(
+                        when (stage) {
+                            2 -> listOf(Color(0xFF172B36), Color(0xFF101820), Color(0xFF241B27))
+                            3 -> listOf(Color(0xFF292331), Color(0xFF171820), Color(0xFF30202A))
+                            4, 5 -> listOf(Color(0xFF102B2A), Color(0xFF111A20), Color(0xFF1C2631))
+                            else -> listOf(Color(0xFF29202A), Color(0xFF171820), Color(0xFF34202A))
+                        }
+                    ),
+                    RoundedCornerShape(18.dp)
+                )
+                .padding(21.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(13.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(beat.eyebrow, color = Color(0xFFE0A2AD), fontSize = 9.sp,
+                        letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.weight(1f))
+                    Text("SCENE ${(stage - 1).toString().padStart(2, '0')}",
+                        color = Color(0xFF9AB4B8), fontSize = 9.sp, letterSpacing = 1.sp)
+                }
+                Text(beat.title, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black)
+                HorizontalDivider(color = Color(0x554C5A66))
+                Text(beat.body, color = Color(0xFFD1D9DF), lineHeight = 23.sp, fontSize = 13.sp)
+            }
         }
         if (stage == 4 || stage == 5) {
             GamePanel {
