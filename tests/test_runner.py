@@ -66,6 +66,44 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print("IDENTITY VERIFIED")', 10)["passed"])
 
+    def test_mission_workspace_reads_only_allowlisted_files(self):
+        source = 'print(read_text("briefing.txt"))'
+        result = json.loads(runner.run_code_json(
+            source, json.dumps({"briefing.txt": "AUTHORIZED BRIEF"}),
+            json.dumps(["script.py"])
+        ))
+        self.assertEqual(result["output"].strip(), "AUTHORIZED BRIEF")
+        denied = json.loads(runner.run_code_json(
+            'print(read_text("private.txt"))',
+            json.dumps({"briefing.txt": "AUTHORIZED BRIEF"}),
+            json.dumps(["script.py"])
+        ))
+        self.assertIn("not available", denied["error"])
+
+    def test_mission_workspace_writes_only_writable_files(self):
+        result = json.loads(runner.run_code_json(
+            'write_text("script.py", "print(42)")',
+            json.dumps({"briefing.txt": "READ ONLY"}),
+            json.dumps(["script.py"])
+        ))
+        self.assertEqual(result["files"]["script.py"], "print(42)")
+        self.assertEqual(result["files"]["briefing.txt"], "READ ONLY")
+
+        denied = json.loads(runner.run_code_json(
+            'write_text("briefing.txt", "tampered")',
+            json.dumps({"briefing.txt": "READ ONLY"}),
+            json.dumps(["script.py"])
+        ))
+        self.assertIn("read-only", denied["error"])
+
+    def test_mission_workspace_rejects_oversized_file_content(self):
+        result = json.loads(runner.run_code_json(
+            'write_text("script.py", "x" * 50001)',
+            json.dumps({}),
+            json.dumps(["script.py"])
+        ))
+        self.assertIn("50000", result["error"])
+
     def test_unknown_mission(self):
         self.assertFalse(self.submit("print(1)", 999)["passed"])
 
