@@ -54,6 +54,16 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(self.submit(source, 8)["passed"])
         self.assertFalse(self.submit("print(2)", 8)["passed"])
 
+    def test_first_contact_stage_one_uses_structured_evaluator(self):
+        source = 'signal = "ACCESS GRANTED"\\nprint(signal)'
+        self.assertTrue(self.submit(source, 9)["passed"])
+        self.assertFalse(self.submit('print("ACCESS GRANTED")', 9)["passed"])
+
+    def test_first_contact_stage_two_uses_structured_evaluator(self):
+        source = 'message = "IDENTITY VERIFIED"\\nprint(message)'
+        self.assertTrue(self.submit(source, 10)["passed"])
+        self.assertFalse(self.submit('print("IDENTITY VERIFIED")', 10)["passed"])
+
     def test_unknown_mission(self):
         self.assertFalse(self.submit("print(1)", 999)["passed"])
 
