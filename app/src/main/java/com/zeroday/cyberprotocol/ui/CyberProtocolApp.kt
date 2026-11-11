@@ -640,6 +640,47 @@ private fun MenuButton(title: String, subtitle: String, onClick: () -> Unit, pri
 }
 
 @Composable
+private fun FreyaNotificationDialog(onOpenMessage: () -> Unit) {
+    Dialog(onDismissRequest = {}) {
+        Surface(
+            color = Color(0xFF202C33),
+            shape = RoundedCornerShape(20.dp),
+            border = BorderStroke(1.dp, Color(0xFF3B514B)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                Modifier.padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(11.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Surface(color = Color(0xFF315448), shape = RoundedCornerShape(50)) {
+                        Text("FK", Modifier.padding(11.dp), color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                    Column(Modifier.weight(1f)) {
+                        Text("PESAN AMAN", color = Color(0xFFE6E9ED),
+                            fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+                        Text("sekarang", color = Color(0xFF9AA2AC), fontSize = 10.sp)
+                    }
+                }
+                Text("Freya Knox", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "Halo. Aku Freya. Aku akan mendampingimu selama misi orientasi A.E.G.I.S.",
+                    color = Color(0xFFD0D5DC), fontSize = 13.sp, lineHeight = 19.sp
+                )
+                Button(
+                    onClick = onOpenMessage,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF17634F))
+                ) {
+                    Text("BUKA PESAN")
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color.Black).padding(horizontal = 22.dp),
@@ -667,8 +708,8 @@ private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
                         Spacer(Modifier.weight(1f))
                         Text("sekarang", color = Color(0xFF9AA2AC), fontSize = 10.sp)
                     }
-                    Text("Pesan baru", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                    Text("Ada undangan yang menunggumu.", color = Color(0xFFD0D5DC), fontSize = 13.sp)
+                    Text("A.E.G.I.S. / Recruitment Office", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    Text("Undangan resmi: permintaan perekrutan.", color = Color(0xFFD0D5DC), fontSize = 13.sp)
                 }
             }
             Text(
