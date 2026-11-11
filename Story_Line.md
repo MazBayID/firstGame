@@ -195,6 +195,9 @@ The primary mentor is **highly intelligent, relaxed, playful, and wonderfully go
 
 That first impression is deliberately misleading.
 
+**First-contact behavior (approved):** The mentor initially communicates in a professional, composed manner. They establish the seriousness of the situation and earn a baseline of credibility before gradually revealing their playful, goofy side as the player gets to know them. Do not make the mentor act instantly overfamiliar or perform jokes throughout the first briefing. The contrast between the professional first impression and the later humor is part of the character's charm.
+
+
 - The mentor is genuinely sharp: they connect information quickly, notice details others overlook, and understand the risks of an operation.
 - They enjoy jokes, teasing, odd remarks, and occasionally ridiculous behavior, but can switch instantly into a focused, professional mode when the situation demands it.
 - Their humor should make the player feel comfortable and make the cast memorable. It must not trivialize victims, sensitive evidence, or genuine danger.
