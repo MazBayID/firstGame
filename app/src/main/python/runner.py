@@ -64,7 +64,7 @@ class RunnerError(Exception):
     pass
 
 
-def _validate(tree):
+def _validate(tree, extra_call_names=()):
     nodes = list(ast.walk(tree))
     if len(nodes) > MAX_AST_NODES:
         raise RunnerError("This program is too complex for the current training environment.")
@@ -74,7 +74,7 @@ def _validate(tree):
         if isinstance(node, ast.Name) and (node.id.startswith("_") or "__" in node.id):
             raise RunnerError("Names beginning with underscore are not available.")
         if isinstance(node, ast.Call):
-            if not isinstance(node.func, ast.Name) or node.func.id not in SAFE_BUILTINS:
+            if not isinstance(node.func, ast.Name) or node.func.id not in SAFE_BUILTINS and node.func.id not in extra_call_names:
                 raise RunnerError("Only approved built-in functions may be called.")
         if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, complex)):
             raise RunnerError("This value type is not available in the training runner.")
@@ -85,7 +85,7 @@ def _validate(tree):
             raise RunnerError("Collection literals are limited to 1000 items.")
 
 
-def _execute(source, variables=None):
+def _execute(source, variables=None, workspace_files=None, writable_files=None):
     if not isinstance(source, str) or not source.strip():
         raise RunnerError("Write some Python code before running.")
     if len(source) > MAX_SOURCE_LENGTH:
@@ -94,8 +94,25 @@ def _execute(source, variables=None):
         tree = ast.parse(source, mode="exec")
     except SyntaxError as error:
         return {"output": "", "error": f"SyntaxError: {error.msg} (line {error.lineno})"}
+    workspace = dict(workspace_files or {})
+    writable = set(writable_files or ())
+
+    def read_text(name):
+        if not isinstance(name, str) or name not in workspace:
+            raise RunnerError("File is not available in this mission workspace.")
+        return workspace[name]
+
+    def write_text(name, content):
+        if not isinstance(name, str) or name not in writable:
+            raise RunnerError("This file is read-only or outside the mission workspace.")
+        if not isinstance(content, str) or len(content) > 50000:
+            raise RunnerError("Mission files must contain text up to 50000 characters.")
+        workspace[name] = content
+
+    safe_builtins = dict(SAFE_BUILTINS)
+    safe_builtins.update({"read_text": read_text, "write_text": write_text})
     try:
-        _validate(tree)
+        _validate(tree, {"read_text", "write_text"})
     except RunnerError as error:
         return {"output": "", "error": str(error)}
 
@@ -115,22 +132,31 @@ def _execute(source, variables=None):
         sys.settrace(trace)
         with contextlib.redirect_stdout(output):
             exec(compile(tree, "<training-mission>", "exec"),
-                 {"__builtins__": SAFE_BUILTINS}, namespace)
+                 {"__builtins__": safe_builtins}, namespace)
     except RunnerError as error:
-        return {"output": output.getvalue(), "error": str(error)}
+        return {"output": output.getvalue(), "error": str(error), "files": workspace}
     except Exception as error:
         return {"output": output.getvalue(),
-                "error": f"{type(error).__name__}: {error}"}
+                "error": f"{type(error).__name__}: {error}", "files": workspace}
     finally:
         sys.settrace(previous_trace)
-    return {"output": output.getvalue(), "error": ""}
+    return {"output": output.getvalue(), "error": "", "files": workspace}
 
 
-def run_code_json(source):
+def run_code_json(source, workspace_json="{}", writable_json="[]"):
     try:
-        return json.dumps(_execute(source))
+        workspace_files = json.loads(workspace_json)
+        writable_files = json.loads(writable_json)
+        if not isinstance(workspace_files, dict) or not isinstance(writable_files, list):
+            raise RunnerError("Invalid mission workspace contract.")
+        if any(not isinstance(k, str) or not isinstance(v, str) for k, v in workspace_files.items()):
+            raise RunnerError("Mission workspace only supports named text files.")
+        return json.dumps(_execute(source, workspace_files=workspace_files,
+                                   writable_files=writable_files))
     except RunnerError as error:
-        return json.dumps({"output": "", "error": str(error)})
+        return json.dumps({"output": "", "error": str(error), "files": {}})
+    except (TypeError, ValueError) as error:
+        return json.dumps({"output": "", "error": f"Invalid workspace data: {error}", "files": {}})
 
 
 def _has_node(tree, node_type):
