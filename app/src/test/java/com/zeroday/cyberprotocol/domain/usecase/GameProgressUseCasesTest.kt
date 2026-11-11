@@ -69,6 +69,11 @@ class GameProgressUseCasesTest {
         assertEquals("ELITE_OPERATIVE", ProgressionRules.rankForExperience(2500))
         assertEquals(60, ProgressionRules.nextRankThreshold(0))
         assertEquals(null, ProgressionRules.nextRankThreshold(2500))
+        assertEquals(0, ProgressionRules.rankThreshold("CIVILIAN"))
+        assertEquals(60, ProgressionRules.rankThreshold("RECRUIT"))
+        assertEquals(100, ProgressionRules.rankThreshold("INITIATE"))
+        assertEquals(2500, ProgressionRules.rankThreshold("ELITE_OPERATIVE"))
+        assertEquals(0, ProgressionRules.rankThreshold("UNKNOWN_RANK"))
     }
 
     @Test
