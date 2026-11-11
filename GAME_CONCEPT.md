@@ -1,14 +1,12 @@
-The goal is to make experimentation safe and mistakes useful. More consequential failure systems may be considered in a later design phase, but they are not part of the initial version.
+Manual save slots may be considered later as a separate feature decision.
 
-## 8.3 Progress Saving — Autosave
+## 8.4 Connectivity — Offline-first
 
-The initial version uses **automatic saving (autosave)**; a manual save system is not required.
+The initial version is **offline-first**. An internet connection must not be required to play the core campaign.
 
-- Save automatically at meaningful checkpoints, such as completed story beats, mission-stage transitions, successful submissions, debrief completion, and progression or unlock changes.
-- Preserve the active mission stage, completed objectives, relevant work/context, campaign progress, player rank/XP, unlocked content, and collected records.
-- Save important state changes safely so that leaving the game, closing the app, or an unexpected interruption does not routinely erase meaningful progress.
-- Avoid writing to storage on every minor UI interaction. Use deliberate save points and safe handling of important state changes.
-- When the player returns, restore the latest valid saved state and return them to an appropriate point in the campaign or operation.
-- Do not imply that every keystroke or transient screen animation is saved. Define which data is persistent and which temporary UI state may reset.
-
-Autosave is the approved initial approach because it reduces friction and protects progress for an Android-first game. Manual save slots may be considered later as a separate feature decision.
+- The main menu, authored story, character dialogue, mission logic, learning content, code exercises, evaluation, progression, and autosave must work locally without an internet connection.
+- Core mission outcomes and campaign progression must not depend on a remote server or external AI service.
+- Store the player's campaign state and progress locally on the device. Design local persistence so that important saved data can be validated and recovered safely where practical.
+- Any future online capability—such as optional AI-assisted conversation, cloud backup/synchronization, or additional downloadable content—must be supplemental. Clearly handle unavailable connectivity and provide a graceful offline fallback.
+- Do not make an external API key, account login, or network connection a prerequisite for the initial campaign.
+- The initial offline-first decision does not prohibit online features later; each proposed online feature must have a clear purpose and must not break the core offline experience.
