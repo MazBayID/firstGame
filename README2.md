@@ -58,6 +58,18 @@ The main menu should feel like the entry point to an intelligence organization o
 The main menu navigation must take inspiration from classic Java-era mobile games, especially the menu style and navigation patterns associated with Gameloft, GLU Mobile, and EA Mobile titles (for example, the old mobile Assassin's Creed games). The intended feeling is a game title/menu screen, not a modern app dashboard: clear game-style menu choices, strong visual identity, and direct, simple navigation. Adapt the interaction for modern Android touch controls while preserving that classic mobile-game character. This is specifically a direction for the main menu and navigation; do not assume every screen must imitate an old Java game's graphics or limitations.
 For the current main-menu background, use a temporary dark cyan or dark blue direction. Treat this as a provisional main-menu visual choice, not a permanent global replacement for the established crimson/obsidian game palette. Keep the background restrained and readable, and let the user refine the exact shade later.
 
+
+## 3.1 Main Menu Background — Cinematic A.E.G.I.S. Headquarters
+
+The main menu background should be a cinematic view of the A.E.G.I.S. headquarters, rather than a generic abstract interface or a character portrait. The headquarters environment establishes the world and identity of the organization as soon as the game opens.
+
+- Use a cinematic environmental composition of the A.E.G.I.S. headquarters as the main-menu backdrop.
+- Keep the current provisional background direction in the dark cyan / dark blue family.
+- The menu navigation must remain clearly readable and visually distinct from the background.
+- The environment should feel like a believable, sophisticated intelligence headquarters and support the classic Java-era mobile-game menu experience already specified above.
+- Do not make the player avatar the focal point. The scene is about the headquarters and its atmosphere.
+- Exact architecture, camera angle, lighting, animation, and menu placement remain open for discussion; do not treat unapproved details as final canon.
+
 # 4. Fictional Intelligence Organization: A.E.G.I.S.
 
 ## 4.1 Identity
