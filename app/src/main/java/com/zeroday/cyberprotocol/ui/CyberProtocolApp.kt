@@ -58,7 +58,7 @@ private val firstContactBeats = listOf(
     StoryBeat("VERIFIKASI SISTEM", "DEKRIPSI TERPANDU  /  LAPIS 02",
         "Pesan kedua tiba. Kali ini strukturnya sudah tidak asing. Terapkan konsep Python yang sama tanpa sekadar menyalin jawaban pertama.\n\nHasil yang benar membuktikan bahwa kamu dapat mengikuti instruksi dasar dan memeriksa keluarannya.", "VERIFIKASI PESAN"),
     StoryBeat("REKRUTMEN RESMI", "A.E.G.I.S.  /  PERSONEL",
-        "Kanal aman mengonfirmasi bahwa kamu diterima sebagai agen magang. Aksesmu masih terbatas, catatan personelmu baru dibuat, dan pelatihanmu baru saja dimulai.\n\nDi suatu tempat di dalam markas, mentor yang ditugaskan untukmu sedang menunggu untuk memperkenalkan diri.",
+        "Kanal aman mengonfirmasi bahwa kamu diterima sebagai Recruit. Aksesmu masih terbatas, catatan personelmu baru dibuat, dan pelatihanmu baru saja dimulai.\n\nSebelum berkas ditutup, NEXUS menampilkan satu catatan tambahan: dua sistem internal menyimpan waktu penerimaan pesan yang berbeda. Selisihnya kecil, sumbernya belum diketahui, dan belum cukup untuk membuktikan adanya gangguan.\n\nFreya hanya meninggalkan satu pesan: \"Simpan pertanyaan itu. Kita tidak akan menuduh siapa pun hanya karena satu angka yang aneh.\"",
         "MASUK KE A.E.G.I.S.")
 )
 
