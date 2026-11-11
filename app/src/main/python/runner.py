@@ -75,7 +75,7 @@ def _validate(tree, extra_call_names=()):
     for node in nodes:
         if (isinstance(node, ast.Assign) and len(node.targets) == 1
                 and isinstance(node.targets[0], ast.Name)
-                and isinstance(node.value, ast.Constant)):
+                and isinstance(node.value, (ast.Constant, ast.List, ast.Tuple))):
             constant_assignments[node.targets[0].id] = node.value.value
 
     def known_value(expression):
@@ -83,6 +83,10 @@ def _validate(tree, extra_call_names=()):
             return expression.value
         if isinstance(expression, ast.Name):
             return constant_assignments.get(expression.id)
+        if isinstance(expression, ast.List):
+            return []
+        if isinstance(expression, ast.Tuple):
+            return ()
         return None
 
     for node in nodes:
