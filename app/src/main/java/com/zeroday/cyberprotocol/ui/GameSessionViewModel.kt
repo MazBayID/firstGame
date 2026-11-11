@@ -36,7 +36,10 @@ internal class GameSessionViewModel(
                 lastCheckpoint = "story_beat_" + beat
             )
         }
-        if (beat >= 7) recordRecruitmentLead()
+        if (beat >= 7) {
+            recordRecruitmentLead()
+            saveCheckpoint("story_beat_7")
+        }
     }
 
     fun startMission(missionId: String) {
@@ -78,6 +81,20 @@ internal class GameSessionViewModel(
     fun resetCampaign() {
         repository.save(GameState(lastCheckpoint = "new_campaign"))
         refresh()
+    }
+
+    private fun recordRecruitmentLead() {
+        val state = repository.load()
+        if (state.evidence.any { it.id == "transmission_timestamp_discrepancy" }) return
+        recordEvidence(
+            EvidenceRecord(
+                id = "transmission_timestamp_discrepancy",
+                title = "Perbedaan Waktu Penerimaan Transmisi",
+                summary = "Dua sistem internal mencatat waktu penerimaan pesan yang berbeda. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
+                source = "NEXUS / perbandingan metadata tanda terima",
+                missionId = "first_contact.recruitment"
+            )
+        )
     }
 
     private fun updateState(transform: (GameState) -> GameState) {
