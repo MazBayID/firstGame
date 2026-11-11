@@ -25,6 +25,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
+import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.data.VirtualFileSystem
 import com.zeroday.cyberprotocol.execution.PythonExecutionService
 import com.zeroday.cyberprotocol.ui.theme.CyberPalette
@@ -67,6 +69,7 @@ private val storyExpected = listOf("ACCESS GRANTED", "IDENTITY VERIFIED")
 fun CyberProtocolApp() {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
+    val gameStateRepository = remember { LocalGameStateRepository(context) }
     val fileSystem = remember { VirtualFileSystem(context) }
     val python = remember { PythonExecutionService() }
     val scope = rememberCoroutineScope()
@@ -74,7 +77,9 @@ fun CyberProtocolApp() {
     var screenName by rememberSaveable { mutableStateOf(GameScreen.MAIN_MENU.name) }
     val screen = runCatching { GameScreen.valueOf(screenName) }.getOrDefault(GameScreen.MAIN_MENU)
     var returnScreen by rememberSaveable { mutableStateOf(GameScreen.CAMPAIGN.name) }
-    var storyStage by rememberSaveable { mutableIntStateOf(preferences.getInt("story_stage", 0).coerceIn(0, 7)) }
+    var storyStage by rememberSaveable {
+        mutableIntStateOf(gameStateRepository.load().storyBeat.coerceIn(0, 7))
+    }
     var code by remember { mutableStateOf(TextFieldValue(preferences.getString("saved_code_$storyStage", storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }) ?: "")) }
     var codeOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
@@ -91,6 +96,11 @@ fun CyberProtocolApp() {
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 7)
         preferences.edit().putInt("story_stage", storyStage).apply()
+        val previousState = gameStateRepository.load()
+        gameStateRepository.save(previousState.copy(
+            storyBeat = storyStage,
+            lastCheckpoint = "story_beat_$storyStage"
+        ))
         code = TextFieldValue(
             preferences.getString("saved_code_$storyStage",
                 storyCode.getOrElse((storyStage - 4).coerceIn(0, 1)) { "" }) ?: ""
@@ -171,6 +181,11 @@ fun CyberProtocolApp() {
                 saveStatus = savedCodeStatus,
                 onSaveCode = {
                     preferences.edit().putString("saved_code_$storyStage", code.text).apply()
+                    val previousState = gameStateRepository.load()
+                    gameStateRepository.save(previousState.copy(
+                        savedCode = previousState.savedCode + ("story_$storyStage" to code.text),
+                        lastCheckpoint = "code_saved_story_$storyStage"
+                    ))
                     savedCodeStatus = "TERSIMPAN"
                 },
                 onRun = {
@@ -193,6 +208,11 @@ fun CyberProtocolApp() {
                         val hasPrint = Regex("""\bprint\s*\(""").containsMatchIn(code.text)
                         if (result.error.isBlank() && result.output.trim() == expected && hasVariable && hasPrint) {
                             preferences.edit().putString("saved_code_$storyStage", code.text).apply()
+                            val previousState = gameStateRepository.load()
+                            gameStateRepository.save(previousState.copy(
+                                savedCode = previousState.savedCode + ("story_$storyStage" to code.text),
+                                lastCheckpoint = "code_checkpoint_story_$storyStage"
+                            ))
                             savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
                             codeFeedback = "TERVERIFIKASI — keluaran yang diminta serta konsep variable/print terdeteksi."
                             saveStage(storyStage + 1)
@@ -264,6 +284,8 @@ fun CyberProtocolApp() {
             confirmButton = {
                 TextButton(onClick = {
                     showResetDialog = false
+                    gameStateRepository.save(GameState(lastCheckpoint = "new_campaign"))
+                    preferences.edit().putInt("story_stage", 0).apply()
                     saveStage(0)
                     screenName = GameScreen.CAMPAIGN.name
                 }) { Text("MULAI") }
