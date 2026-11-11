@@ -34,12 +34,12 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
             clearance = state.clearance.coerceAtLeast(0),
             updatedAtEpochMillis = System.currentTimeMillis()
         )
-        preferences.edit().putString(KEY_SNAPSHOT, encode(normalized).toString()).commit()
+        preferences.edit().putString(KEY_SNAPSHOT, encode(normalized).toString()).apply()
     }
 
     @Synchronized
     override fun clear() {
-        preferences.edit().remove(KEY_SNAPSHOT).commit()
+        preferences.edit().remove(KEY_SNAPSHOT).apply()
     }
 
     private fun migrateLegacyProgress(): GameState {
