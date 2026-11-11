@@ -153,6 +153,10 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 - Extracted Freya and NEXUS authored replies into a deterministic dialogue model with unit tests for recruitment-mystery continuity, beginner-support tone, live mission status, and offline-first messaging.
 
+- Replaced the read-only Operations summary with a mission-control screen showing verified mission count, campaign XP/rank/clearance, each mission's current state, and a contextual resume action for the currently active mission.
+- Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
+
+
 ### Verification observed so far
 - CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
 - CI run `43028768493` passed on commit `73493ac`: the Secure Messenger inbox/chat redesign compiled, Kotlin unit tests passed, and a debug APK artifact was uploaded.
@@ -162,7 +166,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - These CI results are automated build/test evidence, not a substitute for final physical-device acceptance.
 
 ### Remaining before this can be called a complete game
-- Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state.
+- Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state. Operations now has a dedicated mission-control surface, while broader hub and terminal state extraction remains.
 - Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Expand the current data-backed Database, Dossier, Analysis, and Operations surfaces into fully interactive, story-linked workspaces.
