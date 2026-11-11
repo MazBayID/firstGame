@@ -83,23 +83,25 @@ The main menu background should be a cinematic view of the A.E.G.I.S. headquarte
 
 ## 3.2 A.E.G.I.S. Operative Application Hub
 
-The operational interface should provide a compact, elegant way to access the player's in-game tools without turning the experience into a generic dashboard.
+The operational interface provides a compact, smartphone-style hub for the player's in-world A.E.G.I.S. tools. These applications are parts of one connected operation, not unrelated minigames or a generic dashboard.
 
-- Place a small application-hub control in the **upper-right corner** of the relevant operational interface.
-- Selecting it opens a **smartphone-style application panel** containing the operative's available in-game applications. This is the approved hybrid approach: a discreet top-right entry point with a familiar app-panel experience.
-- The application panel should feel like a secure A.E.G.I.S. device interface and remain visually consistent with the game's cinematic intelligence atmosphere.
-- The initial application set consists of:
-  1. **Secure Messenger** — communication with NEXUS and other agents.
-  2. **Terminal** — the player's coding and command-line workspace for supported learning and mission tasks.
-  3. **Intelligence Database** — access to authorized records and structured intelligence data.
-  4. **Dossier** — mission briefings, classified documents, evidence, and case files.
-  5. **Analysis** — tools for examining evidence, connecting clues, and organizing findings.
-  6. **Operations** — current objectives, mission status, and operational progress.
-- Do not expose every application or capability from the beginning. Availability may expand through campaign progress, rank, clearance, and story events.
-- Opening an application should present its relevant focused workspace. Closing it should return the player to the previous operation or screen without losing the current context.
-- Keep the hub focused and purposeful. Additional applications may be considered later, but should only be added when they serve a clear gameplay or narrative need; do not add icons merely to make the panel look busy.
-- Exact icon design, panel layout, transitions, and application-specific interactions remain open for later design.
-
+- Place a small application-hub control in the **upper-right corner** of relevant operational interfaces.
+- Selecting it opens a polished smartphone-style application panel with the applications currently available to the player.
+- The initial application ecosystem is:
+  1. **Secure Messenger** — in-world messaging with A.E.G.I.S., Freya, NEXUS, and other unlocked agents. It delivers briefings, instructions, mission links, and file attachments.
+  2. **A.E.G.I.S. Browser / Intranet** — an offline simulated internal website for fictional login, Mission Control, assignments, File Repository, Intelligence Reports, and mission submissions.
+  3. **Terminal** — the in-game command-line environment for navigating the virtual filesystem, inspecting files, and executing supported commands and Python programs.
+  4. **Intelligence Database** — a structured interface for authorized records, findings, and verified intelligence.
+  5. **Dossier** — briefings, classified documents, evidence, and case files.
+  6. **Analysis** — focused tools for examining evidence, comparing information, and organizing findings.
+  7. **Operations** — current objectives, mission status, progress, and debrief access.
+- The **Code Editor is part of the active operation workspace**, not a replacement for the Terminal. The player writes and edits Python in the Code Editor, then runs the script through the in-game Terminal.
+- Introduce tools when the story and the player's learning progression make them relevant; do not expose every capability immediately.
+- Opening an application must preserve the active operation context. Returning restores the previous screen and working state.
+- Messenger attachments, Browser pages, Repository files, virtual filesystem, Terminal, Code Editor, and mission evaluation must use consistent underlying mission data. A file delivered in a message or downloaded from the fictional intranet must genuinely exist in the authorized virtual workspace.
+- The Browser never depends on the public internet. It represents fictional A.E.G.I.S. services and works offline.
+- Keep the hub focused. Every tool must serve story, learning, investigation, or operations.
+- Exact icon design, panel layout, transitions, and detailed application interactions remain UI design work.
 
 ## 3.3 Character Dialogue — Chat Interface
 
@@ -204,17 +206,20 @@ NEXUS is a system, not a human character.
 
 ## 5.3 Gameplay responsibilities
 
+NEXUS is the A.E.G.I.S. AI communication-intelligence and technical-support system. It is a supporting system, **not the player's primary teacher or human mentor**.
+
 NEXUS can:
-- Deliver mission briefings and contextual updates.
-- Explain programming concepts and syntax.
-- Help interpret runtime errors.
-- Provide graduated hints.
+- Deliver system alerts, operational status, mission updates, and technical diagnostics.
+- Provide reference documentation and factual explanations about available A.E.G.I.S. systems.
+- Help interpret terminal/runtime errors by identifying relevant diagnostics and pointing the player toward useful documentation.
+- Provide secondary hints when appropriate, without replacing Freya's teaching role or solving the operation.
 - React to success, failure, discoveries, and story events.
-- Warn the player about relevant conditions.
-- Remember the player's in-game progress and previously demonstrated skills, where supported by the game data model.
+- Warn the player about relevant operational conditions.
+- Track and surface the player's in-game progress and previously demonstrated skills where supported by the game data model.
 
-NEXUS must guide the player's thinking, not automatically solve every mission. Hints should be useful without removing the player's agency. The system should feel like a competent operational partner, not a decorative chatbot.
+**Freya Knox teaches terminal use and Python from zero.** NEXUS may support that process with diagnostics and reference material, but must not take over the primary instructional relationship.
 
+NEXUS guides the player's thinking rather than automatically solving missions. Core dialogue, mission progression, and technical learning work offline; NEXUS does not require a live AI service.
 
 ## 5.4 Primary Mentor and Specialist Handoffs
 
@@ -246,21 +251,25 @@ The player should have **one primary human mentor** who accompanies them from th
 **Campaign 01: THE RECRUITMENT**  
 **Chapter 001: FIRST CONTACT**
 
-The player begins as an ordinary person. An encrypted message unexpectedly appears on the player's device. The sender is unknown. The message indicates that the player's abilities have attracted the attention of an organization.
+The player begins as an ordinary person who is unexpectedly contacted by A.E.G.I.S. through an official secure recruitment message. The message explains that an unknown person has ordered A.E.G.I.S. to recruit the player. The identity of that person is deliberately withheld.
 
-The opening should be cinematic and paced. Do not immediately throw the player into a programming lesson.
+The opening follows the approved sequence in §21: official A.E.G.I.S. recruitment notification, the player's deliberate interaction with the invitation, activation of the first mission, Freya Knox's separate mentor notification, and Freya's introduction of NEXUS. Do not add an Unknown Sender prologue or replace the official recruitment message with an unsolicited encrypted-message opening.
 
-Current story beats:
+The chapter then introduces the A.E.G.I.S. application hub and Freya-led technical orientation. Freya assumes the player has no prior terminal or programming experience and teaches the required foundations before expecting independent technical work.
 
-1. **Unknown Sender** — the player receives a mysterious encrypted message.
-2. **The Invitation** — the player receives a recruitment invitation.
-3. **The Organization** — A.E.G.I.S. and its purpose are introduced.
-4. **Classified File 001** — the player opens the first classified dossier.
-5. **First Assignment** — the player performs a simple first Python task.
-6. **System Verification** — the system checks the player's demonstrated ability.
-7. **Official Recruitment** — the player is formally accepted as a Recruit.
+The opening story beats are:
 
-These beats are the initial narrative outline and can be expanded into dialogue, environmental storytelling, documents, choices, and cinematic transitions.
+1. **Official Recruitment** — A.E.G.I.S. / Recruitment Office sends the approved secure invitation.
+2. **The Invitation** — the player opens the message and taps the in-world mission-sequence link.
+3. **First Mission Activation** — the campaign establishes the initial operational context.
+4. **Freya's Contact** — Freya sends the separate notification and introduces herself as the player's primary human mentor.
+5. **NEXUS Introduction** — Freya introduces the AI system and the player explicitly opens its contact.
+6. **Technical Orientation** — Freya teaches the in-game applications, terminal, virtual files, Code Editor, and Python from the beginning.
+7. **A.E.G.I.S. Intranet Access** — the player follows Freya's in-world link, uses fictional credentials, and learns to navigate the simulated organization portal.
+8. **First Operation** — the player receives an assignment, obtains supporting files, performs the required work using the tools Freya has taught, and submits the result through the appropriate interface.
+9. **Recruitment Verification** — A.E.G.I.S. evaluates the player's demonstrated abilities and advances the recruitment story.
+
+These beats may be expanded into dialogue, documents, evidence, environmental storytelling, and cinematic transitions while preserving the approved notification sequence and hidden story facts.
 
 ## 6.2 Campaign Experience and Navigation
 
@@ -276,28 +285,31 @@ The Campaign uses a **hybrid story-driven + mission-driven structure**. Cinemati
 - The player may choose among operations that are already unlocked, but the main narrative should retain a deliberate sequence and pacing.
 - The first campaign begins with **FIRST CONTACT** and the established recruitment sequence; do not skip directly to a mission list or coding lesson.
 
-## 6.3 First Contact — Progressive Message Decryption
+## 6.3 First Contact — Learning Before Technical Operations
 
-The opening recruitment story should introduce decryption as part of the narrative and as the player's first practical learning experience.
+The first chapter introduces technical work only after the player has received the appropriate explanation and guided practice. The opening must be fair to someone who has never used a terminal or written code.
 
-- The first incoming message should be presented as an encrypted/obscured transmission, creating curiosity without demanding advanced knowledge.
-- NEXUS (or the appropriate guide in the story) teaches the player a very simple first step, tied to a beginner Python concept such as storing and displaying a message with a variable and `print()`.
-- The first interaction is guided: the player learns the basic tool or syntax before being asked to solve anything independently.
-- A subsequent message becomes a beginner decryption task. The player applies what was just learned to reveal the next part of the recruitment story.
-- Increase complexity gradually as the player's technical skills grow. Early “decryption” may use fictional, deliberately simple transformations; do not present it as real cryptographic security.
-- Preserve the distinction between narrative suspense and learning fairness: provide contextual clues and graduated hints, and never require an unexplained advanced syntax from a beginner.
+- Do not make an unexplained encrypted message the player's first programming test.
+- Freya is the primary guide for every foundational terminal and Python concept in the opening chapter. NEXUS may provide secondary system diagnostics or reference material.
+- Freya first explains the application hub and the role of Messenger, Browser/Intranet, Terminal, Code Editor, and mission files as they become relevant.
+- Freya teaches terminal fundamentals in a safe practice workspace, then introduces Python with small programs the player can type, run, observe, and modify.
+- Only after the relevant concepts have been taught and practiced should the player apply them to mission evidence, simple transformations, or deliberately fictional training ciphers.
+- Any early decryption exercise uses a transparent, beginner-appropriate toy transformation. Never imply that a beginner is breaking real modern cryptography.
+- Mission information and required input must be discoverable through the in-game briefing, Browser, Repository, Dossier, Messenger attachments, or files Freya explicitly explains.
+- Suspense comes from the fictional intelligence story, not from hiding information needed to solve a task or demanding syntax the player has not learned.
+- The first operation connects directly to the recruitment narrative and uses the same Terminal, Code Editor, virtual filesystem, and submission systems as later operations.
 
 ## 6.5 Primary Mentor — Relationship Development
 
-The primary mentor is not merely a tutorial voice or a mission dispatcher. The mentor is a major recurring character whose relationship with the player can develop throughout the storyline.
+Freya Knox is a major recurring character, the player's primary human mentor, and the central guide throughout the campaign.
 
-- Give the mentor a distinct, consistent personality, personal motivations, strengths, limitations, and a recognizable way of speaking.
-- Let the relationship develop through shared operations, conversations, player decisions, successes, mistakes, and difficult moments.
-- Trust, familiarity, emotional closeness, disagreement, and conflict may evolve naturally over time. These are narrative dimensions, not a requirement for a romance system.
-- Player choices and actions may influence how the mentor responds, what they disclose, how much they trust the player, and how later conversations or story events unfold.
-- Do not make every interaction a relationship score check. Character development should be expressed through believable dialogue, behavior, and consequences.
-- The mentor remains the player's central guide even when a specialist temporarily takes over a technical or subject-specific conversation.
-- The mentor's name, background, personality details, relationship stages, and any branching outcomes remain open until designed and approved.
+- Give Freya a distinct, consistent personality, personal motivations, strengths, limitations, and recognizable voice, following the approved characterization in §5.4.
+- Let familiarity and trust develop through shared operations, authored conversations, successes, mistakes, and difficult moments.
+- In the initial version, predefined player dialogue choices are **cosmetic**. They may change the immediate authored response, but they do not alter relationship values, unlock content, change mission access, or branch the main story.
+- Do not implement a relationship meter, persistent dialogue-choice flags, or consequential relationship branching in the initial version.
+- Freya remains the familiar central guide even when a specialist temporarily assists with a subject outside her expertise.
+- Specialist handoffs are introduced and contextualized by Freya. A specialist complements her role and does not replace the primary mentor.
+- Any future move toward consequential dialogue choices or relationship systems requires a separate explicit design decision.
 
 ## 6.4 Narrative principles
 
@@ -305,37 +317,43 @@ The primary mentor is not merely a tutorial voice or a mission dispatcher. The m
 - Every mission should have a believable narrative reason to exist.
 - Documents, evidence, messages, and operational objectives should advance the case or reveal the world.
 - Characters and agents should have consistent identities, motives, and voices.
-- Choices may influence relationships, access, available information, or later events when appropriate.
+- In the initial version, predefined dialogue choices are cosmetic as defined in §3.3 and §6.5. Consequential choices, branching access, and relationship effects are not part of the initial implementation; they require a separate approved design decision.
 - Failure should produce meaningful feedback and learning opportunities, not merely a generic “wrong” screen.
 - Maintain continuity across chapters and preserve prior player decisions when the story system supports them.
 
 # 7. Core Gameplay Loop
 
-The initial campaign uses a **hybrid mission system**: each operation has clear objectives and guided stages, while the player can interact with the relevant available in-game tools to investigate and complete the work. It is neither a rigid sequence of tutorial screens nor an unrestricted sandbox.
+Cyber Protocol is a connected intelligence-operation experience. The player receives information through in-world communications and the simulated A.E.G.I.S. Intranet, investigates through authorized applications, performs technical work in the Code Editor and Terminal, and submits findings through the operation's designated interface.
 
-- **Guided structure:** show the current objective, relevant context, and a clear sense of what progress is expected. Break complex operations into manageable stages.
-- **Interactive workspace:** within those stages, let the player use appropriate unlocked applications such as Terminal, Intelligence Database, Dossier, and Analysis. The available tools depend on the operation.
-- **Player agency:** allow the player to inspect evidence, run experiments, compare information, and decide what to submit rather than simply pressing Next through instructions.
-- **Contextual guidance:** provide hints and explanations when needed, especially for newly introduced concepts, without automatically solving the task.
-- **Focused scope:** do not expose every tool or require every app in every mission. Keep the workspace relevant to the current objective and beginner's skill level.
-- **Persistent context:** moving between an app and the operation should preserve the player's current mission state and work.
+The game combines a clear guided structure with meaningful player agency. It is neither a rigid sequence of tutorial screens nor an unrestricted sandbox.
 
-The intended mission cycle:
+- **Story-led context:** story scenes and character messages establish why an operation matters.
+- **Messenger-led communication:** A.E.G.I.S. and Freya deliver instructions, links, explanations, and attachments through Secure Messenger.
+- **Intranet-led assignments:** the simulated Browser provides the official portal for login, mission briefings, file repositories, reports, and submission workflows when required.
+- **Evidence and files:** supporting files are genuinely present in the game-managed virtual filesystem, with permissions and provenance appropriate to the operation.
+- **Terminal and Code Editor:** the player writes and edits code in the Code Editor, executes it through the Terminal, and inspects actual output and errors.
+- **Player agency:** the player can inspect evidence, test ideas, compare information, and decide what to submit rather than merely pressing Continue.
+- **Freya-led instruction:** Freya explains unfamiliar tools and concepts before expecting the player to use them. Guidance decreases gradually as demonstrated understanding grows.
+- **Persistent context:** moving between Messenger, Browser, Dossier, Database, Code Editor, and Terminal preserves the active operation, files, and current work according to the save rules.
 
-1. **Story / cinematic event** — a new development occurs.
-2. **Briefing** — an agent or system explains the operational context.
-3. **Classified dossier** — the player reads files, evidence, and objectives.
-4. **Operation interface** — the player uses the relevant simulated tool, terminal, editor, database, or evidence interface.
-5. **Agent communication** — NEXUS and other agents provide contextual messages and hints.
-6. **Run / experiment** — the player can execute code and inspect output or errors.
-7. **Submit / mission check** — a separate evaluator checks whether mission requirements and intended concepts are satisfied.
-8. **Debriefing** — the player receives an explanation of results and story consequences.
-9. **Progression** — XP, rank progress, clearance, rewards, skills, or access may be granted.
-10. **Next operation** — the campaign continues with new challenges.
+The intended operation cycle:
 
-**Run and Submit must remain separate actions.** Run executes and displays output/errors. Submit evaluates mission requirements. Running code alone must not silently mark a mission complete.
+1. **Story event / recruitment communication** — a new development is introduced.
+2. **Freya's guidance** — the player receives the explanation or practice needed for unfamiliar tools and concepts.
+3. **Intranet access / briefing** — the player opens the authorized portal and reads the assignment where applicable.
+4. **File delivery / repository** — the player receives or retrieves supporting files and verifies where they are stored.
+5. **Investigation** — the player reads dossiers, evidence, messages, and authorized database records.
+6. **Technical work** — the player edits a Python script and uses the Terminal to run it against permitted virtual files or datasets.
+7. **Freya / NEXUS support** — Freya teaches and gives graduated hints; NEXUS supplies secondary diagnostics and system references.
+8. **Submission** — the player submits the result through the appropriate in-world interface.
+9. **Evaluation and debrief** — the game checks actual behavior and learning objectives, explains the result, and records evidence/report outcomes.
+10. **Progression** — story, XP, rank, clearance, skills, and the next operation advance according to authored rules.
 
-## 7.1 Mission-to-Mission Code Clues
+The exact apps used depend on the operation; do not force every tool into every mission. Browser and Messenger are simulated in-game applications and do not require public internet access.
+
+**Run and Submit remain separate actions.** RUN executes the player's code and displays actual output/errors. SUBMIT evaluates the authored mission requirements. Running code alone must never silently complete a mission.
+
+# 7.1 Mission-to-Mission Code Clues
 
 Every mission should contain a **code- or syntax-based clue pointing toward the next mission**.
 
@@ -396,14 +414,15 @@ Keep **Run** and **Submit** separate: Run executes the player's work; Submit eva
 
 ## 8.1 Teaching and evaluation principles
 
-- LEARN explains concepts, syntax, examples, and expected behavior.
-- PRACTICE allows safe experimentation.
-- MISSION applies the skill to a story-driven objective.
-- Hints should be graduated: first explain the relevant concept, then syntax/structure, then a more specific clue if needed.
-- Evaluators should check actual required concept use where appropriate, not only whether output text matches.
-- Do not give the complete solution by default.
+- Freya is the primary teacher for terminal use and Python. She introduces concepts from zero, explains what commands and syntax mean, demonstrates when useful, and guides the player through hands-on practice.
+- LEARN provides an optional, reviewable reference for concepts already introduced or available to study. It supplements Freya's in-world instruction; it does not replace mentor-led onboarding.
+- PRACTICE provides safe exercises where the player can experiment without risking protected mission evidence or campaign state.
+- MISSION applies learned skills to a story-driven operational objective.
+- Teach the purpose and behavior of commands and code, not only the exact text to type. Explain expected output and how to recognize errors.
+- Hints are graduated: begin with observation or a conceptual reminder, then offer a syntax cue, then more specific guidance if needed. A complete solution is not the default.
+- Evaluators check actual execution, required behavior, and intended concept use where appropriate, not merely whether output text matches.
 - Explain errors in accessible language and connect them to the concept being learned.
-- Keep lessons and mission requirements consistent and testable.
+- Keep tutorials, mission files, terminal commands, Python capabilities, and evaluator criteria consistent and testable. Never instruct the player to use an unavailable file, command, or language feature.
 
 # 9. Player Progression
 
@@ -762,18 +781,33 @@ This approval establishes the rebuild strategy. It does not authorize deleting t
 
 ### 16.12 — Progressive Technical Tracks
 
-The initial campaign introduces Python as the player's first executable programming language. Additional technical disciplines are introduced through the story, authorized tools, and optional learning content.
+The initial campaign teaches Python from zero, with Freya as the primary instructor. Additional technical disciplines are introduced through the story, authorized tools, and optional learning content.
 
-- Python is available from the beginning of the technical training experience and is the primary language for the initial recruitment chapter.
+- Python terminal and programming fundamentals are taught before the player is expected to complete independent technical operations.
 - SQL, networking, C++, and IoT are introduced progressively when the campaign provides a credible operational reason and the player has the necessary context.
-- The LEARN area may provide optional explanations and foundational study material beyond the current mission, so curious players are not forced to wait for the main story to read ahead.
-- Access to operational tools, datasets, simulators, and mission execution capabilities remains governed by story progression, rank, clearance, and the relevant safety boundaries.
-- Optional learning must not expose unrestricted device capabilities or undermine mission authorization. Learning a concept and receiving permission to use an operational system are separate things.
-- The first release should prioritize a complete, polished Python learning and mission experience. Additional languages and technical tracks must be implemented as real, integrated systems—not decorative locked cards or promises of future functionality.
+- The LEARN area may provide optional explanations and foundational study material beyond the current mission. It is a review and enrichment resource, not a substitute for Freya's guided onboarding.
+- Access to operational tools, datasets, simulators, and mission execution capabilities remains governed by story progression, rank, clearance, and relevant safety boundaries.
+- Learning a concept and receiving permission to use an operational system are separate things.
+- The first release prioritizes a complete, polished Python learning and mission experience. Additional languages and technical tracks must be implemented as real, integrated systems—not decorative locked cards or promises of future functionality.
 
-This hybrid approach keeps the opening accessible, rewards campaign progression, and gives motivated players room to explore without turning the game into an unstructured course catalogue.
+This approach keeps the opening accessible, rewards campaign progression, and gives motivated players room to explore without turning the game into an unstructured course catalogue.
 
----
+### 16.13 — A.E.G.I.S. Browser and Simulated Intranet
+
+Cyber Protocol includes an in-game Browser that provides access to a fictional A.E.G.I.S. internal website. It is a simulated application, not a general-purpose internet browser.
+
+- The Browser operates fully offline using locally authored pages, data, and navigation. It must not require public internet access, external websites, real credentials, or a remote service for the core campaign.
+- The opening story introduces the Browser through a link sent in Secure Messenger. The player follows the link, reaches the A.E.G.I.S. Intranet login page, and uses fictional credentials supplied through the story.
+- The login flow is a narrative/gameplay simulation. Credentials are fictional, locally validated, and must not be reused as real account credentials.
+- The intranet may contain Mission Control, File Repository, Intelligence Reports, Operations Archive, and Agent Profile. Introduce sections progressively according to story and clearance.
+- Mission Control presents the active assignment, objectives, required evidence, submission instructions, and current status.
+- File Repository provides supporting mission files. When a player downloads or opens an attachment, the corresponding file must genuinely be created or made available in the authorized game-managed virtual filesystem, with correct contents, path, permissions, and mission association.
+- Secure Messenger attachments and Browser repository downloads must resolve to the same underlying file asset when they refer to the same evidence. Avoid duplicate or inconsistent copies that disagree.
+- Mission submission through the Browser must pass the player's actual work/result to the evaluator. A decorative Submit button or hard-coded answer reveal is not a functioning submission system.
+- The Browser preserves navigation state and returns the player to the previous operation context. It must not silently discard code, files, or unsaved work.
+- Browser pages, links, login states, downloads, and submission outcomes must be testable and persist according to campaign checkpoint rules.
+- Do not imply unrestricted access to real websites or external networks. Later simulated network operations remain controlled, fictional, and explicitly authorized.
+
 
 # 19. Updated Creative Direction — Adventure RPG and AAA-Level Presentation
 
@@ -938,7 +972,7 @@ This is a progression guide, not a requirement to expose every topic during the 
 
 - The first technical lessons take place after the approved A.E.G.I.S. recruitment and Freya-contact sequence. Preserve the two distinct opening notifications and all existing narrative constraints.
 - Freya explains that the player is new to this work and explicitly reassures them that no prior terminal or programming experience is required.
-- She guides the player through the operative application hub and explains the role of Messenger, Terminal, Dossier, and Operations as those tools become relevant. Do not expose every tool or capability prematurely.
+- She guides the player through the operative application hub and explains Secure Messenger, the A.E.G.I.S. Browser/Intranet, Terminal, Code Editor, Dossier, Intelligence Database, and Operations as each becomes relevant. Do not expose every tool or capability prematurely.
 - The first terminal exercises use safe practice files and a clearly identified practice workspace. The player must be able to tell practice material apart from mission evidence.
 - The first Python exercises begin with tiny, understandable programs. The player types, runs, observes the output, and makes a small change to see how the behavior changes.
 - Freya then connects the newly learned command or Python concept to a real action in the opening First Contact sequence. The tutorial and the mission must share the same files, interfaces, and execution rules; never teach a command in a disconnected mock screen that behaves differently from the actual terminal.
@@ -962,7 +996,7 @@ The intended outcome is that a complete beginner can enter Cyber Protocol withou
 `GAME_CONCEPT.md` is the canonical product-design reference for implementation.
 
 - Before writing or changing gameplay code, UI, dialogue, mission data, terminal behavior, Python execution, progression, save-state logic, or supporting architecture, review the relevant sections of this document and the approved narrative in `Story_Line.md`.
-- Every implementation must preserve the approved player experience, character roles, learning principles, story continuity, offline-first requirement, and safety boundaries defined here.
+- Every implementation must preserve the approved player experience, character roles, Freya-led zero-prerequisite terminal/Python teaching, simulated offline A.E.G.I.S. Intranet, connected Messenger-to-file-to-Terminal workflow, story continuity, offline-first requirement, and safety boundaries defined here.
 - Do not introduce a new feature, interaction, teaching method, story fact, mission requirement, or technical capability that contradicts this document or silently turns a provisional idea into canon.
 - If a requested implementation reveals a genuine design gap or requires changing an established decision, update this document first (or in the same coherent change) and clearly identify the design decision before implementing dependent code.
 - Code must implement the design; the design must not be retroactively reinterpreted to excuse behavior that contradicts the approved experience.
