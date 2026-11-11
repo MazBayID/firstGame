@@ -16,33 +16,47 @@ The player is a junior ethical hacker / security analyst working on fictional in
 
 The player joins Helix Dynamics as a junior analyst. Senior analyst Mara assigns a night-shift audit after suspicious access attempts appear in a damaged service log. The first case is **The Corrupted Access Log**.
 
-### Mission 01 — The Corrupted Access Log
+## Hybrid Learning loop
 
-- Skill: beginner loop, condition, string membership, and counter increment.
-- Task: use the preloaded `logs` list and count lines containing ERROR. The starter code provides the loop and condition; the player replaces one `pass` with `count += 1`.
-- Teaching progression: file reading is deferred to M02 so the first mission teaches one new action at a time.
-- Evidence validation: the same program must return 2, 1, and 0 for three different log fixtures.
-- Reward: 100 XP and 50 credits, granted once and persisted locally.
+Every mission follows the same player-centered sequence:
 
-### Mission 02 — The Warning Signal
+1. **Briefing:** establish the story objective without assuming coding knowledge.
+2. **Learning:** explain the new Python concept in plain language.
+3. **Demonstration:** show a short working example and its output.
+4. **Experiment:** invite the player to change one part and observe the result.
+5. **Practice:** provide a starter program and a focused hint.
+6. **Mission:** let the player complete the task in the Python editor.
+7. **Evaluation:** explain the result and validate the required behavior.
 
-- Skill: opening a file, iterating over lines, string matching, and counting.
-- Task: read virtual access.log and count lines containing WARNING. The starter code provides the file-reading structure and leaves the counter action to the player.
-- Evidence validation: the same program must return 2, 1, and 0 for three different log fixtures.
-- Unlock: complete Mission 01.
-- Reward: 100 XP and 50 credits, granted once.
+The first chapter teaches Python itself. It does not require file I/O, network knowledge, or security-analysis algorithms.
 
-### Mission 03 — The Failed Login Trail
+## Chapter 01 — Signal in the Noise
 
-- Skill: reinforce file iteration, filtering records, and identifying failed authentication events.
-- Task: count lines containing FAILED while ignoring successful OK login records. The starter code provides the familiar file-reading structure and leaves the counter action to the player.
-- Evidence validation: the same program must return 2, 1, and 0 for three different log fixtures.
-- Unlock: complete Mission 02.
-- Reward: 100 XP and 50 credits, granted once.
+The player joins Helix Dynamics as a junior analyst. Mara introduces the terminal and gradually teaches the player to communicate with it, store values, calculate, make decisions, and process a small collection of simulated events.
+
+| Mission | Learning objective | Required knowledge |
+|---|---|---|
+| M01 — First Contact | Print the first message | `print()`, strings |
+| M02 — Signal Online | Display multiple lines and add comments | `print()`, comments |
+| M03 — Analyst Identity | Store and display analyst details | Variables, strings, assignment |
+| M04 — Power Calibration | Calculate a power value | Integers, arithmetic operators |
+| M05 — Repair the Shield | Calculate remaining HP | Variables, arithmetic |
+| M06 — Power Decision | Choose a system state from energy | `if`, `else`, comparisons |
+| M07 — Signal Sweep | Repeat four scan steps | `for`, `range()` |
+| M08 — Threat Triage | Count matching events in a list | Lists, iteration, conditions, counters |
+
+### Difficulty and evaluation rules
+
+- M01–M05 are output-based learning tasks. Exact requested output is a valid solution; constant output is not incorrectly classified as cheating.
+- M06 uses multiple energy fixtures (positive, zero, and negative) so the condition must work for changing values.
+- M07 teaches repetition with a bounded sequence.
+- M08 supplies different event lists in each test, requiring a real filter and counter rather than a memorized answer.
+- File reading and access-log analysis are deferred until the next chapter, after the player understands the required Python foundations.
+- Rewards are granted once per mission; completed missions remain replayable for practice.
 
 ## Current implementation
 
-The Android application contains a playable three-mission Chapter 1 campaign. Mission selection is sequential, completed missions can be replayed, and rewards cannot be farmed by replaying. Python code executes locally through Chaquopy / CPython 3.13. The editor provides basic syntax highlighting, line numbers, auto-indent, and insertion shortcuts. XP, credits, and completed mission flags are saved with Android SharedPreferences; the first mission's legacy save key is migrated.
+The Android application contains a playable eight-mission Chapter 1 campaign. Mission selection is sequential, completed missions can be replayed, and rewards cannot be farmed by replaying. Python code executes locally through Chaquopy / CPython 3.13. The editor provides basic syntax highlighting, line numbers, auto-indent, and insertion shortcuts. XP, credits, and completed mission flags are saved with Android SharedPreferences; the first mission's legacy save key is migrated.
 
 ## Planned completion milestones
 
