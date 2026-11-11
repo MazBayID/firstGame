@@ -1,33 +1,46 @@
 name: Android Tests
+
 on:
   push:
-    branches: [main]
+    branches: [main, rebuild/full-game]
   pull_request:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
-  test-and-build:
+  test:
+    name: Python and Android unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+
       - name: Test Python runner
         run: python -m unittest discover -s tests -v
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
+
       - uses: android-actions/setup-android@v4
         with:
           packages: "platform-tools"
+
       - name: Install Android SDK
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
-      - name: Run Android unit tests
+
+      - name: Run Android unit tests only
         run: gradle --no-daemon testDebugUnitTest
