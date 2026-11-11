@@ -706,3 +706,20 @@ Cyber Protocol will provide two distinct areas within its game-managed virtual f
 - The design must preserve file ownership, mission association, access permissions, and recovery after interruption or app restart.
 
 This hybrid model gives players a lasting place to develop their own tools while keeping each investigation's evidence and working files organized, attributable, and appropriately restricted.
+
+
+### 16.11 — Standard Linux-Like Terminal Commands
+
+The in-game terminal will use recognizable, standard Linux-like command conventions for its supported command interface. Players should learn transferable command-line concepts rather than memorize a fictional A.E.G.I.S.-only command language.
+
+**Design principles**
+- Use familiar command names and syntax where practical, such as `pwd`, `ls`, `cd`, `cat`, `mkdir`, and other appropriate file-management commands.
+- Do not invent arbitrary command names or require players to memorize fictional command syntax merely to interact with the game.
+- Commands execute inside Cyber Protocol's game-managed virtual environment. Familiar command syntax does not grant access to the Android/Linux host shell, device files, processes, or unrestricted network resources.
+- Implement only the commands and options that are deliberately supported, tested, and appropriate to the current environment. Do not imply full Linux compatibility where it does not exist.
+- Provide contextual help, command reference, autocomplete, and clear errors so beginners can learn standard syntax while retaining the ability to type commands independently.
+- Unlocking should primarily expand the player's authorized files, datasets, simulated systems, and operational capabilities—not introduce arbitrary fictional command dialects.
+- Mission-specific actions should be represented through accessible files, scripts, and clearly explained application interfaces wherever possible, rather than a growing collection of bespoke commands.
+- Python scripts are written in the Code Editor and executed through the in-game terminal using the supported Python runtime and a clearly documented invocation.
+
+The goal is a functional, approachable terminal that builds useful real-world command-line familiarity while remaining safely contained within the game's virtual workspace.
