@@ -149,6 +149,8 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Tightened the Freya notification checkpoint: the introduction can only be acknowledged while the first mission is active; added regression coverage for premature access and the required mission gate.
 - Expanded Freya's persistent Messenger guidance with the current active mission and verified-mission count, so her mentoring context reflects the player's actual campaign progress instead of repeating a static greeting.
 
+- Added authored, choice-specific Freya and NEXUS responses. Freya's guidance reflects the active mission and verified-mission count; her response to the recruitment question preserves the hidden identity of the recruiter. NEXUS reports only local campaign facts and offline capability.
+
 ### Verification observed so far
 - CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
 - CI run `43028768493` passed on commit `73493ac`: the Secure Messenger inbox/chat redesign compiled, Kotlin unit tests passed, and a debug APK artifact was uploaded.
