@@ -26,6 +26,7 @@ object Campaign01Catalog {
             requiredClearance = 0,
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/signal",
             allowedFiles = setOf("briefing.txt", "signal.py"),
+            writableFiles = setOf("signal.py"),
             objectives = listOf(
                 MissionObjective(
                     id = "assign_signal",
@@ -56,6 +57,7 @@ object Campaign01Catalog {
             requiredClearance = 0,
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/identity",
             allowedFiles = setOf("briefing.txt", "identity.py"),
+            writableFiles = setOf("identity.py"),
             objectives = listOf(
                 MissionObjective(
                     id = "assign_message",
