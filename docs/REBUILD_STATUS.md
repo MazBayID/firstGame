@@ -41,7 +41,7 @@ These foundations are not automatically production-ready. Python file access is 
 - Add deterministic tests for domain rules and storage behavior.
 
 ### 2. Runtime and terminal
-- Replace prototype-only assumptions with an explicit execution contract and documented capability limits; Python currently receives mission-scoped text-file capabilities, but remains in-process and is not a hardened hostile-code sandbox.
+- Replace prototype-only assumptions with an explicit execution contract and documented capability limits; Python currently receives mission-scoped text-file capabilities and source/output/AST/loop/repetition/file-size limits plus a three-second wall-clock budget, but remains in-process and is not a hardened hostile-code sandbox.
 - Connect Python file I/O only through a game-owned, mission-scoped, permission-checked virtual filesystem interface.
 - Enforce source/output/resource limits, bounded file writes, cancellation where feasible, and safe error reporting.
 - Implement authentic standard command conventions in an allowlisted virtual terminal; never invoke the Android/Linux host shell.
