@@ -1,4 +1,4 @@
-"""Offline educational mission runner. This is NOT a security sandbox for hostile code."""
+"""Offline Python learning runner for Cyber Protocol Chapter 01."""
 import ast
 import contextlib
 import io
@@ -20,50 +20,6 @@ ALLOWED_NODES = (
     ast.FloorDiv, ast.Mod, ast.Call, ast.Attribute, ast.Subscript, ast.Slice,
     ast.IfExp, ast.With, ast.withitem, ast.Pass, ast.Break, ast.Continue,
 )
-
-
-class VirtualFile:
-    def __init__(self, content):
-        self._lines = content.splitlines(keepends=True)
-        self._index = 0
-        self.closed = False
-
-    def __enter__(self):
-        self._check_open()
-        return self
-
-    def __exit__(self, *_args):
-        self.close()
-        return False
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.closed or self._index >= len(self._lines):
-            raise StopIteration
-        line = self._lines[self._index]
-        self._index += 1
-        return line
-
-    def read(self):
-        self._check_open()
-        value = "".join(self._lines[self._index:])
-        self._index = len(self._lines)
-        return value
-
-    def readlines(self):
-        self._check_open()
-        value = self._lines[self._index:]
-        self._index = len(self._lines)
-        return list(value)
-
-    def close(self):
-        self.closed = True
-
-    def _check_open(self):
-        if self.closed:
-            raise ValueError("I/O operation on closed file")
 
 
 class LimitedOutput(io.StringIO):
@@ -94,9 +50,9 @@ def _validate(source):
         raise ValueError("Code is too complex for this training mission.")
     allowed_calls = {
         "print", "len", "range", "str", "int", "float", "bool", "list", "dict",
-        "tuple", "set", "enumerate", "sorted", "sum", "min", "max", "abs", "zip", "open",
+        "tuple", "set", "enumerate", "sorted", "sum", "min", "max", "abs", "zip",
     }
-    allowed_attributes = {"append", "strip", "lower", "upper", "read", "readlines", "close"}
+    allowed_attributes = {"append", "strip", "lower", "upper"}
     for node in nodes:
         if not isinstance(node, ALLOWED_NODES):
             raise ValueError("Unsupported syntax: " + type(node).__name__)
@@ -118,18 +74,10 @@ def _validate(source):
                 raise ValueError("This method is not available.")
 
 
-def run_code(source, access_log):
+def run_code(source, variables=None):
     output = LimitedOutput()
     steps = [MAX_STEPS]
     previous_trace = sys.gettrace()
-
-    def virtual_open(filename, mode="r", *_args, **_kwargs):
-        if filename != "access.log":
-            raise ValueError("This mission only contains access.log")
-        if mode not in ("r", "rt"):
-            raise ValueError("The mission file is read-only.")
-        return VirtualFile(access_log)
-
     safe_builtins = {
         "print": print, "len": len, "range": _bounded_range, "str": str,
         "int": int, "float": float, "bool": bool, "list": list, "dict": dict,
@@ -147,7 +95,8 @@ def run_code(source, access_log):
     try:
         _validate(source)
         compiled = compile(source, "<mission>", "exec")
-        namespace = {"__builtins__": safe_builtins, "open": virtual_open, "logs": access_log.splitlines()}
+        namespace = {"__builtins__": safe_builtins}
+        namespace.update(variables or {})
         with contextlib.redirect_stdout(output):
             sys.settrace(budget_trace)
             exec(compiled, namespace, namespace)
@@ -158,36 +107,71 @@ def run_code(source, access_log):
         sys.settrace(previous_trace)
 
 
+# Exact-output missions deliberately accept the requested output: this is how
+# beginners learn print(), strings, variables, and arithmetic without fake
+# anti-hardcoding rules. Later missions use changing fixtures to test behavior.
 MISSIONS = {
     1: {
-        "cases": (
-            ("INFO: booted\nERROR: invalid token\nWARNING: retry\nERROR: denied\n", "2"),
-            ("ERROR: suspicious login\nINFO: audit complete\n", "1"),
-            ("INFO: service started\nWARNING: retry scheduled\n", "0"),
-        ),
-        "feedback": "All evidence tests passed. The ERROR counter works on different log files.",
+        "title": "First Contact",
+        "concept": "print() dan output pertama",
+        "cases": [({}, "Hello, Cyber Protocol!")],
+        "feedback": "Output berhasil dikirim. Kamu baru saja menjalankan program Python pertamamu.",
     },
     2: {
-        "cases": (
-            ("INFO: booted\nWARNING: retry\nERROR: denied\nWARNING: timeout\n", "2"),
-            ("WARNING: disk usage high\nINFO: audit complete\n", "1"),
-            ("ERROR: invalid token\nINFO: service started\n", "0"),
-        ),
-        "feedback": "All evidence tests passed. The WARNING counter works on different log files.",
+        "title": "Signal Online",
+        "concept": "Beberapa print() dan komentar",
+        "cases": [({}, "SYSTEM ONLINE\nACCESS GRANTED")],
+        "feedback": "Dua baris output berhasil dikirim. Komentar membantu manusia membaca kode dan tidak dieksekusi Python.",
     },
     3: {
-        "cases": (
-            ("FAILED login user=admin\nOK login user=guest\nFAILED login user=root\n", "2"),
-            ("FAILED login user=analyst\nOK login user=operator\n", "1"),
-            ("OK login user=guest\nINFO audit complete\n", "0"),
-        ),
-        "feedback": "All evidence tests passed. The failed-login detector handles different evidence files.",
+        "title": "Analyst Identity",
+        "concept": "Variabel dan string",
+        "cases": [({}, "MARA\nONLINE")],
+        "feedback": "Variabel menyimpan nilai yang bisa digunakan kembali. Identitas analis berhasil ditampilkan.",
+    },
+    4: {
+        "title": "Power Calibration",
+        "concept": "Angka dan operator aritmetika",
+        "cases": [({}, "42")],
+        "feedback": "Perhitungan selesai. Python dapat melakukan operasi matematika langsung.",
+    },
+    5: {
+        "title": "Repair the Shield",
+        "concept": "Variabel dan operasi matematika",
+        "cases": [({}, "HP: 75")],
+        "feedback": "Nilai HP berhasil dihitung dari variabel. Kamu sudah menggabungkan penyimpanan nilai dan matematika.",
+    },
+    6: {
+        "title": "Power Decision",
+        "concept": "if, else, dan perbandingan",
+        "cases": [
+            ({"energy": 10}, "SYSTEM ACTIVE"),
+            ({"energy": 0}, "SYSTEM STANDBY"),
+            ({"energy": -5}, "SYSTEM STANDBY"),
+        ],
+        "feedback": "Keputusan sistem benar untuk energi positif, nol, dan negatif. Kondisi mengubah perilaku program.",
+    },
+    7: {
+        "title": "Signal Sweep",
+        "concept": "for dan range()",
+        "cases": [({}, "SCAN 1\nSCAN 2\nSCAN 3\nSCAN 4")],
+        "feedback": "Empat tahap pemindaian dijalankan berurutan. Loop menghindarkan kita dari menulis perintah yang sama berulang kali.",
+    },
+    8: {
+        "title": "Threat Triage",
+        "concept": "List, for, if, dan counter",
+        "cases": [
+            ({"events": ["INFO: boot", "ERROR: token", "WARNING: retry", "ERROR: denied"]}, "2"),
+            ({"events": ["ERROR: login", "INFO: audit"]}, "1"),
+            ({"events": ["INFO: ready", "WARNING: disk"]}, "0"),
+        ],
+        "feedback": "Penyaring ancaman berhasil pada tiga kumpulan data berbeda. Kamu siap mempelajari file log pada chapter berikutnya.",
     },
 }
 
 
 def evaluate_mission(source, mission_id=1):
-    """Run the player's program against varied evidence files for a chapter mission."""
+    """Run a mission against its expected output or varied behavior fixtures."""
     mission = MISSIONS.get(int(mission_id))
     if mission is None:
         return json.dumps({
@@ -195,19 +179,19 @@ def evaluate_mission(source, mission_id=1):
             "passed": False, "feedback": "Mission not found.",
         })
     outputs = []
-    for case_number, (log_text, expected) in enumerate(mission["cases"], start=1):
-        result = run_code(source, log_text)
+    for case_number, (variables, expected) in enumerate(mission["cases"], start=1):
+        result = run_code(source, variables)
         if result["error"]:
             return json.dumps({
                 "output": result["output"], "error": result["error"], "passed": False,
-                "feedback": f"Python error in evidence test {case_number}/3. Check the code and try again.",
+                "feedback": f"Python error in practice test {case_number}/{len(mission['cases'])}. Read the explanation and try again.",
             })
         actual = result["output"].strip()
         outputs.append(actual)
         if actual != expected:
             return json.dumps({
                 "output": outputs[0], "error": "", "passed": False,
-                "feedback": f"Evidence test {case_number}/3: expected {expected}, got {actual or '(no output)'}. Review your condition and counter.",
+                "feedback": f"Test {case_number}/{len(mission['cases'])}: expected {expected!r}, got {actual or '(no output)'!r}. Compare your output with the demonstration.",
             })
     return json.dumps({
         "output": outputs[0], "error": "", "passed": True,
