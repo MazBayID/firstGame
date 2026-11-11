@@ -27,7 +27,16 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         val current = runCatching { decode(JSONObject(raw)) }.getOrNull()
         if (current != null) {
             if (current.schemaVersion < GameState.CURRENT_SCHEMA_VERSION) {
-                val upgraded = current.copy(schemaVersion = GameState.CURRENT_SCHEMA_VERSION)
+                val migratedBeat = LegacyProgressMigration.migrateExpandedChapterBeat(
+                    current.schemaVersion, current.storyBeat
+                )
+                val upgraded = current.copy(
+                    schemaVersion = GameState.CURRENT_SCHEMA_VERSION,
+                    storyBeat = migratedBeat,
+                    lastCheckpoint = if (migratedBeat != current.storyBeat) {
+                        "expanded_first_contact_missions_available"
+                    } else current.lastCheckpoint
+                )
                 save(upgraded)
                 return upgraded
             }
