@@ -8,7 +8,11 @@ import org.json.JSONObject
 
 /** Language adapter boundary. Other runtimes can be added without coupling UI to Chaquopy. */
 class PythonExecutionService {
-    fun run(source: String, workspace: MissionWorkspace? = null): ExecutionResult = try {
+    fun run(
+        source: String,
+        workspace: MissionWorkspace? = null,
+        variables: Map<String, List<String>> = emptyMap()
+    ): ExecutionResult = try {
         val initialFiles = linkedMapOf<String, String>()
         workspace?.allowedFileNames?.sorted()?.forEach { name ->
             workspace.readFile(name)?.let { initialFiles[name] = it }
@@ -18,8 +22,11 @@ class PythonExecutionService {
         }
         val writableNames = workspace?.writableFileNames.orEmpty()
         val writableJson = JSONArray().apply { writableNames.sorted().forEach { put(it) } }
+        val variablesJson = JSONObject().apply {
+            variables.forEach { (name, values) -> put(name, JSONArray(values)) }
+        }
         val raw = Python.getInstance().getModule("runner")
-            .callAttr("run_code_json", source, workspaceJson.toString(), writableJson.toString()).toString()
+            .callAttr("run_code_json", source, workspaceJson.toString(), writableJson.toString(), variablesJson.toString()).toString()
         val json = JSONObject(raw)
         val returnedFiles = json.optJSONObject("files") ?: JSONObject()
         if (json.optString("error").isBlank()) {
