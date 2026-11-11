@@ -15,6 +15,27 @@ Programming is core gameplay—not a quiz attached to a story.
 - **Expandable architecture:** Python is the first language, not a permanent architectural limit.
 - **Safety first:** fictional simulations only. The embedded runner is a teaching prototype, not a hardened hostile-code sandbox.
 
+## Story
+
+You are not a trained operative. You are an ordinary person whose device receives a message from an unknown sender—one containing information that should never have reached you.
+
+The sender claims to represent **A.E.G.I.S.**, an independent intelligence organization headquartered in Manila. They have been following a trail of anomalies: records that do not match, financial traces that disappear, and systems whose answers seem correct until they are compared.
+
+Your first task is not to save the world. It is to answer a simple question: **why were you contacted?**
+
+As you enter A.E.G.I.S., a primary mentor guides your recruitment and development. NEXUS, the organization's AI communication system, keeps you connected, while specialists step in when an operation demands their expertise. You will examine dossiers, question evidence, uncover connections, and use programming as a practical tool—not as a detached classroom exercise.
+
+Every case reveals another fragment. Every mission leaves a clue. And the deeper you investigate, the harder it becomes to tell whether the information in front of you is incomplete by accident—or arranged that way.
+
+**Cyber Protocol is an intelligence RPG, not a sword-and-sorcery adventure.** Your growth comes from technical skill, investigation, trust, judgment, relationships, and the consequences of your decisions.
+
+*The message was meant for someone. The question is why it found you.*
+
+### Story and design references
+
+- [Story Line — Narrative Blueprint](Story_Line.md): campaign direction, story mysteries, character roles, mission structure, and continuity rules.
+- [Game Concept — Design Bible](GAME_CONCEPT.md): canonical product vision, gameplay, UI, learning, progression, and development principles.
+
 ## Visual foundation
 - Cinematic Red Intelligence art direction: Obsidian / Charcoal / Crimson palette with anime character artwork direction.
 - Material 3 semantic color tokens and reusable Compose UI components.
