@@ -1,21 +1,16 @@
-name: Android Signed Release APK
+name: Android Signed Builds
 
 on:
+  push:
+    branches:
+      - rebuild/full-game
   workflow_dispatch:
-    inputs:
-      confirm_release:
-        description: Type SIGN to authorize a signed release build
-        required: true
-        type: choice
-        options:
-          - SIGN
 
 permissions:
   contents: read
 
 jobs:
-  build-release:
-    if: github.ref == 'refs/heads/rebuild/full-game' && inputs.confirm_release == 'SIGN'
+  build-signed-apks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,22 +60,29 @@ jobs:
 
           echo "ANDROID_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
 
-      - name: Build signed release APK
+      - name: Build debug and release APKs with the same key
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle --no-daemon testDebugUnitTest assembleRelease
+        run: gradle --no-daemon testDebugUnitTest assembleDebug assembleRelease
 
-      - name: Verify APK signature
+      - name: Verify debug APK signature
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs \
+            app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Verify release APK signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs \
             app/build/outputs/apk/release/app-release.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cyber-protocol-release
-          path: app/build/outputs/apk/release/app-release.apk
+          name: cyber-protocol-signed-apks
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 14
 
