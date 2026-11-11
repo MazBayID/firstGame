@@ -73,11 +73,7 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
         val legacy = runCatching {
             contextPreferencesLegacy()
         }.getOrDefault(0)
-        val storyBeat = legacy.coerceIn(0, 7)
-        return GameState(
-            storyBeat = storyBeat,
-            unlockedApps = ProgressionRules.unlockedAppsForStoryBeat(storyBeat)
-        )
+        return LegacyProgressMigration.fromStoryBeat(legacy)
     }
 
     private fun contextPreferencesLegacy(): Int {
