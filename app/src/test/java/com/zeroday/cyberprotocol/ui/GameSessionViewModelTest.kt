@@ -86,9 +86,24 @@ class GameSessionViewModelTest {
         val viewModel = GameSessionViewModel(MemoryRepository())
         viewModel.saveStoryBeat(16)
 
+        assertTrue(viewModel.gameState.unlockedApps.contains("BROWSER"))
         assertEquals(16, viewModel.gameState.storyBeat)
         assertEquals(1, viewModel.gameState.clearance)
         assertEquals("story_beat_16", viewModel.gameState.lastCheckpoint)
+    }
+
+    @Test
+    fun existingUnlockedAppsArePreservedWhenStoryProgressAddsTheBrowser() {
+        val repository = MemoryRepository()
+        val viewModel = GameSessionViewModel(repository)
+        viewModel.saveStoryBeat(3)
+        assertFalse(viewModel.gameState.unlockedApps.contains("BROWSER"))
+
+        viewModel.saveStoryBeat(4)
+
+        assertTrue(viewModel.gameState.unlockedApps.contains("BROWSER"))
+        assertTrue(viewModel.gameState.unlockedApps.contains("DATABASE"))
+        assertTrue(viewModel.gameState.unlockedApps.contains("DOSSIER"))
     }
 
     @Test
