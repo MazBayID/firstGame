@@ -144,8 +144,8 @@ class RunnerTests(unittest.TestCase):
             json.dumps({"message_fragment.txt": "ACCESS GRANTED\n"}),
             json.dumps(["signal.py"])
         ))
+        self.assertEqual("", result["error"], result)
         self.assertEqual("ACCESS GRANTED", result["output"].strip())
-        self.assertEqual("", result["error"])
 
     def test_mission_workspace_writes_only_writable_files(self):
         result = json.loads(runner.run_code_json(
