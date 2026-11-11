@@ -86,9 +86,8 @@ internal object GameStateCodec {
             rank = json.optString("rank", "CIVILIAN"),
             experience = json.optInt("experience", 0).coerceAtLeast(0),
             clearance = json.optInt("clearance", 0).coerceAtLeast(0),
-            unlockedApps = json.stringSet("unlockedApps").ifEmpty {
-                ProgressionRules.unlockedAppsForStoryBeat(json.optInt("storyBeat", 0))
-            },
+            unlockedApps = json.stringSet("unlockedApps") +
+                ProgressionRules.unlockedAppsForStoryBeat(json.optInt("storyBeat", 0)),
             evidence = evidence,
             savedCode = code,
             lastCheckpoint = json.optString("lastCheckpoint", "recovered"),
