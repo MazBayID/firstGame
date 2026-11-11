@@ -466,13 +466,19 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         )
         GameScreen.PROFILE -> InfoAppScreen(
             "PROFIL AGEN", "A.E.G.I.S. / IDENTITAS PERSONEL",
-            "IDENTITAS: AGEN MAGANG\nRANK: " + currentGameState.rank.replace('_', ' ') +
-                "\nPENGALAMAN: " + currentGameState.experience + " XP" +
-                "\nCLEARANCE: " + currentGameState.clearance +
-                "\nKAMPANYE: " + currentGameState.campaignId +
-                "\nMISI SELESAI: " + currentGameState.completedMissionIds.size +
-                "\nBUKTI TERCATAT: " + currentGameState.evidence.size +
-                "\nCHECKPOINT: " + currentGameState.lastCheckpoint,
+            buildString {
+                append("IDENTITAS: AGEN MAGANG\\n")
+                append("RANK: ").append(currentGameState.rank.replace('_', ' ')).append("\\n")
+                append("PENGALAMAN: ").append(currentGameState.experience).append(" XP\\n")
+                append("CLEARANCE: ").append(currentGameState.clearance).append("\\n")
+                append("KAMPANYE: ").append(currentGameState.campaignId).append("\\n")
+                append("MISI SELESAI: ").append(currentGameState.completedMissionIds.size).append("\\n")
+                append("BUKTI TERCATAT: ").append(currentGameState.evidence.size).append("\\n")
+                append("CHECKPOINT: ").append(currentGameState.lastCheckpoint).append("\\n")
+                val nextRankXp = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.nextRankThreshold(currentGameState.experience)
+                if (nextRankXp == null) append("RANK MAKSIMUM TERCAPAI")
+                else append("MENUJU RANK BERIKUTNYA: ").append(nextRankXp - currentGameState.experience).append(" XP")
+            },
             CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
         )
         GameScreen.ARCHIVES -> InfoAppScreen(
