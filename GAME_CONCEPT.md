@@ -856,7 +856,7 @@ The in-game **Pesan Aman / Secure Messenger** should feel like a familiar, polis
 
 # 23. First Contact — Approved Mission and Evidence Sequence
 
-The opening chapter now contains six technical missions across twelve story beats. It is one continuous orientation and investigation, not six unrelated coding exercises.
+The opening chapter now contains eight technical missions across fourteen story beats. It is one continuous orientation and investigation, not eight unrelated coding exercises.
 
 | Mission | Player learning objective | Evidence purpose |
 |---|---|---|
@@ -866,6 +866,8 @@ The opening chapter now contains six technical missions across twelve story beat
 | Inventaris Rekaman | `len()` | Count available record references |
 | Penelusuran Referensi | `enumerate()`, loop, filtering | Find the matching reference while retaining source indices |
 | Perbandingan Dua Sumber | List indexing and named variables | Read and display the two receipt records for comparison |
+| Normalisasi Waktu | `int()`, indexing, subtraction | Convert timestamp strings and calculate a signed delta |
+| Validasi Selisih | `abs()`, arithmetic | Calculate the absolute difference across reversed source order |
 
 - All datasets are fictional, deterministic, local, and read-only during execution.
 - RUN executes the player's code against the current mission dataset; SUBMIT evaluates the solution against multiple fixtures where appropriate.
@@ -873,4 +875,4 @@ The opening chapter now contains six technical missions across twelve story beat
 - Each mission carries a concise forward clue, surfaced in the mission debrief after successful verification. Clues should point toward the next story action or technical concept without revealing its full solution.
 - The final report records the four-second difference between A.E.G.I.S. and ARCHIVE receipt times without asserting a cause.
 - The discrepancy remains unverified as to cause. Do not introduce a culprit, reveal manipulation, or start a separate case without approved narrative content.
-- Completion of the twelve story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
+- Completion of the fourteen story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
