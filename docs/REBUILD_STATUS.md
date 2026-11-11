@@ -198,7 +198,7 @@ The following older runs predate the current test-only / signed-Release-only wor
 
 ### Remaining before this can be called a complete game
 - Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state. Operations now has a dedicated mission-control surface, while broader hub and terminal state extraction remains.
-- Extend mission workspace permission tests to the Android persistence adapter and integrate workspace-scoped terminal sessions for operations. The Operations control screen can resume the story-authorized active mission; full terminal-session integration remains.
+- Mission workspace permissions now have Robolectric coverage for read-only asset downloads, persistence across VFS instances, Terminal cat access, write denial, and path-traversal denial. Complete Operations-specific terminal-session integration.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Expand the current data-backed Database and Dossier surfaces into fully interactive, story-linked workspaces. Analysis now supports evidence search/filter and Operations now supports active-mission resume; additional review workflows and data navigation remain.
 - Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
