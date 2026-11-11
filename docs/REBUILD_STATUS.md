@@ -111,6 +111,11 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Added a previous-good-snapshot backup and corrupt-snapshot preservation path for local campaign save recovery.
 - Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; added Profile, Archives, Achievements, and a persistent reduced-motion setting to the main menu.
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
+- Redesigned Secure Messenger toward a familiar smartphone chat experience with searchable conversations, contact previews, distinct incoming/outgoing bubbles, and predefined quick replies.
+- Added the first-entry Campaign notification sequence: black screen, ordinary-looking in-game Pesan Aman notification, and explicit tap-through to Freya's recruitment conversation.
+- Added a persisted recruitment-opening checkpoint in GameState schema 3; the notification tap is idempotent, and older save/legacy migration paths preserve whether the invitation has already been opened.
+- Removed the Unknown Sender prologue from the playable First Contact story sequence. The campaign now begins its story beats with A.E.G.I.S. organization after the invitation conversation.
+- Rewrote the Story_Line opening sequence to match the approved notification → Secure Messenger → recruitment invitation flow.
 - Added a mission-success debrief screen before the story advances.
 - Extracted First Contact narrative content and game destination definitions from the main Compose shell.
 - Added a `GameSessionViewModel` to own campaign state refreshes, mission completion, code checkpoints, recruitment clearance, and progression/evidence mutations outside the main Compose screen.
@@ -135,10 +140,9 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Updated CI configuration to run Android unit tests before APK assembly.
 
 ### Verification observed so far
-- Python runner suite passed on the latest observed run.
-- Android debug APK assembly passed on a commit containing the entry loading integration.
-- A prior failure was traced to a missing loading composable during an intermediate commit; the subsequent commit containing that composable built successfully.
-- CI run `43017431227` passed on the ViewModel integration commit: Python runner tests, Kotlin unit tests, and Android debug APK assembly succeeded. Later workspace-policy and editor-limit commits are awaiting their own CI results.
+- CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue before the Messenger visual redesign.
+- CI run `43028842754` is the current verification for the subsequent Messenger redesign and navigation-return fix on commit `58ec024`. Python runner tests and Android SDK setup passed; Gradle setup/build were still in progress at the time this note was written.
+- The latest completed run is not yet a device acceptance test. The new notification and Messenger presentation still require final integration verification before the next cohesive device build is offered.
 
 ### Remaining before this can be called a complete game
 - Finish extracting navigation and remaining UI state from the main Compose shell; extend ViewModel ownership to terminal and application navigation state.
@@ -147,7 +151,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Expand the current data-backed Database, Dossier, Analysis, and Operations surfaces into fully interactive, story-linked workspaces.
 - Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
 - Add automated tests for previous-snapshot recovery, save-schema migration, and archive retention; expand clearance progression.
-- Finish ViewModel-driven state ownership, complete remaining App Hub interactions, localize all player-facing content, and add audio/control settings when their runtime systems exist.
+- Finish ViewModel-driven state ownership and remaining App Hub interactions; implement complete Indonesian/English localization and the cinematic Campaign presentation overhaul; add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
 
 The branch is deliberately kept as a draft. Phases 1–5 are being developed as one integrated rebuild, but are not yet complete and must not be represented as release-ready.
