@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -657,26 +658,115 @@ private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
 
 @Composable
 private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -> Unit, onHub: () -> Unit) {
+    val completedBeats = (storyStage - 2).coerceIn(0, 5)
+    val progress = completedBeats / 5f
+    val milestones = listOf("ORGANISASI", "BERKAS 001", "TUGAS PERTAMA", "VERIFIKASI", "REKRUTMEN RESMI")
+
     GamePage("KAMPANYE", "A.E.G.I.S. / OPERASI CERITA", onBack, onHub) {
+        Box(
+            Modifier.fillMaxWidth()
+                .background(
+                    Brush.linearGradient(
+                        listOf(Color(0xFF202A34), Color(0xFF111820), Color(0xFF321923))
+                    ),
+                    RoundedCornerShape(18.dp)
+                )
+                .padding(20.dp)
+        ) {
+            Text(
+                "01",
+                modifier = Modifier.align(Alignment.TopEnd),
+                color = Color(0x26FFFFFF),
+                fontSize = 104.sp,
+                fontWeight = FontWeight.Black
+            )
+            Column(
+                Modifier.fillMaxWidth().padding(top = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(9.dp)
+            ) {
+                Text("A.E.G.I.S.  /  CAMPAIGN 01", color = Color(0xFF9AB4B8),
+                    fontSize = 9.sp, letterSpacing = 1.8.sp, fontWeight = FontWeight.Bold)
+                Text("THE RECRUITMENT", color = Color.White,
+                    fontSize = 26.sp, fontWeight = FontWeight.Black, letterSpacing = 0.5.sp)
+                Text("CHAPTER 001  ·  FIRST CONTACT", color = Color(0xFFE0A2AD),
+                    fontSize = 10.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Sebuah undangan telah membuka pintu menuju dunia yang selama ini tersembunyi.",
+                    color = Color(0xFFD0D8DE), fontSize = 13.sp, lineHeight = 20.sp
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(color = Color(0xFF4B2732), shape = RoundedCornerShape(50)) {
+                        Text(
+                            if (storyStage >= 7) "CAMPAIGN COMPLETE" else "ACTIVE OPERATION",
+                            Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            color = Color(0xFFFFDCE2), fontSize = 8.sp, fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text("${completedBeats} / 5", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
         GamePanel {
-            Text("KAMPANYE 01", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.5.sp)
-            Text("REKRUTMEN", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black)
-            Text("Sebuah undangan. Pilihan yang tak diketahui. Langkah pertama menuju dunia intelijen.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-            HorizontalDivider(color = CyberPalette.Divider)
-            Text("BAB 001", color = CyberPalette.Crimson, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-            Text("KONTAK PERTAMA", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text("Progres: " + if (storyStage >= 7) "REKRUTMEN SELESAI" else "$storyStage/7 tahap cerita",
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-            LinearProgressIndicator(progress = { storyStage.coerceAtMost(7) / 7f },
-                modifier = Modifier.fillMaxWidth(), color = CyberPalette.Crimson, trackColor = CyberPalette.Divider)
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text("PROGRES CHAPTER", color = CyberPalette.SteelGray,
+                        fontSize = 9.sp, letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
+                    Text(if (storyStage >= 7) "REKRUTMEN SELESAI" else "FIRST CONTACT",
+                        color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+                Text("${(progress * 100).toInt()}%", color = CyberPalette.Crimson,
+                    fontSize = 20.sp, fontWeight = FontWeight.Black)
+            }
+            LinearProgressIndicator(
+                progress = { progress },
+                modifier = Modifier.fillMaxWidth().height(6.dp),
+                color = CyberPalette.Crimson,
+                trackColor = CyberPalette.Divider
+            )
+            milestones.forEachIndexed { index, title ->
+                val complete = index < completedBeats
+                val current = index == completedBeats && storyStage < 7
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Surface(
+                        color = when {
+                            complete -> Color(0xFF24533F)
+                            current -> Color(0xFF542632)
+                            else -> Color(0xFF252A31)
+                        },
+                        shape = RoundedCornerShape(50)
+                    ) {
+                        Text(
+                            if (complete) "✓" else "%02d".format(index + 1),
+                            Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                            color = if (complete || current) Color.White else CyberPalette.SteelGray,
+                            fontSize = 10.sp, fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Text(
+                        title,
+                        color = if (complete || current) Color.White else CyberPalette.SteelGray,
+                        fontSize = 11.sp,
+                        fontWeight = if (current) FontWeight.Bold else FontWeight.Medium
+                    )
+                    Spacer(Modifier.weight(1f))
+                    if (complete) Text("SELESAI", color = CyberPalette.Success, fontSize = 8.sp)
+                    else if (current) Text("BERIKUTNYA", color = CyberPalette.Crimson, fontSize = 8.sp)
+                    else Text("TERKUNCI", color = CyberPalette.SteelGray, fontSize = 8.sp)
+                }
+            }
             CPPrimaryButton(if (storyStage >= 7) "BUKA PUSAT A.E.G.I.S." else "LANJUTKAN CERITA", onContinue)
         }
-        GamePanel {
-            Text("STRUKTUR KAMPANYE", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.3.sp)
-            Text("Adegan cerita dan penemuan akan mengarah ke operasi terpandu. Bab baru tetap tersembunyi sampai waktunya terungkap.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
+        Text(
+            "Chapter baru dan operasi lanjutan akan terbuka melalui perkembangan cerita. Setiap bukti dan akses memiliki sumber serta otorisasi.",
+            color = CyberPalette.SteelGray, fontSize = 10.sp, lineHeight = 16.sp
+        )
     }
 }
 
