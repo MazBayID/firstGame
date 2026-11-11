@@ -28,7 +28,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - A code editor with basic Python syntax highlighting and editing helpers.
 - A campaign/story-stage flow, basic code RUN/SUBMIT actions, and a six-app hub.
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
-- GitHub Actions for Python unit tests and Android debug APK assembly.
+- GitHub Actions with a test-only Android Tests workflow and a separate permanently signed Release APK workflow for device testing.
 
 These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the expanded First Contact investigation; a later investigative case remains unapproved.
 
@@ -166,12 +166,15 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 ### Signed release-only build policy
 
-- Device testing uses only `app-release.apk`, signed with the permanent Android release keystore. No debug APK is built or published by the development-branch release workflow.
-- The separate Android Tests workflow runs automated tests only and does not generate an installable APK artifact.
+- Device testing uses only `app-release.apk`, signed with the permanent Android release keystore. Debug signing is separate and the Debug variant is never used for device acceptance or distribution.
+- The separate Android Tests workflow runs Python and Kotlin/Android unit tests only; it never invokes APK-producing tasks, reads signing secrets, or uploads an installable APK.
+- Android Release APK starts only after a successful push-triggered Android Tests run on `main` or `rebuild/full-game`, checks out that exact tested commit, and builds only `assembleRelease`.
+- Release verification checks the application ID, versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and SHA-256 certificate fingerprint against the restored permanent keystore.
 - Release CI assigns a monotonically increasing versionCode from the workflow run number (starting above the existing versionCode 6) and verifies that the APK contains the expected value before artifact upload.
 - Release CI verifies the APK signature and uploads one artifact named `cyber-protocol-release`.
 
-### Verification observed so far
+### Historical verification observed under the former CI design
+The following older runs predate the current test-only / signed-Release-only workflow separation. Their Debug APK artifacts are historical and must not be used as device-test or distribution builds.
 - CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
 - CI run `43028768493` passed on commit `73493ac`: the Secure Messenger inbox/chat redesign compiled, Kotlin unit tests passed, and a debug APK artifact was uploaded.
 - CI run `43028842754` passed on commit `58ec024`: the Messenger return-navigation fix also compiled and passed Kotlin/Python tests.
