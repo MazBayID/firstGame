@@ -145,6 +145,17 @@ internal fun AegisBrowserScreen(
                             Text(objective.description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         }
                         HorizontalDivider(color = Color(0xFF26343D))
+                        Text("PERSYARATAN OPERASI", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                        Text("CLEARANCE MINIMUM  /  ${mission.requiredClearance}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                        mission.allowedFiles.sorted().forEach { fileName ->
+                            Text(
+                                "${fileName}  /  " + if (fileName in mission.writableFiles) "BACA-TULIS" else "HANYA BACA",
+                                color = Color(0xFFB9D1C6),
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 10.sp
+                            )
+                        }
+                        HorizontalDivider(color = Color(0xFF26343D))
                         Text("STATUS PENGIRIMAN", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                         Text(submissionStatus.ifBlank { "Belum ada hasil yang dikirim." }, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         OutlinedButton(onClick = onOpenEditor, modifier = Modifier.fillMaxWidth()) {
