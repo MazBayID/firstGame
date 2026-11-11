@@ -211,7 +211,24 @@ The closing report preserves three categories:
 
 The discrepancy is an unresolved lead, not a solved case. It can support a later investigation only after new evidence and story details are deliberately authored and approved.
 
-This case title and exact evidence chain are proposed and may change during mission design.
+The receipt discrepancy and its four-mission learning sequence are approved First Contact canon. Any later case, antagonist, or explanation for the discrepancy requires separate story approval.
+
+## 6.4 Receipt Trace and Source Comparison — Final First Contact Missions
+
+The initial discrepancy remains the same unresolved training case. These two missions deepen the investigation without introducing a new case, real-world target, or unapproved antagonist.
+
+3. **Penelusuran Referensi:** Freya supplies a small, fictional receipt list containing source labels, record references, and timestamps. The player uses `enumerate()`, `for`, and `if` to locate entries for `RX-14` while preserving each entry's original index. The evaluator checks more than one fixture so a hard-coded output cannot pass.
+4. **Perbandingan Dua Sumber:** the player uses list indexing to assign `receipts[0]` to `primary` and `receipts[1]` to `archive`, then prints both records. The evaluator supplies more than one pair to ensure the program reads the actual list rather than printing fixed text.
+
+The final First Contact report records the two receipt entries as evidence: A.E.G.I.S. records `RX-14` at `09:41:12`, while ARCHIVE records the same reference at `09:41:16`. The four-second difference is observable; its cause is not established.
+
+The player must distinguish:
+- **Observed:** two sources contain the same reference with a four-second difference in recorded receipt time.
+- **Not established:** whether the difference comes from tampering, queue delay, clock synchronization, or another recording mechanism.
+- **Next question:** what additional authorized evidence would distinguish those explanations.
+
+This concludes the First Contact orientation chapter, not the wider recruitment campaign. Freya accepts the report and leaves the discrepancy marked for later review. The author-only fact that Freya initiated the recruitment order remains undisclosed.
+
 
 # 7. The Primary Mentor
 
