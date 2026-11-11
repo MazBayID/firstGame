@@ -18,6 +18,15 @@
 **Art direction:** Cinematic, semi-realistic anime-inspired game presentation  
 **Core experience:** The player lives the story of an intelligence operative and learns programming and technical skills by using them to solve problems inside that fictional world.
 
+## 1.2 What “RPG” Means in Cyber Protocol
+
+Cyber Protocol uses RPG storytelling and progression, but it is **not a conventional fantasy/action RPG built around sword combat or fighting enemies**.
+
+- The player's role is an intelligence operative. The central activities are investigation, analysis, communication, technical problem-solving, operational decisions, and story-driven missions.
+- RPG depth comes from character relationships, dialogue, choices, consequences, skills, rank, clearance, and the player's evolving place within A.E.G.I.S.
+- Tension should come primarily from mysteries, intelligence risks, difficult decisions, conflicting motives, time-sensitive operations, and narrative consequences—not from turning the game into a sword-fighting or generic action game.
+- Any physical action or confrontation, if ever included, must serve the intelligence-story context and should not displace the core investigative and technical experience.
+
 ## 1.1 Core promise
 
 Cyber Protocol is **not a programming course app with a game theme**.
@@ -247,6 +256,18 @@ The opening recruitment story should introduce decryption as part of the narrati
 - A subsequent message becomes a beginner decryption task. The player applies what was just learned to reveal the next part of the recruitment story.
 - Increase complexity gradually as the player's technical skills grow. Early “decryption” may use fictional, deliberately simple transformations; do not present it as real cryptographic security.
 - Preserve the distinction between narrative suspense and learning fairness: provide contextual clues and graduated hints, and never require an unexplained advanced syntax from a beginner.
+
+## 6.5 Primary Mentor — Relationship Development
+
+The primary mentor is not merely a tutorial voice or a mission dispatcher. The mentor is a major recurring character whose relationship with the player can develop throughout the storyline.
+
+- Give the mentor a distinct, consistent personality, personal motivations, strengths, limitations, and a recognizable way of speaking.
+- Let the relationship develop through shared operations, conversations, player decisions, successes, mistakes, and difficult moments.
+- Trust, familiarity, emotional closeness, disagreement, and conflict may evolve naturally over time. These are narrative dimensions, not a requirement for a romance system.
+- Player choices and actions may influence how the mentor responds, what they disclose, how much they trust the player, and how later conversations or story events unfold.
+- Do not make every interaction a relationship score check. Character development should be expressed through believable dialogue, behavior, and consequences.
+- The mentor remains the player's central guide even when a specialist temporarily takes over a technical or subject-specific conversation.
+- The mentor's name, background, personality details, relationship stages, and any branching outcomes remain open until designed and approved.
 
 ## 6.4 Narrative principles
 
