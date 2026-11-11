@@ -27,13 +27,11 @@ Programming is not a decorative minigame. It is one of the tools the player lear
 
 # 2. The Central Premise
 
-An ordinary person receives an unexpected message from an unknown sender. The message contains a fragment of information that should not have reached them—and a simple challenge that appears to test whether they can recognize a pattern.
+An ordinary person opens the Campaign and sees a black screen. An ordinary-looking in-game **Pesan Aman** notification appears, as if the phone had just received a normal message. The player must tap the notification; doing so opens Secure Messenger directly to a recruitment conversation with Freya Knox.
 
-The sender claims to represent A.E.G.I.S., an independent international intelligence organization based in Manila. The organization has been examining a series of apparently unrelated anomalies: altered records, missing financial trails, disconnected systems, and reports that contradict one another.
+The invitation begins with the exact line: **"Seseorang meminta kami untuk merekrutmu."** The English localization is: **"Someone has asked us to recruit you."** Freya establishes a professional first impression and reveals only limited information about A.E.G.I.S., an independent international intelligence organization based in Manila. The reason the player was selected remains unexplained.
 
-At first, the player is not told that these incidents are connected. A.E.G.I.S. does not immediately trust the player, and the player has no reason to trust A.E.G.I.S.
-
-The recruitment begins with a question: **why was this message sent to this particular person?**
+The notification is an in-game cinematic simulation, not a real Android notification. There is no separate "Unknown Sender" prologue. The mystery comes from the unexpected invitation and the unanswered question: **why was this person asked to recruit the player?**
 
 As the player learns, investigates, and earns access, small discrepancies begin to form a larger picture. The most important discovery is not simply who changed a record or concealed a transaction. It is that someone may be shaping what different people and institutions are able to see.
 
@@ -88,7 +86,7 @@ The following is a flexible narrative roadmap. It is not a promise that every ca
 **Player state:** Ordinary person → Recruit.  
 **Narrative question:** Why did A.E.G.I.S. contact the player, and what is hidden inside the first case?
 
-The player receives the unknown message, encounters A.E.G.I.S., meets the primary mentor, and completes the first guided technical tasks. The first operation appears small and controlled, but a discrepancy in its evidence hints that the case is not isolated.
+The player receives the recruitment notification, opens the invitation in Secure Messenger, encounters A.E.G.I.S., meets the primary mentor, and completes the first guided technical tasks. The first operation appears small and controlled, but a discrepancy in its evidence hints that the case is not isolated.
 
 The campaign ends with the player formally recruited and entrusted with a limited piece of information that the organization cannot yet explain.
 
@@ -126,37 +124,47 @@ The opening must be intimate before it becomes large-scale. Begin with the playe
 
 ### Opening sequence
 
-**Beat 1 — Unknown Sender**
+**Opening cinematic — The notification**
 
-A message appears from an unidentified sender. It contains a short fragment that looks corrupted or deliberately obscured. The message addresses the player without explaining how the sender knows them.
+The first time the player opens Campaign, the screen becomes completely black. After a deliberate pause, an understated notification card styled like an ordinary smartphone notification appears. It is branded **Pesan Aman** and uses a familiar, everyday notification treatment—not a dramatic classified alert.
 
-The player can inspect the message and decide whether to engage. The scene should create curiosity rather than immediately demand trust.
+The player must tap the notification card. The story does not advance merely because the notification appeared. Tapping it opens the in-game Secure Messenger directly to the recruitment conversation; it must not open the generic contact list first. The notification and Messenger are simulated entirely inside the game and do not use Android's real notification service.
 
-**Beat 2 — The Invitation**
+The opening sequence is shown only once for a new campaign. The tap and transition are saved as a meaningful checkpoint so interruption cannot duplicate the invitation or silently skip the player's action.
 
-The sender reveals limited information about A.E.G.I.S. and offers a secure channel. The invitation is specific enough to feel credible, but leaves important questions unanswered.
+**Beat 1 — The Invitation in Secure Messenger**
 
-**Beat 3 — The Organization**
+The invitation is the first message in Freya Knox's conversation. Its opening sentence is exactly:
 
-The player establishes contact with A.E.G.I.S. The primary mentor becomes the player's main human point of contact. NEXUS is introduced as the organization's AI communication-intelligence system—not as the mentor and not as a human character.
+> "Seseorang meminta kami untuk merekrutmu."
+
+English localization:
+
+> "Someone has asked us to recruit you."
+
+Freya communicates in a composed, professional manner. The message makes clear that the player is not a trained agent, but does not explain who requested the recruitment or why. The player can review the message and choose from authored replies. Do not add a separate "Pengirim tidak dikenal" / "Unknown Sender" prologue or title.
+
+**Beat 2 — The Organization**
+
+The player learns the minimum necessary about A.E.G.I.S. through the campaign. Freya remains the player's primary human point of contact. NEXUS is introduced as the organization's AI communication-intelligence system—not as the mentor and not as a human character.
 
 A.E.G.I.S. explains only what a new recruit needs to know. Its divisions, procedures, and internal tensions should be revealed over time.
 
-**Beat 4 — Classified File 001**
+**Beat 3 — Classified File 001**
 
 The player receives a limited dossier. It contains a small fictional information problem and a discrepancy that can be investigated safely.
 
 The dossier should teach the player how to distinguish a claim, a source, and a verified fact.
 
-**Beat 5 — First Assignment**
+**Beat 4 — First Assignment**
 
 The player completes a very simple Python task as part of an in-world system check. The mentor or NEXUS explains the relevant concept before expecting independent work. The first task should be achievable by a beginner.
 
-**Beat 6 — System Verification**
+**Beat 5 — System Verification**
 
 The game evaluates the intended learning objective. RUN executes code and shows output or errors; SUBMIT separately checks the mission requirements. Feedback explains what happened and why.
 
-**Beat 7 — Official Recruitment**
+**Beat 6 — Official Recruitment**
 
 After the player completes the initial process, A.E.G.I.S. formally accepts them as a Recruit. The player receives a limited profile, access permissions, and the next narrative lead.
 
