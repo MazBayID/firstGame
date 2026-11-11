@@ -85,8 +85,10 @@ class GameProgressUseCasesTest {
         )
 
         useCase.record(evidence)
+        val originalTimestamp = repository.load().evidence.single().recordedAtEpochMillis
         useCase.record(evidence.copy(summary = "Pesan latihan terverifikasi."))
         assertEquals(1, repository.load().evidence.size)
+        assertEquals(originalTimestamp, repository.load().evidence.single().recordedAtEpochMillis)
         assertEquals("first_contact.signal", repository.load().evidence.single().missionId)
 
         val updated = useCase.updateStatus("signal_fragment", EvidenceStatus.DISPUTED)
