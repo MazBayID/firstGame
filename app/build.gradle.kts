@@ -10,10 +10,10 @@ val releaseKeystorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
 val releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
 val releaseKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
 
-val releaseTaskRequested = gradle.startParameter.taskNames.any {
-    it.contains("Release", ignoreCase = true)
+val apkBuildRequested = gradle.startParameter.taskNames.any {
+    it.contains("assemble", ignoreCase = true)
 }
-if (releaseTaskRequested && listOf(
+if (apkBuildRequested && listOf(
         releaseKeystorePath,
         releaseKeystorePassword,
         releaseKeyAlias,
@@ -21,7 +21,7 @@ if (releaseTaskRequested && listOf(
     ).any { it.isNullOrBlank() }
 ) {
     throw GradleException(
-        "Release signing is not configured. Provide all ANDROID_KEYSTORE_* environment variables."
+        "APK signing is not configured. Provide all ANDROID_KEYSTORE_* environment variables."
     )
 }
 
@@ -45,6 +45,9 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("release")
+        }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
