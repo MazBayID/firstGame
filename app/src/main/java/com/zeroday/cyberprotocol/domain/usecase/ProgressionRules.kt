@@ -4,7 +4,7 @@ package com.zeroday.cyberprotocol.domain.usecase
 object ProgressionRules {
     private val ranks = listOf(
         0 to "CIVILIAN",
-        25 to "RECRUIT",
+        60 to "RECRUIT",
         100 to "INITIATE",
         250 to "JUNIOR_ANALYST",
         500 to "FIELD_ANALYST",
