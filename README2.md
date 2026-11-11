@@ -67,6 +67,7 @@ The main menu background should be a cinematic view of the A.E.G.I.S. headquarte
 - Keep the current provisional background direction in the dark cyan / dark blue family.
 - The menu navigation must remain clearly readable and visually distinct from the background.
 - The environment should feel like a believable, sophisticated intelligence headquarters and support the classic Java-era mobile-game menu experience already specified above.
+- The headquarters is envisioned as a **closed, mysterious intelligence complex**, not an ordinary office tower. Its architecture and atmosphere should communicate secrecy, restricted access, and a sophisticated hidden organization.
 - Do not make the player avatar the focal point. The scene is about the headquarters and its atmosphere.
 - Exact architecture, camera angle, lighting, animation, and menu placement remain open for discussion; do not treat unapproved details as final canon.
 
