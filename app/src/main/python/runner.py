@@ -1,199 +1,164 @@
-"""Offline Python learning runner for Cyber Protocol Chapter 01."""
+"""Restricted Python teaching runner. Prototype guardrails, not a hardened sandbox."""
 import ast
 import contextlib
 import io
 import json
 import sys
 
-MAX_SOURCE_LENGTH = 8000
-MAX_AST_NODES = 2000
-MAX_STEPS = 20000
-MAX_RANGE_ITEMS = 10000
-MAX_OUTPUT_LENGTH = 16000
-
+MAX_SOURCE_LENGTH = 12000
+MAX_OUTPUT_LENGTH = 8000
+MAX_TRACE_EVENTS = 50000
+SAFE_BUILTINS = {
+    "print": print, "range": range, "len": len, "str": str, "int": int,
+    "float": float, "bool": bool, "enumerate": enumerate, "min": min,
+    "max": max, "sum": sum, "abs": abs,
+}
 ALLOWED_NODES = (
-    ast.Module, ast.Expr, ast.Assign, ast.AugAssign, ast.Name, ast.Load, ast.Store,
-    ast.Constant, ast.List, ast.Tuple, ast.Dict, ast.Set, ast.For, ast.While, ast.If,
-    ast.Compare, ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.In,
-    ast.NotIn, ast.Is, ast.IsNot, ast.BoolOp, ast.And, ast.Or, ast.UnaryOp,
-    ast.Not, ast.USub, ast.UAdd, ast.BinOp, ast.Add, ast.Sub, ast.Mult, ast.Div,
-    ast.FloorDiv, ast.Mod, ast.Call, ast.Attribute, ast.Subscript, ast.Slice,
-    ast.IfExp, ast.With, ast.withitem, ast.Pass, ast.Break, ast.Continue,
+    ast.Module, ast.Expr, ast.Call, ast.Name, ast.Load, ast.Store, ast.Constant,
+    ast.Assign, ast.BinOp, ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv,
+    ast.Mod, ast.UnaryOp, ast.USub, ast.UAdd, ast.Compare, ast.Gt, ast.GtE,
+    ast.Lt, ast.LtE, ast.Eq, ast.NotEq, ast.In, ast.NotIn, ast.If, ast.For,
+    ast.AugAssign, ast.List, ast.Tuple, ast.BoolOp, ast.And, ast.Or, ast.Not,
+    ast.Subscript,
 )
 
 
-class LimitedOutput(io.StringIO):
-    def write(self, value):
-        remaining = MAX_OUTPUT_LENGTH - len(self.getvalue())
-        if len(value) > remaining:
-            if remaining > 0:
-                super().write(value[:remaining])
-            raise RuntimeError("Output limit exceeded")
-        return super().write(value)
+class RunnerError(Exception):
+    pass
 
 
-def _bounded_range(*args):
-    result = range(*args)
-    if len(result) > MAX_RANGE_ITEMS:
-        raise ValueError(f"range is limited to {MAX_RANGE_ITEMS} items")
-    return result
-
-
-def _validate(source):
-    if not isinstance(source, str) or not source.strip():
-        raise ValueError("Write some Python code before running the mission.")
-    if len(source) > MAX_SOURCE_LENGTH:
-        raise ValueError("Code exceeds the 8000 character limit.")
-    tree = ast.parse(source, mode="exec")
-    nodes = list(ast.walk(tree))
-    if len(nodes) > MAX_AST_NODES:
-        raise ValueError("Code is too complex for this training mission.")
-    allowed_calls = {
-        "print", "len", "range", "str", "int", "float", "bool", "list", "dict",
-        "tuple", "set", "enumerate", "sorted", "sum", "min", "max", "abs", "zip",
-    }
-    allowed_attributes = {"append", "strip", "lower", "upper"}
-    for node in nodes:
+def _validate(tree):
+    for node in ast.walk(tree):
         if not isinstance(node, ALLOWED_NODES):
-            raise ValueError("Unsupported syntax: " + type(node).__name__)
-        if isinstance(node, ast.Name) and node.id.startswith("_"):
-            raise ValueError("Private names are not available in this lab.")
-        if isinstance(node, ast.Constant):
-            if isinstance(node.value, int) and node.value.bit_length() > 1024:
-                raise ValueError("Integer literal is too large.")
-            if isinstance(node.value, (str, bytes)) and len(node.value) > 4096:
-                raise ValueError("Text literal is too long.")
-        if isinstance(node, ast.Attribute):
-            if node.attr.startswith("_") or node.attr not in allowed_attributes:
-                raise ValueError("This attribute is not available: " + node.attr)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            if node.func.id not in allowed_calls:
-                raise ValueError("Function is not available: " + node.func.id)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            if node.func.attr not in allowed_attributes:
-                raise ValueError("This method is not available.")
+            raise RunnerError(f"Unsupported syntax: {type(node).__name__}")
+        if isinstance(node, ast.Name) and (node.id.startswith("_") or "__" in node.id):
+            raise RunnerError("Names beginning with underscore are not available.")
+        if isinstance(node, ast.Call):
+            if not isinstance(node.func, ast.Name) or node.func.id not in SAFE_BUILTINS:
+                raise RunnerError("Only approved built-in functions may be called.")
+        if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, complex)):
+            raise RunnerError("This value type is not available in the training runner.")
 
 
-def run_code(source, variables=None):
-    output = LimitedOutput()
-    steps = [MAX_STEPS]
-    previous_trace = sys.gettrace()
-    safe_builtins = {
-        "print": print, "len": len, "range": _bounded_range, "str": str,
-        "int": int, "float": float, "bool": bool, "list": list, "dict": dict,
-        "tuple": tuple, "set": set, "enumerate": enumerate, "sorted": sorted,
-        "sum": sum, "min": min, "max": max, "abs": abs, "zip": zip,
-    }
-
-    def budget_trace(_frame, event, _arg):
-        if event == "line":
-            steps[0] -= 1
-            if steps[0] < 0:
-                raise RuntimeError("Execution budget exceeded")
-        return budget_trace
-
+def _execute(source, variables=None):
+    if not isinstance(source, str) or not source.strip():
+        raise RunnerError("Write some Python code before running.")
+    if len(source) > MAX_SOURCE_LENGTH:
+        raise RunnerError("Source is too long for this training exercise.")
     try:
-        _validate(source)
-        compiled = compile(source, "<mission>", "exec")
-        namespace = {"__builtins__": safe_builtins}
-        namespace.update(variables or {})
+        tree = ast.parse(source, mode="exec")
+    except SyntaxError as error:
+        return {"output": "", "error": f"SyntaxError: {error.msg} (line {error.lineno})"}
+    try:
+        _validate(tree)
+    except RunnerError as error:
+        return {"output": "", "error": str(error)}
+
+    namespace = dict(variables or {})
+    output = io.StringIO()
+    counter = {"events": 0}
+
+    def trace(frame, event, arg):
+        if event == "line":
+            counter["events"] += 1
+            if counter["events"] > MAX_TRACE_EVENTS:
+                raise RunnerError("Execution budget exceeded. Check for an unbounded loop.")
+        return trace
+
+    previous_trace = sys.gettrace()
+    try:
+        sys.settrace(trace)
         with contextlib.redirect_stdout(output):
-            sys.settrace(budget_trace)
-            exec(compiled, namespace, namespace)
-        return {"output": output.getvalue().strip(), "error": ""}
-    except Exception as exc:
-        return {"output": output.getvalue().strip(), "error": f"{type(exc).__name__}: {exc}"}
+            exec(compile(tree, "<training-mission>", "exec"),
+                 {"__builtins__": SAFE_BUILTINS}, namespace)
+    except RunnerError as error:
+        return {"output": output.getvalue()[:MAX_OUTPUT_LENGTH], "error": str(error)}
+    except Exception as error:
+        return {"output": output.getvalue()[:MAX_OUTPUT_LENGTH],
+                "error": f"{type(error).__name__}: {error}"}
     finally:
         sys.settrace(previous_trace)
+    return {"output": output.getvalue()[:MAX_OUTPUT_LENGTH], "error": ""}
 
 
-# Exact-output missions deliberately accept the requested output: this is how
-# beginners learn print(), strings, variables, and arithmetic without fake
-# anti-hardcoding rules. Later missions use changing fixtures to test behavior.
+def run_code_json(source):
+    try:
+        return json.dumps(_execute(source))
+    except RunnerError as error:
+        return json.dumps({"output": "", "error": str(error)})
+
+
+def _has_node(tree, node_type):
+    return any(isinstance(node, node_type) for node in ast.walk(tree))
+
+
+def _has_assigned_name(tree, name):
+    return any(isinstance(node, ast.Name) and node.id == name
+               and isinstance(node.ctx, ast.Store) for node in ast.walk(tree))
+
+
+def _concept_check(source, mission_id):
+    try:
+        tree = ast.parse(source, mode="exec")
+    except SyntaxError:
+        return "Fix the syntax error before submitting."
+    if mission_id == 3 and not (_has_assigned_name(tree, "agent")
+                                and _has_assigned_name(tree, "status")):
+        return "This mission teaches variables. Assign values to agent and status."
+    if mission_id == 5 and not (_has_assigned_name(tree, "hp")
+                                and _has_assigned_name(tree, "damage")):
+        return "Use the hp and damage variables required by this exercise."
+    if mission_id == 6 and not _has_node(tree, ast.If):
+        return "The objective requires a conditional. Use if/else."
+    if mission_id == 7 and not _has_node(tree, ast.For):
+        return "The objective requires a for loop. Repeating print statements is not enough."
+    if mission_id == 8 and not (_has_node(tree, ast.For) and _has_node(tree, ast.If)):
+        return "Use both a loop and a condition to inspect the changing event list."
+    return ""
+
+
 MISSIONS = {
-    1: {
-        "title": "First Contact",
-        "concept": "print() dan output pertama",
-        "cases": [({}, "Hello, Cyber Protocol!")],
-        "feedback": "Output berhasil dikirim. Kamu baru saja menjalankan program Python pertamamu.",
-    },
-    2: {
-        "title": "Signal Online",
-        "concept": "Beberapa print() dan komentar",
-        "cases": [({}, "SYSTEM ONLINE\nACCESS GRANTED")],
-        "feedback": "Dua baris output berhasil dikirim. Komentar membantu manusia membaca kode dan tidak dieksekusi Python.",
-    },
-    3: {
-        "title": "Analyst Identity",
-        "concept": "Variabel dan string",
-        "cases": [({}, "MARA\nONLINE")],
-        "feedback": "Variabel menyimpan nilai yang bisa digunakan kembali. Identitas analis berhasil ditampilkan.",
-    },
-    4: {
-        "title": "Power Calibration",
-        "concept": "Angka dan operator aritmetika",
-        "cases": [({}, "42")],
-        "feedback": "Perhitungan selesai. Python dapat melakukan operasi matematika langsung.",
-    },
-    5: {
-        "title": "Repair the Shield",
-        "concept": "Variabel dan operasi matematika",
-        "cases": [({}, "HP: 75")],
-        "feedback": "Nilai HP berhasil dihitung dari variabel. Kamu sudah menggabungkan penyimpanan nilai dan matematika.",
-    },
-    6: {
-        "title": "Power Decision",
-        "concept": "if, else, dan perbandingan",
-        "cases": [
-            ({"energy": 10}, "SYSTEM ACTIVE"),
-            ({"energy": 0}, "SYSTEM STANDBY"),
-            ({"energy": -5}, "SYSTEM STANDBY"),
-        ],
-        "feedback": "Keputusan sistem benar untuk energi positif, nol, dan negatif. Kondisi mengubah perilaku program.",
-    },
-    7: {
-        "title": "Signal Sweep",
-        "concept": "for dan range()",
-        "cases": [({}, "SCAN 1\nSCAN 2\nSCAN 3\nSCAN 4")],
-        "feedback": "Empat tahap pemindaian dijalankan berurutan. Loop menghindarkan kita dari menulis perintah yang sama berulang kali.",
-    },
-    8: {
-        "title": "Threat Triage",
-        "concept": "List, for, if, dan counter",
-        "cases": [
-            ({"events": ["INFO: boot", "ERROR: token", "WARNING: retry", "ERROR: denied"]}, "2"),
-            ({"events": ["ERROR: login", "INFO: audit"]}, "1"),
-            ({"events": ["INFO: ready", "WARNING: disk"]}, "0"),
-        ],
-        "feedback": "Penyaring ancaman berhasil pada tiga kumpulan data berbeda. Kamu siap mempelajari file log pada chapter berikutnya.",
-    },
+    1: {"cases": [({}, "Hello, Cyber Protocol!")]},
+    2: {"cases": [({}, "SYSTEM ONLINE\nACCESS GRANTED")]},
+    3: {"cases": [({}, "MARA\nONLINE")]},
+    4: {"cases": [({}, "42")]},
+    5: {"cases": [({}, "75")]},
+    6: {"cases": [({"energy": 10}, "SYSTEM ACTIVE"), ({"energy": 0}, "SYSTEM STANDBY"), ({"energy": -5}, "SYSTEM STANDBY")]},
+    7: {"cases": [({}, "SCAN 1\nSCAN 2\nSCAN 3\nSCAN 4")]},
+    8: {"cases": [
+        ({"events": ["INFO: boot", "ERROR: token", "WARNING: retry", "ERROR: denied"]}, "2"),
+        ({"events": ["ERROR: login", "INFO: audit"]}, "1"),
+        ({"events": ["INFO: ready", "WARNING: disk"]}, "0"),
+    ]},
 }
 
 
 def evaluate_mission(source, mission_id=1):
-    """Run a mission against its expected output or varied behavior fixtures."""
-    mission = MISSIONS.get(int(mission_id))
+    try:
+        mission_id = int(mission_id)
+    except (TypeError, ValueError):
+        mission_id = -1
+    mission = MISSIONS.get(mission_id)
     if mission is None:
-        return json.dumps({
-            "output": "", "error": "Unknown mission. Select an available mission.",
-            "passed": False, "feedback": "Mission not found.",
-        })
+        return json.dumps({"output": "", "error": "Unknown mission.",
+                           "passed": False, "feedback": "Mission not found."})
+    concept_feedback = _concept_check(source, mission_id)
+    if concept_feedback:
+        return json.dumps({"output": "", "error": "", "passed": False,
+                           "feedback": concept_feedback})
     outputs = []
-    for case_number, (variables, expected) in enumerate(mission["cases"], start=1):
-        result = run_code(source, variables)
+    cases = mission["cases"]
+    for index, (variables, expected) in enumerate(cases, start=1):
+        result = _execute(source, variables)
         if result["error"]:
-            return json.dumps({
-                "output": result["output"], "error": result["error"], "passed": False,
-                "feedback": f"Python error in practice test {case_number}/{len(mission['cases'])}. Read the explanation and try again.",
-            })
+            return json.dumps({"output": result["output"], "error": result["error"],
+                               "passed": False,
+                               "feedback": f"Execution failed in test {index}/{len(cases)}."})
         actual = result["output"].strip()
         outputs.append(actual)
         if actual != expected:
-            return json.dumps({
-                "output": outputs[0], "error": "", "passed": False,
-                "feedback": f"Test {case_number}/{len(mission['cases'])}: expected {expected!r}, got {actual or '(no output)'!r}. Compare your output with the demonstration.",
-            })
-    return json.dumps({
-        "output": outputs[0], "error": "", "passed": True,
-        "feedback": mission["feedback"],
-    })
+            return json.dumps({"output": actual, "error": "", "passed": False,
+                               "feedback": f"Test {index}/{len(cases)}: expected {expected!r}, got {actual or '(no output)'!r}."})
+    return json.dumps({"output": outputs[0] if outputs else "", "error": "",
+                       "passed": True,
+                       "feedback": "All mission checks passed. Required concepts and behavior were verified."})

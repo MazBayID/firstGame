@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: Test Python mission runner
+      - name: Test Python runner
         run: python -m unittest discover -s tests -v
       - uses: actions/setup-java@v4
         with:
@@ -23,7 +23,7 @@ jobs:
           java-version: "17"
       - uses: android-actions/setup-android@v4
         with:
-          packages: 'platform-tools'
+          packages: "platform-tools"
       - name: Install Android SDK
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
