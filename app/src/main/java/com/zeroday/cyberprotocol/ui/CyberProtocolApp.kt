@@ -235,6 +235,9 @@ private fun CyberProtocolGameContent() {
                 feedback = codeFeedback,
                 saveStatus = savedCodeStatus,
                 onSaveCode = {
+                    authoredMission?.let { mission ->
+                        fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
+                    }
                     preferences.edit().putString("saved_code_$storyStage", code.text).apply()
                     val previousState = gameStateRepository.load()
                     gameStateRepository.save(previousState.copy(
@@ -246,7 +249,8 @@ private fun CyberProtocolGameContent() {
                 onRun = {
                     scope.launch {
                         codeFeedback = "MENJALANKAN — hanya eksekusi; belum ada evaluasi misi."
-                        val result = withContext(Dispatchers.IO) { python.run(code.text) }
+                        val workspace = authoredMission?.let { fileSystem.openMissionWorkspace(it) }
+                        val result = withContext(Dispatchers.IO) { python.run(code.text, workspace) }
                         codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                         codeFeedback = "JALANKAN SELESAI — progres kampanye belum berubah."
