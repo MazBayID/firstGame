@@ -417,14 +417,12 @@ private fun CyberProtocolApp(onRunCode: (Int, String, (String, Boolean) -> Unit)
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(localized(language, "MARA / SENIOR SECURITY ANALYST", "MARA / ANALIS KEAMANAN SENIOR"), color = Cyan, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Text(
-                        when (selectedMission) {
-                            1 -> localized(language, "“This is your first coding task. The log lines are prepared in a list named logs. Follow the loop and condition. Replace pass with count += 1 so each ERROR line is counted. The evidence changes during testing.”", "“Ini tugas pemrograman pertamamu. Baris log sudah disiapkan dalam list bernama logs. Ikuti perulangan dan kondisi. Ganti pass dengan count += 1 agar setiap baris ERROR dihitung. Bukti berubah saat pengujian.”")
-                            2 -> localized(language, "“Read access.log and count every line containing WARNING. Do not count ERROR or INFO entries.”", "“Baca access.log dan hitung setiap baris yang berisi WARNING. Jangan hitung entri ERROR atau INFO.”")
-                            else -> localized(language, "“Read access.log and count every line containing FAILED. The evidence will include successful logins too.”", "“Baca access.log dan hitung setiap baris yang berisi FAILED. Bukti juga akan memuat login yang berhasil.”")
-                        },
+                        localized(language,
+                            "“We will build your Python skills one step at a time. Learn the concept, inspect the example, experiment with it, then solve the case. No previous coding experience is required.”",
+                            "“Kita akan membangun kemampuan Python-mu tahap demi tahap. Pelajari konsepnya, amati contoh, bereksperimen, lalu selesaikan kasus. Kamu tidak perlu pengalaman coding sebelumnya.”"),
                         color = Color.White, fontSize = 13.sp, lineHeight = 19.sp
                     )
-                    Text(missionHint + localized(language, " Your code is tested against three evidence files.", " Kode diuji pada tiga file bukti yang berbeda."), color = Muted, fontSize = 11.sp)
+                    Text(missionHint, color = Muted, fontSize = 11.sp, lineHeight = 16.sp)
                     Text(if (selectedMission in completedMissions) localized(language, "REWARD CLAIMED  •  REPLAY FOR PRACTICE", "HADIAH SUDAH DIAMBIL  •  ULANGI UNTUK LATIHAN") else localized(language, "REWARD: 100 XP  •  50 CREDITS", "HADIAH: 100 XP  •  50 KREDIT"), color = Neon, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
             },
