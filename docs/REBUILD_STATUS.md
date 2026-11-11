@@ -151,6 +151,8 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 - Added authored, choice-specific Freya and NEXUS responses. Freya's guidance reflects the active mission and verified-mission count; her response to the recruitment question preserves the hidden identity of the recruiter. NEXUS reports only local campaign facts and offline capability.
 
+- Extracted Freya and NEXUS authored replies into a deterministic dialogue model with unit tests for recruitment-mystery continuity, beginner-support tone, live mission status, and offline-first messaging.
+
 ### Verification observed so far
 - CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
 - CI run `43028768493` passed on commit `73493ac`: the Secure Messenger inbox/chat redesign compiled, Kotlin unit tests passed, and a debug APK artifact was uploaded.
