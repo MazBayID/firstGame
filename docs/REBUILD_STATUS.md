@@ -173,6 +173,12 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 - Release CI assigns a monotonically increasing versionCode from the workflow run number (starting above the existing versionCode 6) and verifies that the APK contains the expected value before artifact upload.
 - Release CI verifies the APK signature and uploads one artifact named `cyber-protocol-release`.
 
+### Verification of the current CI and Release policy
+
+- Android Tests run [43078293753](https://github.com/MazBayID/firstGame/actions/runs/43078293753) passed on commit `7a58b670`; Python runner tests and Android/Kotlin unit tests passed without producing an APK.
+- Android Release APK run [43078293947](https://github.com/MazBayID/firstGame/actions/runs/43078293947) passed on the same commit. The Release build produced `app-release.apk`, versionCode `1024`, verified package identity and both configured ABIs, and confirmed that the APK certificate SHA-256 matches the permanent keystore certificate.
+- The Release artifact `cyber-protocol-release` was uploaded successfully. This is a development snapshot, not a final-game acceptance build; physical-device installation and update validation remain outstanding.
+
 ### Historical verification observed under the former CI design
 The following older runs predate the current test-only / signed-Release-only workflow separation. Their Debug APK artifacts are historical and must not be used as device-test or distribution builds.
 - CI run `43028166224` passed on code commit `83d983e`: Python runner tests, Kotlin unit tests, Android debug APK assembly, and artifact upload all succeeded. This verifies the persisted recruitment-opening state and removal of the old prologue.
