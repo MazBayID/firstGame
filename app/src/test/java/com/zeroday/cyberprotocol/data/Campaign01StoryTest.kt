@@ -8,7 +8,7 @@ import org.junit.Test
 class Campaign01StoryTest {
     @Test
     fun firstContactStartsAfterTheMessengerRecruitmentInvitation() {
-        assertEquals(12, Campaign01Story.beats.size)
+        assertEquals(14, Campaign01Story.beats.size)
         assertEquals("ORIENTASI A.E.G.I.S.", Campaign01Story.beats.first().title)
         assertEquals("LAPORAN INVESTIGASI", Campaign01Story.beats.last().title)
         assertFalse(Campaign01Story.beats.any { it.title.contains("PENGIRIM", ignoreCase = true) })
@@ -18,7 +18,7 @@ class Campaign01StoryTest {
     }
 
     @Test
-    fun sixTechnicalMissionTemplatesAreMappedToTheirStoryStages() {
+    fun eightTechnicalMissionTemplatesAreMappedToTheirStoryStages() {
         assertEquals(
             "signal = \"ACCESS GRANTED\"\nprint(signal)",
             Campaign01Story.codeTemplates[0]
@@ -31,6 +31,8 @@ class Campaign01StoryTest {
         assertEquals(Campaign01Story.codeTemplates[3], Campaign01Story.codeTemplateForStage(9))
         assertEquals(Campaign01Story.codeTemplates[4], Campaign01Story.codeTemplateForStage(11))
         assertEquals(Campaign01Story.codeTemplates[5], Campaign01Story.codeTemplateForStage(12))
+        assertEquals(Campaign01Story.codeTemplates[6], Campaign01Story.codeTemplateForStage(13))
+        assertEquals(Campaign01Story.codeTemplates[7], Campaign01Story.codeTemplateForStage(14))
     }
 
     @Test
