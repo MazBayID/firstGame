@@ -11,11 +11,13 @@ Cyber Protocol is an Android-first Hacker RPG and coding simulation. You play a 
 - Split mission, target-terminal, and code-editor layout.
 - On-screen cursor navigation controls (left/right/up/down and line start/end) for touch editing.
 - Python syntax coloring, line numbers, auto-indent, and editor shortcut keys.
+- Beginner-friendly progression: M01 uses a prepared `logs` list and a guided `pass` placeholder; M02 introduces reading `access.log`; M03 reinforces file iteration and filtering.
 - Chapter 1 campaign with three playable Python investigations:
   - M01 — The Corrupted Access Log (count ERROR entries).
   - M02 — The Warning Signal (count WARNING entries).
   - M03 — The Failed Login Trail (count FAILED login entries).
-- Each mission runs actual player-written Python against three different evidence fixtures.
+- Each mission runs actual player-written Python against three different evidence fixtures. M01's `logs` variable comes from the active evidence file, keeping the player's input aligned with validation.
+- Mission feedback identifies the failed evidence test and shows expected versus actual output.
 - Mission unlocks are sequential; completed missions can be replayed without farming rewards.
 - XP, credits, unlocked/completed missions, and legacy M01 progress are saved locally.
 - GitHub Actions builds a debug APK and uploads it as an artifact.
