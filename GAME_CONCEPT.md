@@ -201,6 +201,10 @@ NEXUS must guide the player's thinking, not automatically solve every mission. H
 The player should have **one primary human mentor** who accompanies them from the beginning of recruitment and serves as their main point of contact throughout the RPG experience.
 
 - The primary mentor builds an ongoing relationship with the player, provides guidance, follows the player's development, and helps maintain continuity across the campaign.
+- The mentor's approved personality direction is **highly intelligent, relaxed, playful, and notably goofy**. Their humor can be absurd or unexpected, especially when others expect a strictly formal agent.
+- The mentor remains genuinely competent and professional when an operation becomes serious. The comedy comes from personality and timing, never from incompetence or careless handling of danger.
+- The mentor appears to make an outrageous recruitment choice by selecting an ordinary person with no programming background for an urgent situation. This is intentional: the mentor has already reviewed information about the player and identified potential that the player has not yet recognized.
+- The mentor's assessment of the player must have a credible in-story basis. The exact source, scope, and method of the mentor's player data—and why the mentor trusts that potential—are deliberate mysteries to reveal gradually. Do not imply unlimited surveillance or expose private real-world user data; this is fictional player-character backstory.
 - The player should not feel as though they are being passed randomly between unrelated guides. The primary mentor remains the familiar central figure.
 - When an operation requires expertise outside the primary mentor's field, the mentor should arrange a clear handoff in the communication interface, introducing or connecting the player with an appropriate specialist.
 - The specialist temporarily leads the conversation for that specific subject or task and provides domain-specific guidance. For example, a technical specialist may assist with device or embedded-system work, while an intelligence analyst may help with evidence interpretation.
