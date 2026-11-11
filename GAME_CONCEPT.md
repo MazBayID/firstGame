@@ -620,3 +620,18 @@ The **Terminal** and **Code Editor** are distinct tools with complementary roles
 - Running code and submitting a mission remain separate actions. RUN executes and displays results; SUBMIT evaluates the mission requirements.
 - Moving between the operation interface and Terminal should preserve the player's current mission context and unsaved editor contents during that active session. Persistence across app closure follows the explicit code-saving rules in §16.2.
 - Other App Hub tools may provide evidence, records, analysis, or operational context, but should not blur the distinct purpose of the editor and Terminal.
+
+
+## 16.6 Terminal — Real In-Game Execution Environment (B2)
+
+The player uses a **real, functional terminal environment built inside Cyber Protocol**. It is not merely a visual mock-up, but it is also not the Android system shell, Termux, or a launcher for external applications. The player remains inside the game throughout the operation.
+
+- Terminal commands and supported programs must actually execute and produce real, inspectable results within a controlled environment owned by the game.
+- The terminal environment should provide a game-managed workspace, command set, files, and simulated operational systems. Its capabilities can expand as missions, rank, and clearance progress.
+- Commands may interact with fictional case files, mission data, simulated databases, and controlled network/system environments when the current operation authorizes them.
+- The terminal must not open or depend on external Android applications. It must not expose unrestricted access to the Android/Linux host shell, device filesystem, processes, network, or privileged system capabilities.
+- The Terminal application remains separate from the mission Code Editor as defined in §16.5. The editor is where the player writes code; the in-game Terminal is where supported commands and programs are executed and their results inspected.
+- Python mission code continues to use the on-device runtime described in §16.1, integrated with the game-managed execution environment. Terminal commands and Python execution must share only explicitly designed interfaces and permitted mission data.
+- Execution results must be available to the Mission Engine and Evaluator through structured, testable interfaces. This allows genuine command/program output to become evidence, satisfy objectives, or reveal story information without allowing terminal code to modify campaign state arbitrarily.
+- Implement strict command permissions, controlled virtual files, execution/resource limits, input validation, and isolation between player code and privileged game logic. Chaquopy or an in-game terminal interface alone does not automatically provide a secure sandbox.
+- The terminal is a core gameplay tool, not a decorative screen. Its command behavior, output, errors, and available capabilities must be consistent, learnable, and testable.
