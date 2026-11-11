@@ -22,7 +22,23 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
     override fun load(): GameState {
         val raw = preferences.getString(KEY_SNAPSHOT, null)
         if (raw.isNullOrBlank()) return migrateLegacyProgress()
-        return runCatching { decode(JSONObject(raw)) }.getOrElse { migrateLegacyProgress() }
+
+        val current = runCatching { decode(JSONObject(raw)) }.getOrNull()
+        if (current != null) return current
+
+        // Preserve the damaged snapshot for diagnostics before attempting recovery.
+        preferences.edit().putString(KEY_CORRUPT_BACKUP, raw).apply()
+        val previousRaw = preferences.getString(KEY_PREVIOUS_SNAPSHOT, null)
+        val previous = previousRaw?.let { runCatching { decode(JSONObject(it)) }.getOrNull() }
+        if (previous != null) {
+            val recovered = previous.copy(lastCheckpoint = "recovered_previous_snapshot")
+            preferences.edit().putString(KEY_SNAPSHOT, encode(recovered).toString()).apply()
+            return recovered
+        }
+
+        val migrated = migrateLegacyProgress().copy(lastCheckpoint = "recovered_legacy_progress")
+        preferences.edit().putString(KEY_SNAPSHOT, encode(migrated).toString()).apply()
+        return migrated
     }
 
     @Synchronized
@@ -34,12 +50,22 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
             clearance = state.clearance.coerceAtLeast(0),
             updatedAtEpochMillis = System.currentTimeMillis()
         )
-        preferences.edit().putString(KEY_SNAPSHOT, encode(normalized).toString()).apply()
+        val encoded = encode(normalized).toString()
+        val previous = preferences.getString(KEY_SNAPSHOT, null)
+        val editor = preferences.edit()
+        if (!previous.isNullOrBlank() && previous != encoded) {
+            editor.putString(KEY_PREVIOUS_SNAPSHOT, previous)
+        }
+        editor.putString(KEY_SNAPSHOT, encoded).apply()
     }
 
     @Synchronized
     override fun clear() {
-        preferences.edit().remove(KEY_SNAPSHOT).apply()
+        preferences.edit()
+            .remove(KEY_SNAPSHOT)
+            .remove(KEY_PREVIOUS_SNAPSHOT)
+            .remove(KEY_CORRUPT_BACKUP)
+            .apply()
     }
 
     private fun migrateLegacyProgress(): GameState {
@@ -132,5 +158,7 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
     companion object {
         private const val STORE_NAME = "cp_game_state_v1"
         private const val KEY_SNAPSHOT = "snapshot"
+        private const val KEY_PREVIOUS_SNAPSHOT = "previous_snapshot"
+        private const val KEY_CORRUPT_BACKUP = "corrupt_snapshot_backup"
     }
 }
