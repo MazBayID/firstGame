@@ -74,7 +74,7 @@ class RunnerTests(unittest.TestCase):
         self.assertIn("read-only", result["error"])
 
     def test_instruction_budget(self):
-        result = self.evaluate("while True:\\n    pass")
+        result = self.evaluate("while True:\n    pass")
         self.assertIn("Execution budget exceeded", result["error"])
 
     def test_range_budget(self):
