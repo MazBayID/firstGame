@@ -679,3 +679,30 @@ Cyber Protocol will include a real, game-managed virtual file system as part of 
 - The game must validate paths and operations, prevent traversal outside the virtual workspace, enforce resource limits, and protect campaign state and system data from arbitrary file modification.
 
 The virtual filesystem should make the terminal feel like a functional computer environment while preserving the controlled, offline-first, story-driven nature of Cyber Protocol.
+
+
+### 16.10 — Hybrid Workspace Persistence
+
+Cyber Protocol will provide two distinct areas within its game-managed virtual filesystem:
+
+**1. Personal Workspace**
+- A persistent workspace belonging to the player-character and available across missions.
+- Players can keep their own scripts, notes, reusable tools, and other permitted files here.
+- Files created or saved in this area remain available when a mission ends and can be used in later missions, subject to the current mission's access rules.
+- The game should make it clear which files are personal work and which are official A.E.G.I.S. resources.
+
+**2. Mission Workspace**
+- Each operation receives its own scoped workspace for mission-specific files, evidence, datasets, reports, and temporary work.
+- Mission data and evidence must remain associated with the operation that supplied them, preserving provenance and preventing accidental mixing between cases.
+- Access may be read-only or read/write depending on the player's authorization and mission objectives.
+- On mission completion, the workspace is retained as part of the operation's archive or case record according to the story and save rules. It must not simply disappear without clear communication to the player.
+- Later missions may explicitly grant access to selected archived material when the story or authorization permits it; one mission must not automatically expose every other mission's private workspace.
+
+**Integration and persistence**
+- The terminal should clearly identify the current location and distinguish Personal Workspace from the active Mission Workspace.
+- Supported commands should allow navigation between areas only when the player has permission.
+- Python execution may read or write files in either area only through explicit game-managed interfaces and the permissions granted to the current operation.
+- Personal files and mission workspaces must be included in the game's local persistence and checkpoint strategy. Code drafts still follow the explicit-save and checkpoint rules defined elsewhere in this document.
+- The design must preserve file ownership, mission association, access permissions, and recovery after interruption or app restart.
+
+This hybrid model gives players a lasting place to develop their own tools while keeping each investigation's evidence and working files organized, attributable, and appropriately restricted.
