@@ -316,6 +316,20 @@ Evaluate each operation according to the kind of work the player is asked to do:
 
 Keep RUN (execute and inspect) separate from SUBMIT (evaluate against mission criteria). A run is not itself a submission or a guarantee of mission completion.
 
+## 10.2 Failure and Retry
+
+The initial campaign uses a **retry-first approach**. A failed submission is a learning opportunity, not an immediate story punishment.
+
+- Explain the unmet requirement and the reason for failure in clear, beginner-appropriate language.
+- Allow the player to revise the work and submit again without restarting the whole operation.
+- Offer graduated hints: start with a conceptual reminder, then give a more focused clue if needed. Do not reveal the full solution by default.
+- Preserve the player's working context and relevant mission progress between attempts.
+- In the initial version, failed attempts do not reduce XP or rank, change relationships, lock mission access, or branch the story. Do not introduce retry penalties or consequence-based failure outcomes.
+- Mission completion still depends on meeting the explicit criteria authored for that operation. The player may experiment through RUN before submitting again.
+- On success, explain what requirements were met and what the player has learned or demonstrated.
+
+This approach encourages beginners to experiment, understand mistakes, and improve without fear of losing campaign progress. Consequence-based failure can be reconsidered separately after the core mission loop is proven.
+
 
 # 11. Code and Story Clues
 
