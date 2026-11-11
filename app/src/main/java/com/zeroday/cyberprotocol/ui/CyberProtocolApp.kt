@@ -249,11 +249,15 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         }
     }
 
-    fun executeTerminalCommand() {
+    fun executeTerminalCommand(
+        missionOverride: com.zeroday.cyberprotocol.core.model.MissionDefinition? = null,
+        onPythonResult: ((String, String) -> Unit)? = null
+    ) {
         val input = command.trim()
         if (input.isEmpty() || terminalBusy) return
         command = ""
-        val activeMission = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
+        val activeMission = missionOverride
+            ?: currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
         val response = if (activeMission == null) {
             fileSystem.execute(input, currentDirectory)
         } else {
@@ -280,7 +284,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 fileSystem.readFile(fileName, currentDirectory, activeMission.workspaceDirectory, activeMission.allowedFiles)
             }
             if (source == null) {
-                appendTerminalOutput("python: tidak dapat membuka '$fileName': file tidak ditemukan\n")
+                val error = "python: tidak dapat membuka '$fileName': file tidak ditemukan"
+                appendTerminalOutput(error + "\n")
+                onPythonResult?.invoke("", error)
             } else {
                 terminalBusy = true
                 scope.launch {
@@ -288,13 +294,55 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     val result = withContext(Dispatchers.IO) {
                         python.run(source, missionWorkspace, activeMission?.runtimeVariables.orEmpty())
                     }
-                    appendTerminalOutput((result.output.ifBlank { "(tidak ada keluaran)" }) + "\n")
+                    val visibleOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                    appendTerminalOutput(visibleOutput + "\n")
                     if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
                     terminalBusy = false
+                    onPythonResult?.invoke(result.output, result.error)
                 }
             }
         } else if (output.isNotBlank()) {
             appendTerminalOutput(output + "\n")
+            onPythonResult?.invoke("", output)
+        }
+    }
+
+    fun runMissionCode(
+        mission: com.zeroday.cyberprotocol.core.model.MissionDefinition,
+        source: String
+    ) {
+        if (terminalBusy) {
+            codeFeedback = "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai."
+            return
+        }
+        val fileName = mission.writableFiles.firstOrNull()
+        if (fileName == null) {
+            codeFeedback = "MISI INI BELUM MENYEDIAKAN FILE KODE YANG DAPAT DITULIS."
+            return
+        }
+        val workspace = fileSystem.openMissionWorkspace(mission)
+        if (!workspace.writeFile(fileName, source)) {
+            codeFeedback = "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI."
+            return
+        }
+        currentDirectory = mission.workspaceDirectory
+        command = "python $fileName"
+        lastSuccessfulRunSource = null
+        codeFeedback = "MENJALANKAN MELALUI A.E.G.I.S. TERMINAL..."
+        executeTerminalCommand(mission) { output, error ->
+            codeOutput = output.ifBlank { "(tidak ada keluaran)" }
+            if (error.isNotBlank()) codeOutput += "\n" + error
+            if (error.isBlank() && code.text == source) {
+                lastSuccessfulRunSource = source
+                codeFeedback = "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control."
+            } else {
+                lastSuccessfulRunSource = null
+                codeFeedback = if (error.isNotBlank()) {
+                    "EKSEKUSI TERMINAL GAGAL — perbaiki kesalahan sebelum verifikasi."
+                } else {
+                    "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                }
+            }
         }
     }
 
@@ -394,30 +442,14 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 },
                 onRun = {
                     val sourceToRun = code.text
+                    val mission = authoredMission
                     if (sourceToRun.isBlank()) {
                         lastSuccessfulRunSource = null
                         codeFeedback = "EDITOR KOSONG — tulis kode terlebih dahulu."
+                    } else if (mission == null) {
+                        codeFeedback = "TIDAK ADA RUANG KERJA MISI AKTIF."
                     } else {
-                        scope.launch {
-                            lastSuccessfulRunSource = null
-                            codeFeedback = "MENJALANKAN — hanya eksekusi; belum ada evaluasi misi."
-                            val workspace = authoredMission?.let { fileSystem.openMissionWorkspace(it) }
-                            val result = withContext(Dispatchers.IO) {
-                                python.run(sourceToRun, workspace, authoredMission?.runtimeVariables.orEmpty())
-                            }
-                            codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
-                            if (result.error.isNotBlank()) codeOutput += "\n" + result.error
-                            if (result.error.isBlank() && code.text == sourceToRun) {
-                                lastSuccessfulRunSource = sourceToRun
-                                codeFeedback = "EKSEKUSI BERHASIL — kode ini siap dikirim untuk verifikasi."
-                            } else {
-                                codeFeedback = if (result.error.isNotBlank()) {
-                                    "EKSEKUSI GAGAL — perbaiki kesalahan sebelum verifikasi."
-                                } else {
-                                    "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
-                                }
-                            }
-                        }
+                        runMissionCode(mission, sourceToRun)
                     }
                 },
                 onContinue = {
@@ -1005,7 +1037,7 @@ private fun StoryScreen(
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SIMPAN KODE") }
-                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN") }
+                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN DI TERMINAL") }
                 }
                 Surface(color = Color(0xFF080D12), shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
