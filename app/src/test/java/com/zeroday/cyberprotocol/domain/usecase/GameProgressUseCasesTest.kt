@@ -112,6 +112,19 @@ class GameProgressUseCasesTest {
     }
 
     @Test
+    fun appUnlocksFollowCampaignStoryProgression() {
+        assertEquals(setOf("MESSENGER"), ProgressionRules.unlockedAppsForStoryBeat(0))
+        assertEquals(
+            setOf("MESSENGER", "DATABASE", "DOSSIER"),
+            ProgressionRules.unlockedAppsForStoryBeat(3)
+        )
+        assertEquals(
+            setOf("MESSENGER", "DATABASE", "DOSSIER", "TERMINAL", "ANALYSIS", "OPERATIONS"),
+            ProgressionRules.unlockedAppsForStoryBeat(7)
+        )
+    }
+
+    @Test
     fun checkpointRejectsBlankIdentifier() {
         val repository = MemoryGameStateRepository()
         assertThrows(IllegalArgumentException::class.java) {
