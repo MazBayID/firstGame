@@ -547,7 +547,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     "AUDIT_COMPLETE" to ("Audit Jejak Selesai" to "first_contact.audit"),
                     "INVENTORY_COMPLETE" to ("Inventaris Rekaman Selesai" to "first_contact.inventory"),
                     "TRACE_COMPLETE" to ("Penelusuran Referensi Selesai" to "first_contact.trace"),
-                    "COMPARE_COMPLETE" to ("Perbandingan Dua Sumber Selesai" to "first_contact.compare")
+                    "COMPARE_COMPLETE" to ("Perbandingan Dua Sumber Selesai" to "first_contact.compare"),
+                    "NORMALIZE_COMPLETE" to ("Normalisasi Waktu Selesai" to "first_contact.normalize"),
+                    "DELTA_COMPLETE" to ("Validasi Selisih Selesai" to "first_contact.validate_delta")
                 )
                 awards.forEach { (_, award) ->
                     val earned = award.second in currentGameState.completedMissionIds
