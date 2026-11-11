@@ -1335,7 +1335,7 @@ private fun MessengerScreen(
                         ChatBubble(
                             "Freya Knox",
                             if (activeMissionTitle != null) {
-                                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Tulis kode di Code Editor, jalankan melalui Terminal, lalu kirim hasilnya dari Browser Mission Control setelah eksekusinya berhasil."
+                                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Kita akan mempelajari terminal dan Python dari dasar sebelum kamu mengerjakan tugas teknis secara mandiri."
                             } else {
                                 "Kalau belum ada tugas aktif, buka kembali rangkaian misi dari Campaign. Aku akan membantumu memahami instruksi saat tugas berikutnya tersedia."
                             },
@@ -1348,17 +1348,22 @@ private fun MessengerScreen(
                         )
                         ChatBubble(
                             "Freya Knox",
-                            "Sebelum mulai bekerja, buka A.E.G.I.S. Intranet melalui Browser internal. Gunakan ID personel RECRUIT-014 dan kode akses FIRSTCONTACT. Portal ini berjalan lokal di perangkatmu.",
+                            "Untuk dukungan teknis tambahan, ada NEXUS. Sistem ini membantu komunikasi intelijen dan diagnostik, tetapi bukan pengganti mentor. Aku tetap akan membimbingmu memahami setiap langkah.",
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            "Terminal adalah tempat memberi perintah teks kepada lingkungan kerja game. Python adalah bahasa yang akan kita gunakan untuk menulis instruksi. Kita mulai dari perintah sederhana, membaca berkas, menyimpan nilai ke variabel, lalu menampilkan hasilnya.",
+                            false
+                        )
+                        ChatBubble(
+                            "Freya Knox",
+                            "Setelah pengenalan dasar, buka A.E.G.I.S. Intranet melalui Browser internal. Gunakan ID personel RECRUIT-014 dan kode akses FIRSTCONTACT. Portal ini berjalan lokal di perangkatmu.",
                             false
                         )
                         ChatBubble(
                             "Freya Knox",
                             "Untuk tugas Sinyal Pertama, aku juga melampirkan message_fragment.txt. Simpan berkas itu ke ruang kerja misi, lalu baca melalui Terminal. Browser Repository dan lampiran ini menunjuk berkas yang sama.",
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            "Untuk tugas teknis, NEXUS adalah sistem pendukung analisis dan komunikasi. Aku sertakan tautan kanalnya di bawah setelah akses intranet tersedia.",
                             false
                         )
                         replies.forEach { message ->
@@ -1389,6 +1394,20 @@ private fun MessengerScreen(
                     Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(7.dp)) {
                         Text("TAUTAN DAN LAMPIRAN DARI FREYA", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
+                        Surface(
+                            onClick = onOpenNexusLink,
+                            color = Color(0xFF263A34),
+                            shape = RoundedCornerShape(18.dp),
+                            border = BorderStroke(1.dp, Color(0xFF36564A)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text("NEXUS  /  KANAL SISTEM", color = Color.White,
+                                    fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text("Dukungan analisis dan komunikasi", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                Text("Ketuk untuk membuka kontak NEXUS", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                            }
+                        }
                         Surface(
                             onClick = onOpenIntranetLink,
                             color = Color(0xFF263A34),
@@ -1426,19 +1445,6 @@ private fun MessengerScreen(
                             }
                             if (attachmentFeedback.isNotBlank()) {
                                 Text(attachmentFeedback, color = Color(0xFF83C7D0), fontSize = 10.sp)
-                            }
-                        }
-                        Surface(
-                            onClick = onOpenNexusLink,
-                            color = Color(0xFF263A34),
-                            shape = RoundedCornerShape(18.dp),
-                            border = BorderStroke(1.dp, Color(0xFF36564A)),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text("NEXUS  /  KANAL SISTEM", color = Color.White,
-                                    fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                Text("Ketuk untuk membuka kontak NEXUS", color = Color(0xFFB9D1C6), fontSize = 10.sp)
                             }
                         }
                         Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
