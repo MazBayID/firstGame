@@ -893,6 +893,17 @@ private fun StoryScreen(
                     Text("${index + 1}. ${objective.title}", color = Color.White, fontWeight = FontWeight.SemiBold)
                     Text(objective.description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
+                mission?.runtimeVariables?.takeIf { it.isNotEmpty() }?.let { datasets ->
+                    Text("DATASET MISI  /  HANYA BACA", color = Color(0xFF83C7D0),
+                        fontSize = 9.sp, letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
+                    datasets.forEach { (name, values) ->
+                        Text(name + " =", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
+                        values.forEach { value ->
+                            Text("  •  \"$value\"", color = Color(0xFFB7D9C2),
+                                fontFamily = FontFamily.Monospace, fontSize = 10.sp)
+                        }
+                    }
+                }
                 if (mission != null) {
                     Text("RUANG KERJA MISI", color = CyberPalette.SteelGray, fontSize = 9.sp, letterSpacing = 1.2.sp)
                     mission.allowedFiles.sorted().forEach { fileName ->
