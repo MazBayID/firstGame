@@ -75,7 +75,7 @@ gradle --no-daemon testDebugUnitTest
 
 These commands run tests only; they do not produce an APK. The **Android Tests** GitHub Actions workflow follows the same rule: it runs Python and Android/Kotlin unit tests only, never builds, signs, or uploads an APK, and never accesses release-signing secrets.
 
-After a push to `main` or the active development branch passes **Android Tests**, the **Android Release APK** workflow builds the exact tested commit as a Release variant. It restores the permanent release keystore only inside the ephemeral CI runner, verifies package identity, ABI, version code, and certificate fingerprint, then publishes the signed `app-release.apk` artifact under GitHub Actions.
+On pushes to `main` or the active development branch, **Android Tests** runs independently as a test-only workflow. The **Android Release APK** workflow has its own mandatory Python/Kotlin validation job; only after that job succeeds does it build the exact same commit as a Release variant. It restores the permanent release keystore only inside the ephemeral CI runner, verifies package identity, ABI, version code, and certificate fingerprint, then publishes the signed `app-release.apk` artifact under GitHub Actions.
 
 For physical-device installation, download only the `cyber-protocol-release` artifact from a successful **Android Release APK** run. Do not use a Debug APK for device acceptance or distribution. Pull-request test runs do not produce release APKs.
 
