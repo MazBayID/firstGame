@@ -116,7 +116,7 @@ class VirtualFileSystem(context: Context) {
                 ""
             }
             "rm" -> {
-                val target = resolve(rest.firstOrNull() ?: "", cwd)
+                val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse("Usage: rm <file>", cwd)
                 if (directories.contains(target)) return TerminalResponse("Penghapusan folder belum tersedia. Hapus file satu per satu.", cwd)
                 if (files.remove(target) == null) return TerminalResponse("File not found: $target", cwd)
