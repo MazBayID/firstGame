@@ -225,10 +225,11 @@ The default presentation for conversations between the player and characters is 
 
 - Freya's conversations with the player appear as messages in a secure A.E.G.I.S. messaging interface, not as default visual-novel dialogue boxes.
 - Messages identify their sender and use distinguishable chat bubbles for the character and player.
-- When a response is needed, present authored reply choices as messages the player can send.
+- When a response is needed, present a set of **predefined authored reply choices** as messages the player can send. The initial version does not accept free-text replies, so story branches and consequences remain deterministic and testable.
 - Preserve conversation history so the player can review important instructions, clues, and relationship moments.
 - Use notifications or unread indicators sparingly for new or consequential messages.
 - The same general approach can support NEXUS and specialist conversations, while preserving each sender's distinct voice and role.
+- The conversation system may later gain optional AI-assisted interaction through an external API such as the OpenAI API. This is a future possibility, not a launch requirement. Core story events, mission progression, relationship state, and consequential decisions must remain controlled by the game and must work without an AI service.
 - The exact visual layout and optional messaging features remain open for later UI design.
 
 
