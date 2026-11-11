@@ -86,11 +86,11 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 
 ## Current status
 
-**Phase 0 — Audit and specification alignment:** in progress.  
-**Phase 1 — Architecture and persistence foundation:** not started.  
-**Phase 2 — Runtime and terminal:** existing prototype foundation; production hardening required.  
-**Phase 3 — Complete campaign and operational systems:** not started.  
-**Phase 4 — Progression, archives, and release quality gates:** not started.
+**Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
+**Phase 1 — Architecture and persistence foundation:** in progress; versioned state and domain mission contracts exist, while navigation/state extraction and recovery tests remain.  
+**Phase 2 — Runtime and terminal:** in progress; virtual terminal and Python adapter exist, but mission-scoped I/O and stronger execution isolation remain.  
+**Phase 3 — Complete campaign and operational systems:** in progress; First Contact has authored mission data and integrated objectives/hints/rewards; the remaining campaign and App Hub systems are unfinished.  
+**Phase 4 — Progression, archives, and release quality gates:** in progress at the foundation level; XP idempotency exists, while rank/clearance/unlocks/archives and full release gates remain.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists.
 
@@ -100,6 +100,11 @@ Branch: `rebuild/full-game`
 Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/firstGame/pull/1)
 
 ### Completed in this implementation increment
+
+- Added a data-driven mission definition contract with objective, graduated-hint, workspace, evaluator, reward, and clearance metadata.
+- Authored the two approved First Contact coding missions as catalog entries; later case concepts remain excluded until approved.
+- Integrated the First Contact mission catalog into the opening story UI: authored briefings/objectives and progressive hint reveal now come from mission data rather than duplicated screen text.
+- Successful First Contact submissions now use the mission completion use case and award their configured XP exactly once.
 - Added `GameState`, evidence models, and a repository interface independent of Android storage APIs.
 - Added versioned local campaign-state persistence, including migration of the previous story-stage preference.
 - Added checkpoint and idempotent mission-completion use cases with clearance and XP rules.
