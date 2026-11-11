@@ -225,7 +225,8 @@ The default presentation for conversations between the player and characters is 
 
 - Freya's conversations with the player appear as messages in a secure A.E.G.I.S. messaging interface, not as default visual-novel dialogue boxes.
 - Messages identify their sender and use distinguishable chat bubbles for the character and player.
-- When a response is needed, present a set of **predefined authored reply choices** as messages the player can send. The initial version does not accept free-text replies, so story branches and consequences remain deterministic and testable.
+- When a response is needed, present a set of **predefined authored reply choices** as messages the player can send. The initial version does not accept free-text replies.
+- Dialogue choices in the initial version are **cosmetic**. They select the player's immediate wording and may produce a different immediate response, but they do not alter relationship values, unlock content, change mission access, or branch the main story. Do not implement persistent dialogue-choice flags or a relationship meter for this version.
 - Preserve conversation history so the player can review important instructions, clues, and relationship moments.
 - Use notifications or unread indicators sparingly for new or consequential messages.
 - The same general approach can support NEXUS and specialist conversations, while preserving each sender's distinct voice and role.
@@ -233,17 +234,16 @@ The default presentation for conversations between the player and characters is 
 - The exact visual layout and optional messaging features remain open for later UI design.
 
 
-## 7.3 Relationship arc
+## 7.3 Relationship portrayal
 
-The mentor-player relationship may develop through:
-- Trust earned through reliable work and honest communication.
-- Familiarity built through recurring conversations and shared experiences.
-- Respect shown when the player demonstrates independent judgment.
-- Disagreement when the player questions an instruction or reaches a different conclusion.
-- Conflict when priorities, withheld information, or consequences create tension.
-- Reconciliation or lasting distance depending on the story and player choices.
+The mentor-player relationship may become warmer, more familiar, or more strained through authored story events and character development. However, in the initial version:
 
-Do not reduce the relationship to a simplistic meter that dictates every line. Use dialogue, remembered events, changed behavior, optional conversations, and consequential scenes. Romance is not assumed or required.
+- Do not implement a numerical relationship or trust meter.
+- Cosmetic dialogue selections do not create persistent relationship consequences.
+- The main story does not branch based on the player's selected chat replies.
+- Relationship changes, when needed, are authored as part of the narrative itself rather than calculated from cosmetic response choices.
+
+A more consequential relationship system may be considered in a later design phase. Romance is not assumed or required.
 
 The mentor's exact age, facial features, hairstyle, clothing, accessories, detailed history, exact expertise, and the full truth behind the player dossier remain open until designed and approved. Her gender, broad personality direction, **youthful and energetic appearance direction**, humor-as-teaching approach, and recruitment rationale above are established story decisions.
 
