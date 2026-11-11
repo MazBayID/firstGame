@@ -44,6 +44,16 @@ class VirtualFileSystemMissionAssetTest {
                 mission.writableFiles
             ).output
         )
+        assertEquals(
+            "PYTHON_LAUNCH:signal.py",
+            VirtualFileSystem(context).execute(
+                "python signal.py",
+                mission.workspaceDirectory,
+                mission.workspaceDirectory,
+                mission.allowedFiles,
+                mission.writableFiles
+            ).output
+        )
     }
 
     @Test
