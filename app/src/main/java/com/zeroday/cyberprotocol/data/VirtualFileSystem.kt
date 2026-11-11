@@ -233,23 +233,8 @@ class VirtualFileSystem(context: Context) {
             .put("files", fileJson).put("directories", dirJson).toString()).apply()
     }
 
-    private fun resolve(input: String, cwd: String, workspaceRoot: String): String? {
-        if (input.isBlank()) return null
-        if (input == "/") return null
-        val parts = if (input.startsWith("/")) mutableListOf<String>() else
-            cwd.trim('/').split('/').filter { it.isNotEmpty() }.toMutableList()
-        input.split('/').forEach { part ->
-            when (part) {
-                "", "." -> Unit
-                ".." -> if (parts.isNotEmpty()) parts.removeAt(parts.lastIndex) else return null
-                else -> parts.add(part)
-            }
-        }
-        if (parts.firstOrNull() != "A.E.G.I.S") return null
-        val resolved = "/" + parts.joinToString("/")
-        if (resolved != workspaceRoot && !resolved.startsWith("$workspaceRoot/")) return null
-        return resolved
-    }
+    private fun resolve(input: String, cwd: String, workspaceRoot: String): String? =
+        VirtualPathPolicy.resolve(input, cwd, workspaceRoot)
 
     private fun parent(path: String): String = path.substringBeforeLast("/", "")
 
