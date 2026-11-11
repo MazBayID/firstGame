@@ -247,6 +247,14 @@ def _concept_check(source, mission_id):
                                  and _has_assigned_name(tree, "archive")
                                  and sum(isinstance(node, ast.Subscript) for node in ast.walk(tree)) >= 2):
         return "Use list indexing to assign receipts[0] to primary and receipts[1] to archive."
+    if mission_id == 14 and not all(_has_assigned_name(tree, name) for name in ("first_time", "second_time", "delta")):
+        return "Convert both receipt_seconds entries with int(), assign first_time and second_time, then calculate delta."
+    if mission_id == 14 and sum(isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "int" for node in ast.walk(tree)) < 2:
+        return "Use int() to convert both timestamp strings before subtracting."
+    if mission_id == 15 and not _has_assigned_name(tree, "difference"):
+        return "Assign the absolute timestamp difference to a variable named difference."
+    if mission_id == 15 and not any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "abs" for node in ast.walk(tree)):
+        return "Use abs() so the reported difference is never negative."
     return ""
 
 
@@ -281,6 +289,16 @@ MISSIONS = {
          "A.E.G.I.S. | RX-14 | 09:41:12\nARCHIVE | RX-14 | 09:41:16"),
         ({"receipts": ["A.E.G.I.S. | RX-19 | 10:05:02", "ARCHIVE | RX-19 | 10:05:02"]},
          "A.E.G.I.S. | RX-19 | 10:05:02\nARCHIVE | RX-19 | 10:05:02"),
+    ]},
+    14: {"cases": [
+        ({"receipt_seconds": ["34872", "34876"]}, "4"),
+        ({"receipt_seconds": ["36302", "36302"]}, "0"),
+        ({"receipt_seconds": ["30620", "30617"]}, "-3"),
+    ]},
+    15: {"cases": [
+        ({"receipt_seconds": ["34872", "34876"]}, "4"),
+        ({"receipt_seconds": ["36302", "36302"]}, "0"),
+        ({"receipt_seconds": ["30620", "30617"]}, "3"),
     ]},
 }
 
