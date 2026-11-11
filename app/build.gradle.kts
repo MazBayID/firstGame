@@ -18,10 +18,11 @@ if (androidVersionCode <= 0) {
     throw GradleException("ANDROID_VERSION_CODE must be a positive integer.")
 }
 
-val apkBuildRequested = gradle.startParameter.taskNames.any {
-    it.contains("assemble", ignoreCase = true)
+val releaseApkBuildRequested = gradle.startParameter.taskNames.any {
+    it.contains("assembleRelease", ignoreCase = true) ||
+        it.contains("bundleRelease", ignoreCase = true)
 }
-if (apkBuildRequested && listOf(
+if (releaseApkBuildRequested && listOf(
         releaseKeystorePath,
         releaseKeystorePassword,
         releaseKeyAlias,
@@ -53,9 +54,6 @@ android {
         }
     }
     buildTypes {
-        getByName("debug") {
-            signingConfig = signingConfigs.getByName("release")
-        }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
