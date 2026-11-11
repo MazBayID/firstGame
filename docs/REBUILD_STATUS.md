@@ -102,7 +102,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 ### Completed in this implementation increment
 
 - Added a data-driven mission definition contract with objective, graduated-hint, workspace, evaluator, reward, and clearance metadata.
-- Authored the two approved First Contact coding missions as catalog entries; later case concepts remain excluded until approved.
+- Authored eight evaluated First Contact coding missions as catalog entries; the two timestamp-analysis exercises extend the same unresolved case, while later case concepts remain excluded until approved.
 - Integrated the First Contact mission catalog into the opening story UI: authored briefings/objectives and progressive hint reveal now come from mission data rather than duplicated screen text.
 - Successful First Contact submissions now use the mission completion use case and award their configured XP exactly once.
 - Successful First Contact submissions now create mission-provenanced evidence records; the recruitment ending adds a separate unresolved transmission-timestamp discrepancy as UNVERIFIED evidence.
