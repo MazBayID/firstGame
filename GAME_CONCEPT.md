@@ -609,8 +609,10 @@ The initial version uses a **local Python runtime on the Android device**. Playe
 
 - Use the established Kotlin + Jetpack Compose application with Python integration through Chaquopy.
 - The code runner must execute player-submitted Python in a controlled environment, separate from the app's privileged internal operations.
-- Apply practical execution safeguards: execution time limits, output limits, input validation, controlled working directories, and prevention of access to unrelated app/device data or privileged Android capabilities.
+- Apply practical execution safeguards: a strict wall-clock budget and line-event budget, source/AST/input/output limits, bounded collections and file writes, controlled working directories, and prevention of access to unrelated app/device data or privileged Android capabilities.
+- The initial runner uses a three-second wall-clock budget and a 50,000 line-event budget; keep limits explicit, configurable, and covered by automated tests.
 - Do not expose unrestricted filesystem, network, process, shell, or Android API access to mission code.
+- Chaquopy execution currently runs in-process. AST restrictions and quotas are defense-in-depth, not process isolation or a guarantee against hostile code. Do not market the initial runner as a hardened hostile-code sandbox or accept arbitrary third-party scripts. A process-isolated runner requires a separately reviewed architecture.
 - Keep mission evaluation separate from execution: RUN executes code and displays output/errors; SUBMIT evaluates the mission requirements.
 - Core code exercises and missions must work offline. A remote execution service is not a dependency of the initial version.
 - Treat sandboxing as a security boundary that requires careful engineering and testing, not as a guarantee merely because Python runs through Chaquopy.
