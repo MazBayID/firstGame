@@ -180,6 +180,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         screenName = GameScreen.APP_HUB.name
     }
 
+    fun appendTerminalOutput(value: String) {
+        terminalOutput = (terminalOutput + value).takeLast(24_000)
+    }
+
     fun executeTerminalCommand() {
         val input = command.trim()
         if (input.isEmpty() || terminalBusy) return
@@ -190,24 +194,24 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             terminalOutput = "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n"
             return
         }
-        terminalOutput += "\n$ $input\n"
+        appendTerminalOutput("\n$ $input\n")
         val output = response.output
         if (output.startsWith("PYTHON_LAUNCH:")) {
             val fileName = output.removePrefix("PYTHON_LAUNCH:")
             val source = fileSystem.readFile(fileName, currentDirectory)
             if (source == null) {
-                terminalOutput += "python: tidak dapat membuka '$fileName': file tidak ditemukan\n"
+                appendTerminalOutput("python: tidak dapat membuka '$fileName': file tidak ditemukan\n")
             } else {
                 terminalBusy = true
                 scope.launch {
                     val result = withContext(Dispatchers.IO) { python.run(source) }
-                    terminalOutput += (result.output.ifBlank { "(tidak ada keluaran)" }) + "\n"
-                    if (result.error.isNotBlank()) terminalOutput += "KESALAHAN: " + result.error + "\n"
+                    appendTerminalOutput((result.output.ifBlank { "(tidak ada keluaran)" }) + "\n")
+                    if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
                     terminalBusy = false
                 }
             }
         } else if (output.isNotBlank()) {
-            terminalOutput += output + "\n"
+            appendTerminalOutput(output + "\n")
         }
     }
 
