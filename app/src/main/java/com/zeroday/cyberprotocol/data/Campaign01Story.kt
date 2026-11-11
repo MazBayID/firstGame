@@ -54,15 +54,30 @@ object Campaign01Story {
             "SELESAIKAN FIRST CONTACT")
     )
 
+    /**
+     * Starter drafts contain objectives only. They intentionally never contain
+     * executable answers; players must author the solution in the editor.
+     */
     val codeTemplates = listOf(
-        "signal = \"ACCESS GRANTED\"\nprint(signal)",
-        "message = \"IDENTITY VERIFIED\"\nprint(message)",
-        "count = 0\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\nprint(count)",
-        "record_count = len(records)\nprint(record_count)",
-        "for index, receipt in enumerate(receipts):\n    if \"RX-14\" in receipt:\n        print(index, receipt)",
-        "primary = receipts[0]\narchive = receipts[1]\nprint(primary)\nprint(archive)",
-        "first_time = int(receipt_seconds[0])\nsecond_time = int(receipt_seconds[1])\ndelta = second_time - first_time\nprint(delta)",
-        "difference = abs(int(receipt_seconds[1]) - int(receipt_seconds[0]))\nprint(difference)"
+        "# TODO: Buat variabel signal dan isi dengan pesan dari briefing.\n# TODO: Tampilkan nilai signal dengan print().",
+        "# TODO: Buat variabel message untuk menyimpan pesan identitas.\n# TODO: Tampilkan nilai message dengan print().",
+        "# TODO: Mulai penghitung dari 0.\n# TODO: Periksa setiap event dengan for dan if.\n# TODO: Tampilkan jumlah event ERROR.",
+        "# TODO: Hitung jumlah item records menggunakan len().\n# TODO: Simpan hasilnya pada record_count lalu tampilkan.",
+        "# TODO: Telusuri receipts menggunakan enumerate().\n# TODO: Gunakan if untuk memilih baris RX-14.\n# TODO: Tampilkan indeks dan isi baris.",
+        "# TODO: Ambil receipts[0] sebagai primary.\n# TODO: Ambil receipts[1] sebagai archive.\n# TODO: Tampilkan kedua variabel.",
+        "# TODO: Konversikan dua nilai receipt_seconds dengan int().\n# TODO: Hitung second_time - first_time dan simpan pada delta.\n# TODO: Tampilkan delta.",
+        "# TODO: Konversikan dua nilai receipt_seconds menjadi integer.\n# TODO: Hitung selisih menggunakan abs() dan simpan pada difference.\n# TODO: Tampilkan difference."
+    )
+
+    private val legacySolutionTemplates = mapOf(
+        4 to "signal = \"ACCESS GRANTED\"\nprint(signal)",
+        5 to "message = \"IDENTITY VERIFIED\"\nprint(message)",
+        8 to "count = 0\nfor event in events:\n    if \"ERROR\" in event:\n        count += 1\nprint(count)",
+        9 to "record_count = len(records)\nprint(record_count)",
+        11 to "for index, receipt in enumerate(receipts):\n    if \"RX-14\" in receipt:\n        print(index, receipt)",
+        12 to "primary = receipts[0]\narchive = receipts[1]\nprint(primary)\nprint(archive)",
+        13 to "first_time = int(receipt_seconds[0])\nsecond_time = int(receipt_seconds[1])\ndelta = second_time - first_time\nprint(delta)",
+        14 to "difference = abs(int(receipt_seconds[1]) - int(receipt_seconds[0]))\nprint(difference)"
     )
 
     fun codeTemplateForStage(stage: Int): String = when (stage) {
@@ -75,5 +90,13 @@ object Campaign01Story {
         13 -> codeTemplates[6]
         14 -> codeTemplates[7]
         else -> ""
+    }
+
+    /** Discards only the exact answers bundled by older builds, preserving player drafts. */
+    fun draftForStage(stage: Int, savedDraft: String?): String {
+        if (savedDraft.isNullOrBlank() || savedDraft == legacySolutionTemplates[stage]) {
+            return codeTemplateForStage(stage)
+        }
+        return savedDraft
     }
 }
