@@ -1,4 +1,4 @@
-name: Android Signed Debug APK
+name: Android Tests
 on:
   push:
     branches: [main]
@@ -29,40 +29,5 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
-      - name: Restore and validate signing keystore
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -n "$ANDROID_KEYSTORE_BASE64"
-          test -n "$ANDROID_KEYSTORE_PASSWORD"
-          test -n "$ANDROID_KEY_ALIAS"
-          KEYSTORE_PATH="$RUNNER_TEMP/cyberprotocol-release.jks"
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
-          chmod 600 "$KEYSTORE_PATH"
-          keytool -list -keystore "$KEYSTORE_PATH" \
-            -alias "$ANDROID_KEY_ALIAS" \
-            -storepass:env ANDROID_KEYSTORE_PASSWORD >/dev/null
-          echo "ANDROID_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
-      - name: Build signed debug APK
-        env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle --no-daemon testDebugUnitTest assembleDebug
-      - name: Verify debug APK signature
-        run: |
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs \
-            app/build/outputs/apk/debug/app-debug.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cyber-protocol-debug-signed
-          path: app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 14
-      - name: Remove temporary signing keystore
-        if: always()
-        run: rm -f "$RUNNER_TEMP/cyberprotocol-release.jks"
+      - name: Run Android unit tests
+        run: gradle --no-daemon testDebugUnitTest
