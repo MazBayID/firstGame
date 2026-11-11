@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
 
 private enum class GameScreen {
     MAIN_MENU, CAMPAIGN, STORY, APP_HUB, MESSENGER, TERMINAL,
-    DATABASE, DOSSIER, ANALYSIS, OPERATIONS
+    DATABASE, DOSSIER, ANALYSIS, OPERATIONS, PROFILE, ARCHIVES, ACHIEVEMENTS, SETTINGS, LANGUAGE
 }
 
 private data class StoryBeat(val title: String, val eyebrow: String, val body: String, val button: String = "LANJUTKAN")
@@ -212,6 +212,8 @@ private fun CyberProtocolGameContent() {
             } else GameScreen.APP_HUB.name
             GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER,
             GameScreen.ANALYSIS, GameScreen.OPERATIONS -> GameScreen.APP_HUB.name
+            GameScreen.PROFILE, GameScreen.ARCHIVES, GameScreen.ACHIEVEMENTS,
+            GameScreen.SETTINGS, GameScreen.LANGUAGE -> GameScreen.MAIN_MENU.name
             GameScreen.MAIN_MENU -> GameScreen.MAIN_MENU.name
         }
     }
@@ -220,7 +222,12 @@ private fun CyberProtocolGameContent() {
         GameScreen.MAIN_MENU -> MainMenuScreen(
             onContinue = { screenName = GameScreen.CAMPAIGN.name },
             onNewCampaign = { showResetDialog = true },
-            onHub = { openHub(GameScreen.MAIN_MENU) }
+            onHub = { openHub(GameScreen.MAIN_MENU) },
+            onProfile = { screenName = GameScreen.PROFILE.name },
+            onArchives = { screenName = GameScreen.ARCHIVES.name },
+            onAchievements = { screenName = GameScreen.ACHIEVEMENTS.name },
+            onSettings = { screenName = GameScreen.SETTINGS.name },
+            onLanguage = { screenName = GameScreen.LANGUAGE.name }
         )
         GameScreen.CAMPAIGN -> CampaignScreen(
             storyStage = storyStage,
@@ -424,6 +431,55 @@ private fun CyberProtocolGameContent() {
             },
             CyberAssets.investigation, { screenName = GameScreen.APP_HUB.name }
         )
+        GameScreen.PROFILE -> InfoAppScreen(
+            "PROFIL AGEN", "A.E.G.I.S. / IDENTITAS PERSONEL",
+            "IDENTITAS: AGEN MAGANG\nRANK: " + currentGameState.rank.replace('_', ' ') +
+                "\nPENGALAMAN: " + currentGameState.experience + " XP" +
+                "\nCLEARANCE: " + currentGameState.clearance +
+                "\nKAMPANYE: " + currentGameState.campaignId +
+                "\nMISI SELESAI: " + currentGameState.completedMissionIds.size +
+                "\nBUKTI TERCATAT: " + currentGameState.evidence.size +
+                "\nCHECKPOINT: " + currentGameState.lastCheckpoint,
+            CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
+        )
+        GameScreen.ARCHIVES -> InfoAppScreen(
+            "ARSIP", "A.E.G.I.S. / RIWAYAT OPERASI",
+            buildString {
+                append("MISI TERVERIFIKASI\n")
+                Campaign01Catalog.missions.filter { it.id in currentGameState.completedMissionIds }
+                    .forEach { append("• ").append(it.title).append("\n") }
+                if (currentGameState.completedMissionIds.isEmpty()) append("Belum ada misi selesai.\n")
+                append("\nBUKTI TERSIMPAN\n")
+                currentGameState.evidence.forEach {
+                    append("• ").append(it.title).append(" / ").append(it.status.name).append("\n")
+                    append("  SUMBER: ").append(it.source).append("\n")
+                }
+                if (currentGameState.evidence.isEmpty()) append("Belum ada bukti tersimpan.\n")
+            },
+            CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
+        )
+        GameScreen.ACHIEVEMENTS -> InfoAppScreen(
+            "PENCAPAIAN", "A.E.G.I.S. / PENGHARGAAN",
+            buildString {
+                val awards = listOf(
+                    "FIRST_SIGNAL" to ("Sinyal Pertama" to "first_contact.signal"),
+                    "IDENTITY_VERIFIED" to ("Identitas Terverifikasi" to "first_contact.identity")
+                )
+                awards.forEach { (_, award) ->
+                    val earned = award.second in currentGameState.completedMissionIds
+                    append(if (earned) "[DIPEROLEH] " else "[TERKUNCI] ")
+                    append(award.first).append("\n")
+                }
+                append(if (currentGameState.storyBeat >= 7) "[DIPEROLEH] Rekrutmen A.E.G.I.S. Selesai" else "[TERKUNCI] Rekrutmen A.E.G.I.S. Selesai")
+            },
+            CyberAssets.investigation, { screenName = GameScreen.MAIN_MENU.name }
+        )
+        GameScreen.SETTINGS -> SettingsScreen(onBack = { screenName = GameScreen.MAIN_MENU.name })
+        GameScreen.LANGUAGE -> InfoAppScreen(
+            "BAHASA", "PREFERENSI LOKALISASI",
+            "BAHASA AKTIF: BAHASA INDONESIA\n\nPaket bahasa Inggris belum tersedia. Pilihan bahasa lain akan diaktifkan setelah seluruh dialog, misi, dan antarmuka memiliki terjemahan yang konsisten.",
+            CyberAssets.document, { screenName = GameScreen.MAIN_MENU.name }
+        )
     }
 
     if (showResetDialog) {
@@ -446,7 +502,7 @@ private fun CyberProtocolGameContent() {
 }
 
 @Composable
-private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, onHub: () -> Unit) {
+private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, onHub: () -> Unit, onProfile: () -> Unit, onArchives: () -> Unit, onAchievements: () -> Unit, onSettings: () -> Unit, onLanguage: () -> Unit) {
     Box(
         Modifier.fillMaxSize().background(
             androidx.compose.ui.graphics.Brush.verticalGradient(
@@ -476,6 +532,11 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
                     MenuButton("LANJUTKAN KAMPANYE", "Lanjutkan berkas rekrutmenmu", onContinue, true)
                     MenuButton("KAMPANYE BARU", "Mulai Bab 001 — Kontak Pertama", onNewCampaign)
                     MenuButton("PUSAT APLIKASI", "Buka perangkat A.E.G.I.S.-mu", onHub)
+                    MenuButton("PROFIL AGEN", "Rank, pengalaman, dan clearance", onProfile)
+                    MenuButton("ARSIP", "Bukti dan riwayat operasi", onArchives)
+                    MenuButton("PENCAPAIAN", "Penghargaan dan milestone", onAchievements)
+                    MenuButton("PENGATURAN", "Audio, kontrol, dan aksesibilitas", onSettings)
+                    MenuButton("BAHASA", "Preferensi bahasa permainan", onLanguage)
                 }
             }
             Spacer(Modifier.height(30.dp))
