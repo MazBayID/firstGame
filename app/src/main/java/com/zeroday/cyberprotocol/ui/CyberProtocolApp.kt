@@ -286,6 +286,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 beat = Campaign01Story.beats[beatIndex - 2],
                 stage = beatIndex,
                 mission = authoredMission,
+                freyaContactUnlocked = currentGameState.freyaContactOpened,
                 hintLevel = hintLevel,
                 onRequestHint = { hintLevel = (hintLevel + 1).coerceAtMost(3) },
                 code = code,
@@ -857,6 +858,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
 @Composable
 private fun StoryScreen(
     beat: StoryBeat, stage: Int, mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?,
+    freyaContactUnlocked: Boolean,
     hintLevel: Int, onRequestHint: () -> Unit,
     code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
     output: String, feedback: String, saveStatus: String, onSaveCode: () -> Unit,
@@ -894,7 +896,11 @@ private fun StoryScreen(
         }
         if (stage == 4 || stage == 5 || stage == 8 || stage == 9 || stage == 11 || stage == 12) {
             GamePanel {
-                Text(if (stage <= 5) "FREYA KNOX  /  BANTUAN PELATIHAN" else "A.E.G.I.S.  /  DATA REVIEW", color = Color(0xFF83C7D0),
+                Text(
+                    if (stage <= 5 && freyaContactUnlocked) "FREYA KNOX  /  BANTUAN PELATIHAN"
+                    else if (stage <= 5) "A.E.G.I.S.  /  PANDUAN MISI"
+                    else "A.E.G.I.S.  /  DATA REVIEW",
+                    color = Color(0xFF83C7D0),
                     fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 Text(mission?.briefing.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 mission?.objectives?.forEachIndexed { index, objective ->
