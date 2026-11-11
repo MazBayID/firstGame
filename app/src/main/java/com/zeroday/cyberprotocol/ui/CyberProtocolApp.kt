@@ -490,22 +490,15 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             },
             CyberAssets.dataAnalysis, { navigate(GameScreen.APP_HUB) }
         )
-        GameScreen.OPERATIONS -> InfoAppScreen(
-            "OPERASI", "AKSES MISI / PEMERIKSAAN IZIN",
-            buildString {
-                append("CAMPAIGN 01  /  THE RECRUITMENT\n")
-                append("CHAPTER 001  /  FIRST CONTACT\n")
-                append("PROGRES CERITA: ").append((currentGameState.storyBeat - 2).coerceIn(0, 14)).append("/14\n\n")
-                Campaign01Catalog.missions.forEach { mission ->
-                    val completed = mission.id in currentGameState.completedMissionIds
-                    val active = mission.id == currentGameState.activeMissionId
-                    append(if (completed) "[SELESAI] " else if (active) "[AKTIF] " else "[TERCATAT] ")
-                    append(mission.title).append("\n")
-                    append("XP: ").append(mission.rewardXp).append("  /  CLEARANCE: ").append(mission.requiredClearance).append("\n\n")
-                }
-                append("Setiap misi memiliki ruang kerja dan sumber data yang terpisah. Hasil pemeriksaan harus tetap sesuai dengan bukti yang tersedia.")
-            },
-            CyberAssets.investigation, { navigate(GameScreen.APP_HUB) }
+        GameScreen.OPERATIONS -> OperationsScreen(
+            gameState = currentGameState,
+            onBack = { navigate(GameScreen.APP_HUB) },
+            onResumeActiveMission = {
+                val activeStage = currentGameState.activeMissionId
+                    ?.let { Campaign01Catalog.storyStageForMission(it) }
+                if (activeStage != null) saveStage(activeStage)
+                navigate(GameScreen.STORY)
+            }
         )
         GameScreen.PROFILE -> InfoAppScreen(
             "PROFIL AGEN", "A.E.G.I.S. / IDENTITAS PERSONEL",
