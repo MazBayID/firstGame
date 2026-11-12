@@ -16,6 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zeroday.cyberprotocol.core.model.CaseDefinition
+import com.zeroday.cyberprotocol.core.model.CasePhase
+import com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator
+import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
@@ -46,7 +50,11 @@ internal object EvidenceAnalysisFilter {
 @Composable
 internal fun AnalysisScreen(
     gameState: GameState,
+    caseDefinition: CaseDefinition,
+    caseProgress: CaseProgress,
     onBack: () -> Unit,
+    onAnalyzeCaseEvidence: (String) -> Unit,
+    onSelectAnalysisConclusion: (String) -> Unit,
     onReviewEvidence: (String, EvidenceStatus, String) -> Unit
 ) {
     var selectedStatus by rememberSaveable { mutableStateOf("ALL") }
@@ -64,6 +72,11 @@ internal fun AnalysisScreen(
         else -> null
     }
     val filtered = EvidenceAnalysisFilter.filter(gameState.evidence, status, query)
+    val casePhase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
+    val caseConclusion = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
+    val caseRecords = caseDefinition.requiredEvidenceIds.mapNotNull { id ->
+        gameState.evidence.firstOrNull { it.id == id }
+    }
 
     Column(
         Modifier.fillMaxSize()
@@ -81,6 +94,16 @@ internal fun AnalysisScreen(
             }
             TextButton(onClick = onBack) { Text("KEMBALI", color = Color(0xFFBCE8EA)) }
         }
+
+        CaseAnalysisWorkspace(
+            definition = caseDefinition,
+            progress = caseProgress,
+            phase = casePhase,
+            selectedConclusion = caseConclusion,
+            records = caseRecords,
+            onAnalyzeEvidence = onAnalyzeCaseEvidence,
+            onSelectConclusion = onSelectAnalysisConclusion
+        )
 
         OutlinedTextField(
             value = query,
@@ -255,6 +278,83 @@ private fun EvidenceRecordCard(record: EvidenceRecord, onReview: () -> Unit) {
             } else {
                 Text("STATUS FINAL — TIDAK DAPAT DIAKTIFKAN KEMBALI",
                     color = Color(0xFF9A879D), fontSize = 8.sp)
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun CaseAnalysisWorkspace(
+    definition: CaseDefinition,
+    progress: CaseProgress,
+    phase: CasePhase,
+    selectedConclusion: com.zeroday.cyberprotocol.core.model.CaseAnalysisOption?,
+    records: List<EvidenceRecord>,
+    onAnalyzeEvidence: (String) -> Unit,
+    onSelectConclusion: (String) -> Unit
+) {
+    Surface(
+        color = Color(0xFF10232B),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, Color(0xFF31545B)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
+            Text("CASE WORKSPACE  /  RX-14", color = Color(0xFF83C7D0),
+                fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
+            Text(definition.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text("FASE  /  " + phase.name.replace('_', ' '), color = Color(0xFF9AB4B8),
+                fontSize = 9.sp, fontWeight = FontWeight.Bold)
+            Text("Analisis hanya dapat dilakukan pada sumber yang sudah diperiksa. Pilih kesimpulan setelah semua sumber wajib dianalisis.",
+                color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
+            records.forEach { record ->
+                val discovered = record.id in progress.discoveredEvidenceIds
+                val analyzed = record.id in progress.analyzedEvidenceIds
+                Surface(color = Color(0xFF111B22), shape = RoundedCornerShape(6.dp),
+                    border = BorderStroke(1.dp, Color(0xFF263F48)), modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(11.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                        Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(record.provenance.sourceLabel + "  /  " + record.provenance.origin.name,
+                            color = Color(0xFF83C7D0), fontSize = 8.sp)
+                        Text(record.summary, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
+                        Text(when {
+                            analyzed -> "ANALISIS TERCATAT"
+                            discovered -> "SIAP DIANALISIS"
+                            else -> "SUMBER BELUM DIPERIKSA — gunakan Messenger, Browser, atau Operations"
+                        }, color = if (analyzed) Color(0xFF8CD5AC) else Color(0xFF9AB4B8),
+                            fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                        OutlinedButton(
+                            onClick = { onAnalyzeEvidence(record.id) },
+                            enabled = phase == CasePhase.ANALYSIS && discovered && !analyzed,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
+                        ) { Text(if (analyzed) "SUDAH DIANALISIS" else "CATAT HASIL ANALISIS") }
+                    }
+                }
+            }
+            val allAnalyzed = definition.requiredEvidenceIds.all { it in progress.analyzedEvidenceIds }
+            if (allAnalyzed && definition.analysisOptions.isNotEmpty()) {
+                Text("KESIMPULAN ANALISIS", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                definition.analysisOptions.forEach { option ->
+                    val selected = progress.analysisConclusionId == option.id
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(option.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(option.description, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
+                        OutlinedButton(
+                            onClick = { onSelectConclusion(option.id) },
+                            enabled = phase == CasePhase.ANALYSIS &&
+                                CasePhaseEvaluator.canSelectAnalysisConclusion(definition, progress, option.id),
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
+                        ) { Text(if (selected) "KESIMPULAN TERSIMPAN" else "UJI KESIMPULAN") }
+                    }
+                }
+                selectedConclusion?.let {
+                    Text(it.feedback, color = if (it.supportedByEvidence) Color(0xFF8CD5AC) else Color(0xFFE3C17B),
+                        fontSize = 10.sp, lineHeight = 16.sp)
+                }
             }
         }
     }

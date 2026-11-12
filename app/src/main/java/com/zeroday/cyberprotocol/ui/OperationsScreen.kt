@@ -32,8 +32,7 @@ internal fun OperationsScreen(
     onAcknowledgeBriefing: () -> Unit,
     onReadSource: (String) -> String?,
     onDiscoverEvidence: (String) -> Unit,
-    onAnalyzeEvidence: (String) -> Unit,
-    onSelectAnalysisConclusion: (String) -> Unit,
+    onOpenAnalysis: () -> Unit,
     onSelectDecision: (String, String) -> Unit,
     onAcknowledgeDebrief: () -> Unit
 ) {
@@ -115,49 +114,24 @@ internal fun OperationsScreen(
             }
             CasePhase.ANALYSIS -> {
                 SectionLabel("03  /  INTELLIGENCE ANALYSIS")
-                InfoPanel("Bandingkan kedua sumber. Catat kesamaan, perbedaan yang terlihat, dan batas kesimpulan yang dapat ditarik.")
+                InfoPanel("Kedua sumber wajib telah dibuka. Gunakan ruang Analisis untuk mencatat hasil pemeriksaan tiap sumber dan memilih kesimpulan yang benar-benar didukung bukti.")
                 records.forEach { record ->
                     val analyzed = record.id in caseProgress.analyzedEvidenceIds
-                    EvidencePanel(
-                        record = record,
-                        discovered = record.id in caseProgress.discoveredEvidenceIds,
-                        analyzed = analyzed,
-                        sourceContent = null,
-                        actionLabel = if (analyzed) "SUDAH DIANALISIS" else "CATAT HASIL ANALISIS",
-                        actionEnabled = !analyzed,
-                        onAction = { onAnalyzeEvidence(record.id) }
-                    )
-                }
-                Text(caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
-                    " dari " + caseDefinition.requiredEvidenceIds.size + " sumber telah dianalisis.",
-                    color = Color(0xFF91A8AD), fontSize = 10.sp)
-                val allRequiredAnalyzed = caseDefinition.requiredEvidenceIds.all {
-                    it in caseProgress.analyzedEvidenceIds
-                }
-                if (allRequiredAnalyzed && caseDefinition.analysisOptions.isNotEmpty()) {
-                    SectionLabel("KESIMPULAN ANALISIS  /  UJI DUKUNGAN BUKTI")
-                    caseDefinition.analysisOptions.forEach { option ->
-                        Surface(
-                            color = if (caseProgress.analysisConclusionId == option.id) Color(0xFF18323A) else Color(0xFF111F27),
-                            shape = RoundedCornerShape(7.dp),
-                            border = BorderStroke(1.dp, Color(0xFF31545B)),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Text(option.title, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                Text(option.description, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
-                                OutlinedButton(
-                                    onClick = { onSelectAnalysisConclusion(option.id) },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
-                                ) { Text(if (caseProgress.analysisConclusionId == option.id) "KESIMPULAN DIPILIH" else "UJI KESIMPULAN") }
-                            }
+                    Surface(
+                        color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
+                        border = BorderStroke(1.dp, Color(0xFF31545B)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                            Text(record.title, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 9.sp)
+                            Text(if (analyzed) "ANALISIS TERCATAT" else "MENUNGGU HASIL ANALISIS",
+                                color = if (analyzed) Color(0xFF8CD5AC) else Color(0xFF9AB4B8),
+                                fontSize = 8.sp, fontWeight = FontWeight.Bold)
                         }
                     }
-                    analysisConclusion?.let { selected ->
-                        InfoPanel(selected.feedback)
-                    }
                 }
+                PrimaryAction("BUKA RUANG ANALISIS", onOpenAnalysis)
             }
             CasePhase.OPERATIONAL_DECISION -> {
                 SectionLabel("04  /  OPERATIONAL DECISION")

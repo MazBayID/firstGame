@@ -705,7 +705,16 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.ANALYSIS -> AnalysisScreen(
             gameState = currentGameState,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
+                ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
             onBack = { navigate(GameScreen.APP_HUB) },
+            onAnalyzeCaseEvidence = { evidenceId ->
+                sessionViewModel.analyzeCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
+            },
+            onSelectAnalysisConclusion = { conclusionId ->
+                sessionViewModel.selectCaseAnalysisConclusion(Campaign01CaseCatalog.rx14, conclusionId)
+            },
             onReviewEvidence = { evidenceId, status, reason ->
                 sessionViewModel.reviewEvidence(evidenceId, status, reason)
             }
@@ -728,11 +737,9 @@ private fun CyberProtocolGameContentBody(
             onDiscoverEvidence = { evidenceId ->
                 sessionViewModel.discoverCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
             },
-            onAnalyzeEvidence = { evidenceId ->
-                sessionViewModel.analyzeCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
-            },
-            onSelectAnalysisConclusion = { conclusionId ->
-                sessionViewModel.selectCaseAnalysisConclusion(Campaign01CaseCatalog.rx14, conclusionId)
+            onOpenAnalysis = {
+                navigation = navigation.copy(hubReturnScreen = GameScreen.OPERATIONS)
+                navigate(GameScreen.ANALYSIS)
             },
             onSelectDecision = { decisionId, rationale ->
                 sessionViewModel.selectCaseDecision(Campaign01CaseCatalog.rx14, decisionId, rationale)

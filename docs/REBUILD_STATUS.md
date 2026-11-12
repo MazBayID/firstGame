@@ -331,3 +331,12 @@ Only after this journey is complete should we schedule a release-candidate batch
 - An operational decision now requires a non-empty player-authored rationale (maximum 600 characters); the rationale is persisted and shown in debrief.
 - Save schema 9 persists the selected analysis conclusion and decision rationale. Schema-8 saves receive safe defaults without losing their existing decision/progress.
 - Source and domain tests cover conclusion gating, retry behavior, rationale persistence, and schema migration. CI verification is pending.
+
+
+## Analysis application connected to RX-14 case progression
+
+- Operations no longer treats evidence analysis as a standalone checklist. Its Analysis phase opens the dedicated Analysis workspace.
+- The Analysis app reads the same persisted RX-14 discovery/analyzed state, records analysis results, and presents the evidence-backed conclusion choices.
+- The player can enter Analysis directly from the hub or through Operations; returning through the hub restores the correct Operations context.
+- The same Analysis app continues to support general evidence status review and audit reasons.
+- Domain tests already cover the phase/conclusion rules; UI compilation and integrated navigation verification are pending.

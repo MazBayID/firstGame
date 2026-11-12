@@ -379,3 +379,13 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The player must provide a non-empty rationale (up to 600 characters) with an operational decision; it is persisted in `CaseProgress` and displayed during debrief.
 - Save schema 9 adds `analysisConclusionId` and `decisionRationale`; schema-8 case progress decodes with safe defaults and retains existing decision state.
 - Tests cover supported/unsupported conclusions, progression gates, retry behavior, and codec migration. Full CI and interactive acceptance are still pending.
+
+
+## Analysis workspace integration
+
+- The Analysis app now contains the RX-14 case workspace in addition to general evidence review.
+- It exposes analysis actions only for discovered records, and exposes analytical conclusions only after all required records have been analyzed.
+- Unsupported conclusions remain retryable; supported conclusions unlock the operational decision phase through shared case state.
+- Operations routes into Analysis and restores its own context on return through the A.E.G.I.S. hub.
+- The Analysis app and Operations consume the same persisted `CaseProgress`; no parallel analysis state is introduced.
+- Automated domain coverage exists for the gating rules. CI and manual navigation checks are pending.
