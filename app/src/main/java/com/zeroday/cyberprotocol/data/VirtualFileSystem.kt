@@ -146,7 +146,9 @@ class VirtualFileSystem(context: Context) {
                     .map { it.substringAfterLast("/") + "/" } else emptyList()
                 val childFiles = files.keys.filter { parent(it) == target && canReadPath(it) }
                     .map { it.substringAfterLast("/") }
-                (childDirs + childFiles).sorted().joinToString("\n").ifBlank { "(empty)" }
+                (childDirs + childFiles).sorted().joinToString("\n").ifBlank {
+                    terminalText(language, "(empty)", "(kosong)")
+                }
             }
             "cd" -> {
                 val target = resolve(rest.firstOrNull() ?: workspaceRoot, cwd, workspaceRoot)
@@ -195,7 +197,7 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse(terminalText(language, "Usage: rm <file>", "Penggunaan: rm <file>"), cwd)
                 if (directories.contains(target)) return TerminalResponse(terminalText(language, "Folder deletion is not available yet. Remove files one at a time.", "Penghapusan folder belum tersedia. Hapus file satu per satu."), cwd)
-                if (!canWritePath(target, 0)) return TerminalResponse("Permission denied: file is read-only or outside its allowlist.", cwd)
+                if (!canWritePath(target, 0)) return TerminalResponse(terminalText(language, "Permission denied: file is read-only or outside its allowlist.", "Akses ditolak: file hanya-baca atau di luar daftar izin."), cwd)
                 if (files.remove(target) == null) return TerminalResponse(terminalText(language, "File not found: $target", "File tidak ditemukan: $target"), cwd)
                 persist()
                 ""
