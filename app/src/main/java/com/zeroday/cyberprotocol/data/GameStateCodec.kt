@@ -18,6 +18,8 @@ internal object GameStateCodec {
         put("rank", state.rank)
         put("experience", state.experience)
         put("clearance", state.clearance)
+        put("technicalCompetencyXp", state.technicalCompetencyXp)
+        put("intelligenceCompetencyXp", state.intelligenceCompetencyXp)
         put("unlockedApps", JSONArray(state.unlockedApps.sorted()))
         put("lastCheckpoint", state.lastCheckpoint)
         put("updatedAtEpochMillis", state.updatedAtEpochMillis)
@@ -142,6 +144,8 @@ internal object GameStateCodec {
             rank = json.optString("rank", "CIVILIAN"),
             experience = json.optInt("experience", 0).coerceAtLeast(0),
             clearance = json.optInt("clearance", 0).coerceAtLeast(0),
+            technicalCompetencyXp = json.optInt("technicalCompetencyXp", 0).coerceAtLeast(0),
+            intelligenceCompetencyXp = json.optInt("intelligenceCompetencyXp", 0).coerceAtLeast(0),
             unlockedApps = json.stringSet("unlockedApps") + ProgressionRules.unlockedAppsForStoryBeat(json.optInt("storyBeat", 0)),
             evidence = evidence, caseProgress = caseProgress, savedCode = code,
             lastCheckpoint = json.optString("lastCheckpoint", "recovered"),

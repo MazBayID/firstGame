@@ -64,6 +64,8 @@ class LocalGameStateRepository(context: Context) : GameStateRepository {
             storyBeat = state.storyBeat.coerceAtLeast(0),
             experience = state.experience.coerceAtLeast(0),
             clearance = state.clearance.coerceAtLeast(0),
+            technicalCompetencyXp = state.technicalCompetencyXp.coerceAtLeast(0),
+            intelligenceCompetencyXp = state.intelligenceCompetencyXp.coerceAtLeast(0),
             updatedAtEpochMillis = System.currentTimeMillis()
         )
         val encoded = GameStateCodec.encode(normalized).toString()

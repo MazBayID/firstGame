@@ -1,5 +1,7 @@
 package com.zeroday.cyberprotocol.core.model
 
+enum class CompetencyTrack { TECHNICAL, INTELLIGENCE }
+
 /** Dominant player experience for a mission; secondary activities never replace its focus. */
 enum class MissionArchetype { NARRATIVE, INVESTIGATION, TECHNICAL, ANALYTICAL, OPERATIONAL }
 

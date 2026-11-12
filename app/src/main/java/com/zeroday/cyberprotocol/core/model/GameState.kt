@@ -16,11 +16,13 @@ data class GameState(
     val unlockedApps: Set<String> = setOf("MESSENGER"),
     val evidence: List<EvidenceRecord> = emptyList(),
     val caseProgress: Map<String, CaseProgress> = emptyMap(),
+    val technicalCompetencyXp: Int = 0,
+    val intelligenceCompetencyXp: Int = 0,
     val savedCode: Map<String, String> = emptyMap(),
     val lastCheckpoint: String = "new_game",
     val updatedAtEpochMillis: Long = 0L
 ) {
-    companion object { const val CURRENT_SCHEMA_VERSION = 7 }
+    companion object { const val CURRENT_SCHEMA_VERSION = 8 }
 }
 
 enum class EvidenceStatus { UNVERIFIED, INFERRED, CORROBORATED, CONFIRMED, DISPUTED, RETRACTED }
