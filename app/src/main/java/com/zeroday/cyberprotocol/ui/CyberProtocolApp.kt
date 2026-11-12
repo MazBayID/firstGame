@@ -682,6 +682,11 @@ private fun CyberProtocolGameContentBody(
                 ?: com.zeroday.cyberprotocol.core.model.CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
             evidenceRecords = currentGameState.evidence,
             onBack = { navigate(GameScreen.APP_HUB) },
+            onReadSource = { evidenceId ->
+                val asset = com.zeroday.cyberprotocol.data.EvidenceAssetCatalog.assets
+                    .firstOrNull { it.evidenceId == evidenceId }
+                asset?.let { fileSystem.readEvidenceAsset(it.id) }
+            },
             onAcknowledgeBriefing = {
                 sessionViewModel.acknowledgeCaseBriefing(Campaign01CaseCatalog.rx14)
             },

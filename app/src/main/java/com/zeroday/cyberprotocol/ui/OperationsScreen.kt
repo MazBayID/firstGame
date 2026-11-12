@@ -8,6 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -26,6 +30,7 @@ internal fun OperationsScreen(
     evidenceRecords: List<EvidenceRecord>,
     onBack: () -> Unit,
     onAcknowledgeBriefing: () -> Unit,
+    onReadSource: (String) -> String?,
     onDiscoverEvidence: (String) -> Unit,
     onAnalyzeEvidence: (String) -> Unit,
     onSelectDecision: (String) -> Unit,
@@ -91,9 +96,15 @@ internal fun OperationsScreen(
                 InfoPanel("Periksa dua catatan penerimaan RX-14. Perbedaan waktu adalah fakta yang perlu dicatat, bukan bukti otomatis adanya manipulasi.")
                 records.forEach { record ->
                     val found = record.id in caseProgress.discoveredEvidenceIds
-                    EvidencePanel(record, found, record.id in caseProgress.analyzedEvidenceIds,
-                        if (found) "SUDAH DIPERIKSA" else "PERIKSA SUMBER",
-                        !found) { onDiscoverEvidence(record.id) }
+                    EvidencePanel(
+                        record = record,
+                        discovered = found,
+                        analyzed = record.id in caseProgress.analyzedEvidenceIds,
+                        sourceContent = if (found) null else onReadSource(record.id),
+                        actionLabel = if (found) "SUDAH DIPERIKSA" else "BUKA SUMBER ASLI",
+                        actionEnabled = !found,
+                        onAction = { onDiscoverEvidence(record.id) }
+                    )
                 }
                 Text(caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
                     " dari " + caseDefinition.requiredEvidenceIds.size + " sumber wajib telah diperiksa.",
@@ -104,9 +115,15 @@ internal fun OperationsScreen(
                 InfoPanel("Bandingkan kedua sumber. Catat kesamaan, perbedaan yang terlihat, dan batas kesimpulan yang dapat ditarik.")
                 records.forEach { record ->
                     val analyzed = record.id in caseProgress.analyzedEvidenceIds
-                    EvidencePanel(record, record.id in caseProgress.discoveredEvidenceIds, analyzed,
-                        if (analyzed) "SUDAH DIANALISIS" else "CATAT HASIL ANALISIS",
-                        !analyzed) { onAnalyzeEvidence(record.id) }
+                    EvidencePanel(
+                        record = record,
+                        discovered = record.id in caseProgress.discoveredEvidenceIds,
+                        analyzed = analyzed,
+                        sourceContent = null,
+                        actionLabel = if (analyzed) "SUDAH DIANALISIS" else "CATAT HASIL ANALISIS",
+                        actionEnabled = !analyzed,
+                        onAction = { onAnalyzeEvidence(record.id) }
+                    )
                 }
                 Text(caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
                     " dari " + caseDefinition.requiredEvidenceIds.size + " sumber telah dianalisis.",
@@ -168,9 +185,29 @@ private fun InfoPanel(value: String) {
 
 @Composable
 private fun EvidencePanel(
-    record: EvidenceRecord, discovered: Boolean, analyzed: Boolean,
-    actionLabel: String, actionEnabled: Boolean, onAction: () -> Unit
+    record: EvidenceRecord,
+    discovered: Boolean,
+    analyzed: Boolean,
+    sourceContent: String?,
+    actionLabel: String,
+    actionEnabled: Boolean,
+    onAction: () -> Unit
 ) {
+    var sourceOpened by remember(record.id) { mutableStateOf(false) }
+    if (sourceOpened && sourceContent != null) {
+        AlertDialog(
+            onDismissRequest = { sourceOpened = false },
+            title = { Text(record.title) },
+            text = { Text(sourceContent, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) },
+            confirmButton = {
+                TextButton(onClick = {
+                    sourceOpened = false
+                    onAction()
+                }) { Text("CATAT SEBAGAI DIPERIKSA") }
+            },
+            dismissButton = { TextButton(onClick = { sourceOpened = false }) { Text("TUTUP") } }
+        )
+    }
     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
@@ -184,8 +221,14 @@ private fun EvidencePanel(
                     color = Color(0xFF91A8AD), fontSize = 10.sp, lineHeight = 15.sp)
             }
             if (analyzed) Text("ANALISIS TERCATAT", color = Color(0xFF8CD5AC), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-            OutlinedButton(onClick = onAction, enabled = actionEnabled, modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))) { Text(actionLabel) }
+            OutlinedButton(
+                onClick = {
+                    if (!discovered && sourceContent != null) sourceOpened = true else onAction()
+                },
+                enabled = actionEnabled && (discovered || sourceContent != null),
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
+            ) { Text(actionLabel) }
         }
     }
 }
