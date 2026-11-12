@@ -69,11 +69,11 @@ This is **interface-copy coverage only**, not full L3/L4 parity. Authored case t
 
 ## Implementation checkpoint — 2026-11-12 (expanded First Contact coverage)
 
-The selected language is now passed into the campaign timeline, story mission workspace, mission debrief, App Hub, main menu, settings, language preference screen, and recruitment/Freya notifications. The RX-14 case title and briefing, analysis option titles/descriptions/feedback, operational decision titles/descriptions, and mission source presentation are resolved at the UI boundary without changing canonical IDs or evaluator contracts.
+The selected language is now passed into the campaign timeline, story mission workspace, mission debrief, App Hub, main menu, settings, language preference screen, recruitment/Freya notifications, Operative Profile, Archives, Achievements, and Terminal. The RX-14 case title and briefing, analysis option titles/descriptions/feedback, operational decision titles/descriptions, and mission source presentation are resolved at the UI boundary without changing canonical IDs or evaluator contracts.
 
-The shared First Contact content resolver now supplies English variants for all eight catalog missions: titles, briefings, next clues, objectives, objective descriptions, and graduated hints. The Story, optional Training Simulator, Browser Mission Control, Intelligence Database, and Personnel Dossier use these localized mission values where those details are shown.
+The shared First Contact content resolver now supplies English variants for all eight catalog missions: titles, briefings, next clues, objectives, objective descriptions, graduated hints, and RX-14 evidence title/summary/source metadata. The Story, optional Training Simulator, Browser Mission Control, Intelligence Database, Personnel Dossier, and Archives use these localized mission values where those details are shown.
 
-A new unit-test suite checks the RX-14 translations, all eight mission-content mappings, and stable language behavior. The current implementation still uses a transitional Kotlin presentation resolver with inline language pairs rather than the final stable resource/message-key system described in the technical direction. Do not mark L2–L5 complete until all remaining player-facing routes and evaluator feedback are covered, a missing-key/content parity check exists, and both language journeys receive manual Android review.
+A new unit-test suite checks the RX-14 translations, all eight mission-content mappings, and stable language behavior. The Python evaluator now receives the selected language for story and optional-practice submissions and returns Indonesian translations for authored guidance, mismatch summaries, and pass feedback; English remains the default for compatibility. The virtual Terminal now localizes its command guide and identity output while preserving command names and file contents. Rank labels and RX-14 evidence metadata are localized at the presentation boundary without mutating persisted values. The implementation still uses a transitional Kotlin presentation resolver with inline language pairs rather than the final stable resource/message-key system described in the technical direction. Do not mark L2–L5 complete until all remaining player-facing routes and evaluator feedback are covered, a missing-key/content parity check exists, and both language journeys receive manual Android review.
 
 
 ## Implementation checkpoint — 2026-11-12 (A.E.G.I.S. profile and evaluator feedback)
@@ -92,3 +92,12 @@ The Python test suite now includes a language-parity check for evaluator feedbac
 - Replace transitional inline bilingual strings with a stable message-key/resource strategy, or document and test the approved alternative if a full resource migration is not justified.
 - Add an automated completeness/parity check covering every player-facing route and authored content ID.
 - Perform manual English and Indonesian journeys on Android, including language switching mid-campaign, force-stop/relaunch, save migration, and end-to-end First Contact completion.
+
+
+## Implementation checkpoint — 2026-11-12 (evidence, Terminal, and rank parity)
+
+The virtual Terminal command guide and `whoami` response now respect the selected language. Command tokens, paths, player-created file contents, and Python output remain untouched. The profile and personnel dossier display localized rank names while the persisted rank identifiers remain canonical.
+
+RX-14 evidence titles, the derived discrepancy summary, and source labels now have English presentation variants in Operations, Analysis, Intelligence Database, and Archives. Original receipt contents and stored EvidenceRecord fields remain unchanged. The evaluator's language parameter and localized feedback are covered by Python tests; Terminal language behavior, rank labels, and evidence metadata have Kotlin unit-test coverage.
+
+This checkpoint is implementation progress, not full localization acceptance. Other VFS error messages, all remaining evidence/review metadata, the full message-key parity mechanism, and physical Android review remain open.
