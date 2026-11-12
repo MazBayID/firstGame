@@ -51,7 +51,7 @@ class TerminalSessionStateTest {
             override fun canBeSaved(value: Any): Boolean = true
         }
 
-        val saved = with(saverScope) { TerminalSessionState.Saver.save(original) }
+        val saved = with(TerminalSessionState.Saver) { with(saverScope) { save(original) } }
         val restored = TerminalSessionState.Saver.restore(saved!!)
 
         assertEquals("python main.py", restored?.command)
