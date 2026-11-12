@@ -218,6 +218,17 @@ def _has_assigned_name(tree, name):
                and isinstance(node.ctx, ast.Store) for node in ast.walk(tree))
 
 
+def _prints_name(tree, name):
+    return any(
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "print"
+        and any(isinstance(argument, ast.Name) and argument.id == name
+                for argument in node.args)
+        for node in ast.walk(tree)
+    )
+
+
 def _concept_check(source, mission_id):
     try:
         tree = ast.parse(source, mode="exec")
@@ -235,10 +246,10 @@ def _concept_check(source, mission_id):
         return "The objective requires a for loop. Repeating print statements is not enough."
     if mission_id == 8 and not (_has_node(tree, ast.For) and _has_node(tree, ast.If)):
         return "Use both a loop and a condition to inspect the changing event list."
-    if mission_id == 9 and not (_has_assigned_name(tree, "signal") and _has_node(tree, ast.Call)):
-        return "Assign the first signal to a variable named signal, then display it with print()."
-    if mission_id == 10 and not (_has_assigned_name(tree, "message") and _has_node(tree, ast.Call)):
-        return "Assign the verified message to a variable named message, then display it with print()."
+    if mission_id == 9 and not (_has_assigned_name(tree, "signal") and _prints_name(tree, "signal")):
+        return "Assign the first signal to signal, then display that variable with print(signal)."
+    if mission_id == 10 and not (_has_assigned_name(tree, "message") and _prints_name(tree, "message")):
+        return "Assign the verified message to message, then display that variable with print(message)."
     if mission_id == 11 and not (_has_assigned_name(tree, "record_count")
                                  and any(isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
                                          and node.func.id == "len" for node in ast.walk(tree))):

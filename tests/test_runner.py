@@ -60,12 +60,18 @@ class RunnerTests(unittest.TestCase):
         result = self.submit(source, 9)
         self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print("ACCESS GRANTED")', 9)["passed"])
+        bypass = self.submit('signal = "WRONG"\nprint("ACCESS GRANTED")', 9)
+        self.assertFalse(bypass["passed"])
+        self.assertIn("print(signal)", bypass["feedback"])
 
     def test_first_contact_stage_two_uses_structured_evaluator(self):
         source = 'message = "IDENTITY VERIFIED"\nprint(message)'
         result = self.submit(source, 10)
         self.assertTrue(result["passed"], result)
         self.assertFalse(self.submit('print("IDENTITY VERIFIED")', 10)["passed"])
+        bypass = self.submit('message = "WRONG"\nprint("IDENTITY VERIFIED")', 10)
+        self.assertFalse(bypass["passed"])
+        self.assertIn("print(message)", bypass["feedback"])
 
     def test_first_contact_audit_uses_loop_and_condition(self):
         source = 'count = 0\nfor event in events:\n    if "ERROR" in event:\n        count += 1\nprint(count)'

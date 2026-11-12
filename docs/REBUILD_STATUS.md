@@ -415,3 +415,9 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Ensure the story's Operational Decision beat opens the shared Operations screen when the case is ready for a decision.
 - Advance to the report beat only after the operational decision is saved and the case enters debrief.
 - Add phase-specific route-policy regression coverage.
+
+
+## Beginner evaluator guardrail — 2026-11-12
+
+- Strengthen the two required variable exercises: successful output must come from `print(signal)` or `print(message)`, not from a hard-coded print that bypasses the variable objective.
+- Add explicit negative regression cases for both bypass patterns. Python runner tests execute in the source workflow.

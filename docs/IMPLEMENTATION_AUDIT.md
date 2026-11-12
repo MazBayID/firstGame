@@ -465,3 +465,9 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The Operational Decision story beat now opens Operations while the case is in the decision phase; it no longer advances past the player's decision prompt.
 - Once the decision is recorded and the case enters debrief, the story CTA can advance to the investigation report beat.
 - Phase routing regression tests cover the operational-decision and debrief transition.
+
+
+## Beginner evaluator integrity
+
+- The two mandatory First Contact variable exercises now require the named variable itself to be passed to `print()`, not merely assigned while a hard-coded output is printed separately.
+- Regression tests include deliberate bypass attempts for both `signal` and `message`, alongside the intended valid submissions.
