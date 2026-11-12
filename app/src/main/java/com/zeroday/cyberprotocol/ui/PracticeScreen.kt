@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zeroday.cyberprotocol.core.model.MissionDefinition
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 
 @Composable
 internal fun PracticeScreen(
@@ -31,6 +32,7 @@ internal fun PracticeScreen(
     canSubmit: Boolean,
     busy: Boolean,
     clearance: Int,
+    selectedLanguage: GameLanguage,
     onSelectMission: (String) -> Unit,
     onBackToList: () -> Unit,
     onBack: () -> Unit,
@@ -51,23 +53,23 @@ internal fun PracticeScreen(
             Column(Modifier.weight(1f)) {
                 Text("A.E.G.I.S. / TRAINING SIMULATOR", color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
-                Text("LATIHAN TAMBAHAN", color = Color.White, fontSize = 22.sp,
+                Text(localizedUiText(selectedLanguage, "OPTIONAL TRAINING", "LATIHAN TAMBAHAN"), color = Color.White, fontSize = 22.sp,
                     fontWeight = FontWeight.Black)
             }
-            TextButton(onClick = onBack, enabled = !busy) { Text("APLIKASI", color = Color(0xFFBCE8EA)) }
+            TextButton(onClick = onBack, enabled = !busy) { Text(localizedUiText(selectedLanguage, "APPS", "APLIKASI"), color = Color(0xFFBCE8EA)) }
         }
         Surface(color = Color(0xFF102A32), shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
             Text(
-                "SIMULASI OPSIONAL  ·  Latihan ini tidak menjadi syarat penyelesaian cerita atau kasus RX-14. Hasil RUN tidak otomatis menyelesaikan latihan; gunakan SUBMIT setelah kode berhasil dijalankan.",
+                localizedUiText(selectedLanguage, "OPTIONAL SIMULATION  ·  This training is not required to complete the story or RX-14 case. RUN does not complete a training mission; use SUBMIT after the code runs successfully.", "SIMULASI OPSIONAL  ·  Latihan ini tidak menjadi syarat penyelesaian cerita atau kasus RX-14. Hasil RUN tidak otomatis menyelesaikan latihan; gunakan SUBMIT setelah kode berhasil dijalankan."),
                 Modifier.padding(13.dp), color = Color(0xFFC2D0D4), fontSize = 10.sp, lineHeight = 16.sp
             )
         }
 
         if (selectedMission == null) {
-            Text("DAFTAR LATIHAN", color = Color(0xFF83C7D0), fontSize = 9.sp,
+            Text(localizedUiText(selectedLanguage, "TRAINING LIST", "DAFTAR LATIHAN"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                 letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
-            Text("Pilih konsep yang ingin kamu latih kembali. Semua latihan memakai workspace dan evaluator yang sama dengan sistem misi.",
+            Text(localizedUiText(selectedLanguage, "Choose a concept to practice. All exercises use the same workspace and evaluator system as campaign missions.", "Pilih konsep yang ingin kamu latih kembali. Semua latihan memakai workspace dan evaluator yang sama dengan sistem misi."),
                 color = Color(0xFF9AB4B8), fontSize = 11.sp, lineHeight = 17.sp)
             missions.forEach { mission ->
                 val completed = mission.id in completedMissionIds
@@ -84,24 +86,24 @@ internal fun PracticeScreen(
                                 color = Color(0xFF9AB4B8), fontSize = 9.sp)
                             Text(
                                 when {
-                                    completed -> "TERVERIFIKASI  ·  BISA DIULANG"
-                                    clearance < mission.requiredClearance -> "CLEARANCE ${mission.requiredClearance} DIPERLUKAN"
-                                    else -> "BELUM DIVERIFIKASI  ·  +${mission.rewardXp} XP"
+                                    completed -> localizedUiText(selectedLanguage, "VERIFIED  ·  REPLAYABLE", "TERVERIFIKASI  ·  BISA DIULANG")
+                                    clearance < mission.requiredClearance -> localizedUiText(selectedLanguage, "CLEARANCE ${mission.requiredClearance} REQUIRED", "CLEARANCE ${mission.requiredClearance} DIPERLUKAN")
+                                    else -> localizedUiText(selectedLanguage, "NOT VERIFIED  ·  +${mission.rewardXp} XP", "BELUM DIVERIFIKASI  ·  +${mission.rewardXp} XP")
                                 },
                                 color = if (completed) Color(0xFF8CD5AC) else Color(0xFF83C7D0),
                                 fontSize = 8.sp, fontWeight = FontWeight.Bold
                             )
                         }
-                        Text("BUKA  ›", color = Color(0xFF83C7D0), fontSize = 9.sp)
+                        Text(localizedUiText(selectedLanguage, "OPEN  ›", "BUKA  ›"), color = Color(0xFF83C7D0), fontSize = 9.sp)
                     }
                 }
             }
         } else {
-            TextButton(onClick = onBackToList, enabled = !busy) { Text("‹  DAFTAR LATIHAN", color = Color(0xFF83C7D0)) }
+            TextButton(onClick = onBackToList, enabled = !busy) { Text(localizedUiText(selectedLanguage, "‹  TRAINING LIST", "‹  DAFTAR LATIHAN"), color = Color(0xFF83C7D0)) }
             Text(selectedMission.title, color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Black)
             Text(selectedMission.briefing, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 18.sp)
             Panel {
-                Text("TUJUAN LATIHAN", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                Text(localizedUiText(selectedLanguage, "TRAINING OBJECTIVES", "TUJUAN LATIHAN"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                 selectedMission.objectives.forEachIndexed { index, objective ->
                     Text("${index + 1}. ${objective.title}", color = Color.White,
@@ -111,7 +113,7 @@ internal fun PracticeScreen(
             }
             if (selectedMission.runtimeVariables.isNotEmpty()) {
                 Panel {
-                    Text("DATASET MISI  /  HANYA BACA", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                    Text(localizedUiText(selectedLanguage, "MISSION DATASET  /  READ ONLY", "DATASET MISI  /  HANYA BACA"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                         letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                     selectedMission.runtimeVariables.forEach { (name, values) ->
                         Text("$name =", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
@@ -121,39 +123,39 @@ internal fun PracticeScreen(
                 }
             }
             Panel {
-                Text("RUANG KERJA", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                Text(localizedUiText(selectedLanguage, "WORKSPACE", "RUANG KERJA"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                 selectedMission.allowedFiles.sorted().forEach { file ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(file, color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
-                        Text(if (file in selectedMission.writableFiles) "BACA / TULIS" else "HANYA BACA",
+                        Text(if (file in selectedMission.writableFiles) localizedUiText(selectedLanguage, "READ / WRITE", "BACA / TULIS") else localizedUiText(selectedLanguage, "READ ONLY", "HANYA BACA"),
                             color = Color(0xFF8AA8AE), fontSize = 8.sp)
                     }
                 }
             }
             if (hintLevel > 0) {
                 selectedMission.hints.firstOrNull { it.level == hintLevel }?.let { hint ->
-                    Text("PETUNJUK $hintLevel/3\n${hint.message}", color = Color(0xFF83C7D0),
+                    Text(localizedUiText(selectedLanguage, "HINT $hintLevel/3\n${hint.message}", "PETUNJUK $hintLevel/3\n${hint.message}"), color = Color(0xFF83C7D0),
                         fontSize = 11.sp, lineHeight = 17.sp)
                 }
             }
             if (hintLevel < 3) OutlinedButton(onClick = onRequestHint) {
-                Text("MINTA PETUNJUK ${hintLevel + 1}/3")
+                Text(localizedUiText(selectedLanguage, "REQUEST HINT ${hintLevel + 1}/3", "MINTA PETUNJUK ${hintLevel + 1}/3"))
             }
             CodeEditor(code, onCodeChange, "EDITOR KODE PYTHON 3", 190)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onSave, modifier = Modifier.weight(1f)) { Text("SIMPAN DRAF") }
+                OutlinedButton(onClick = onSave, modifier = Modifier.weight(1f)) { Text(localizedUiText(selectedLanguage, "SAVE DRAFT", "SIMPAN DRAF")) }
                 Button(onClick = onRun, enabled = !busy, modifier = Modifier.weight(1f)) {
-                    Text(if (busy) "MENJALANKAN…" else "JALANKAN")
+                    Text(if (busy) localizedUiText(selectedLanguage, "RUNNING…", "MENJALANKAN…") else localizedUiText(selectedLanguage, "RUN", "JALANKAN"))
                 }
             }
             Button(onClick = onSubmit, enabled = canSubmit && !busy,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF28634D))) {
-                Text("SUBMIT LATIHAN")
+                Text(localizedUiText(selectedLanguage, "SUBMIT TRAINING", "SUBMIT LATIHAN"))
             }
             Panel {
-                Text("KELUARAN TERMINAL", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                Text(localizedUiText(selectedLanguage, "TERMINAL OUTPUT", "KELUARAN TERMINAL"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                 Text(output, color = Color(0xFFB7D9C2), fontFamily = FontFamily.Monospace,
                     fontSize = 10.sp, lineHeight = 15.sp)
