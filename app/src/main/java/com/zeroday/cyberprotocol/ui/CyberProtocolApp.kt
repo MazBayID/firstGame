@@ -1103,11 +1103,37 @@ private fun CyberProtocolGameContentBody(
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
             title = { Text(localizedUiText(selectedLanguage, "START A NEW CAMPAIGN?", "MULAI KAMPANYE BARU?")) },
-            text = { Text(localizedUiText(selectedLanguage, "Campaign story progress will return to the beginning. Files in Personal Workspace will remain saved.", "Progres cerita kampanye akan kembali ke awal. File di Ruang Kerja Pribadi akan tetap tersimpan.")) },
+            text = { Text(localizedUiText(selectedLanguage, "Campaign progress, mission workspaces, and conversations will reset. Personal Workspace files and the shared evidence archive will remain saved.", "Progres kampanye, ruang kerja misi, dan percakapan akan direset. File di Ruang Kerja Pribadi dan arsip bukti bersama akan tetap tersimpan.")) },
             confirmButton = {
                 TextButton(onClick = {
                     showResetDialog = false
                     sessionViewModel.resetCampaign()
+                    fileSystem.resetMissionWorkspaces()
+                    messengerPreferences.edit().remove("freya_replies").remove("nexus_replies").apply()
+                    messengerSession = MessengerSessionState()
+                    browserSession = BrowserSessionState(
+                        authenticated = browserPreferences.getBoolean("authenticated", false)
+                    )
+                    terminalSession = TerminalSessionState(
+                        currentDirectory = fileSystem.initialDirectory(),
+                        output = TerminalSessionState.initialOutput(selectedLanguage)
+                    )
+                    terminalReturnScreen = GameScreen.APP_HUB.name
+                    practiceMissionId = null
+                    practiceCode = TextFieldValue("")
+                    practiceLastSuccessfulRunSource = null
+                    practiceOutput = ""
+                    practiceFeedback = ""
+                    practiceHintLevel = 0
+                    practiceSubmitting = false
+                    lastSuccessfulRunSource = null
+                    codeOutput = ""
+                    codeFeedback = ""
+                    savedCodeStatus = localizedUiText(selectedLanguage, "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN")
+                    debriefTitle = ""
+                    debriefFeedback = ""
+                    debriefXp = 0
+                    debriefClue = ""
                     preferences.edit().putInt("story_stage", 0).apply()
                     saveStage(0)
                     navigate(GameScreen.CAMPAIGN)
