@@ -61,7 +61,7 @@ These foundations are not automatically production-ready. Python file access is 
 - Develop the Evidence & Investigation Engine as the cross-app source of truth for evidence identity, content/reference, provenance, uncertainty/status, related findings, and audited review actions. Define the schema and allowed status transitions before broad implementation.
 - Expand deterministic hybrid evaluation to distinguish technical execution, evidence discovery, analytical reasoning, and operational decisions. Preserve multiple defensible conclusions where the authored evidence supports them; never require hidden criteria.
 - Preserve RUN/SUBMIT separation, mission workspace permissions, graduated hints, and learning-oriented retry behavior.
-- Preserve Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as the guided beginner chapter with fourteen story beats and eight evaluated Python missions. Do not rewrite its approved narrative merely to force mission variety.
+- Preserve Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as the guided beginner chapter and preserve its approved narrative, characters, fourteen story beats, and unresolved RX-14 evidence premise. The previous requirement to preserve eight evaluated Python missions as a fixed linear sequence is superseded: redesign, merge, make optional, or retire legacy mission mechanics wherever they conflict with the Guided Intelligence RPG. Keep beginner Python teaching progressive, but do not force code into non-technical case phases.
 - Use code/syntax clues when they naturally foreshadow the next technical concept; do not force them into every mission archetype.
 - Introduce SQL, networking, C++, and IoT progressively when campaign problems justify them; Python is the first technical track.
 
@@ -114,7 +114,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 ### Completed in this implementation increment
 
 - Added a data-driven mission definition contract with objective, graduated-hint, workspace, evaluator, reward, and clearance metadata.
-- Authored eight evaluated First Contact coding missions as catalog entries; the two timestamp-analysis exercises extend the same unresolved case, while later case concepts remain excluded until approved.
+- The original First Contact catalog contains eight evaluated coding missions. These are legacy mechanics under redesign, not a mandatory linear gameplay contract. Their learning concepts may be retained as Freya-led training or optional practice; the RX-14 case should require code only where it genuinely serves the investigation.
 - Integrated the First Contact mission catalog into the opening story UI: authored briefings/objectives and progressive hint reveal now come from mission data rather than duplicated screen text.
 - Removed bundled executable answers from all eight First Contact mission starters; starter files now contain objective-only TODO comments, and exact legacy bundled solutions are cleared on load while custom player drafts remain intact.
 - Added a mission practice gate: SUBMIT is blocked until the exact current editor source has completed RUN without errors; editing code invalidates that run result, and edits made during execution/verification cannot advance the campaign.
@@ -230,3 +230,16 @@ The following older runs predate the current test-only / signed-Release-only wor
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
 
 The repository's long-lived development and release branch is `main`. The game remains a development build: the integrated rebuild is not complete and must not be represented as final-game release-ready.
+
+## Latest gameplay direction — supersedes the eight-mission preservation rule
+
+**Player decision, 2026-11-12:** the current gameplay may be changed when it conflicts with the latest Guided Intelligence RPG plan. The previous constraint to preserve all eight evaluated Python missions as fixed, mandatory mechanics is removed.
+
+Implementation requirements:
+- Preserve First Contact's approved narrative and beginner-onboarding purpose, not obsolete mission mechanics.
+- Make the RX-14 discrepancy a coherent evidence-backed case with flexible briefing, investigation, analysis, decision, and debrief phases.
+- Treat the eight old Python concepts as curriculum material. Keep only the technical steps that naturally serve the case; move the rest to optional practice/learning or redesign them.
+- Do not force visits to every app. The player chooses relevant tools to solve the problem.
+- Allow a qualified 'insufficient evidence' outcome when the sources do not establish a cause.
+- Retire or migrate old evaluator IDs and mission-save state deliberately; preserve drafts and earned progress where safely possible.
+- No new culprit, tampering claim, or additional story case is authorized by this gameplay change.

@@ -706,7 +706,7 @@ The following details remain open and must be designed deliberately before imple
 - Final technical architecture and Android performance strategy.
 - Audio direction, accessibility, and cinematic asset pipeline.
 
-The five mission archetypes and five-phase gameplay loop are design tools, not a mandate to create five separate modes or screens. Begin implementation with the smallest reusable vertical slice that demonstrates a complete evidence-backed case. Preserve First Contact as the guided beginner/onboarding chapter; do not rewrite its approved story or eight evaluated Python missions merely to force variety into the opening.
+The five mission archetypes and five-phase gameplay loop are design tools, not a mandate to create five separate modes or screens. Begin implementation with the smallest reusable vertical slice that demonstrates a complete evidence-backed case. Preserve First Contact's approved story, characters, beginner-friendly purpose, and unresolved RX-14 evidence premise. The previous requirement to preserve eight evaluated Python missions as a fixed, linear gameplay sequence is superseded by the latest player decision: redesign, merge, make optional, or retire legacy mission mechanics whenever they conflict with the Guided Intelligence RPG. Keep Python teaching progressive and accessible, but require code only when it serves the current learning objective or operation. Update evaluator IDs, save migration, and regression tests deliberately if the mission structure changes; do not preserve obsolete mechanics merely for compatibility.
 
 Develop open details systematically. Mark unapproved specifics as proposals until the user approves them.
 
@@ -1006,30 +1006,33 @@ The in-game **Pesan Aman / Secure Messenger** should feel like a familiar, polis
 - Keep the experience offline-first and locally persisted. No real phone contacts, SMS, notifications, or external messaging account access is required.
 
 
-# 23. First Contact — Approved Mission and Evidence Sequence
+# 23. First Contact — Guided Case, Not a Fixed Coding Checklist
 
-The opening chapter now contains eight technical missions across fourteen story beats. It is one continuous orientation and investigation, not eight unrelated coding exercises.
+First Contact remains the guided beginner chapter and the player's first introduction to A.E.G.I.S. Its approved narrative, character introductions, recruitment sequence, fourteen story beats, and unresolved RX-14 discrepancy remain the narrative foundation.
 
-| Mission | Player learning objective | Evidence purpose |
-|---|---|---|
-| Sinyal Pertama | Variables and `print()` | Verify a first authored response |
-| Verifikasi Identitas | Named variables and output | Verify a second response |
-| Audit Jejak Sistem | `for`, `if`, counting | Count ERROR entries in a supplied event log |
-| Inventaris Rekaman | `len()` | Count available record references |
-| Penelusuran Referensi | `enumerate()`, loop, filtering | Find the matching reference while retaining source indices |
-| Perbandingan Dua Sumber | List indexing and named variables | Read and display the two receipt records for comparison |
-| Normalisasi Waktu | `int()`, indexing, subtraction | Convert timestamp strings and calculate a signed delta |
-| Validasi Selisih | `abs()`, arithmetic | Calculate the absolute difference across reversed source order |
+The gameplay mechanism is now governed by the Guided Intelligence RPG:
 
-- All datasets are fictional, deterministic, local, and read-only during execution.
-- RUN executes the player's code against the current mission dataset; SUBMIT evaluates the solution against multiple fixtures where appropriate.
-- Mission evaluators must verify the intended programming concept as well as the expected behavior. A hard-coded answer must not pass a mission that teaches a variable, loop, condition, enumeration, or indexing.
-- Each mission carries a concise forward clue, surfaced in the mission debrief after successful verification. Clues should point toward the next story action or technical concept without revealing its full solution.
-- The final report records the four-second difference between A.E.G.I.S. and ARCHIVE receipt times without asserting a cause.
-- The discrepancy remains unverified as to cause. Do not introduce a culprit, reveal manipulation, or start a separate case without approved narrative content.
-- Completion of the fourteen story beats is the First Contact chapter milestone. Recruitment clearance is awarded at the earlier Recruit milestone; the later missions extend the chapter rather than changing the initial recruitment event.
+- The central unit is the RX-14 problem: two receipt records show a four-second timestamp difference. The player investigates what the records establish, what they do not establish, and what a proportionate next step would be.
+- The five experience phases—Intelligence Briefing, Investigation, Intelligence Analysis, Operational Decision, and Debriefing & Progression—are flexible case phases, not mandatory app visits or separate screens.
+- The player may inspect relevant messages, source files, intranet records, dossier material, and database entries in a useful order. App navigation is not itself an objective.
+- The original receipt assets remain immutable. The derived discrepancy is a separate finding linked to its sources. A timestamp difference does not prove tampering or identify a cause.
+- The player must be allowed to report that the available evidence is insufficient. A defensible uncertainty statement is not a failure.
+- A small Python task may be used when it genuinely helps inspect or compare records. It must not be inserted merely to force every concept into the case.
 
+### Superseded legacy mission sequence
 
+The former eight evaluated Python missions are no longer a mandatory linear progression contract. Their learning concepts remain useful as the beginner Python curriculum, but their old mission boundaries, evaluator IDs, and completion gates may be redesigned:
+
+- Keep essential beginner instruction with Freya: terminal basics, reading files, variables, output, and understanding errors.
+- Move practice that is useful but not essential to the RX-14 decision into optional PRACTICE or LEARN activities.
+- Retain a technical mission only when code is a natural and meaningful way to solve the operational problem.
+- Do not force `for`, `if`, `len()`, `enumerate()`, indexing, `int()`, or `abs()` into the case merely to preserve the old evaluator sequence.
+- If a legacy evaluator is retired or its mission is merged, update catalog references, story transitions, save migration, tests, and documentation together. Do not leave obsolete IDs as hidden progression blockers.
+- Preserve player drafts and already-earned campaign progress where a migration can do so safely. Explain any unavoidable incompatibility before shipping it.
+
+This supersedes the former rule that all eight evaluated Python missions must remain unchanged. It does not authorize changing the approved recruitment premise, Freya/NEXUS roles, or the unresolved meaning of RX-14 without a separate story decision.
+
+---
 ## 23.1 — Zero-Prerequisite Onboarding: Freya's Full Technical Training
 
 Cyber Protocol must be playable and understandable by someone who has **never used a command-line terminal and has never written a line of code**. The player is not expected to arrive with programming knowledge. Teaching these skills from the ground up is a core part of the opening campaign and of the game's identity.

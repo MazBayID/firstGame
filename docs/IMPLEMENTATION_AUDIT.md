@@ -277,3 +277,27 @@ This refresh does not introduce story canon or change gameplay implementation. I
 - The two source records remain UNVERIFIED. The discrepancy record is a separate derived finding linked to both sources; the source pair is related as contradictory only on its recorded timestamp. No cause is asserted.
 - Existing First Contact story beats and all eight evaluator contracts remain unchanged.
 - Added VFS tests for gated installation, shared reads, and persistence across VFS reconstruction.
+
+## Latest player decision — gameplay mechanics may be redesigned
+
+**Decision date:** 2026-11-12
+
+The previous preservation constraint for eight evaluated First Contact Python missions as a fixed linear sequence is superseded. The player explicitly authorized changing current gameplay mechanics whenever they conflict with the approved Guided Intelligence RPG.
+
+The following remain canonical:
+- First Contact's approved recruitment story, character roles, beginner-onboarding purpose, and RX-14 timestamp discrepancy.
+- The original source records and the rule that their four-second difference does not prove tampering or its cause.
+- Progressive Python teaching for beginners, while code is used in a case only when it naturally serves the problem.
+
+The following are no longer immutable:
+- The eight old mission boundaries and their mandatory linear progression.
+- The old evaluator IDs as permanent gameplay gates.
+- The requirement that every First Contact learning concept be passed as a separate mission.
+
+Next implementation direction:
+1. Rework First Contact into a coherent evidence-backed case using flexible case phases.
+2. Keep essential Freya-led terminal/Python onboarding; move unrelated or repetitive exercises to optional practice/learning.
+3. Retain only technically meaningful code work in the case; make investigation and analytical reasoning first-class gameplay.
+4. Provide deterministic, fair decision evaluation, including a valid insufficient-evidence outcome.
+5. Migrate old saves and drafts safely when catalog/evaluator contracts change.
+6. Do not author an unapproved culprit, tampering explanation, or separate new case.
