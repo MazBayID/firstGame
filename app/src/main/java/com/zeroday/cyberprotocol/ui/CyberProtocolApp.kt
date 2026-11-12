@@ -1789,7 +1789,7 @@ private fun MessengerScreen(
                             ChatBubble("Freya Knox", message, false)
                         }
                         replies.forEach { message ->
-                            ChatBubble("Kamu", message, true)
+                            ChatBubble(localizedUiText(selectedLanguage, "You", "Kamu"), message, true)
                             ChatBubble(
                                 "Freya Knox",
                                 MessengerDialogue.freyaResponse(message, selectedLanguage),
@@ -1802,7 +1802,7 @@ private fun MessengerScreen(
                             ChatBubble("NEXUS", message, false)
                         }
                         replies.forEach { message ->
-                            ChatBubble("Kamu", message, true)
+                            ChatBubble(localizedUiText(selectedLanguage, "You", "Kamu"), message, true)
                             ChatBubble(
                                 "NEXUS",
                                 MessengerDialogue.nexusResponse(message, activeMissionTitle, completedMissionCount, selectedLanguage),
@@ -1839,9 +1839,9 @@ private fun MessengerScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text("A.E.G.I.S. INTRANET  /  BROWSER", color = Color.White,
+                                Text(localizedUiText(selectedLanguage, "A.E.G.I.S. INTRANET  /  BROWSER", "A.E.G.I.S. INTRANET  /  BROWSER"), color = Color.White,
                                     fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                Text("ID: RECRUIT-014  ·  KODE: FIRSTCONTACT", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                Text(localizedUiText(selectedLanguage, "ID: RECRUIT-014  ·  CODE: FIRSTCONTACT", "ID: RECRUIT-014  ·  KODE: FIRSTCONTACT"), color = Color(0xFFB9D1C6), fontSize = 10.sp)
                                 Text(localizedUiText(selectedLanguage, "Tap to open the offline internal portal", "Ketuk untuk membuka portal internal offline"), color = Color(0xFFB9D1C6), fontSize = 10.sp)
                             }
                         }
