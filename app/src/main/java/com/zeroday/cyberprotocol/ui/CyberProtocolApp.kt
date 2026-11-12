@@ -1056,24 +1056,12 @@ private fun CyberProtocolGameContentBody(
             },
             CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
         )
-        GameScreen.ARCHIVES -> InfoAppScreen(
-            localizedUiText(selectedLanguage, "ARCHIVES", "ARSIP"),
-            localizedUiText(selectedLanguage, "A.E.G.I.S. / OPERATION HISTORY", "A.E.G.I.S. / RIWAYAT OPERASI"),
-            buildString {
-                append(localizedUiText(selectedLanguage, "VERIFIED MISSIONS\n", "MISI TERVERIFIKASI\n"))
-                Campaign01Catalog.missions.filter { it.id in currentGameState.completedMissionIds }
-                    .forEach { append("• ").append(CaseLocalizedContent.missionTitle(it, selectedLanguage)).append("\n") }
-                if (currentGameState.completedMissionIds.isEmpty())
-                    append(localizedUiText(selectedLanguage, "No completed missions yet.\n", "Belum ada misi selesai.\n"))
-                append("\n").append(localizedUiText(selectedLanguage, "STORED EVIDENCE\n", "BUKTI TERSIMPAN\n"))
-                currentGameState.evidence.forEach {
-                    append("• ").append(CaseLocalizedContent.evidenceTitle(it, selectedLanguage)).append(" / ").append(localizedEvidenceStatus(it.status, selectedLanguage)).append("\n")
-                    append("  ").append(localizedUiText(selectedLanguage, "SOURCE: ", "SUMBER: ")).append(CaseLocalizedContent.evidenceSource(it, selectedLanguage)).append("\n")
-                }
-                if (currentGameState.evidence.isEmpty())
-                    append(localizedUiText(selectedLanguage, "No evidence stored yet.\n", "Belum ada bukti tersimpan.\n"))
-            },
-            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
+        GameScreen.ARCHIVES -> ArchivesScreen(
+            gameState = currentGameState,
+            selectedLanguage = selectedLanguage,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = rx14Progress,
+            onBack = { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.ACHIEVEMENTS -> InfoAppScreen(
             localizedUiText(selectedLanguage, "ACHIEVEMENTS", "PENCAPAIAN"),
