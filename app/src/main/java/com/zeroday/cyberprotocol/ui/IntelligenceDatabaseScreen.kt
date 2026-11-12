@@ -282,6 +282,5 @@ private fun evidenceColor(status: EvidenceStatus): Color = when (status) {
 }
 
 
-@Composable
 private fun databaseText(language: GameLanguage, english: String, indonesian: String): String =
     localizedUiText(language, english, indonesian)
