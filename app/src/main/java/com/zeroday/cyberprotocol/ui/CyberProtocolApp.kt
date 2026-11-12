@@ -661,6 +661,7 @@ private fun CyberProtocolGameContentBody(
             } else {
                 CampaignScreen(
                     storyStage = storyStage,
+                    selectedLanguage = selectedLanguage,
                     onBack = { navigate(GameScreen.MAIN_MENU) },
                     onContinue = { navigate(if (storyStage < 16) GameScreen.STORY else GameScreen.APP_HUB) },
                     onHub = { openHub(GameScreen.CAMPAIGN) }
@@ -686,6 +687,7 @@ private fun CyberProtocolGameContentBody(
                 beat = Campaign01StoryLocalization.localizedBeat(beatIndex - 2, selectedLanguage),
                 stage = beatIndex,
                 mission = authoredMission,
+                selectedLanguage = selectedLanguage,
                 freyaContactUnlocked = currentGameState.freyaContactOpened,
                 caseComplete = rx14CaseComplete,
                 casePhase = rx14CasePhase,
@@ -1229,10 +1231,16 @@ private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
 }
 
 @Composable
-private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -> Unit, onHub: () -> Unit) {
+private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBack: () -> Unit, onContinue: () -> Unit, onHub: () -> Unit) {
     val completedBeats = (storyStage - 2).coerceIn(0, 14)
     val progress = completedBeats / 14f
-    val milestones = listOf(
+    val milestones = if (selectedLanguage == GameLanguage.ENGLISH) listOf(
+        "A.E.G.I.S. ORIENTATION", "CLASSIFIED FILE 001", "FIRST SIGNAL",
+        "IDENTITY VERIFICATION", "RECRUIT STATUS", "FIRST DISCREPANCY",
+        "LOG INSPECTION", "SOURCE INVENTORY", "INITIAL REPORT",
+        "RX-14 INSPECTION", "SOURCE COMPARISON", "TIMESTAMP ANALYSIS",
+        "OPERATIONAL DECISION", "INVESTIGATION REPORT"
+    ) else listOf(
         "ORIENTASI A.E.G.I.S.", "BERKAS RAHASIA 001", "SINYAL PERTAMA",
         "VERIFIKASI IDENTITAS", "STATUS RECRUIT", "SELISIH PERTAMA",
         "PEMERIKSAAN LOG", "INVENTARIS SUMBER", "LAPORAN AWAL",
@@ -1240,7 +1248,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
         "KEPUTUSAN OPERASIONAL", "LAPORAN INVESTIGASI"
     )
 
-    GamePage("KAMPANYE", "A.E.G.I.S. / OPERASI CERITA", onBack, onHub) {
+    GamePage(localizedUiText(selectedLanguage, "CAMPAIGN", "KAMPANYE"), localizedUiText(selectedLanguage, "A.E.G.I.S. / STORY OPERATIONS", "A.E.G.I.S. / OPERASI CERITA"), onBack, onHub) {
         Box(
             Modifier.fillMaxWidth()
                 .background(
@@ -1270,13 +1278,13 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
                     fontSize = 10.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Sebuah undangan telah membuka pintu menuju dunia yang selama ini tersembunyi.",
+                    localizedUiText(selectedLanguage, "An invitation has opened the door to a world that has remained hidden until now.", "Sebuah undangan telah membuka pintu menuju dunia yang selama ini tersembunyi."),
                     color = Color(0xFFD0D8DE), fontSize = 13.sp, lineHeight = 20.sp
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(color = Color(0xFF4B2732), shape = RoundedCornerShape(50)) {
                         Text(
-                            if (storyStage >= 16) "CHAPTER COMPLETE" else "ACTIVE OPERATION",
+                            if (storyStage >= 16) localizedUiText(selectedLanguage, "CHAPTER COMPLETE", "CHAPTER SELESAI") else localizedUiText(selectedLanguage, "ACTIVE OPERATION", "OPERASI AKTIF"),
                             Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                             color = Color(0xFFFFDCE2), fontSize = 8.sp, fontWeight = FontWeight.Bold
                         )
@@ -1290,9 +1298,9 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
         GamePanel {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                    Text("PROGRES CHAPTER", color = CyberPalette.SteelGray,
+                    Text(localizedUiText(selectedLanguage, "CHAPTER PROGRESS", "PROGRES CHAPTER"), color = CyberPalette.SteelGray,
                         fontSize = 9.sp, letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
-                    Text(if (storyStage >= 16) "LAPORAN INVESTIGASI SELESAI" else "FIRST CONTACT",
+                    Text(if (storyStage >= 16) localizedUiText(selectedLanguage, "INVESTIGATION REPORT COMPLETE", "LAPORAN INVESTIGASI SELESAI") else "FIRST CONTACT",
                         color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
                 Text("${(progress * 100).toInt()}%", color = CyberPalette.Crimson,
@@ -1334,15 +1342,15 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
                         fontWeight = if (current) FontWeight.Bold else FontWeight.Medium
                     )
                     Spacer(Modifier.weight(1f))
-                    if (complete) Text("SELESAI", color = CyberPalette.Success, fontSize = 8.sp)
-                    else if (current) Text("BERIKUTNYA", color = CyberPalette.Crimson, fontSize = 8.sp)
-                    else Text("TERKUNCI", color = CyberPalette.SteelGray, fontSize = 8.sp)
+                    if (complete) Text(localizedUiText(selectedLanguage, "COMPLETE", "SELESAI"), color = CyberPalette.Success, fontSize = 8.sp)
+                    else if (current) Text(localizedUiText(selectedLanguage, "NEXT", "BERIKUTNYA"), color = CyberPalette.Crimson, fontSize = 8.sp)
+                    else Text(localizedUiText(selectedLanguage, "LOCKED", "TERKUNCI"), color = CyberPalette.SteelGray, fontSize = 8.sp)
                 }
             }
-            CPPrimaryButton(if (storyStage >= 16) "BUKA PUSAT A.E.G.I.S." else "LANJUTKAN CERITA", onContinue)
+            CPPrimaryButton(if (storyStage >= 16) localizedUiText(selectedLanguage, "OPEN A.E.G.I.S. HUB", "BUKA PUSAT A.E.G.I.S.") else localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA"), onContinue)
         }
         Text(
-            "Chapter baru dan operasi lanjutan akan terbuka melalui perkembangan cerita. Setiap bukti dan akses memiliki sumber serta otorisasi.",
+            localizedUiText(selectedLanguage, "New chapters and follow-up operations unlock through story progress. Every piece of evidence and every access permission has a source and authorization.", "Chapter baru dan operasi lanjutan akan terbuka melalui perkembangan cerita. Setiap bukti dan akses memiliki sumber serta otorisasi."),
             color = CyberPalette.SteelGray, fontSize = 10.sp, lineHeight = 16.sp
         )
     }
@@ -1351,6 +1359,7 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
 @Composable
 private fun StoryScreen(
     beat: StoryBeat, stage: Int, mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?,
+    selectedLanguage: GameLanguage,
     freyaContactUnlocked: Boolean,
     caseComplete: Boolean,
     casePhase: CasePhase,
@@ -1364,7 +1373,7 @@ private fun StoryScreen(
     onRun: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
 ) {
-    GamePage("KONTAK PERTAMA", "BAB 001  /  REKRUTMEN", onBack, onHub) {
+    GamePage(localizedUiText(selectedLanguage, "FIRST CONTACT", "KONTAK PERTAMA"), localizedUiText(selectedLanguage, "CHAPTER 001  /  RECRUITMENT", "BAB 001  /  REKRUTMEN"), onBack, onHub) {
         Box(
             Modifier.fillMaxWidth()
                 .background(
@@ -1396,18 +1405,18 @@ private fun StoryScreen(
         if (mission != null) {
             GamePanel {
                 Text(
-                    if (stage <= 5 && freyaContactUnlocked) "FREYA KNOX  /  BANTUAN PELATIHAN"
-                    else if (stage <= 5) "A.E.G.I.S.  /  PANDUAN MISI"
-                    else "A.E.G.I.S.  /  DATA REVIEW",
+                    if (stage <= 5 && freyaContactUnlocked) localizedUiText(selectedLanguage, "FREYA KNOX  /  TRAINING SUPPORT", "FREYA KNOX  /  BANTUAN PELATIHAN")
+                    else if (stage <= 5) localizedUiText(selectedLanguage, "A.E.G.I.S.  /  MISSION GUIDE", "A.E.G.I.S.  /  PANDUAN MISI")
+                    else localizedUiText(selectedLanguage, "A.E.G.I.S.  /  DATA REVIEW", "A.E.G.I.S.  /  DATA REVIEW"),
                     color = Color(0xFF83C7D0),
                     fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
-                Text(mission?.briefing.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(mission?.let { CaseLocalizedContent.missionBriefing(it, selectedLanguage) }.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 mission?.objectives?.forEachIndexed { index, objective ->
-                    Text("${index + 1}. ${objective.title}", color = Color.White, fontWeight = FontWeight.SemiBold)
-                    Text(objective.description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                    Text("${index + 1}. ${CaseLocalizedContent.objectiveTitle(mission!!, objective, index, selectedLanguage)}", color = Color.White, fontWeight = FontWeight.SemiBold)
+                    Text(CaseLocalizedContent.objectiveDescription(mission!!, objective, index, selectedLanguage), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                 }
                 mission?.runtimeVariables?.takeIf { it.isNotEmpty() }?.let { datasets ->
-                    Text("DATASET MISI  /  HANYA BACA", color = Color(0xFF83C7D0),
+                    Text(localizedUiText(selectedLanguage, "MISSION DATASET  /  READ ONLY", "DATASET MISI  /  HANYA BACA"), color = Color(0xFF83C7D0),
                         fontSize = 9.sp, letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                     datasets.forEach { (name, values) ->
                         Text(name + " =", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
@@ -1418,12 +1427,12 @@ private fun StoryScreen(
                     }
                 }
                 if (mission != null) {
-                    Text("RUANG KERJA MISI", color = CyberPalette.SteelGray, fontSize = 9.sp, letterSpacing = 1.2.sp)
+                    Text(localizedUiText(selectedLanguage, "MISSION WORKSPACE", "RUANG KERJA MISI"), color = CyberPalette.SteelGray, fontSize = 9.sp, letterSpacing = 1.2.sp)
                     mission.allowedFiles.sorted().forEach { fileName ->
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(fileName, color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 11.sp)
                             Text(
-                                if (fileName in mission.writableFiles) "BACA / TULIS" else "HANYA BACA",
+                                if (fileName in mission.writableFiles) localizedUiText(selectedLanguage, "READ / WRITE", "BACA / TULIS") else localizedUiText(selectedLanguage, "READ ONLY", "HANYA BACA"),
                                 color = if (fileName in mission.writableFiles) CyberPalette.Success else CyberPalette.SteelGray,
                                 fontSize = 9.sp
                             )
@@ -1432,10 +1441,10 @@ private fun StoryScreen(
                 }
                 if (hintLevel > 0) {
                     val hint = mission?.hints?.firstOrNull { it.level == hintLevel }
-                    if (hint != null) Text("PETUNJUK $hintLevel/3\n${hint.message}", color = Color(0xFF83C7D0), fontSize = 12.sp)
+                    if (hint != null) Text(localizedUiText(selectedLanguage, "HINT $hintLevel/3\n${CaseLocalizedContent.hint(mission!!, hint, selectedLanguage)}", "PETUNJUK $hintLevel/3\n${hint.message}"), color = Color(0xFF83C7D0), fontSize = 12.sp)
                 }
-                if (hintLevel < 3) OutlinedButton(onClick = onRequestHint) { Text("MINTA PETUNJUK ${hintLevel + 1}/3") }
-                CodeEditor(code, onCodeChange, "EDITOR KODE PYTHON 3", 180)
+                if (hintLevel < 3) OutlinedButton(onClick = onRequestHint) { Text(localizedUiText(selectedLanguage, "REQUEST HINT ${hintLevel + 1}/3", "MINTA PETUNJUK ${hintLevel + 1}/3")) }
+                CodeEditor(code, onCodeChange, localizedUiText(selectedLanguage, "PYTHON 3 CODE EDITOR", "EDITOR KODE PYTHON 3"), 180)
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SIMPAN KODE") }
@@ -1450,7 +1459,7 @@ private fun StoryScreen(
                         disabledContainerColor = Color(0xFF26343A)
                     )
                 ) {
-                    Text(if (canSubmit) "KIRIM / SUBMIT MISI" else "SUBMIT MISI — JALANKAN KODE DULU")
+                    Text(if (canSubmit) localizedUiText(selectedLanguage, "SUBMIT MISSION", "KIRIM / SUBMIT MISI") else localizedUiText(selectedLanguage, "RUN CODE BEFORE SUBMITTING", "SUBMIT MISI — JALANKAN KODE DULU"))
                 }
                 Surface(color = Color(0xFF080D12), shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
