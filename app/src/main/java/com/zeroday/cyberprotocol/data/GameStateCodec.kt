@@ -79,14 +79,20 @@ internal object GameStateCodec {
             val item = caseProgressJson.optJSONObject(key) ?: return@forEach
             val caseId = item.optString("caseId", key)
             if (caseId.isBlank() || caseId != key) return@forEach
+            val discoveredEvidenceIds = item.stringSet("discoveredEvidenceIds")
+                .filter { it.isNotBlank() }
+                .toSet()
+            val analyzedEvidenceIds = item.stringSet("analyzedEvidenceIds")
+                .filter { it.isNotBlank() && it in discoveredEvidenceIds }
+                .toSet()
             caseProgress[caseId] = CaseProgress(
                 caseId = caseId,
                 briefingAcknowledged = item.optBoolean("briefingAcknowledged", false),
-                discoveredEvidenceIds = item.stringSet("discoveredEvidenceIds"),
-                analyzedEvidenceIds = item.stringSet("analyzedEvidenceIds"),
+                discoveredEvidenceIds = discoveredEvidenceIds,
+                analyzedEvidenceIds = analyzedEvidenceIds,
                 analysisConclusionId = item.optString("analysisConclusionId").takeIf { it.isNotBlank() && it != "null" },
                 selectedDecisionId = item.optString("selectedDecisionId").takeIf { it.isNotBlank() && it != "null" },
-                decisionRationale = item.optString("decisionRationale", ""),
+                decisionRationale = item.optString("decisionRationale", "").take(600),
                 debriefViewed = item.optBoolean("debriefViewed", false)
             )
         }

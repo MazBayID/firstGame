@@ -99,6 +99,30 @@ class GameStateCodecTest {
     }
 
     @Test
+    fun malformedCaseProgressIsRecoveredWithoutDiscardingTheWholeSave() {
+        val progress = JSONObject()
+            .put("caseId", "case_alpha")
+            .put("briefingAcknowledged", true)
+            .put("discoveredEvidenceIds", org.json.JSONArray().put("ev_found").put(""))
+            .put("analyzedEvidenceIds", org.json.JSONArray().put("ev_found").put("ev_orphan"))
+            .put("decisionRationale", "x".repeat(650))
+        val snapshot = JSONObject()
+            .put("schemaVersion", GameState.CURRENT_SCHEMA_VERSION)
+            .put("storyBeat", 9)
+            .put("experience", 125)
+            .put("caseProgress", JSONObject().put("case_alpha", progress))
+
+        val decoded = GameStateCodec.decode(snapshot)
+        val recovered = decoded.caseProgress.getValue("case_alpha")
+
+        assertEquals(setOf("ev_found"), recovered.discoveredEvidenceIds)
+        assertEquals(setOf("ev_found"), recovered.analyzedEvidenceIds)
+        assertEquals(600, recovered.decisionRationale.length)
+        assertEquals(9, decoded.storyBeat)
+        assertEquals(125, decoded.experience)
+    }
+
+    @Test
     fun existingSnapshotReceivesNewUnlocksWithoutLosingItsStoredApps() {
         val snapshot = JSONObject()
             .put("schemaVersion", GameState.CURRENT_SCHEMA_VERSION)
