@@ -131,6 +131,34 @@ class GameSessionViewModelTest {
     }
 
     @Test
+    fun newCampaignResetClearsCampaignProgressAndSavedCode() {
+        val repository = MemoryRepository(
+            GameState(
+                storyBeat = 15,
+                activeMissionId = "first_contact.validate_delta",
+                completedMissionIds = setOf("first_contact.signal", "first_contact.identity"),
+                experience = 180,
+                clearance = 2,
+                savedCode = mapOf("story_15" to "player draft"),
+                evidence = listOf(
+                    EvidenceRecord(
+                        id = "old-evidence",
+                        title = "Old record",
+                        summary = "Old campaign record",
+                        source = "A.E.G.I.S.",
+                        missionId = "first_contact.signal"
+                    )
+                )
+            )
+        )
+        val viewModel = GameSessionViewModel(repository)
+
+        viewModel.resetCampaign()
+
+        assertEquals(GameState(lastCheckpoint = "new_campaign"), repository.load())
+    }
+
+    @Test
     fun ensuringRx14EvidenceIsIdempotent() {
         val repository = MemoryRepository(GameState(storyBeat = 16))
         val viewModel = GameSessionViewModel(repository)
