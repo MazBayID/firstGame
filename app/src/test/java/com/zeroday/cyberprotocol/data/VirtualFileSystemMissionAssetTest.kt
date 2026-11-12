@@ -57,6 +57,30 @@ class VirtualFileSystemMissionAssetTest {
     }
 
     @Test
+    fun firstContactSourceAssetsAreSharedByMessengerBrowserAndTerminalAndPersist() {
+        val context = freshContext()
+        val fileSystem = VirtualFileSystem(context)
+        val aegis = EvidenceAssetCatalog.assets.first()
+        val archive = EvidenceAssetCatalog.assets.last()
+
+        assertEquals(null, fileSystem.readEvidenceAsset(aegis.id))
+        fileSystem.installEvidenceAssets()
+
+        assertEquals(aegis.content, fileSystem.readEvidenceAsset(aegis.id))
+        assertEquals(archive.content, fileSystem.readEvidenceAsset(archive.id))
+        assertEquals(aegis.content, fileSystem.readFile(
+            aegis.path, fileSystem.initialDirectory()
+        ))
+        assertEquals(
+            aegis.content,
+            VirtualFileSystem(context).execute(
+                "cat ${aegis.path}", fileSystem.initialDirectory()
+            ).output
+        )
+        assertEquals(aegis.content, VirtualFileSystem(context).readEvidenceAsset(aegis.id))
+    }
+
+    @Test
     fun missionTerminalCannotDeleteOrReadOutsideAuthorizedFiles() {
         val context = freshContext()
         val mission = Campaign01Catalog.find("first_contact.signal")!!

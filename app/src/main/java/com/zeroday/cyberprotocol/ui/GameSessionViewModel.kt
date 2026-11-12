@@ -9,9 +9,11 @@ import androidx.compose.runtime.setValue
 import com.zeroday.cyberprotocol.core.model.CaseDefinition
 import com.zeroday.cyberprotocol.core.model.CompetencyTrack
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
+import com.zeroday.cyberprotocol.core.model.EvidenceProvenance
 import com.zeroday.cyberprotocol.core.model.EvidenceRelationType
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.data.EvidenceAssetCatalog
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import com.zeroday.cyberprotocol.domain.usecase.CompleteMissionUseCase
@@ -169,16 +171,56 @@ internal class GameSessionViewModel(
     }
 
     private fun recordRecruitmentLead() {
-        val state = repository.load()
-        if (state.evidence.any { it.id == "transmission_timestamp_discrepancy" }) return
+        val collectedAt = System.currentTimeMillis()
+        EvidenceAssetCatalog.assets.forEach { asset ->
+            recordEvidence(
+                EvidenceRecord(
+                    id = asset.evidenceId,
+                    title = asset.title,
+                    summary = asset.content.trim(),
+                    source = asset.sourceLabel,
+                    missionId = EvidenceAssetCatalog.MISSION_ID,
+                    recordedAtEpochMillis = collectedAt,
+                    provenance = EvidenceProvenance(
+                        origin = asset.origin,
+                        sourceLabel = asset.sourceLabel,
+                        sourceAssetId = asset.id,
+                        sourcePath = asset.path,
+                        collectedAtEpochMillis = collectedAt,
+                        collectorId = "system:aegis-ingest"
+                    )
+                )
+            )
+        }
         recordEvidence(
             EvidenceRecord(
                 id = "transmission_timestamp_discrepancy",
                 title = "Perbedaan Waktu Penerimaan Transmisi",
-                summary = "Dua sistem internal mencatat waktu penerimaan pesan yang berbeda. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
+                summary = "Dua sistem internal mencatat referensi RX-14 pada waktu berbeda empat detik. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
                 source = "A.E.G.I.S. / perbandingan metadata tanda terima",
-                missionId = "first_contact.recruitment"
+                missionId = EvidenceAssetCatalog.MISSION_ID,
+                recordedAtEpochMillis = collectedAt,
+                provenance = EvidenceProvenance(
+                    origin = com.zeroday.cyberprotocol.core.model.EvidenceOrigin.ANALYSIS,
+                    sourceLabel = "Perbandingan dua sumber penerimaan",
+                    collectedAtEpochMillis = collectedAt,
+                    collectorId = "system:aegis-analysis"
+                )
             )
+        )
+        EvidenceAssetCatalog.assets.forEach { asset ->
+            relateEvidence(
+                "transmission_timestamp_discrepancy",
+                asset.evidenceId,
+                EvidenceRelationType.DERIVED_FROM,
+                "Temuan perbedaan waktu diturunkan dari sumber asli ini; sumber tidak diubah."
+            )
+        }
+        relateEvidence(
+            EvidenceAssetCatalog.assets[0].evidenceId,
+            EvidenceAssetCatalog.assets[1].evidenceId,
+            EvidenceRelationType.CONTRADICTS,
+            "Kedua sumber mencatat waktu penerimaan RX-14 yang berbeda empat detik."
         )
     }
 

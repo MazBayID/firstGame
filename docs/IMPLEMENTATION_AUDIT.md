@@ -267,3 +267,13 @@ This refresh does not introduce story canon or change gameplay implementation. I
 - Added separate Technical Competency XP and Intelligence Competency XP. Mission archetype determines which track receives its reward; total campaign XP and rank remain independent.
 - The Personnel Dossier now displays both competency tracks. Schema 8 persists them; older saves default both tracks to zero without changing campaign progress.
 - Added regression tests for case phase gates, optional leads, competency awards/idempotency, and schema round trips.
+
+
+## Batch 03 — First Contact evidence source vertical slice
+
+- Added two immutable fictional source assets for the existing RX-14 timestamp discrepancy: the A.E.G.I.S. receipt at 09:41:12 and the archive receipt at 09:41:16.
+- The assets are installed into the game-owned virtual filesystem when the story reaches the existing discrepancy checkpoint (story beat 10). They are not seeded into a fresh player's early workspace.
+- Messenger attachments, Browser intelligence reports, the evidence database, and Terminal file access resolve the same stable asset IDs and VFS paths. The source preview reads the VFS content; it does not create a second copy.
+- The two source records remain UNVERIFIED. The discrepancy record is a separate derived finding linked to both sources; the source pair is related as contradictory only on its recorded timestamp. No cause is asserted.
+- Existing First Contact story beats and all eight evaluator contracts remain unchanged.
+- Added VFS tests for gated installation, shared reads, and persistence across VFS reconstruction.

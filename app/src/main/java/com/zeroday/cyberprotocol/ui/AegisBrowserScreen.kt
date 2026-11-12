@@ -59,6 +59,7 @@ internal fun AegisBrowserScreen(
     gameState: GameState,
     evidence: List<EvidenceRecord>,
     downloadedFiles: Set<String>,
+    onReadEvidenceAsset: (String) -> String?,
     onPageChange: (String) -> Unit,
     onAuthenticate: (String, String) -> Boolean,
     onDownloadFile: (String) -> Boolean,
@@ -216,6 +217,19 @@ internal fun AegisBrowserScreen(
                             Text(record.title, color = Color.White, fontWeight = FontWeight.Bold)
                             Text(record.summary, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                             Text("${record.status.name}  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp)
+                            record.provenance.sourceAssetId?.let { assetId ->
+                                Text("SHARED SOURCE  /  $assetId", color = Color(0xFF9AB4B8), fontSize = 8.sp)
+                                record.provenance.sourcePath?.let { path ->
+                                    Text(path, color = Color(0xFF71858B), fontSize = 8.sp)
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        val content = onReadEvidenceAsset(assetId)
+                                        evidenceAssetPreview = content?.let { record.title to it }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) { Text("BUKA SUMBER ASLI") }
+                            }
                             HorizontalDivider(color = Color(0xFF26343D))
                         }
                     }
@@ -255,6 +269,16 @@ internal fun AegisBrowserScreen(
                     BrowserLink("AGENT PROFILE", "Identitas dan akses personel") { onPageChange("profile") }
                 }
             }
+        }
+        evidenceAssetPreview?.let { (title, content) ->
+            AlertDialog(
+                onDismissRequest = { evidenceAssetPreview = null },
+                title = { Text(title) },
+                text = { Text(content, fontFamily = FontFamily.Monospace, fontSize = 11.sp) },
+                confirmButton = {
+                    TextButton(onClick = { evidenceAssetPreview = null }) { Text("TUTUP") }
+                }
+            )
         }
     }
 }

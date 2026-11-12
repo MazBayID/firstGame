@@ -32,6 +32,28 @@ class VirtualFileSystem(context: Context) {
 
     fun initialDirectory(): String = "$root/personal"
 
+    /** Installs the approved First Contact source records without overwriting player data. */
+    @Synchronized
+    fun installEvidenceAssets(): Boolean {
+        val evidenceDirectory = "$root/evidence/first_contact"
+        directories.add(evidenceDirectory)
+        var changed = false
+        EvidenceAssetCatalog.assets.forEach { asset ->
+            if (!files.containsKey(asset.path)) {
+                files[asset.path] = asset.content
+                changed = true
+            }
+        }
+        if (changed) persist()
+        return changed
+    }
+
+    @Synchronized
+    fun readEvidenceAsset(assetId: String): String? {
+        val asset = EvidenceAssetCatalog.find(assetId) ?: return null
+        return files[asset.path]
+    }
+
     @Synchronized
     fun execute(
         commandLine: String,

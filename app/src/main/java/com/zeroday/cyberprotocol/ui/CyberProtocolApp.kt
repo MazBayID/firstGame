@@ -579,6 +579,8 @@ private fun CyberProtocolGameContentBody(
             nexusUnlocked = currentGameState.nexusContactUnlocked,
             activeMissionTitle = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it)?.title },
             completedMissionCount = currentGameState.completedMissionIds.size,
+            evidenceAssetsAvailable = currentGameState.storyBeat >= 10,
+            onReadEvidenceAsset = fileSystem::readEvidenceAsset,
             onOpenMissionLink = {
                 if (storyStage < 2) saveStage(2)
                 messengerSession = messengerSession.copy(selectedContact = "")
@@ -616,6 +618,7 @@ private fun CyberProtocolGameContentBody(
             gameState = currentGameState,
             evidence = currentGameState.evidence,
             downloadedFiles = activeWorkspace?.listFiles()?.toSet().orEmpty(),
+            onReadEvidenceAsset = fileSystem::readEvidenceAsset,
             onPageChange = { browserSession = browserSession.copy(page = it) },
             onAuthenticate = { agentId, accessCode ->
                 val accepted = AegisIntranetAccess.authenticate(agentId, accessCode)
@@ -1220,6 +1223,8 @@ private fun MessengerScreen(
     nexusUnlocked: Boolean,
     activeMissionTitle: String?,
     completedMissionCount: Int,
+    evidenceAssetsAvailable: Boolean,
+    onReadEvidenceAsset: (String) -> String?,
     onOpenMissionLink: () -> Unit,
     onOpenNexusLink: () -> Unit,
     onOpenIntranetLink: () -> Unit,
@@ -1229,6 +1234,7 @@ private fun MessengerScreen(
 ) {
     var search by rememberSaveable { mutableStateOf("") }
     var attachmentFeedback by rememberSaveable { mutableStateOf("") }
+    var evidenceAssetPreview by remember { mutableStateOf<Pair<String, String>?>(null) }
     val chatScrollState = rememberScrollState()
 
     LaunchedEffect(selectedContact, replies.size) {
@@ -1483,6 +1489,26 @@ private fun MessengerScreen(
                                 Text("Ketuk untuk membuka portal internal offline", color = Color(0xFFB9D1C6), fontSize = 10.sp)
                             }
                         }
+                        if (evidenceAssetsAvailable) {
+                            com.zeroday.cyberprotocol.data.EvidenceAssetCatalog.assets.forEach { asset ->
+                                Surface(
+                                    onClick = {
+                                        evidenceAssetPreview = onReadEvidenceAsset(asset.id)?.let { asset.title to it }
+                                    },
+                                    color = Color(0xFF202E3B),
+                                    shape = RoundedCornerShape(14.dp),
+                                    border = BorderStroke(1.dp, Color(0xFF3B5265)),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                        Text("LAMPIRAN INVESTIGASI  /  ${asset.title}", color = Color.White,
+                                            fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                        Text(asset.path, color = Color(0xFFB9D1C6), fontSize = 9.sp)
+                                        Text("Sumber asli tersimpan di arsip virtual A.E.G.I.S.", color = Color(0xFF83C7D0), fontSize = 10.sp)
+                                    }
+                                }
+                            }
+                        }
                         if (activeMissionTitle == "Sinyal Pertama") {
                             Surface(
                                 onClick = {
@@ -1533,6 +1559,16 @@ private fun MessengerScreen(
                     }
                 }
             }
+        }
+        evidenceAssetPreview?.let { (title, content) ->
+            AlertDialog(
+                onDismissRequest = { evidenceAssetPreview = null },
+                title = { Text(title) },
+                text = { Text(content, fontFamily = FontFamily.Monospace, fontSize = 11.sp) },
+                confirmButton = {
+                    TextButton(onClick = { evidenceAssetPreview = null }) { Text("TUTUP") }
+                }
+            )
         }
     }
 }
