@@ -1,5 +1,7 @@
 package com.zeroday.cyberprotocol.ui
 
+import com.zeroday.cyberprotocol.core.model.GameLanguage
+
 /**
  * Authored, deterministic dialogue for the opening campaign.
  *
@@ -7,7 +9,18 @@ package com.zeroday.cyberprotocol.ui
  * mission access, or progression. Game-state changes remain explicit ViewModel actions.
  */
 internal object MessengerDialogue {
-    fun freyaResponse(message: String): String = when (message) {
+    fun freyaResponse(message: String, language: GameLanguage = GameLanguage.INDONESIAN): String {
+        if (language == GameLanguage.ENGLISH) return when (message) {
+            "Dimengerti. Kita mulai dari mana?" -> "Start with the nearest task: open the A.E.G.I.S. Browser, sign in with the credentials I gave you, and download the mission file. Then read it in the in-game Terminal. I will explain each step before asking you to try it yourself."
+            "Apa fungsi Terminal?" -> "The Terminal accepts text commands inside the game's own workspace. It is not your Android shell and cannot access your phone's system. Type help to see allowed commands, such as ls to list files and cat to read one."
+            "Bagaimana membaca berkas misi?" -> "After downloading message_fragment.txt, open Terminal and type cat message_fragment.txt. The cat command only displays the file; it does not execute Python. The displayed text is the data required by your first task."
+            "Apa itu variabel Python?" -> "A variable is a name used to store a value. The = sign assigns a value to that name. Text must be enclosed in quotation marks. For example: signal = \"the text you read\". On the next line, print(signal) displays the stored value."
+            "Bagaimana menjalankan dan mengirim kode?" -> "Write your code in the Code Editor. Select RUN IN TERMINAL: the game saves the script to the workspace and runs python signal.py in its Terminal. Check the output. If it succeeds and the code has not changed, open Browser > Mission Control to submit it to the evaluator."
+            "Masih banyak yang harus kupelajari." -> "Good. I would be more concerned if you pretended to understand everything already. We will build your skills through tasks you actually complete."
+            "Mengapa kamu memilihku?" -> "I knew that question would come up. For now, assume there is a reason I cannot share through this channel. Show me how you handle something you do not yet know."
+            else -> "I understand. Review the briefing and available evidence, then we can discuss the results. Do not reach a conclusion before the data supports it."
+        }
+        return when (message) {
         "Dimengerti. Kita mulai dari mana?" ->
             "Mulai dari satu hal yang paling dekat: buka Browser A.E.G.I.S., masuk dengan kredensial yang kuberikan, lalu unduh berkas misi. Setelah itu kita baca berkasnya melalui Terminal. Aku akan jelaskan setiap langkah sebelum kamu diminta mengerjakannya sendiri."
         "Apa fungsi Terminal?" ->
@@ -30,7 +43,16 @@ internal object MessengerDialogue {
         message: String,
         activeMissionTitle: String?,
         completedMissionCount: Int
-    ): String = when (message) {
+    ,
+        language: GameLanguage = GameLanguage.INDONESIAN
+    ): String {
+        if (language == GameLanguage.ENGLISH) return when (message) {
+            "Tampilkan status personel." -> "PERSONNEL STATUS: RECRUIT. Verified missions: $completedMissionCount. Active mission: ${activeMissionTitle ?: "none"}. Clearance follows the saved campaign checkpoint."
+            "Di mana catatan operasiku?" -> "Personnel records are available through PERSONNEL DOSSIER. Evidence and investigation sources can be reviewed through ANALYSIS. App access follows the local account permissions."
+            "Apakah sistem ini berjalan offline?" -> "Yes. The core campaign, local Python runtime, mission evaluation, and progress storage are designed to run on this device without an AI service or external server."
+            else -> "Request received. I will refer only to data and permissions available in the active mission."
+        }
+        return when (message) {
         "Tampilkan status personel." ->
             "STATUS PERSONEL: RECRUIT. Misi terverifikasi: $completedMissionCount. Misi aktif: ${activeMissionTitle ?: "tidak ada"}. Clearance mengikuti checkpoint kampanye yang tersimpan."
         "Di mana catatan operasiku?" ->
@@ -39,5 +61,6 @@ internal object MessengerDialogue {
             "Benar. Kampanye inti, runtime Python lokal, evaluasi misi, dan penyimpanan progres dirancang berjalan pada perangkat ini tanpa layanan AI atau server eksternal."
         else ->
             "Permintaan diterima. Aku hanya akan merujuk pada data dan izin yang tersedia di dalam misi aktif."
+    }
     }
 }

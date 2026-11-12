@@ -787,6 +787,7 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.MESSENGER -> MessengerScreen(
             selectedContact = messengerSession.selectedContact,
+            selectedLanguage = selectedLanguage,
             onSelectContact = { contact -> messengerSession = messengerSession.copy(selectedContact = contact) },
             onClose = {
                 navigate(runCatching { GameScreen.valueOf(messengerSession.returnScreen) }.getOrDefault(GameScreen.APP_HUB))
@@ -1592,6 +1593,7 @@ private fun AppHubScreen(gameState: GameState, onClose: () -> Unit, onOpen: (Gam
 @Composable
 private fun MessengerScreen(
     selectedContact: String,
+    selectedLanguage: GameLanguage,
     onSelectContact: (String) -> Unit,
     onClose: () -> Unit,
     recruitmentInvitation: Boolean,
@@ -1822,7 +1824,7 @@ private fun MessengerScreen(
                             ChatBubble("Kamu", message, true)
                             ChatBubble(
                                 "Freya Knox",
-                                MessengerDialogue.freyaResponse(message),
+                                MessengerDialogue.freyaResponse(message, selectedLanguage),
                                 false
                             )
                         }
@@ -1834,7 +1836,7 @@ private fun MessengerScreen(
                             ChatBubble("Kamu", message, true)
                             ChatBubble(
                                 "NEXUS",
-                                MessengerDialogue.nexusResponse(message, activeMissionTitle, completedMissionCount),
+                                MessengerDialogue.nexusResponse(message, activeMissionTitle, completedMissionCount, selectedLanguage),
                                 false
                             )
                         }

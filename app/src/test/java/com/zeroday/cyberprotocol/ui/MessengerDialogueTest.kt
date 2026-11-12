@@ -2,9 +2,50 @@ package com.zeroday.cyberprotocol.ui
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 import org.junit.Test
 
 class MessengerDialogueTest {
+
+    @Test
+    fun freyaProvidesEnglishResponsesWithoutChangingCanonicalReplyKeys() {
+        val response = MessengerDialogue.freyaResponse(
+            "Apa fungsi Terminal?",
+            GameLanguage.ENGLISH
+        )
+        assertTrue(response.contains("not your Android shell"))
+        assertTrue(response.contains("allowed commands"))
+        assertFalse(response.contains("bukan shell Android"))
+    }
+
+    @Test
+    fun englishFreyaRepliesPreserveBeginnerFriendlyGuidanceAndRecruitmentMystery() {
+        val beginner = MessengerDialogue.freyaResponse(
+            "Masih banyak yang harus kupelajari.",
+            GameLanguage.ENGLISH
+        )
+        val mystery = MessengerDialogue.freyaResponse(
+            "Mengapa kamu memilihku?",
+            GameLanguage.ENGLISH
+        )
+        assertTrue(beginner.contains("pretended to understand"))
+        assertTrue(mystery.contains("cannot share through this channel"))
+        assertFalse(mystery.contains("I gave the recruitment order"))
+    }
+
+    @Test
+    fun nexusProvidesEnglishStatusAndOfflineExplanations() {
+        val status = MessengerDialogue.nexusResponse(
+            "Tampilkan status personel.", null, 2, GameLanguage.ENGLISH
+        )
+        val offline = MessengerDialogue.nexusResponse(
+            "Apakah sistem ini berjalan offline?", null, 0, GameLanguage.ENGLISH
+        )
+        assertTrue(status.contains("Verified missions: 2"))
+        assertTrue(status.contains("Active mission: none"))
+        assertTrue(offline.contains("local Python runtime"))
+    }
+
     @Test
     fun freyaPreservesRecruitmentMysteryWhenAskedWhySheChoseThePlayer() {
         val response = MessengerDialogue.freyaResponse("Mengapa kamu memilihku?")
