@@ -1128,30 +1128,24 @@ The intended outcome is that a complete beginner can enter Cyber Protocol withou
 - `main` is the sole long-lived development and release branch. Do not maintain a separate permanent development branch or a parallel APK-producing workflow.
 
 
-# 24. CI Builds, Development APKs, and Final Release
+# 24. Source Validation and Explicit Final Release
 
-Cyber Protocol CI has two distinct APK classes. **Development APKs may be built and published during normal development without an emulator smoke test.** A **Final APK** is a separate, explicitly requested release artifact and must pass the emulator smoke test using the exact APK that is published. Never label or present a development APK as final.
+Cyber Protocol is developed as a complete, integrated game before release packaging. **Ordinary development commits do not produce APKs.** A Final APK is a separate, explicitly requested release artifact and must pass the complete release pipeline using the exact APK that is published.
 
-## 24.1 — Source validation
+## 24.1 — Development source validation
 
-- Pushes to main run Python runner tests and Release-variant Android/Kotlin unit tests first.
+- Pushes to main run Python runner tests and Release-variant Android/Kotlin unit tests.
 - Pull requests targeting main run source-level tests only; they do not build installable APKs or access release-signing secrets.
-- A failed or incomplete source-test run blocks downstream APK jobs.
-- Source-test success alone does not mean an APK has been built, tested, or approved as final.
+- A failed or incomplete source-test run blocks the relevant validation workflow.
+- Focused unit/domain tests are guardrails during feature development. Broader suites run at coherent integration checkpoints.
+- Do not spend feature batches producing development APKs, polishing CI, or treating compilation as proof of a complete player experience.
+- Source-test success does not mean the game has passed end-to-end gameplay, emulator, or physical-device acceptance.
 
-## 24.2 — Development APK (non-final)
+## 24.2 — Explicit Final APK
 
-- After source tests pass, every push to main builds a development Debug APK using `assembleDebug` and publishes it as a development artifact.
-- A manual workflow dispatch with `final_release=false` also builds and publishes this development APK after source tests pass.
-- The development APK does not require the permanent release keystore and does not run an Android Emulator smoke test.
-- The artifact name and included status manifest must clearly say **DEVELOPMENT — NOT FINAL — SMOKE TEST NOT RUN** and record source commit SHA and APK SHA-256.
-- This artifact is suitable for early installation and development feedback. Its successful assembly is not evidence of runtime correctness, release signing, update compatibility, or production readiness.
-- Development APKs must never be named, described, or distributed as Final Release APKs.
-
-## 24.3 — Explicit Final APK
-
-- A Final APK is built only through a deliberate `workflow_dispatch` on main with `final_release=true`.
-- The workflow reruns source tests before the final packaging job.
+- A Final APK may be built only after the integrated game meets the complete-game acceptance criteria in `docs/REBUILD_STATUS.md` and the player explicitly requests release packaging.
+- A deliberate `workflow_dispatch` on main with `final_release=true` starts the final pipeline.
+- The workflow reruns source tests before packaging.
 - CI builds exactly one installable APK using the production Release configuration and the permanent release-signing identity.
 - CI validates package identity, monotonically increasing versionCode, supported ABIs, permanent signing certificate, and expected production configuration.
 - The Android Emulator smoke test installs and launches that exact signed APK. It must confirm that the app process remains alive.
@@ -1160,15 +1154,14 @@ Cyber Protocol CI has two distinct APK classes. **Development APKs may be built 
 - A failed, skipped, cancelled, or incomplete required final check blocks publication. No artifact may be labeled final unless every required check passed.
 - Do not rebuild or re-sign the APK after smoke testing. If validation fails, correct the issue and start a new Final Release run.
 
-## 24.4 — Permanent signing identity
+## 24.3 — Permanent signing identity
 
-- Development APKs use the normal Android Debug signing identity and must not use the permanent release keystore.
 - The Final APK uses the project's permanent Android release keystore. Every published update must use the same key and certificate.
 - Restore the keystore only inside the ephemeral Final Release CI runner, restrict permissions, validate the alias without printing secrets, and remove temporary key material after the job.
 - Store signing credentials only in a secure offline backup and protected GitHub Actions Secrets. Never commit or publish the keystore, passwords, or signing material.
 - Losing the permanent key may make future in-place updates impossible for installations signed with that key.
 
-## 24.5 — Safe updates and device acceptance
+## 24.4 — Safe updates and device acceptance
 
 - Retain the existing applicationId across updates. Every Final APK must have a versionCode greater than the previously distributed Final APK.
 - Preserve local campaign data, player code, evidence, settings, and workspaces during normal updates. Use explicit tested migrations for save-schema changes.

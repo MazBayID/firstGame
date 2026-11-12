@@ -312,3 +312,12 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Operations consumes the same persisted case-progress state, so a source inspected in Messenger or Browser is not presented as undiscovered again.
 - A shared domain policy controls when required and optional evidence can be discovered. Required sources are inspected during Investigation; optional leads may also be inspected during Analysis.
 - Unit tests cover the discovery policy. CI and integrated navigation verification remain pending.
+
+
+## RX-14 chapter completion reward — 2026-11-12
+
+- Completing the persisted RX-14 debrief now awards 100 Intelligence XP through the shared completion ledger.
+- The reward is idempotent and is repaired for existing saves that already reached COMPLETE without a corresponding reward entry.
+- Operations displays the chapter reward and updated total XP after completion.
+- A ViewModel regression test covers exactly-once award behavior. Source-test workflow verification is pending.
+- This is a progression integration improvement, not a claim that the complete First Contact campaign is finished.

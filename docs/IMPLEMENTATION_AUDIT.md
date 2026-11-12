@@ -361,3 +361,12 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Operations reads the same persisted discovery state; it does not create duplicate evidence records.
 - `CasePhaseEvaluator.canDiscoverEvidence` is the shared domain policy for source discovery, including the optional-lead analysis window.
 - Domain tests cover phase-aware source discovery. Manual navigation and UI interaction still require integrated acceptance.
+
+
+## RX-14 chapter reward integration
+
+- The RX-14 reward is granted only after the persisted case reaches COMPLETE (including debrief acknowledgement).
+- Reward application uses the existing completed-mission ledger, so repeated calls cannot duplicate XP.
+- A startup repair path grants the missing reward to existing completed saves.
+- Operations exposes the earned reward and total campaign XP.
+- Automated regression coverage checks reward amount, Intelligence competency attribution, ledger entry, and idempotency. Source-test workflow verification is pending.
