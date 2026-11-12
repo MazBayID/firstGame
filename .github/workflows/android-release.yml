@@ -138,7 +138,7 @@ jobs:
         with:
           api-level: 35
           arch: x86_64
-          profile: Pixel_2
+          profile: pixel_2
           script: |
             set -euo pipefail
             adb install "$APK"
