@@ -249,6 +249,9 @@ private fun CyberProtocolGameContentBody(
 
     LaunchedEffect(currentGameState.storyBeat) {
         if (currentGameState.storyBeat >= 10) {
+            if ("PRACTICE" !in currentGameState.unlockedApps) {
+                sessionViewModel.saveStoryBeat(currentGameState.storyBeat)
+            }
             fileSystem.installEvidenceAssets()
             sessionViewModel.ensureRecruitmentEvidence()
         }
