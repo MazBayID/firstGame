@@ -71,13 +71,13 @@ Run the test suites locally:
 
 ```bash
 python -m unittest discover -s tests -v
-gradle --no-daemon testDebugUnitTest
+gradle --no-daemon testReleaseUnitTest
 ```
 
-These commands run tests only; they do not produce an APK. The **Android Tests** GitHub Actions workflow follows the same rule: it runs Python and Android/Kotlin unit tests only, never builds, signs, or uploads an APK, and never accesses release-signing secrets.
+These commands run tests only; they do not produce an APK. The **Android Tests (PR only)** workflow runs Python and Release-variant Android/Kotlin unit tests for pull requests targeting `main`. It never builds, signs, or uploads an installable APK and never accesses release-signing secrets.
 
-On pushes to `main` or the active development branch, **Android Tests** runs independently as a test-only workflow. The **Android Release APK** workflow has its own mandatory Python/Kotlin validation job; only after that job succeeds does it build the exact same commit as a Release variant. It restores the permanent release keystore only inside the ephemeral CI runner, verifies package identity, ABI, version code, and certificate fingerprint, then publishes the signed `app-release.apk` artifact under GitHub Actions.
+On pushes to `main`, **Cyber Protocol — Build, Test & Release** runs one sequential pipeline: Python/Kotlin source tests, one permanently signed Release APK build, package/version/ABI/signature validation, installation and launch smoke test of that exact APK on an Android Emulator, SHA-256 equality verification, and publication of the same tested APK. It does not rebuild or re-sign after testing. The permanent keystore is restored only inside the ephemeral CI runner and removed at the end of the job.
 
-For physical-device installation, download only the `cyber-protocol-release` artifact from a successful **Android Release APK** run. Do not use a Debug APK for device acceptance or distribution. Pull-request test runs do not produce release APKs.
+For physical-device installation, download only the `cyber-protocol-release` artifact from a successful **Cyber Protocol — Build, Test & Release** run. Emulator smoke testing is not a substitute for physical-device acceptance. Pull-request test runs do not produce release APKs.
 
 The project is an evolving game foundation. This repository does not claim that the full v1.0 campaign is complete.
