@@ -13,7 +13,7 @@ import androidx.compose.runtime.saveable.listSaver
 internal data class TerminalSessionState(
     val command: String = "",
     val currentDirectory: String,
-    val output: String = INITIAL_OUTPUT,
+    val output: String = initialOutput(com.zeroday.cyberprotocol.core.model.GameLanguage.INDONESIAN),
     val busy: Boolean = false
 ) {
     fun appendOutput(value: String): TerminalSessionState =
@@ -26,13 +26,13 @@ internal data class TerminalSessionState(
         private const val MAX_OUTPUT_CHARACTERS = 24_000
         fun initialOutput(language: com.zeroday.cyberprotocol.core.model.GameLanguage): String =
             if (language == com.zeroday.cyberprotocol.core.model.GameLanguage.ENGLISH) {
-                "A.E.G.I.S. VIRTUAL TERMINAL  ·  BUILD 0.1\\n" +
-                    "Game environment is ready.\\n" +
-                    "Type 'help' to view available commands.\\n"
+                "A.E.G.I.S. VIRTUAL TERMINAL  ·  BUILD 0.1\n" +
+                    "Game environment is ready.\n" +
+                    "Type 'help' to view available commands.\n"
             } else {
-                "TERMINAL VIRTUAL A.E.G.I.S.  ·  BUILD 0.1\\n" +
-                    "Lingkungan game siap digunakan.\\n" +
-                    "Ketik 'help' untuk melihat daftar perintah.\\n"
+                "TERMINAL VIRTUAL A.E.G.I.S.  ·  BUILD 0.1\n" +
+                    "Lingkungan game siap digunakan.\n" +
+                    "Ketik 'help' untuk melihat daftar perintah.\n"
             }
 
         val Saver: Saver<TerminalSessionState, Any> = listSaver(
