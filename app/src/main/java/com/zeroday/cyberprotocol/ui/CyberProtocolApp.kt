@@ -1740,11 +1740,11 @@ private fun MessengerScreen(
                 }
                 val visibleTerms = listOf(
                     "A.E.G.I.S.", "recruitment", "Recruitment Office", "perintah untuk merekrutmu",
-                    "FREYA KNOX", "FREYA", "mentor", "NEXUS", "sistem komunikasi"
+                    "FREYA KNOX", "FREYA", "mentor", "NEXUS", "sistem komunikasi", "communication system"
                 )
                 val visible = (recruitmentInvitation && visibleTerms.take(4).any { it.contains(search, true) }) ||
                     (freyaContactUnlocked && visibleTerms.slice(4..6).any { it.contains(search, true) }) ||
-                    (nexusUnlocked && visibleTerms.slice(7..8).any { it.contains(search, true) })
+                    (nexusUnlocked && visibleTerms.slice(7..9).any { it.contains(search, true) })
                 if (search.isNotBlank() && !visible) {
                     Text(localizedUiText(selectedLanguage, "No matching conversations.", "Tidak ada percakapan yang cocok."), color = Color(0xFF9BAEB4),
                         modifier = Modifier.fillMaxWidth().padding(18.dp), fontSize = 12.sp)
