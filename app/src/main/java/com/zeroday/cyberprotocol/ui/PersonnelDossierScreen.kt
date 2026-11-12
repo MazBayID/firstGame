@@ -86,7 +86,7 @@ internal fun PersonnelDossierScreen(
             Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(dossierText(selectedLanguage, "QUALIFICATIONS AND PROGRESS", "KUALIFIKASI DAN PROGRES"), color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
-                DossierValue(dossierText(selectedLanguage, "RANK", "PANGKAT"), gameState.rank.replace('_', ' '))
+                DossierValue(dossierText(selectedLanguage, "RANK", "PANGKAT"), localizedRankName(gameState.rank, selectedLanguage))
                 DossierValue(dossierText(selectedLanguage, "EXPERIENCE", "PENGALAMAN"), "${gameState.experience} XP")
                 DossierValue(dossierText(selectedLanguage, "CLEARANCE", "OTORISASI"), gameState.clearance.toString())
                 DossierValue(dossierText(selectedLanguage, "TECHNICAL COMPETENCY", "KOMPETENSI TEKNIS"), "${gameState.technicalCompetencyXp} XP")
