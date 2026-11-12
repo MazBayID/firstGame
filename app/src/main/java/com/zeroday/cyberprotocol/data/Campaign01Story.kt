@@ -54,6 +54,10 @@ object Campaign01Story {
             "SELESAIKAN FIRST CONTACT")
     )
 
+    /** Returns the presentation variant without changing the canonical Indonesian story data. */
+    fun localizedBeat(index: Int, language: com.zeroday.cyberprotocol.core.model.GameLanguage): StoryBeat =
+        Campaign01StoryLocalization.localizedBeat(index, language)
+
     /**
      * Starter drafts contain objectives only. They intentionally never contain
      * executable answers; players must author the solution in the editor.
