@@ -58,3 +58,10 @@ Do not expose English as a completed playable language until L2–L5 cover every
 - No evaluator-sensitive Python code, terminal command, path, or literal output is translated.
 - Automated tests detect missing keys or missing authored content variants.
 - No major player-facing screen silently falls back to another language.
+
+
+## Implementation checkpoint — 2026-11-12
+
+The current localization batch extends bilingual interface coverage in the RX-14 Operations screen and the optional Training Simulator. Phase/status labels, decision-rationale guidance and legacy-save fallbacks, training navigation, workspace labels, and RUN/SUBMIT controls now use the selected game language. Practice-screen feedback for draft edits and saves is also localized.
+
+This is **interface-copy coverage only**, not full L3/L4 parity. Authored case titles, briefings, analysis/decision option content, optional mission titles/objectives/briefings/hints, and some player-facing output elsewhere still need reviewed English variants. The Language screen must continue to describe localization as partial.
