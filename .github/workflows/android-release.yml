@@ -2,7 +2,7 @@ name: Android Release APK
 
 on:
   push:
-    branches: [main, rebuild/full-game]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -15,7 +15,7 @@ permissions:
 jobs:
   validate-release-source:
     name: Validate source before release
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rebuild/full-game'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Check out the exact release source
