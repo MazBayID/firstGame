@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      final_release:
+        description: "Build, emulator-test, and publish the Final Release APK"
+        required: true
+        type: boolean
+        default: false
 
 concurrency:
   group: cyber-protocol-release-${{ github.ref }}
@@ -13,17 +19,16 @@ permissions:
   contents: read
 
 jobs:
-  build-test-release:
-    name: Build once, test the exact APK, release the same APK
+  source-tests:
+    name: Source tests (no APK)
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the candidate commit
+      - name: Check out source
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
 
-      # Source-level tests do not create an installable APK.
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -50,7 +55,33 @@ jobs:
       - name: Run Android unit tests
         run: gradle --no-daemon testReleaseUnitTest
 
-      # Restore the permanent key only after source tests have passed.
+  final-release:
+    name: Build once, test the exact APK, release the same APK
+    if: github.event_name == 'workflow_dispatch' && inputs.final_release == true && github.ref == 'refs/heads/main'
+    needs: source-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the approved release commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: "platform-tools"
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
       - name: Restore and validate permanent release keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -86,9 +117,8 @@ jobs:
           set -euo pipefail
           VERSION_CODE=$((1000 + GITHUB_RUN_NUMBER))
           echo "ANDROID_VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
-          echo "Release version code: $VERSION_CODE"
+          echo "Final Release version code: $VERSION_CODE"
 
-      # This is the ONLY installable game APK build in this workflow.
       - name: Build the single permanently signed Release APK
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -97,7 +127,6 @@ jobs:
         run: gradle --no-daemon assembleRelease
 
       - name: Validate package, version, ABIs, and permanent signature
-        id: apk_validation
         shell: bash
         run: |
           set -euo pipefail
@@ -132,7 +161,6 @@ jobs:
           echo "Permanent signing certificate: verified" >> "$GITHUB_STEP_SUMMARY"
           echo "APK SHA-256: $APK_SHA256" >> "$GITHUB_STEP_SUMMARY"
 
-      # Install and launch the exact signed Release APK built above.
       - name: Install and smoke-test the exact Release APK on Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -147,7 +175,7 @@ jobs:
             adb shell monkey -p com.zeroday.cyberprotocol -c android.intent.category.LAUNCHER 1
             sleep 20
             adb shell pidof com.zeroday.cyberprotocol
-            echo "Signed Release APK installed and launched successfully."
+            echo "Signed Final Release APK installed and launched successfully."
 
       - name: Confirm the tested APK is unchanged and prepare its digest
         shell: bash
@@ -159,7 +187,6 @@ jobs:
           echo "Tested APK SHA-256 unchanged: $ACTUAL_SHA256" >> "$GITHUB_STEP_SUMMARY"
           echo "Source commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
 
-      # Upload the same file tested above. No second build or re-signing occurs.
       - name: Publish the tested APK and checksum
         uses: actions/upload-artifact@v4
         with:

@@ -28,7 +28,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - A code editor with basic Python syntax highlighting and editing helpers.
 - A campaign/story-stage flow, code RUN/SUBMIT actions, and a seven-app hub including the offline A.E.G.I.S. Browser.
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
-- GitHub Actions with one main-branch Build → Test → Release pipeline that builds one permanently signed Release APK, installs and smoke-tests that exact binary on an Android Emulator, then publishes the unchanged APK. Pull requests use source-only tests and never build an installable APK.
+- GitHub Actions with source-only validation on development pushes and pull requests. A manually approved Final Release on `main` builds one permanently signed Release APK, installs and smoke-tests that exact binary on an Android Emulator, then publishes the unchanged APK.
 
 These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the expanded First Contact investigation; a later investigative case remains unapproved.
 
@@ -67,7 +67,7 @@ These foundations are not automatically production-ready. Python file access is 
 ### 6. Quality and release readiness
 - Unit-test domain logic, evaluators, command parsing, virtual filesystem, save migrations, and runtime boundaries.
 - Add integration tests for campaign transitions, persistence, mission completion, and App Hub navigation.
-- Run Android unit tests in the test workflow; produce only the permanently signed Release APK for device testing. Verify package, ABI, monotonically increasing versionCode, and APK signature.
+- Run Python and Android unit tests on development pushes and pull requests without producing an APK. Only an explicitly dispatched Final Release may produce the permanently signed Release APK; verify package, ABI, monotonically increasing versionCode, and APK signature.
 - Run static checks and dependency/security review where supported.
 - Validate layouts and keyboard behavior on representative Android screen sizes.
 - Produce a release candidate only after the complete campaign path and core systems pass the defined quality gates.
@@ -154,7 +154,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Added Python runner limits for AST size, range iteration, integer literals, collection literals, and captured stdout. These are teaching-runtime guardrails, **not a hardened sandbox**.
 - Added the entry-only WebP loading animation. It decodes one frame at a time and releases the previous bitmap instead of loading all 240 frames into memory.
 - Added Python regression tests and Kotlin domain-use-case tests.
-- Established the single-APK CI policy: source tests run before packaging; the main-branch pipeline builds one permanently signed Release APK, tests that exact file on an Android Emulator, verifies its SHA-256 remains unchanged, and publishes that same file. Pull-request checks remain source-only and do not produce installable APKs.
+- Established the single-APK Final Release policy: development pushes and pull requests run source tests only; a manually approved Final Release on `main` builds one permanently signed Release APK, tests that exact file on an Android Emulator, verifies its SHA-256 remains unchanged, and publishes that same file.
 
 
 - Tightened the Freya notification checkpoint: the introduction can only be acknowledged while the first mission is active; added regression coverage for premature access and the required mission gate.
@@ -179,21 +179,22 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation. The Android Emulator installed and launched that exact APK; the post-test SHA-256 comparison passed; the unchanged APK and checksum manifest were published; and temporary signing material was removed.
 - This automated verification does **not** replace physical-device acceptance: clean install, in-place update, and save-data preservation still need testing on the user's Android device.
 
-### Single-APK Build → Test → Release pipeline
+### Source Validation and Explicit Final Release pipeline
 
-- The `main`-branch workflow is one sequential pipeline: Python/Kotlin source tests → one signed Release APK build → package/signature/ABI/version validation → install and launch smoke test on an Android Emulator → publish the exact tested APK.
-- The pipeline invokes `assembleRelease` once. It does not build an installable Debug APK or rebuild/re-sign the Release APK after testing.
-- The Android Tests workflow is pull-request-only. It runs Python and Kotlin unit tests without signing secrets, APK-producing tasks, or installable APK artifacts. The main-branch Release pipeline repeats the required source tests before building its candidate APK.
+- Pushes to `main` run Python and Android/Kotlin unit tests only. They do not build an APK, restore signing secrets, start an emulator, or publish artifacts.
+- Pull-request checks remain source-only and do not produce installable APKs or receive signing secrets.
+- A Final Release is started manually from the `main` branch through **Cyber Protocol — Build, Test & Release**, with `final_release=true`. The workflow reruns source tests before packaging.
+- Only that explicit Final Release job invokes `assembleRelease`, exactly once. It does not build an installable Debug APK or rebuild/re-sign the Release APK after testing.
 - The emulator smoke test installs the built `app-release.apk` itself, launches `com.zeroday.cyberprotocol`, and requires the app process to remain alive. A failed installation or launch blocks publication.
-- Release validation checks application ID, monotonically increasing versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and the SHA-256 certificate fingerprint against the permanent keystore.
-- The pipeline records the APK SHA-256 before runtime testing and verifies the file is unchanged afterward. The uploaded `cyber-protocol-release` artifact contains that exact APK and its checksum manifest.
-- The permanent keystore is restored only after source tests pass, kept in the ephemeral runner with restricted permissions, and removed even when later steps fail. Pull requests never receive signing secrets.
+- Final Release validation checks application ID, monotonically increasing versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and the SHA-256 certificate fingerprint against the permanent keystore.
+- The workflow records the APK SHA-256 before runtime testing and verifies the file is unchanged afterward. The uploaded `cyber-protocol-release` artifact contains that exact APK and its checksum manifest.
+- The permanent keystore is restored only after source tests pass, kept in the ephemeral runner with restricted permissions, and removed even when later steps fail.
 - This automated emulator smoke test does not replace physical-device acceptance. Clean installation, in-place update, and save-data preservation must still be confirmed on the user's Android device.
 
 ### Current pipeline verification
 
-- **Verified:** CI run [#117](https://github.com/MazBayID/firstGame/actions/runs/43141349283) completed successfully on 2026-11-12 for commit `ca6e400c4d3e3bf1e8744625ebd28493e19785ea`. It includes the saveable Browser session state and its regression tests.
-- The verified candidate also includes the earlier saveable Terminal session state and its regression tests. Each newer `main` commit must pass this same release workflow before its APK is considered a tested candidate.
+- **Verified:** CI run [#119](https://github.com/MazBayID/firstGame/actions/runs/43144903075) completed successfully on 2026-11-12 for commit `c3027dc0e54d0785f6ed80eae631274afee9f60b`. It includes automatic scroll-to-latest in Messenger and Terminal, the preceding saveable Messenger/Browser/Terminal session states, and their regression tests.
+- Run #119 used the former automatic push-to-release workflow. It passed as a historical verified APK candidate; under the new policy, later development commits will run source tests only, and APK-level verification will occur only in an explicitly dispatched Final Release.
 - The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation.
 - The Android Emulator successfully installed and launched that exact APK; the app process remained alive for the smoke-test check.
 - The post-test SHA-256 comparison passed, the unchanged APK and checksum manifest were uploaded as artifact `cyber-protocol-release`, and temporary signing material was removed.
