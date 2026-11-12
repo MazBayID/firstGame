@@ -426,8 +426,8 @@ private fun CyberProtocolGameContentBody(
             terminalSession = terminalSession.clearOutput(
                 localizedUiText(
                     selectedLanguage,
-                    "A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\\n",
-                    "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\\n"
+                    "A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\n",
+                    "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n"
                 )
             )
             return
