@@ -252,8 +252,8 @@ internal object CaseLocalizedContent {
     fun evidenceSource(record: EvidenceRecord, language: GameLanguage): String {
         if (record.id.startsWith("evidence_")) {
             val mission = Campaign01Catalog.find(record.missionId)
-            val evaluatorId = mission?.evaluatorId
-            if (evaluatorId != null) {
+            if (mission != null && mission.evaluatorId != null) {
+                val evaluatorId = mission.evaluatorId
                 val optional = mission.id in Campaign01Catalog.retiredLegacyStoryMissionIds
                 return if (language == GameLanguage.ENGLISH) {
                     if (optional) "A.E.G.I.S. / optional Python practice evaluator $evaluatorId"
