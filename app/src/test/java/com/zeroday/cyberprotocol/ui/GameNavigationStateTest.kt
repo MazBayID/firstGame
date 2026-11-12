@@ -39,6 +39,24 @@ class GameNavigationStateTest {
     }
 
     @Test
+    fun operationsAndAnalysisReturnToTheirActualOrigin() {
+        val fromStory = GameNavigationState(
+            currentScreen = GameScreen.OPERATIONS,
+            caseReturnScreen = GameScreen.STORY
+        )
+        assertEquals(GameScreen.STORY, fromStory.back(12, false).currentScreen)
+
+        val fromOperations = GameNavigationState(
+            currentScreen = GameScreen.ANALYSIS,
+            caseReturnScreen = GameScreen.STORY,
+            analysisReturnScreen = GameScreen.OPERATIONS
+        )
+        val returnedToOperations = fromOperations.back(12, false)
+        assertEquals(GameScreen.OPERATIONS, returnedToOperations.currentScreen)
+        assertEquals(GameScreen.STORY, returnedToOperations.back(12, false).currentScreen)
+    }
+
+    @Test
     fun appScreensReturnToHubAndMenuScreensReturnToMenu() {
         val hub = GameNavigationState(currentScreen = GameScreen.TERMINAL)
         val menu = GameNavigationState(currentScreen = GameScreen.PROFILE)

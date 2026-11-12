@@ -11,7 +11,9 @@ import androidx.compose.runtime.saveable.listSaver
  */
 internal data class GameNavigationState(
     val currentScreen: GameScreen = GameScreen.MAIN_MENU,
-    val hubReturnScreen: GameScreen = GameScreen.CAMPAIGN
+    val hubReturnScreen: GameScreen = GameScreen.CAMPAIGN,
+    val caseReturnScreen: GameScreen = GameScreen.APP_HUB,
+    val analysisReturnScreen: GameScreen = GameScreen.APP_HUB
 ) {
     fun navigateTo(destination: GameScreen): GameNavigationState =
         copy(currentScreen = destination)
@@ -29,7 +31,8 @@ internal data class GameNavigationState(
             GameScreen.APP_HUB -> hubReturnScreen
             GameScreen.MESSENGER, GameScreen.BROWSER -> GameScreen.APP_HUB
             GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER,
-            GameScreen.ANALYSIS, GameScreen.OPERATIONS -> GameScreen.APP_HUB
+            GameScreen.ANALYSIS -> analysisReturnScreen
+            GameScreen.OPERATIONS -> caseReturnScreen
             GameScreen.PROFILE, GameScreen.ARCHIVES, GameScreen.ACHIEVEMENTS,
             GameScreen.SETTINGS, GameScreen.LANGUAGE -> GameScreen.MAIN_MENU
             GameScreen.MAIN_MENU -> GameScreen.MAIN_MENU
@@ -39,11 +42,24 @@ internal data class GameNavigationState(
 
     companion object {
         val Saver: Saver<GameNavigationState, Any> = listSaver(
-            save = { listOf(it.currentScreen.name, it.hubReturnScreen.name) },
+            save = {
+                listOf(
+                    it.currentScreen.name,
+                    it.hubReturnScreen.name,
+                    it.caseReturnScreen.name,
+                    it.analysisReturnScreen.name
+                )
+            },
             restore = {
                 GameNavigationState(
-                    currentScreen = GameScreen.valueOf(it[0]),
-                    hubReturnScreen = GameScreen.valueOf(it[1])
+                    currentScreen = GameScreen.valueOf(it[0] as String),
+                    hubReturnScreen = GameScreen.valueOf(it[1] as String),
+                    caseReturnScreen = (it.getOrNull(2) as? String)
+                        ?.let { name -> runCatching { GameScreen.valueOf(name) }.getOrNull() }
+                        ?: GameScreen.APP_HUB,
+                    analysisReturnScreen = (it.getOrNull(3) as? String)
+                        ?.let { name -> runCatching { GameScreen.valueOf(name) }.getOrNull() }
+                        ?: GameScreen.APP_HUB
                 )
             }
         )

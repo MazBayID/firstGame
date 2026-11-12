@@ -532,11 +532,11 @@ private fun CyberProtocolGameContentBody(
                 casePhase = rx14CasePhase,
                 caseProgress = rx14Progress,
                 onOpenOperations = {
-                    navigation = navigation.copy(hubReturnScreen = GameScreen.STORY)
+                    navigation = navigation.copy(caseReturnScreen = GameScreen.STORY)
                     navigate(GameScreen.OPERATIONS)
                 },
                 onOpenAnalysis = {
-                    navigation = navigation.copy(hubReturnScreen = GameScreen.STORY)
+                    navigation = navigation.copy(analysisReturnScreen = GameScreen.STORY)
                     navigate(GameScreen.ANALYSIS)
                 },
                 hintLevel = hintLevel,
@@ -735,7 +735,7 @@ private fun CyberProtocolGameContentBody(
             caseDefinition = Campaign01CaseCatalog.rx14,
             caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
                 ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
-            onBack = { navigate(navigation.hubReturnScreen) },
+            onBack = { navigate(navigation.analysisReturnScreen) },
             onAnalyzeCaseEvidence = { evidenceId ->
                 sessionViewModel.analyzeCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
             },
@@ -752,7 +752,7 @@ private fun CyberProtocolGameContentBody(
             caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
                 ?: com.zeroday.cyberprotocol.core.model.CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
             evidenceRecords = currentGameState.evidence,
-            onBack = { navigate(GameScreen.APP_HUB) },
+            onBack = { navigate(navigation.caseReturnScreen) },
             onReadSource = { evidenceId ->
                 val asset = com.zeroday.cyberprotocol.data.EvidenceAssetCatalog.assets
                     .firstOrNull { it.evidenceId == evidenceId }
@@ -765,7 +765,7 @@ private fun CyberProtocolGameContentBody(
                 sessionViewModel.discoverCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
             },
             onOpenAnalysis = {
-                navigation = navigation.copy(hubReturnScreen = GameScreen.OPERATIONS)
+                navigation = navigation.copy(analysisReturnScreen = GameScreen.OPERATIONS)
                 navigate(GameScreen.ANALYSIS)
             },
             onDecisionRationaleChange = { rationale ->
