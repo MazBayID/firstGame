@@ -4,8 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,23 +15,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zeroday.cyberprotocol.core.model.GameState
-import com.zeroday.cyberprotocol.data.Campaign01Catalog
+import com.zeroday.cyberprotocol.core.model.*
 
-/**
- * Operations is the player's mission-control surface, not a second progression
- * engine. It renders persisted campaign facts and only resumes the mission
- * already authorized by the story flow.
- */
+/** Operations is now the case-control surface, not a fixed list of coding missions. */
 @Composable
 internal fun OperationsScreen(
     gameState: GameState,
+    caseDefinition: CaseDefinition,
+    caseProgress: CaseProgress,
+    evidenceRecords: List<EvidenceRecord>,
     onBack: () -> Unit,
-    onResumeActiveMission: () -> Unit
+    onAcknowledgeBriefing: () -> Unit,
+    onDiscoverEvidence: (String) -> Unit,
+    onAnalyzeEvidence: (String) -> Unit,
+    onSelectDecision: (String) -> Unit,
+    onAcknowledgeDebrief: () -> Unit
 ) {
-    val missions = Campaign01Catalog.missions
-    val completedCount = missions.count { it.id in gameState.completedMissionIds }
-    val activeMission = missions.firstOrNull { it.id == gameState.activeMissionId }
+    val phase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
+    val records = caseDefinition.requiredEvidenceIds.mapNotNull { id ->
+        evidenceRecords.firstOrNull { it.id == id }
+    }
+    val phaseNumber = when (phase) {
+        CasePhase.BRIEFING -> 1
+        CasePhase.INVESTIGATION -> 2
+        CasePhase.ANALYSIS -> 3
+        CasePhase.OPERATIONAL_DECISION -> 4
+        CasePhase.DEBRIEFING, CasePhase.COMPLETE -> 5
+    }
+    val decision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
 
     Column(
         Modifier.fillMaxSize()
@@ -42,125 +53,154 @@ internal fun OperationsScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("PUSAT OPERASI", color = Color(0xFFBCE8EA), fontSize = 10.sp,
-                    letterSpacing = 2.sp, fontWeight = FontWeight.Bold)
-                Text("FIRST CONTACT", color = Color.White, fontSize = 25.sp,
-                    fontWeight = FontWeight.Black)
-                Text("A.E.G.I.S.  /  MANILA COMMAND", color = Color(0xFF8AA8AE),
-                    fontSize = 9.sp, letterSpacing = 1.2.sp)
+                Text("A.E.G.I.S.  /  MANILA COMMAND", color = Color(0xFF8AA8AE), fontSize = 9.sp)
+                Text("PUSAT OPERASI", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black)
             }
             TextButton(onClick = onBack) { Text("KEMBALI", color = Color(0xFFBCE8EA)) }
         }
 
         Surface(
-            color = Color(0xFF102A32),
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, Color(0xFF31545B)),
-            modifier = Modifier.fillMaxWidth()
+            color = Color(0xFF102A32), shape = RoundedCornerShape(8.dp),
+            border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()
         ) {
-            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                Text("STATUS OPERASI", color = Color(0xFF83C7D0), fontSize = 9.sp,
-                    letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
-                Row(verticalAlignment = Alignment.Bottom) {
-                    Text("$completedCount", color = Color.White, fontSize = 30.sp,
-                        fontWeight = FontWeight.Black)
-                    Text(" / ${missions.size} MISI TERVERIFIKASI", color = Color(0xFF9AB4B8),
-                        fontSize = 10.sp, modifier = Modifier.padding(start = 7.dp, bottom = 5.dp))
-                    Spacer(Modifier.weight(1f))
-                    Text("${(completedCount * 100 / missions.size)}%",
-                        color = Color(0xFFE0A2AD), fontSize = 17.sp, fontWeight = FontWeight.Bold)
-                }
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("KASUS AKTIF", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(caseDefinition.title, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("RX-14  ·  INVESTIGASI SUMBER DATA", color = Color(0xFFB8C9CC), fontSize = 10.sp)
                 LinearProgressIndicator(
-                    progress = { completedCount.toFloat() / missions.size.coerceAtLeast(1) },
-                    modifier = Modifier.fillMaxWidth().height(5.dp),
-                    color = Color(0xFFB85B70),
-                    trackColor = Color(0xFF263A40)
+                    progress = { phaseNumber / 5f }, modifier = Modifier.fillMaxWidth().height(5.dp),
+                    color = Color(0xFF65C7C0), trackColor = Color(0xFF263A40)
                 )
-                Text("RANK ${gameState.rank.replace('_', ' ')}   ·   ${gameState.experience} XP   ·   CLEARANCE ${gameState.clearance}",
-                    color = Color(0xFFB8C9CC), fontSize = 10.sp)
+                Text("TAHAP " + phaseNumber + " DARI 5  ·  " + phaseLabel(phase),
+                    color = Color(0xFF9AB4B8), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("RANK " + gameState.rank.replace('_', ' ') + "   ·   " + gameState.experience +
+                    " XP   ·   CLEARANCE " + gameState.clearance, color = Color(0xFFB8C9CC), fontSize = 10.sp)
             }
         }
 
-        if (activeMission != null) {
-            Surface(
-                color = Color(0xFF182B27),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, Color(0xFF3D715D)),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("OPERASI AKTIF", color = Color(0xFF8CD5AC), fontSize = 9.sp,
-                        letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
-                    Text(activeMission.title, color = Color.White, fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(activeMission.briefing, color = Color(0xFFC5D3D0),
-                        fontSize = 12.sp, lineHeight = 18.sp)
-                    Button(
-                        onClick = onResumeActiveMission,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF28634D))
-                    ) { Text("LANJUTKAN OPERASI") }
+        when (phase) {
+            CasePhase.BRIEFING -> {
+                SectionLabel("01  /  INTELLIGENCE BRIEFING")
+                InfoPanel(caseDefinition.briefing)
+                Text("Kamu tidak harus membuka semua aplikasi. Mulailah dari tujuan kasus, lalu pilih sumber yang relevan.",
+                    color = Color(0xFF91A8AD), fontSize = 11.sp, lineHeight = 17.sp)
+                PrimaryAction("PAHAMI BRIEFING", onAcknowledgeBriefing)
+            }
+            CasePhase.INVESTIGATION -> {
+                SectionLabel("02  /  INVESTIGATION")
+                InfoPanel("Periksa dua catatan penerimaan RX-14. Perbedaan waktu adalah fakta yang perlu dicatat, bukan bukti otomatis adanya manipulasi.")
+                records.forEach { record ->
+                    val found = record.id in caseProgress.discoveredEvidenceIds
+                    EvidencePanel(record, found, record.id in caseProgress.analyzedEvidenceIds,
+                        if (found) "SUDAH DIPERIKSA" else "PERIKSA SUMBER",
+                        !found) { onDiscoverEvidence(record.id) }
                 }
+                Text(caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
+                    " dari " + caseDefinition.requiredEvidenceIds.size + " sumber wajib telah diperiksa.",
+                    color = Color(0xFF91A8AD), fontSize = 10.sp)
             }
-        } else {
-            Surface(
-                color = Color(0xFF18232A),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, Color(0xFF34464D)),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    if (gameState.storyBeat >= 16) "First Contact selesai. Semua temuan tetap tersimpan di Analisis dan Arsip."
-                    else "Belum ada misi aktif. Lanjutkan alur cerita untuk menerima briefing dan otorisasi operasi berikutnya.",
-                    Modifier.padding(15.dp), color = Color(0xFFB7C6CB), fontSize = 12.sp, lineHeight = 18.sp
-                )
+            CasePhase.ANALYSIS -> {
+                SectionLabel("03  /  INTELLIGENCE ANALYSIS")
+                InfoPanel("Bandingkan kedua sumber. Catat kesamaan, perbedaan yang terlihat, dan batas kesimpulan yang dapat ditarik.")
+                records.forEach { record ->
+                    val analyzed = record.id in caseProgress.analyzedEvidenceIds
+                    EvidencePanel(record, record.id in caseProgress.discoveredEvidenceIds, analyzed,
+                        if (analyzed) "SUDAH DIANALISIS" else "CATAT HASIL ANALISIS",
+                        !analyzed) { onAnalyzeEvidence(record.id) }
+                }
+                Text(caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
+                    " dari " + caseDefinition.requiredEvidenceIds.size + " sumber telah dianalisis.",
+                    color = Color(0xFF91A8AD), fontSize = 10.sp)
             }
-        }
-
-        Text("DAFTAR MISI", color = Color(0xFF83C7D0), fontSize = 10.sp,
-            letterSpacing = 1.5.sp, fontWeight = FontWeight.Bold)
-        missions.forEachIndexed { index, mission ->
-            val completed = mission.id in gameState.completedMissionIds
-            val active = mission.id == gameState.activeMissionId
-            val status = when {
-                completed -> "TERVERIFIKASI"
-                active -> "AKTIF"
-                else -> "MENUNGGU ALUR CERITA"
-            }
-            Surface(
-                color = if (active) Color(0xFF182B27) else Color(0xFF111B22),
-                shape = RoundedCornerShape(6.dp),
-                border = BorderStroke(1.dp, when {
-                    active -> Color(0xFF3D715D)
-                    completed -> Color(0xFF315348)
-                    else -> Color(0xFF263940)
-                }),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    Modifier.padding(horizontal = 13.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("%02d".format(index + 1), color = Color(0xFF83C7D0),
-                        fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    Column(Modifier.weight(1f).padding(horizontal = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                        Text(mission.title, color = Color.White, fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold)
-                        Text("XP ${mission.rewardXp}  ·  CLEARANCE ${mission.requiredClearance}",
-                            color = Color(0xFF8AA8AE), fontSize = 9.sp)
+            CasePhase.OPERATIONAL_DECISION -> {
+                SectionLabel("04  /  OPERATIONAL DECISION")
+                InfoPanel("A.E.G.I.S. mencatat 09:41:12 dan arsip mencatat 09:41:16. Pilih tindakan yang proporsional dengan bukti yang tersedia.")
+                caseDefinition.decisionOptions.forEach { option ->
+                    Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
+                        border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                            Text(option.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text(option.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 16.sp)
+                            OutlinedButton(onClick = { onSelectDecision(option.id) }, modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))) {
+                                Text("PILIH TINDAKAN")
+                            }
+                        }
                     }
-                    Text(status, color = when {
-                        completed -> Color(0xFF8CD5AC)
-                        active -> Color(0xFFE0A2AD)
-                        else -> Color(0xFF73878D)
-                    }, fontSize = 8.sp, fontWeight = FontWeight.Bold)
                 }
             }
+            CasePhase.DEBRIEFING -> {
+                SectionLabel("05  /  DEBRIEFING")
+                InfoPanel("Keputusanmu telah dicatat. Tinjau kembali apa yang didukung sumber dan apa yang masih belum diketahui.")
+                decision?.let {
+                    Text("KEPUTUSAN TERCATAT", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Text(it.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(it.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 17.sp)
+                }
+                InfoPanel("Fakta: dua catatan menyebut RX-14 dan waktu penerimaannya berselisih empat detik. Penyebabnya belum dapat dipastikan. Tidak ada dasar untuk menunjuk pelaku atau menyatakan manipulasi.")
+                PrimaryAction("SELESAIKAN DEBRIEF", onAcknowledgeDebrief)
+            }
+            CasePhase.COMPLETE -> {
+                SectionLabel("CASE STATUS  /  COMPLETE")
+                InfoPanel("First Contact selesai. Laporan mempertahankan perbedaan antara fakta, dugaan, dan hal yang belum diketahui. Anomali RX-14 tetap terbuka untuk pemeriksaan jika bukti baru tersedia.")
+                Text("KEPUTUSAN AKHIR", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(decision?.title ?: "Tidak ada keputusan tersimpan", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            }
         }
-        Text(
-            "Otorisasi misi mengikuti checkpoint cerita. Pusat Operasi tidak dapat membuka misi yang belum diberikan oleh alur kampanye.",
-            color = Color(0xFF71858B), fontSize = 10.sp, lineHeight = 16.sp
-        )
+
+        Text("Pusat Operasi mengelola kasus dan keputusan. Aplikasi lain adalah alat investigasi; membuka aplikasi bukan syarat progres dengan sendirinya.",
+            color = Color(0xFF71858B), fontSize = 10.sp, lineHeight = 16.sp)
     }
+}
+
+@Composable
+private fun SectionLabel(value: String) {
+    Text(value, color = Color(0xFF83C7D0), fontSize = 10.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
+}
+
+@Composable
+private fun InfoPanel(value: String) {
+    Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
+        border = BorderStroke(1.dp, Color(0xFF263F48)), modifier = Modifier.fillMaxWidth()) {
+        Text(value, Modifier.padding(14.dp), color = Color(0xFFC5D3D0), fontSize = 12.sp, lineHeight = 19.sp)
+    }
+}
+
+@Composable
+private fun EvidencePanel(
+    record: EvidenceRecord, discovered: Boolean, analyzed: Boolean,
+    actionLabel: String, actionEnabled: Boolean, onAction: () -> Unit
+) {
+    Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
+        border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            Text(record.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 10.sp)
+            if (discovered) {
+                Text(record.summary, color = Color(0xFFC5D3D0), fontSize = 11.sp, lineHeight = 17.sp)
+                Text("STATUS BUKTI: " + record.status.name, color = Color(0xFF91A8AD), fontSize = 9.sp)
+            } else {
+                Text("Catatan sumber tersedia. Periksa untuk membuka isi dan mencatatnya sebagai bukti kasus.",
+                    color = Color(0xFF91A8AD), fontSize = 10.sp, lineHeight = 15.sp)
+            }
+            if (analyzed) Text("ANALISIS TERCATAT", color = Color(0xFF8CD5AC), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+            OutlinedButton(onClick = onAction, enabled = actionEnabled, modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))) { Text(actionLabel) }
+        }
+    }
+}
+
+@Composable
+private fun PrimaryAction(label: String, onClick: () -> Unit) {
+    Button(onClick = onClick, modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF28634D))) { Text(label) }
+}
+
+private fun phaseLabel(phase: CasePhase): String = when (phase) {
+    CasePhase.BRIEFING -> "BRIEFING"
+    CasePhase.INVESTIGATION -> "INVESTIGATION"
+    CasePhase.ANALYSIS -> "ANALYSIS"
+    CasePhase.OPERATIONAL_DECISION -> "DECISION"
+    CasePhase.DEBRIEFING -> "DEBRIEFING"
+    CasePhase.COMPLETE -> "COMPLETE"
 }
