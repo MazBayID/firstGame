@@ -323,7 +323,7 @@ private fun CyberProtocolGameContentBody(
             scope.launch {
                 codeFeedback = "MEMVERIFIKASI..."
                 val result = withContext(Dispatchers.IO) {
-                    python.submit(mission.evaluatorId ?: -1, sourceToVerify)
+                    python.submit(mission.evaluatorId ?: -1, sourceToVerify, selectedLanguage)
                 }
                 if (code.text != sourceToVerify) {
                     lastSuccessfulRunSource = null
@@ -576,7 +576,7 @@ private fun CyberProtocolGameContentBody(
         scope.launch {
             practiceFeedback = "MEMVERIFIKASI LATIHAN..."
             val result = withContext(Dispatchers.IO) {
-                python.submit(mission.evaluatorId ?: -1, source)
+                python.submit(mission.evaluatorId ?: -1, source, selectedLanguage)
             }
             if (practiceCode.text != source) {
                 practiceLastSuccessfulRunSource = null
