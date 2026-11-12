@@ -46,6 +46,26 @@ class MessengerDialogueTest {
         assertTrue(offline.contains("local Python runtime"))
     }
 
+
+    @Test
+    fun freyaOpeningDialogueIsLocalizedAndReflectsCurrentProgress() {
+        val english = MessengerDialogue.freyaIntroduction("Identity Verification", 2, GameLanguage.ENGLISH)
+        val indonesian = MessengerDialogue.freyaIntroduction("Verifikasi Identitas", 2, GameLanguage.INDONESIAN)
+
+        assertTrue(english.first().startsWith("Hello. I am Freya Knox"))
+        assertTrue(english.any { it.contains("Identity Verification") })
+        assertTrue(english.any { it.contains("identity_fragment.txt") })
+        assertTrue(english.any { it.contains("2 verified missions") })
+        assertTrue(indonesian.first().startsWith("Halo. Aku Freya Knox"))
+        assertTrue(indonesian.any { it.contains("identity_fragment.txt") })
+    }
+
+    @Test
+    fun nexusOpeningDialogueUsesTheSelectedLanguage() {
+        assertTrue(MessengerDialogue.nexusIntroduction(GameLanguage.ENGLISH).first().startsWith("The A.E.G.I.S."))
+        assertTrue(MessengerDialogue.nexusIntroduction(GameLanguage.INDONESIAN).first().startsWith("Kanal komunikasi"))
+    }
+
     @Test
     fun freyaPreservesRecruitmentMysteryWhenAskedWhySheChoseThePlayer() {
         val response = MessengerDialogue.freyaResponse("Mengapa kamu memilihku?")

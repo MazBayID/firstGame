@@ -1778,51 +1778,10 @@ private fun MessengerScreen(
                         }
                     }
                     "FREYA" -> {
-                        ChatBubble(
-                            "Freya Knox",
-                            "Halo. Aku Freya Knox. Selamat datang. Aku akan mendampingimu selama rangkaian misi awal A.E.G.I.S. dan membantu menjelaskan apa yang perlu kamu lakukan. Kita jalani satu per satu—tidak ada alasan untuk berpura-pura sudah memahami sesuatu yang baru kamu temui.",
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            if (activeMissionTitle != null) {
-                                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Kita akan mempelajari terminal dan Python dari dasar sebelum kamu mengerjakan tugas teknis secara mandiri."
-                            } else {
-                                "Kalau belum ada tugas aktif, buka kembali rangkaian misi dari Campaign. Aku akan membantumu memahami instruksi saat tugas berikutnya tersedia."
-                            },
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            "Progresmu tercatat pada $completedMissionCount misi yang sudah diverifikasi. Kita tidak perlu terburu-buru; yang penting kamu memahami alasan di balik setiap langkah.",
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            "Untuk dukungan teknis tambahan, ada NEXUS. Sistem ini membantu komunikasi intelijen dan diagnostik, tetapi bukan pengganti mentor. Aku tetap akan membimbingmu memahami setiap langkah.",
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            "Terminal adalah tempat memberi perintah teks kepada lingkungan kerja game. Python adalah bahasa yang akan kita gunakan untuk menulis instruksi. Kita mulai dari perintah sederhana, membaca berkas, menyimpan nilai ke variabel, lalu menampilkan hasilnya.",
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            "Setelah pengenalan dasar, buka A.E.G.I.S. Intranet melalui Browser internal. Gunakan ID personel RECRUIT-014 dan kode akses FIRSTCONTACT. Portal ini berjalan lokal di perangkatmu.",
-                            false
-                        )
-                        ChatBubble(
-                            "Freya Knox",
-                            "Untuk tugas Sinyal Pertama, aku juga melampirkan message_fragment.txt. Simpan berkas itu ke ruang kerja misi, lalu baca melalui Terminal. Browser Repository dan lampiran ini menunjuk berkas yang sama.",
-                            false
-                        )
-                        if (activeMissionTitle == "Verifikasi Identitas") {
-                            ChatBubble(
-                                "Freya Knox",
-                                "Untuk Verifikasi Identitas, gunakan identity_fragment.txt. Unduh berkas dari lampiran atau File Repository, baca dengan cat, lalu simpan isi persisnya ke variabel message. Jangan menebak isi pesan.",
-                                false
-                            )
+                        MessengerDialogue.freyaIntroduction(
+                            activeMissionTitle, completedMissionCount, selectedLanguage
+                        ).forEach { message ->
+                            ChatBubble("Freya Knox", message, false)
                         }
                         replies.forEach { message ->
                             ChatBubble("Kamu", message, true)
@@ -1834,8 +1793,9 @@ private fun MessengerScreen(
                         }
                     }
                     else -> {
-                        ChatBubble("NEXUS", "Kanal komunikasi A.E.G.I.S. aktif. Status personel: Recruit. Aku adalah sistem pendukung analisis dan komunikasi, bukan pengambil keputusan operasional.", false)
-                        ChatBubble("NEXUS", "Aku dapat menjelaskan data yang diizinkan, membantu memeriksa hasil teknis, dan meneruskan instruksi yang telah disahkan mentor.", false)
+                        MessengerDialogue.nexusIntroduction(selectedLanguage).forEach { message ->
+                            ChatBubble("NEXUS", message, false)
+                        }
                         replies.forEach { message ->
                             ChatBubble("Kamu", message, true)
                             ChatBubble(

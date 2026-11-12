@@ -9,6 +9,58 @@ import com.zeroday.cyberprotocol.core.model.GameLanguage
  * mission access, or progression. Game-state changes remain explicit ViewModel actions.
  */
 internal object MessengerDialogue {
+    fun freyaIntroduction(
+        activeMissionTitle: String?,
+        completedMissionCount: Int,
+        language: GameLanguage
+    ): List<String> {
+        if (language == GameLanguage.ENGLISH) {
+            return buildList {
+                add("Hello. I am Freya Knox. Welcome. I will guide you through the opening A.E.G.I.S. missions and explain what you need to do. We will take this one step at a time—there is no reason to pretend you understand something you have only just encountered.")
+                add(
+                    if (activeMissionTitle != null) {
+                        "I can see your current task: $activeMissionTitle. Review the briefing and objectives one by one. We will learn the Terminal and Python from the basics before you work independently on technical tasks."
+                    } else {
+                        "If no task is active, reopen the mission sequence from Campaign. I will help you understand the instructions when the next task becomes available."
+                    }
+                )
+                add("Your progress shows $completedMissionCount verified missions. There is no need to rush; what matters is understanding the reason behind each step.")
+                add("For additional technical support, there is NEXUS. The system assists with intelligence communication and diagnostics, but it does not replace a mentor. I will continue helping you understand each step.")
+                add("The Terminal accepts text commands in the game's workspace. Python is the language we will use to write instructions. We will begin with simple commands, reading files, storing values in variables, and displaying results.")
+                add("After the basic introduction, open the A.E.G.I.S. Intranet through the internal Browser. Use personnel ID RECRUIT-014 and access code FIRSTCONTACT. This portal runs locally on your device.")
+                add("For the First Signal task, I have also attached message_fragment.txt. Save it to the mission workspace, then read it in the Terminal. The Browser Repository and this attachment point to the same file.")
+                if (activeMissionTitle == "Verifikasi Identitas") {
+                    add("For Identity Verification, use identity_fragment.txt. Download it from the attachment or File Repository, read it with cat, then store its exact contents in the message variable. Do not guess the message.")
+                }
+            }
+        }
+        return buildList {
+            add("Halo. Aku Freya Knox. Selamat datang. Aku akan mendampingimu selama rangkaian misi awal A.E.G.I.S. dan membantu menjelaskan apa yang perlu kamu lakukan. Kita jalani satu per satu—tidak ada alasan untuk berpura-pura sudah memahami sesuatu yang baru kamu temui.")
+            add(if (activeMissionTitle != null) {
+                "Aku melihat tugas aktifmu sekarang: $activeMissionTitle. Periksa briefing dan tujuan satu per satu. Kita akan mempelajari terminal dan Python dari dasar sebelum kamu mengerjakan tugas teknis secara mandiri."
+            } else {
+                "Kalau belum ada tugas aktif, buka kembali rangkaian misi dari Campaign. Aku akan membantumu memahami instruksi saat tugas berikutnya tersedia."
+            })
+            add("Progresmu tercatat pada $completedMissionCount misi yang sudah diverifikasi. Kita tidak perlu terburu-buru; yang penting kamu memahami alasan di balik setiap langkah.")
+            add("Untuk dukungan teknis tambahan, ada NEXUS. Sistem ini membantu komunikasi intelijen dan diagnostik, tetapi bukan pengganti mentor. Aku tetap akan membimbingmu memahami setiap langkah.")
+            add("Terminal adalah tempat memberi perintah teks kepada lingkungan kerja game. Python adalah bahasa yang akan kita gunakan untuk menulis instruksi. Kita mulai dari perintah sederhana, membaca berkas, menyimpan nilai ke variabel, lalu menampilkan hasilnya.")
+            add("Setelah pengenalan dasar, buka A.E.G.I.S. Intranet melalui Browser internal. Gunakan ID personel RECRUIT-014 dan kode akses FIRSTCONTACT. Portal ini berjalan lokal di perangkatmu.")
+            add("Untuk tugas Sinyal Pertama, aku juga melampirkan message_fragment.txt. Simpan berkas itu ke ruang kerja misi, lalu baca melalui Terminal. Browser Repository dan lampiran ini menunjuk berkas yang sama.")
+            if (activeMissionTitle == "Verifikasi Identitas") {
+                add("Untuk Verifikasi Identitas, gunakan identity_fragment.txt. Unduh berkas dari lampiran atau File Repository, baca dengan cat, lalu simpan isi persisnya ke variabel message. Jangan menebak isi pesan.")
+            }
+        }
+    }
+
+    fun nexusIntroduction(language: GameLanguage): List<String> =
+        if (language == GameLanguage.ENGLISH) listOf(
+            "The A.E.G.I.S. communication channel is active. Personnel status: Recruit. I am an analysis and communication support system, not an operational decision-maker.",
+            "I can explain permitted data, help review technical results, and relay instructions approved by your mentor."
+        ) else listOf(
+            "Kanal komunikasi A.E.G.I.S. aktif. Status personel: Recruit. Aku adalah sistem pendukung analisis dan komunikasi, bukan pengambil keputusan operasional.",
+            "Aku dapat menjelaskan data yang diizinkan, membantu memeriksa hasil teknis, dan meneruskan instruksi yang telah disahkan mentor."
+        )
+
     fun freyaResponse(message: String, language: GameLanguage = GameLanguage.INDONESIAN): String {
         if (language == GameLanguage.ENGLISH) return when (message) {
             "Dimengerti. Kita mulai dari mana?" -> "Start with the nearest task: open the A.E.G.I.S. Browser, sign in with the credentials I gave you, and download the mission file. Then read it in the in-game Terminal. I will explain each step before asking you to try it yourself."
