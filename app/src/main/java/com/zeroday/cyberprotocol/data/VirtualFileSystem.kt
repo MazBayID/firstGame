@@ -206,7 +206,7 @@ class VirtualFileSystem(context: Context) {
                 if (!files.containsKey(target)) return TerminalResponse("File not found: $script", cwd)
                 "PYTHON_LAUNCH:" + script
             }
-            else -> if (language == GameLanguage.ENGLISH) "Unknown command: $name\\nType 'help' to view the command guide." else "Perintah tidak dikenal: $name\\nKetik 'help' untuk melihat daftar perintah."
+            else -> if (language == GameLanguage.ENGLISH) "Unknown command: $name\nType 'help' to view the command guide." else "Perintah tidak dikenal: $name\\nKetik 'help' untuk melihat daftar perintah."
         }
         return TerminalResponse(output, cwd)
     }
