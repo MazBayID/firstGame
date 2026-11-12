@@ -115,7 +115,7 @@ internal fun PracticeScreen(
                         letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                     selectedMission.runtimeVariables.forEach { (name, values) ->
                         Text("$name =", color = Color.White, fontFamily = FontFamily.Monospace, fontSize = 10.sp)
-                        Text(values.joinToString(prefix = "[", postfix = "]") { ""$it"" },
+                        Text(values.joinToString(prefix = "[", postfix = "]") { "\\"$it\\"" },
                             color = Color(0xFFB7D9C2), fontFamily = FontFamily.Monospace, fontSize = 10.sp)
                     }
                 }

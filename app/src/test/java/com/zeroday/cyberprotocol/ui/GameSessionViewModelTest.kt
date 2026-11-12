@@ -74,6 +74,17 @@ class GameSessionViewModelTest {
     }
 
     @Test
+    fun existingRecruitmentSaveReceivesNewOptionalPracticeUnlock() {
+        val repository = MemoryRepository(GameState(storyBeat = 10))
+        val viewModel = GameSessionViewModel(repository)
+
+        viewModel.saveStoryBeat(10)
+
+        assertTrue("PRACTICE" in repository.load().unlockedApps)
+        assertEquals(10, repository.load().storyBeat)
+    }
+
+    @Test
     fun completedRx14CaseAwardsChapterRewardExactlyOnce() {
         val definition = Campaign01CaseCatalog.rx14
         val completedProgress = CaseProgress(
