@@ -1033,8 +1033,8 @@ private fun CyberProtocolGameContentBody(
                     append(localizedUiText(selectedLanguage, "No completed missions yet.\n", "Belum ada misi selesai.\n"))
                 append("\n").append(localizedUiText(selectedLanguage, "STORED EVIDENCE\n", "BUKTI TERSIMPAN\n"))
                 currentGameState.evidence.forEach {
-                    append("• ").append(it.title).append(" / ").append(localizedEvidenceStatus(it.status, selectedLanguage)).append("\n")
-                    append("  ").append(localizedUiText(selectedLanguage, "SOURCE: ", "SUMBER: ")).append(it.source).append("\n")
+                    append("• ").append(CaseLocalizedContent.evidenceTitle(it, selectedLanguage)).append(" / ").append(localizedEvidenceStatus(it.status, selectedLanguage)).append("\n")
+                    append("  ").append(localizedUiText(selectedLanguage, "SOURCE: ", "SUMBER: ")).append(CaseLocalizedContent.evidenceSource(it, selectedLanguage)).append("\n")
                 }
                 if (currentGameState.evidence.isEmpty())
                     append(localizedUiText(selectedLanguage, "No evidence stored yet.\n", "Belum ada bukti tersimpan.\n"))
