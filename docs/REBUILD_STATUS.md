@@ -348,3 +348,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Operations now renders the saved CaseProgress rationale as its controlled field, so leaving and returning to the screen cannot silently discard the draft.
 - The decision remains a separate explicit action; a draft alone never enters debrief or awards progression.
 - Added domain regression tests for phase gating and the 600-character cap. Source workflow result is pending.
+
+
+## Database and Dossier case-state integration
+
+- Intelligence Database now has an RX-14 case file view with phase, source discovery/analysis counts, analytical conclusion, operational decision, rationale, debrief state, and source relationships.
+- Personnel Dossier now includes the RX-14 case history alongside rank, XP, competency, and mission history.
+- Both screens read the same persisted CaseProgress and reward ledger as Operations and Analysis; they do not create parallel state.
+- Source workflow verification is pending.

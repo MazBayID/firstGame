@@ -16,13 +16,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zeroday.cyberprotocol.core.model.CaseDefinition
+import com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator
+import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 
 @Composable
-internal fun IntelligenceDatabaseScreen(gameState: GameState, onBack: () -> Unit) {
+internal fun IntelligenceDatabaseScreen(
+    gameState: GameState,
+    caseDefinition: CaseDefinition,
+    caseProgress: CaseProgress,
+    onBack: () -> Unit
+) {
     var selectedTab by rememberSaveable { mutableStateOf("MISSIONS") }
     var query by rememberSaveable { mutableStateOf("") }
     var selectedMissionId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -41,6 +49,12 @@ internal fun IntelligenceDatabaseScreen(gameState: GameState, onBack: () -> Unit
     }.sortedByDescending { it.recordedAtEpochMillis }
     val selectedMission = selectedMissionId?.let(Campaign01Catalog::find)
     val selectedEvidence = evidence.firstOrNull { it.id == selectedEvidenceId }
+    val casePhase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
+    val caseRecords = caseDefinition.requiredEvidenceIds.mapNotNull { id ->
+        gameState.evidence.firstOrNull { it.id == id }
+    }
+    val analysisConclusion = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
+    val decision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
 
     Column(
         Modifier.fillMaxSize()
@@ -77,6 +91,9 @@ internal fun IntelligenceDatabaseScreen(gameState: GameState, onBack: () -> Unit
             FilterChip(selected = selectedTab == "EVIDENCE", onClick = {
                 selectedTab = "EVIDENCE"; selectedMissionId = null
             }, label = { Text("BUKTI TERSIMPAN") })
+            FilterChip(selected = selectedTab == "CASE", onClick = {
+                selectedTab = "CASE"; selectedMissionId = null; selectedEvidenceId = null
+            }, label = { Text("KASUS RX-14") })
         }
 
         Surface(color = Color(0xFF102A32), shape = RoundedCornerShape(7.dp),
@@ -131,7 +148,7 @@ internal fun IntelligenceDatabaseScreen(gameState: GameState, onBack: () -> Unit
                         color = Color(0xFF83C7D0), fontSize = 8.sp)
                 }
             }
-        } else {
+        } else if (selectedTab == "EVIDENCE") {
             if (evidence.isEmpty()) EmptyDatabaseNote(
                 if (gameState.evidence.isEmpty()) "Belum ada bukti. Temuan yang lolos verifikasi misi akan masuk ke indeks ini."
                 else "Tidak ada bukti yang cocok dengan pencarian."
@@ -175,6 +192,28 @@ internal fun IntelligenceDatabaseScreen(gameState: GameState, onBack: () -> Unit
                         Text(related.briefing, color = Color(0xFF9AB4B8), fontSize = 10.sp,
                             lineHeight = 16.sp)
                     }
+                }
+            }
+        } else {
+            DatabaseDetailPanel("ACTIVE CASE FILE", caseDefinition.title) {
+                DatabaseValue("CASE ID", caseDefinition.id)
+                DatabaseValue("PHASE", casePhase.name.replace('_', ' '))
+                DatabaseValue("BRIEFING", caseDefinition.briefing)
+                DatabaseValue("REQUIRED SOURCES", caseRecords.size.toString())
+                DatabaseValue("DISCOVERED", "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                DatabaseValue("ANALYZED", "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                DatabaseValue("ANALYTICAL CONCLUSION", analysisConclusion?.title ?: "Belum dipilih")
+                DatabaseValue("CONCLUSION FEEDBACK", analysisConclusion?.feedback ?: "Belum ada kesimpulan tersimpan.")
+                DatabaseValue("OPERATIONAL DECISION", decision?.title ?: "Belum dipilih")
+                DatabaseValue("DECISION RATIONALE", caseProgress.decisionRationale.ifBlank { "Belum ada alasan tersimpan." })
+                DatabaseValue("DEBRIEF", if (caseProgress.debriefViewed) "SELESAI" else "BELUM SELESAI")
+                caseRecords.forEach { record ->
+                    HorizontalDivider(color = Color(0xFF293A40))
+                    Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    DatabaseValue("SOURCE", record.provenance.sourceLabel + " / " + record.provenance.origin.name)
+                    DatabaseValue("STATUS", if (record.id in caseProgress.discoveredEvidenceIds) "DIPERIKSA" else "BELUM DIPERIKSA")
+                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { "No linked evidence" })
+                    record.provenance.sourcePath?.let { DatabaseValue("SOURCE PATH", it) }
                 }
             }
         }

@@ -397,3 +397,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Returning to Operations restores the exact draft from CaseProgress; selecting a decision commits the same rationale into the debrief record.
 - Draft edits are accepted only during OPERATIONAL_DECISION and remain capped at 600 characters. The case phase does not advance until a decision is explicitly selected.
 - Regression coverage checks draft persistence, phase gating, and the storage limit.
+
+
+## Database and Dossier case-state integration
+
+- Intelligence Database exposes a read-only RX-14 case file view backed by the same GameState and CaseProgress used by the other A.E.G.I.S. apps.
+- Personnel Dossier includes case completion, evidence counts, analytical conclusion, operational decision/rationale, debrief state, and reward history.
+- No duplicate or screen-local case state is introduced. Source tests and manual navigation verification remain pending.

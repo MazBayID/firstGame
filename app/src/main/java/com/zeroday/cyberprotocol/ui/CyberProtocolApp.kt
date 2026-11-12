@@ -697,10 +697,16 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.DATABASE -> IntelligenceDatabaseScreen(
             gameState = currentGameState,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
+                ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
             onBack = { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.DOSSIER -> PersonnelDossierScreen(
             gameState = currentGameState,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
+                ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
             onBack = { navigate(GameScreen.APP_HUB) }
         )
         GameScreen.ANALYSIS -> AnalysisScreen(
