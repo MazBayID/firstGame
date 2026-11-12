@@ -1347,7 +1347,7 @@ private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBa
                     else Text(localizedUiText(selectedLanguage, "LOCKED", "TERKUNCI"), color = CyberPalette.SteelGray, fontSize = 8.sp)
                 }
             }
-            CPPrimaryButton(if (storyStage >= 16) localizedUiText(selectedLanguage, "OPEN A.E.G.I.S. HUB", "BUKA PUSAT A.E.G.I.S.") else localizedUiText(selectedLanguage, "CONTINUE STORY", localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA")), onContinue)
+            CPPrimaryButton(if (storyStage >= 16) localizedUiText(selectedLanguage, "OPEN A.E.G.I.S. HUB", "BUKA PUSAT A.E.G.I.S.") else localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA"), onContinue)
         }
         Text(
             localizedUiText(selectedLanguage, "New chapters and follow-up operations unlock through story progress. Every piece of evidence and every access permission has a source and authorization.", "Chapter baru dan operasi lanjutan akan terbuka melalui perkembangan cerita. Setiap bukti dan akses memiliki sumber serta otorisasi."),
@@ -1514,13 +1514,13 @@ private fun StoryScreen(
                     val nextLabel = when {
                         stage == 11 && casePhase == CasePhase.ANALYSIS -> localizedUiText(selectedLanguage, "CONTINUE TO COMPARISON", "LANJUTKAN KE PERBANDINGAN")
                         stage == 11 && casePhase != CasePhase.BRIEFING && casePhase != CasePhase.INVESTIGATION ->
-                            "LANJUTKAN CERITA"
+                            localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA")
                         stage == 12 && casePhase == CasePhase.OPERATIONAL_DECISION ->
                             localizedUiText(selectedLanguage, "CONTINUE TO TIMESTAMP ANALYSIS", "LANJUTKAN KE ANALISIS WAKTU")
                         stage == 13 && casePhase == CasePhase.OPERATIONAL_DECISION ->
                             localizedUiText(selectedLanguage, "CONTINUE TO OPERATIONAL DECISION", "LANJUTKAN KE KEPUTUSAN OPERASIONAL")
                         stage in 12..13 && (casePhase == CasePhase.DEBRIEFING || casePhase == CasePhase.COMPLETE) ->
-                            "LANJUTKAN CERITA"
+                            localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA")
                         stage == 14 && casePhase == CasePhase.DEBRIEFING -> localizedUiText(selectedLanguage, "CONTINUE TO REPORT", "LANJUTKAN KE LAPORAN")
                         stage == 14 && caseComplete -> beat.completedButton ?: beat.button
                         else -> beat.button
