@@ -18,9 +18,13 @@ The opening notifications and links are in-game simulations. The app does not ac
 
 ## Current playable foundation
 
-First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. Only the first two Python exercises remain required for beginner onboarding. The six later evaluated exercises have been removed from the mandatory story route; their definitions remain temporarily available for old-save/history compatibility, but a dedicated optional-practice interface has not yet been implemented. The case phases themselves no longer require the player to solve those legacy coding tasks.
+First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. Only two Python exercises are mandatory: the signal and identity exercises. Six later coding exercises remain in the catalog for legacy-save/history compatibility, but are no longer mandatory and do not block the RX-14 case. A dedicated optional-practice interface has not yet been implemented.
 
-The RX-14 case is now represented in Operations as a persisted five-phase case flow. The player inspects the original receipt sources, analyzes them separately, and chooses a proportionate operational response. The valid outcome **insufficient evidence** preserves the unresolved cause of the four-second discrepancy. This case flow is a playable foundation; story routing and cross-app evidence interactions are still being converted.
+RX-14 is a persisted, five-phase case connected to the campaign story and the shared A.E.G.I.S. tools. The same case progress is used by Messenger, Browser, Terminal, Operations, Analysis, Intelligence Database, and Personnel Dossier. Original receipt assets remain in the game-owned virtual filesystem; source inspection, analysis, the supported conclusion, operational rationale, decision, debrief, and the 100 Intelligence XP chapter reward are persisted. The valid **insufficient evidence** outcome preserves the unresolved cause of the four-second discrepancy.
+
+A source-level acceptance test now exercises a fresh campaign through both required training missions, the complete RX-14 case, reward delivery, and session reload. This is automated integration coverage—not a substitute for testing the experience on a physical Android device.
+
+Remaining work includes broader player-facing localization, an optional-practice interface, future approved chapters, continued UI/session-state cleanup, and physical-device acceptance. No later case or culprit is being invented to fill the campaign.
 
 ## Gameplay approach
 
@@ -36,7 +40,7 @@ The core loop is:
 
 Missions use five primary archetypes: Narrative, Investigation, Technical, Analytical, and Operational. A mission may combine activities, but it has one dominant experience. The player is solving a problem, not completing a mandatory sequence of apps. Python and other technical skills are used when the case genuinely calls for them; not every mission requires code.
 
-The **Evidence & Investigation Engine** connects immutable source assets, provenance-aware evidence records, case progression, and uncertainty-aware decisions. RX-14 is the first case-flow vertical slice. Cross-app source discovery, full analytical workspaces, and the remaining legacy mission migration are still in progress.
+The **Evidence & Investigation Engine** provides structured source provenance, evidence relationships, review history, controlled status transitions, and shared case progression. RX-14 is the first integrated case; deeper hypothesis/derived-finding tools and additional approved cases remain future work.
 
 ## Core systems
 
@@ -57,7 +61,7 @@ The **Evidence & Investigation Engine** connects immutable source assets, proven
 
 **Approved direction: English-first, Indonesian-supported.** English is the default for fresh installations; Bahasa Indonesia is an in-game alternative whose choice will persist locally. English is the source language for new story and UI content, and both languages must reach full player-facing content parity before bilingual support is called complete. Python syntax, identifiers, standard command names, file paths, and evaluator-sensitive output remain unchanged.
 
-The current build is **not yet localized**: the Language menu is a placeholder and much of the UI and campaign content remains Indonesian-only. See [Localization Plan](docs/LOCALIZATION_PLAN.md) and the language rules in GAME_CONCEPT.md.
+The Language screen is functional and persists the English/Bahasa Indonesia choice locally. English is the fresh-install default, the main menu has localized resources, and all 14 story beats have English and Indonesian variants. Operational screens, Messenger dialogue, and much of the remaining player-facing UI are still Indonesian-first, so full language parity is not complete. See [Localization Plan](docs/LOCALIZATION_PLAN.md) and the language rules in GAME_CONCEPT.md.
 
 ## Safety and technical limitations
 
