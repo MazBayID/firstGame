@@ -169,6 +169,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Rebuilt the Intelligence Database into two linked indexes: authored mission files and persisted evidence records. Both are searchable; mission detail shows objectives/workspace metadata, while evidence detail preserves status, source, mission provenance, timestamp, and the related mission briefing.
 - Replaced the text-only Personnel Dossier with a data-backed record showing recruitment/contact status, mentor and NEXUS access, campaign qualification, clearance, verified mission history, evidence count, and XP progress toward the next rank. The rank threshold calculation is now exposed by the progression domain rule and covered by tests.
 - Added unit tests for evidence ordering, status isolation, combined search/filter behavior, and provenance-field search.
+- Extracted terminal command, current-directory, output-buffer, and execution-busy state into a saveable `TerminalSessionState`; terminal output remains bounded to 24,000 characters, and an interrupted in-flight command restores as idle. Added unit tests for output bounds, clear behavior, workspace-state preservation, and save/restore behavior.
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
 
@@ -186,6 +187,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 ### Current pipeline verification
 
 - **Verified:** CI run [#105](https://github.com/MazBayID/firstGame/actions/runs/43137098194) completed successfully on 2026-11-12 for commit `6fe9d6a92a89a5fb29034282211cc0d7d1dc3063`.
+- Subsequent documentation and terminal-state refactor commits are newer than run #105; each new `main` commit is validated by the same release workflow, and the latest run must pass before its APK is considered a tested candidate.
 - The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation.
 - The Android Emulator successfully installed and launched that exact APK; the app process remained alive for the smoke-test check.
 - The post-test SHA-256 comparison passed, the unchanged APK and checksum manifest were uploaded as artifact `cyber-protocol-release`, and temporary signing material was removed.
