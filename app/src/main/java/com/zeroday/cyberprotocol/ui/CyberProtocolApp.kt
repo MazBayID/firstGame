@@ -39,6 +39,7 @@ import com.zeroday.cyberprotocol.core.model.CompetencyTrack
 import com.zeroday.cyberprotocol.core.model.MissionArchetype
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
+import com.zeroday.cyberprotocol.data.Campaign01CaseCatalog
 import com.zeroday.cyberprotocol.data.Campaign01Story
 import com.zeroday.cyberprotocol.data.Campaign01StoryLocalization
 import com.zeroday.cyberprotocol.data.StoryBeat
@@ -676,12 +677,25 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.OPERATIONS -> OperationsScreen(
             gameState = currentGameState,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
+                ?: com.zeroday.cyberprotocol.core.model.CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
+            evidenceRecords = currentGameState.evidence,
             onBack = { navigate(GameScreen.APP_HUB) },
-            onResumeActiveMission = {
-                val activeStage = currentGameState.activeMissionId
-                    ?.let { Campaign01Catalog.storyStageForMission(it) }
-                if (activeStage != null) saveStage(activeStage)
-                navigate(GameScreen.STORY)
+            onAcknowledgeBriefing = {
+                sessionViewModel.acknowledgeCaseBriefing(Campaign01CaseCatalog.rx14)
+            },
+            onDiscoverEvidence = { evidenceId ->
+                sessionViewModel.discoverCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
+            },
+            onAnalyzeEvidence = { evidenceId ->
+                sessionViewModel.analyzeCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
+            },
+            onSelectDecision = { decisionId ->
+                sessionViewModel.selectCaseDecision(Campaign01CaseCatalog.rx14, decisionId)
+            },
+            onAcknowledgeDebrief = {
+                sessionViewModel.acknowledgeCaseDebrief(Campaign01CaseCatalog.rx14)
             }
         )
         GameScreen.PROFILE -> InfoAppScreen(
