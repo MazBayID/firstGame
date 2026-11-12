@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.zeroday.cyberprotocol.core.model.CaseDefinition
 import com.zeroday.cyberprotocol.core.model.CompetencyTrack
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceRelationType
@@ -16,6 +17,7 @@ import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import com.zeroday.cyberprotocol.domain.usecase.CompleteMissionUseCase
 import com.zeroday.cyberprotocol.domain.usecase.ProgressionRules
 import com.zeroday.cyberprotocol.domain.usecase.RecordEvidenceUseCase
+import com.zeroday.cyberprotocol.domain.usecase.UpdateCaseProgressUseCase
 
 /** Owns campaign persistence and progression mutations outside the Compose screen. */
 internal class GameSessionViewModel(
@@ -118,6 +120,31 @@ internal class GameSessionViewModel(
         note: String = ""
     ) {
         RecordEvidenceUseCase(repository).relate(evidenceId, relatedEvidenceId, type, note)
+        refresh()
+    }
+
+    fun acknowledgeCaseBriefing(definition: CaseDefinition) {
+        UpdateCaseProgressUseCase(repository).acknowledgeBriefing(definition)
+        refresh()
+    }
+
+    fun discoverCaseEvidence(definition: CaseDefinition, evidenceId: String) {
+        UpdateCaseProgressUseCase(repository).discoverEvidence(definition, evidenceId)
+        refresh()
+    }
+
+    fun analyzeCaseEvidence(definition: CaseDefinition, evidenceId: String) {
+        UpdateCaseProgressUseCase(repository).analyzeEvidence(definition, evidenceId)
+        refresh()
+    }
+
+    fun selectCaseDecision(definition: CaseDefinition, decisionId: String) {
+        UpdateCaseProgressUseCase(repository).selectDecision(definition, decisionId)
+        refresh()
+    }
+
+    fun acknowledgeCaseDebrief(definition: CaseDefinition) {
+        UpdateCaseProgressUseCase(repository).acknowledgeDebrief(definition)
         refresh()
     }
 

@@ -256,3 +256,14 @@ This refresh does not introduce story canon or change gameplay implementation. I
 - Added separate default-English and Indonesian Android string resources for the main menu and Language screen.
 - Migrated main-menu labels, descriptions, motto, and footer to stable resource keys.
 - Full localization is not complete. Story dialogue, First Contact briefings/hints, and many operational screens still contain hard-coded Indonesian content; neither language should yet be advertised as fully localized.
+
+
+## Batch 06 — Case progression and competency integration
+
+- Added a deterministic case-progress use case for briefing acknowledgement, evidence discovery, analysis, operational decision, and debrief acknowledgement.
+- Case evidence must belong to the authored case and exist in the shared evidence store before it can be discovered. Analysis requires prior discovery.
+- Required evidence gates the normal case phases. Optional leads do not block the case, but a decision option may explicitly require an optional lead.
+- Exposed case-progress mutations through GameSessionViewModel for future case screens without adding unapproved case story content.
+- Added separate Technical Competency XP and Intelligence Competency XP. Mission archetype determines which track receives its reward; total campaign XP and rank remain independent.
+- The Personnel Dossier now displays both competency tracks. Schema 8 persists them; older saves default both tracks to zero without changing campaign progress.
+- Added regression tests for case phase gates, optional leads, competency awards/idempotency, and schema round trips.
