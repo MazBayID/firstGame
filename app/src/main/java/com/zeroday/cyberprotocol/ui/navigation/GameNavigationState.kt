@@ -30,7 +30,7 @@ internal data class GameNavigationState(
             GameScreen.DEBRIEF -> if (storyStage >= 7) GameScreen.CAMPAIGN else GameScreen.STORY
             GameScreen.APP_HUB -> hubReturnScreen
             GameScreen.MESSENGER, GameScreen.BROWSER -> GameScreen.APP_HUB
-            GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER,
+            GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER -> GameScreen.APP_HUB
             GameScreen.ANALYSIS -> analysisReturnScreen
             GameScreen.OPERATIONS -> caseReturnScreen
             GameScreen.PROFILE, GameScreen.ARCHIVES, GameScreen.ACHIEVEMENTS,
@@ -59,7 +59,9 @@ internal data class GameNavigationState(
                         ?: GameScreen.APP_HUB,
                     analysisReturnScreen = (it.getOrNull(3) as? String)
                         ?.let { name -> runCatching { GameScreen.valueOf(name) }.getOrNull() }
-                        ?: GameScreen.APP_HUB
+                        ?: if (it.size < 4 && it.getOrNull(0) == GameScreen.ANALYSIS.name) {
+                            GameScreen.valueOf(it[1] as String)
+                        } else GameScreen.APP_HUB
                 )
             }
         )

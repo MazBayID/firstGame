@@ -59,9 +59,13 @@ class GameNavigationStateTest {
     @Test
     fun appScreensReturnToHubAndMenuScreensReturnToMenu() {
         val hub = GameNavigationState(currentScreen = GameScreen.TERMINAL)
+        val database = GameNavigationState(currentScreen = GameScreen.DATABASE)
+        val dossier = GameNavigationState(currentScreen = GameScreen.DOSSIER)
         val menu = GameNavigationState(currentScreen = GameScreen.PROFILE)
 
         assertEquals(GameScreen.APP_HUB, hub.back(0, false).currentScreen)
+        assertEquals(GameScreen.APP_HUB, database.back(0, false).currentScreen)
+        assertEquals(GameScreen.APP_HUB, dossier.back(0, false).currentScreen)
         assertEquals(GameScreen.MAIN_MENU, menu.back(0, false).currentScreen)
     }
 }

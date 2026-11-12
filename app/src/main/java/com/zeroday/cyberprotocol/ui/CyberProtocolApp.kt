@@ -621,6 +621,8 @@ private fun CyberProtocolGameContentBody(
                 if (target == GameScreen.MESSENGER) messengerSession = messengerSession.copy(returnScreen = GameScreen.APP_HUB.name)
                 if (target == GameScreen.BROWSER) browserSession = browserSession.copy(returnScreen = GameScreen.APP_HUB.name)
                 if (target == GameScreen.TERMINAL) terminalReturnScreen = GameScreen.APP_HUB.name
+                if (target == GameScreen.OPERATIONS) navigation = navigation.copy(caseReturnScreen = GameScreen.APP_HUB)
+                if (target == GameScreen.ANALYSIS) navigation = navigation.copy(analysisReturnScreen = GameScreen.APP_HUB)
                 navigate(target)
             }
         )
