@@ -75,12 +75,12 @@ internal fun OperationsScreen(
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(localizedUiText(selectedLanguage, "ACTIVE CASE", "KASUS AKTIF"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 Text(caseDefinition.title, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text("RX-14  ·  INVESTIGASI SUMBER DATA", color = Color(0xFFB8C9CC), fontSize = 10.sp)
+                Text(localizedUiText(selectedLanguage, "RX-14  ·  DATA SOURCE INVESTIGATION", "RX-14  ·  INVESTIGASI SUMBER DATA"), color = Color(0xFFB8C9CC), fontSize = 10.sp)
                 LinearProgressIndicator(
                     progress = { phaseNumber / 5f }, modifier = Modifier.fillMaxWidth().height(5.dp),
                     color = Color(0xFF65C7C0), trackColor = Color(0xFF263A40)
                 )
-                Text("TAHAP " + phaseNumber + " DARI 5  ·  " + phaseLabel(phase),
+                Text(localizedUiText(selectedLanguage, "PHASE " + phaseNumber + " OF 5  ·  " + localizedPhaseName(phase, selectedLanguage), "TAHAP " + phaseNumber + " DARI 5  ·  " + localizedPhaseName(phase, selectedLanguage)),
                     color = Color(0xFF9AB4B8), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Text("RANK " + gameState.rank.replace('_', ' ') + "   ·   " + gameState.experience +
                     " XP   ·   CLEARANCE " + gameState.clearance, color = Color(0xFFB8C9CC), fontSize = 10.sp)
@@ -91,7 +91,7 @@ internal fun OperationsScreen(
             CasePhase.BRIEFING -> {
                 SectionLabel(localizedUiText(selectedLanguage, "01  /  INTELLIGENCE BRIEFING", "01  /  BRIEFING INTELIJEN"))
                 InfoPanel(caseDefinition.briefing)
-                Text("Kamu tidak harus membuka semua aplikasi. Mulailah dari tujuan kasus, lalu pilih sumber yang relevan.",
+                Text(localizedUiText(selectedLanguage, "You do not need to open every app. Start with the case objective, then choose relevant sources.", "Kamu tidak harus membuka semua aplikasi. Mulailah dari tujuan kasus, lalu pilih sumber yang relevan."),
                     color = Color(0xFF91A8AD), fontSize = 11.sp, lineHeight = 17.sp)
                 PrimaryAction(localizedUiText(selectedLanguage, "ACKNOWLEDGE BRIEFING", "PAHAMI BRIEFING"), onAcknowledgeBriefing)
             }
@@ -112,7 +112,7 @@ internal fun OperationsScreen(
                     )
                 }
                 Text(caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
-                    " dari " + caseDefinition.requiredEvidenceIds.size + " sumber wajib telah diperiksa.",
+                    localizedUiText(selectedLanguage, " of " + caseDefinition.requiredEvidenceIds.size + " required sources inspected.", " dari " + caseDefinition.requiredEvidenceIds.size + " sumber wajib telah diperiksa."),
                     color = Color(0xFF91A8AD), fontSize = 10.sp)
             }
             CasePhase.ANALYSIS -> {
@@ -146,7 +146,7 @@ internal fun OperationsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     label = { Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN")) },
-                    placeholder = { Text("Jelaskan fakta dan batas bukti yang mendukung tindakanmu.") }
+                    placeholder = { Text(localizedUiText(selectedLanguage, "Explain the facts and evidence limits that support your action.", "Jelaskan fakta dan batas bukti yang mendukung tindakanmu.")) }
                 )
                 Text(localizedUiText(selectedLanguage, "This rationale is saved with your decision and shown during the debrief.", "Alasan ini disimpan bersama keputusan dan ditampilkan saat debrief."),
                     color = Color(0xFF91A8AD), fontSize = 10.sp, lineHeight = 15.sp)
@@ -182,26 +182,26 @@ internal fun OperationsScreen(
                     Text(it.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 17.sp)
                 }
                 Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                InfoPanel(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan yang tersimpan pada save lama." })
+                InfoPanel(caseProgress.decisionRationale.ifBlank { localizedUiText(selectedLanguage, "No rationale was stored in this older save.", "Tidak ada alasan yang tersimpan pada save lama.") })
                 InfoPanel(localizedUiText(selectedLanguage, "Fact: two records reference RX-14 and their intake times differ by four seconds. The cause has not been established. There is no basis to identify an actor or claim tampering.", "Fakta: dua catatan menyebut RX-14 dan waktu penerimaannya berselisih empat detik. Penyebabnya belum dapat dipastikan. Tidak ada dasar untuk menunjuk pelaku atau menyatakan manipulasi."))
                 PrimaryAction(localizedUiText(selectedLanguage, "COMPLETE DEBRIEF", "SELESAIKAN DEBRIEF"), onAcknowledgeDebrief)
             }
             CasePhase.COMPLETE -> {
-                SectionLabel("CASE STATUS  /  COMPLETE")
-                InfoPanel("First Contact selesai. Laporan mempertahankan perbedaan antara fakta, dugaan, dan hal yang belum diketahui. Anomali RX-14 tetap terbuka untuk pemeriksaan jika bukti baru tersedia.")
+                SectionLabel(localizedUiText(selectedLanguage, "CASE STATUS  /  COMPLETE", "STATUS KASUS  /  SELESAI"))
+                InfoPanel(localizedUiText(selectedLanguage, "First Contact is complete. The report preserves the distinction between facts, hypotheses, and unknowns. The RX-14 anomaly remains open for review if new evidence becomes available.", "First Contact selesai. Laporan mempertahankan perbedaan antara fakta, dugaan, dan hal yang belum diketahui. Anomali RX-14 tetap terbuka untuk pemeriksaan jika bukti baru tersedia."))
                 Text(localizedUiText(selectedLanguage, "ANALYSIS CONCLUSION", "KESIMPULAN ANALISIS"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                Text(analysisConclusion?.title ?: "Tidak ada kesimpulan tersimpan", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text(analysisConclusion?.title ?: localizedUiText(selectedLanguage, "No conclusion saved", "Tidak ada kesimpulan tersimpan"), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "FINAL DECISION", "KEPUTUSAN AKHIR"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                Text(decision?.title ?: "Tidak ada keputusan tersimpan", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Text(decision?.title ?: localizedUiText(selectedLanguage, "No decision saved", "Tidak ada keputusan tersimpan"), color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 InfoPanel(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan yang tersimpan pada save lama." })
                 if (caseDefinition.id in gameState.completedMissionIds) {
                     Text(
-                        "REWARD KASUS  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP",
+                        localizedUiText(selectedLanguage, "CASE REWARD  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP", "HADIAH KASUS  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP"),
                         color = Color(0xFF8CD5AC), fontSize = 11.sp, fontWeight = FontWeight.Bold
                     )
                 }
-                Text("TOTAL PENGALAMAN  /  ${gameState.experience} XP",
+                Text(localizedUiText(selectedLanguage, "TOTAL EXPERIENCE  /  ${gameState.experience} XP", "TOTAL PENGALAMAN  /  ${gameState.experience} XP"),
                     color = Color(0xFFB8C9CC), fontSize = 11.sp)
             }
         }
@@ -281,11 +281,3 @@ private fun PrimaryAction(label: String, onClick: () -> Unit) {
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF28634D))) { Text(label) }
 }
 
-private fun phaseLabel(phase: CasePhase): String = when (phase) {
-    CasePhase.BRIEFING -> "BRIEFING"
-    CasePhase.INVESTIGATION -> "INVESTIGATION"
-    CasePhase.ANALYSIS -> "ANALYSIS"
-    CasePhase.OPERATIONAL_DECISION -> "DECISION"
-    CasePhase.DEBRIEFING -> "DEBRIEFING"
-    CasePhase.COMPLETE -> "COMPLETE"
-}
