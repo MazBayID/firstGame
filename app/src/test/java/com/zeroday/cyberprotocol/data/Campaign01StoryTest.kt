@@ -60,8 +60,10 @@ class Campaign01StoryTest {
             Campaign01StoryNavigationPolicy.action(13, CasePhase.INVESTIGATION))
         assertEquals(StoryCaseAction.OPEN_ANALYSIS,
             Campaign01StoryNavigationPolicy.action(13, CasePhase.ANALYSIS))
-        assertEquals(StoryCaseAction.CONTINUE,
+        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
             Campaign01StoryNavigationPolicy.action(13, CasePhase.OPERATIONAL_DECISION))
+        assertEquals(StoryCaseAction.CONTINUE,
+            Campaign01StoryNavigationPolicy.action(13, CasePhase.DEBRIEFING))
         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
             Campaign01StoryNavigationPolicy.action(14, CasePhase.DEBRIEFING))
         assertEquals(StoryCaseAction.CONTINUE,

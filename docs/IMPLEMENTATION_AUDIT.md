@@ -458,3 +458,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The RX-14 Reference Inspection story beat now opens Operations directly while the case is in briefing or investigation, matching the authored instruction instead of advancing to the next story page first.
 - The following Two-Source Comparison beat retains its own phase-aware route, so players can return to Operations until discovery is complete.
 - Navigation policy regression tests cover the stage-10 route in briefing, investigation, and analysis phases.
+
+
+## Operational decision story handoff
+
+- The Operational Decision story beat now opens Operations while the case is in the decision phase; it no longer advances past the player's decision prompt.
+- Once the decision is recorded and the case enters debrief, the story CTA can advance to the investigation report beat.
+- Phase routing regression tests cover the operational-decision and debrief transition.

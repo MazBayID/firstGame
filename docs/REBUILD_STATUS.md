@@ -408,3 +408,10 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Align the stage-10 "OPEN OPERATIONS" story action with the actual Operations workspace destination.
 - Preserve the phase-aware stage-11 comparison and stage-12 analysis handoff.
 - Add focused route-policy tests for the new entry point.
+
+
+## Operational decision handoff — 2026-11-12
+
+- Ensure the story's Operational Decision beat opens the shared Operations screen when the case is ready for a decision.
+- Advance to the report beat only after the operational decision is saved and the case enters debrief.
+- Add phase-specific route-policy regression coverage.

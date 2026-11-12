@@ -15,10 +15,16 @@ object Campaign01StoryNavigationPolicy {
         10, 11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
             StoryCaseAction.OPEN_OPERATIONS
         } else StoryCaseAction.CONTINUE
-        12, 13 -> when (phase) {
+        12 -> when (phase) {
             CasePhase.BRIEFING, CasePhase.INVESTIGATION -> StoryCaseAction.OPEN_OPERATIONS
             CasePhase.ANALYSIS -> StoryCaseAction.OPEN_ANALYSIS
             else -> StoryCaseAction.CONTINUE
+        }
+        13 -> when (phase) {
+            CasePhase.BRIEFING, CasePhase.INVESTIGATION, CasePhase.OPERATIONAL_DECISION ->
+                StoryCaseAction.OPEN_OPERATIONS
+            CasePhase.ANALYSIS -> StoryCaseAction.OPEN_ANALYSIS
+            CasePhase.DEBRIEFING, CasePhase.COMPLETE -> StoryCaseAction.CONTINUE
         }
         14 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
         15 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
