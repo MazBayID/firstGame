@@ -73,7 +73,7 @@ These foundations are not automatically production-ready. Python file access is 
 ### 6. Quality and release readiness
 - Unit-test domain logic, evaluators, command parsing, virtual filesystem, save migrations, and runtime boundaries.
 - Add integration tests for campaign transitions, persistence, mission completion, and App Hub navigation.
-- Run Python and Android unit tests on development pushes and pull requests without producing an APK. Only an explicitly dispatched Final Release may produce the permanently signed Release APK; verify package, ABI, monotonically increasing versionCode, and APK signature.
+- Run Python and Release-variant Android/Kotlin unit tests on pushes to `main` and pull requests. A push to `main` publishes a clearly labeled development Debug APK after tests pass; pull requests remain source-tests-only and receive no release-signing secrets. A manual dispatch with `final_release=false` also publishes a development APK without emulator smoke testing. Only an explicit `workflow_dispatch` on `main` with `final_release=true` may produce a permanently signed Final APK; validate package, ABI, monotonically increasing versionCode, and signature, then install and launch that exact APK on the emulator, verify its SHA-256 is unchanged, and publish it as **FINAL — EMULATOR SMOKE-TESTED**.
 - Run static checks and dependency/security review where supported.
 - Validate layouts and keyboard behavior on representative Android screen sizes.
 - Produce a release candidate only after the complete campaign path and core systems pass the defined quality gates.
@@ -92,13 +92,19 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 
 ## Current status
 
-**Phase 0 — Audit and specification alignment:** baseline audit completed; implementation continues to refine the boundaries.  
+**Phase 0 — Audit and specification alignment:** repository-wide implementation audit recorded in `docs/IMPLEMENTATION_AUDIT.md` against the current `main` baseline (`3c89476`). The audit identifies existing partial foundations, specification gaps, and the ordered implementation batches; follow-up code changes must update this ledger.  
 **Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, a ViewModel-owned campaign state/progression layer, and isolated snapshot serialization with codec regression tests exist; broader UI state/navigation extraction and Android storage recovery tests remain.  
 **Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
 **Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has fourteen authored story beats and eight evaluated Python missions, graduated hints, debriefs, contact-list messaging, an offline intranet Browser with file downloads and Mission Control submission, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
 **Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
 
-No feature is marked production-complete solely because a prior prototype screen or partial test exists.
+No feature is marked production-complete solely because a prior prototype screen or partial test exists. The implementation audit is a point-in-time assessment of the current source tree, not a claim that the listed workstreams are complete.
+
+## Latest implementation audit
+
+See [IMPLEMENTATION_AUDIT.md](IMPLEMENTATION_AUDIT.md) for the source-by-source gap analysis against the approved Guided Intelligence RPG and English-first localization direction. The audit baseline is `3c89476`. It confirms existing evidence/persistence foundations while identifying the missing structured provenance, immutable review history, case/archetype model, competency tracks, and complete localization.
+
+The audit is a point-in-time source review. The implementation ledger below records previously completed work and must be updated as each new batch is implemented.
 
 ## Implementation ledger — current branch
 
@@ -187,24 +193,21 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 
 ### Source Validation and Explicit Final Release pipeline
 
-- Pushes to `main` run Python and Android/Kotlin unit tests only. They do not build an APK, restore signing secrets, start an emulator, or publish artifacts.
-- Pull-request checks remain source-only and do not produce installable APKs or receive signing secrets.
-- A Final Release is started manually from the `main` branch through **Cyber Protocol — Build, Test & Release**, with `final_release=true`. The workflow reruns source tests before packaging.
-- Only that explicit Final Release job invokes `assembleRelease`, exactly once. It does not build an installable Debug APK or rebuild/re-sign the Release APK after testing.
-- The emulator smoke test installs the built `app-release.apk` itself, launches `com.zeroday.cyberprotocol`, and requires the app process to remain alive. A failed installation or launch blocks publication.
-- Final Release validation checks application ID, monotonically increasing versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and the SHA-256 certificate fingerprint against the permanent keystore.
-- The workflow records the APK SHA-256 before runtime testing and verifies the file is unchanged afterward. The uploaded `cyber-protocol-release` artifact contains that exact APK and its checksum manifest.
-- The permanent keystore is restored only after source tests pass, kept in the ephemeral runner with restricted permissions, and removed even when later steps fail.
-- This automated emulator smoke test does not replace physical-device acceptance. Clean installation, in-place update, and save-data preservation must still be confirmed on the user's Android device.
+- Pushes to `main` run Python and Release-variant Android/Kotlin unit tests, then build and publish a Debug development APK. The artifact and its manifest must say **DEVELOPMENT — NOT FINAL — SMOKE TEST NOT RUN**.
+- Pull-request checks remain source-only: no installable APK and no release-signing secrets.
+- A manual dispatch with `final_release=false` runs source tests and publishes the same clearly labeled development APK without emulator smoke testing.
+- Only a manual dispatch from `main` with `final_release=true` may create the permanently signed Final APK. The workflow reruns source tests, builds exactly one Release APK, validates package/version/ABI/signature, installs and launches that exact binary on the Android Emulator, verifies its SHA-256 is unchanged, and publishes the same file as **FINAL — EMULATOR SMOKE-TESTED**.
+- A skipped, failed, cancelled, or incomplete final check blocks Final publication. Never rebuild or re-sign the APK after smoke testing.
+- The permanent keystore is restored only inside the ephemeral Final Release runner, protected by GitHub Actions Secrets, and removed after the job.
+- Emulator smoke testing does not replace physical-device acceptance. Clean installation, in-place update, and save-data preservation must still be confirmed on the user's Android device.
 
 ### Current pipeline verification
 
-- CI run [#123](https://github.com/MazBayID/firstGame/actions/runs/43151248797) passed on 2026-11-12 for commit `160866011518a4563f1ebafdc8a67a712af451e3`. It ran Python runner tests and Release-variant Android/Kotlin unit tests only under the previous workflow definition; it did not produce an APK.
-- The CI policy is now updated: pushes to main and manual dispatches with `final_release=false` run source tests and then publish a clearly labeled development Debug APK without emulator smoke testing.
-- Only a manual dispatch with `final_release=true` creates the permanently signed Final APK. The exact APK must pass package/signature validation and Android Emulator smoke testing before publication, and its artifact must be labeled **FINAL — EMULATOR SMOKE-TESTED**.
-- Latest verified APK available before this policy update: CI run [#119](https://github.com/MazBayID/firstGame/actions/runs/43144903075), source commit `c3027dc0e54d0785f6ed80eae631274afee9f60b`. It includes Messenger/Browser/Terminal session-state persistence and automatic scroll-to-latest in Messenger and Terminal. It passed source tests, signed APK validation, exact-APK emulator install/launch, and post-test SHA-256 verification.
-- Run #119 artifact ID: `13912230989`; archive digest: `sha256:914a2473891b38bb9ac914a281bd9340b1edb1270dbdde54f2f0081e1524fce7`; expires 2026-11-26. Its historical artifact name is `cyber-protocol-release`; the new workflow will use explicit development/final labels.
-- This APK does not include the subsequent gameplay-direction or English-first documentation commits. No APK has yet been built from current main after those changes.
+- Latest development workflow: [CI run #124](https://github.com/MazBayID/firstGame/actions/runs/43152125920), source commit `3c89476190461737c51ffdc1044a9b219109fe38`.
+- Python runner tests and Release-variant Android/Kotlin unit tests passed. The Debug development APK build and artifact-upload steps also succeeded. At the last check, the job was completing post-action cleanup; the development artifact was already available.
+- Artifact: `cyber-protocol-development-not-final-no-smoke-test`, ID `13914700984`, archive size 58,748,863 bytes, SHA-256 digest `c477e3a72dc5d1fea80411029b950547028cea25a027b5fa47590518538e0658`, expiry 2026-11-26.
+- This is a development APK only. It has no emulator smoke-test result and must not be described as a Final APK.
+- Latest historical emulator-smoke-tested APK before the new gameplay/localization direction remains CI run [#119](https://github.com/MazBayID/firstGame/actions/runs/43144903075), source commit `c3027dc0e54d0785f6ed80eae631274afee9f60b`, artifact ID `13912230989`. It predates the Guided Intelligence RPG and English-first documentation changes.
 - Physical-device acceptance remains outstanding: clean install, in-place update, and save-data preservation on the user's Android device.
 
 ### Historical verification observed under the former CI design
