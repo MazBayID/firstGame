@@ -168,10 +168,10 @@ internal fun AnalysisScreen(
                 Column(Modifier.weight(1f)) {
                     Text(localizedUiText(selectedLanguage, "EVIDENCE RECORDS", "REKAMAN BUKTI"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                         letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
-                    Text("${filtered.size} DARI ${gameState.evidence.size} REKAMAN",
+                    Text("${filtered.size} ${localizedUiText(selectedLanguage, "OF", "DARI")} ${gameState.evidence.size} ${localizedUiText(selectedLanguage, "RECORDS", "REKAMAN")}",
                         color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
                 }
-                Text("AUDITED REVIEW", color = Color(0xFF8AA8AE), fontSize = 9.sp,
+                Text(localizedUiText(selectedLanguage, "AUDITED REVIEW", "TINJAUAN TERAUDIT"), color = Color(0xFF8AA8AE), fontSize = 9.sp,
                     fontWeight = FontWeight.Bold)
             }
         }
@@ -185,8 +185,8 @@ internal fun AnalysisScreen(
             ) {
                 Text(
                     if (gameState.evidence.isEmpty())
-                        "Belum ada bukti. Selesaikan dan verifikasi misi untuk mencatat temuan beserta sumbernya."
-                    else "Tidak ada rekaman yang cocok dengan pencarian dan filter ini.",
+                        localizedUiText(selectedLanguage, "No evidence yet. Complete and verify a mission to record findings and their sources.", "Belum ada bukti. Selesaikan dan verifikasi misi untuk mencatat temuan beserta sumbernya.")
+                    else localizedUiText(selectedLanguage, "No records match this search and filter.", "Tidak ada rekaman yang cocok dengan pencarian dan filter ini."),
                     Modifier.padding(16.dp), color = Color(0xFF9AB4B8),
                     fontSize = 12.sp, lineHeight = 18.sp
                 )
@@ -210,7 +210,7 @@ internal fun AnalysisScreen(
         }
 
         Text(
-            "Setiap perubahan klasifikasi memerlukan alasan dan tercatat bersama identitas peninjau dalam riwayat audit.",
+            localizedUiText(selectedLanguage, "Every classification change requires a rationale and is recorded with the reviewer identity in the audit history.", "Setiap perubahan klasifikasi memerlukan alasan dan tercatat bersama identitas peninjau dalam riwayat audit."),
             color = Color(0xFF71858B), fontSize = 10.sp, lineHeight = 16.sp
         )
         reviewTarget?.let { target ->
@@ -220,12 +220,12 @@ internal fun AnalysisScreen(
                 title = { Text(localizedUiText(selectedLanguage, "REVIEW CLASSIFICATION", "TINJAU KLASIFIKASI")) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text(target.title, fontWeight = FontWeight.Bold)
+                        Text(CaseLocalizedContent.evidenceTitle(target, selectedLanguage), fontWeight = FontWeight.Bold)
                         targets.forEach { candidate ->
                             FilterChip(
                                 selected = reviewStatus == candidate,
                                 onClick = { reviewStatus = candidate },
-                                label = { Text(candidate.name.replace('_', ' ')) }
+                                label = { Text(localizedEvidenceStatus(candidate, selectedLanguage)) }
                             )
                         }
                         OutlinedTextField(
@@ -278,7 +278,7 @@ private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selec
             }
             Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
             Text(
-                if (concealed) "ISI SUMBER TERSEMBUNYI — periksa sumber asli melalui Operasi atau Browser."
+                if (concealed) localizedUiText(selectedLanguage, "SOURCE CONTENT HIDDEN — inspect the original through Operations or Browser.", "ISI SUMBER TERSEMBUNYI — periksa sumber asli melalui Operasi atau Browser.")
                 else CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
                 color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
             )
@@ -287,7 +287,7 @@ private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selec
                 lineHeight = 14.sp)
             Text(localizedUiText(selectedLanguage, "MISSION  /  ${record.missionId}", "MISI  /  ${record.missionId}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
             Text(localizedUiText(selectedLanguage, "ORIGIN  /  ${record.provenance.origin.name}", "ASAL  /  ${record.provenance.origin.name}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
-            Text("RELASI  /  ${record.relations.size}  ·  RIWAYAT REVIEW  /  ${record.reviewHistory.size}",
+            Text(localizedUiText(selectedLanguage, "RELATIONS / ${record.relations.size}  ·  REVIEW HISTORY / ${record.reviewHistory.size}", "RELASI / ${record.relations.size}  ·  RIWAYAT REVIEW / ${record.reviewHistory.size}"),
                 color = Color(0xFF8AA8AE), fontSize = 9.sp)
             if (EvidenceReviewPolicy.allowedTransitions(record.status).isNotEmpty()) {
                 TextButton(onClick = onReview) { Text(localizedUiText(selectedLanguage, "REVIEW EVIDENCE", "TINJAU BUKTI")) }
@@ -318,7 +318,7 @@ private fun CaseAnalysisWorkspace(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-            Text("CASE WORKSPACE  /  RX-14", color = Color(0xFF83C7D0),
+            Text(localizedUiText(selectedLanguage, "CASE WORKSPACE  /  RX-14", "RUANG KERJA KASUS  /  RX-14"), color = Color(0xFF83C7D0),
                 fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
             Text(CaseLocalizedContent.title(definition, selectedLanguage), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(localizedUiText(selectedLanguage, "PHASE  /  ", "FASE  /  ") + localizedPhaseName(phase, selectedLanguage), color = Color(0xFF9AB4B8),
@@ -332,10 +332,10 @@ private fun CaseAnalysisWorkspace(
                     border = BorderStroke(1.dp, Color(0xFF263F48)), modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(11.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                         Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        Text(record.provenance.sourceLabel + "  /  " + record.provenance.origin.name,
+                        Text(CaseLocalizedContent.evidenceSource(record, selectedLanguage) + "  /  " + localizedEvidenceOrigin(record.provenance.origin, selectedLanguage),
                             color = Color(0xFF83C7D0), fontSize = 8.sp)
                         Text(
-                            if (discovered) record.summary else localizedUiText(selectedLanguage, "Source contents remain locked until the original record is reviewed.", "Isi sumber terkunci sampai catatan asli diperiksa."),
+                            if (discovered) CaseLocalizedContent.evidenceSummary(record, selectedLanguage) else localizedUiText(selectedLanguage, "Source contents remain locked until the original record is reviewed.", "Isi sumber terkunci sampai catatan asli diperiksa."),
                             color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp
                         )
                         Text(when {
