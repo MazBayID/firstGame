@@ -1946,9 +1946,9 @@ private fun MessengerScreen(
                         verticalArrangement = Arrangement.spacedBy(7.dp)) {
                         Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
                         quickReplies.forEach { choice ->
-                            Surface(onClick = { onReply(choice) }, color = Color(0xFF263A34),
+                            Surface(onClick = { onReply(choice.first) }, color = Color(0xFF263A34),
                                 shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
-                                Text(choice, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+                                Text(choice.second, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
                                     color = Color(0xFFE2ECE7), fontSize = 12.sp)
                             }
                         }
