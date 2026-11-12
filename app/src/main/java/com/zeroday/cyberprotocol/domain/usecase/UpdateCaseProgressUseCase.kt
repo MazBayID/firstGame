@@ -22,6 +22,9 @@ class UpdateCaseProgressUseCase(private val repository: GameStateRepository) {
 
     fun analyzeEvidence(definition: CaseDefinition, evidenceId: String): GameState {
         val progress = repository.load().caseProgress[definition.id] ?: CaseProgress(definition.id)
+        require(CasePhaseEvaluator.phase(definition, progress) == CasePhase.ANALYSIS) {
+            "Complete the required investigation before analyzing evidence."
+        }
         require(evidenceId in progress.discoveredEvidenceIds) {
             "Evidence must be discovered before it can be analyzed."
         }
