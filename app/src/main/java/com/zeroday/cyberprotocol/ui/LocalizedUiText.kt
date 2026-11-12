@@ -17,6 +17,11 @@ internal fun localizedEvidenceStatus(status: EvidenceStatus, language: GameLangu
         EvidenceStatus.RETRACTED -> localizedUiText(language, "RETRACTED", "DICABUT")
     }
 
+internal fun localizedEvidenceStatus(status: String, language: GameLanguage): String =
+    EvidenceStatus.entries.firstOrNull { it.name.equals(status, ignoreCase = true) }
+        ?.let { localizedEvidenceStatus(it, language) }
+        ?: status
+
 internal fun localizedPhaseName(phase: CasePhase, language: GameLanguage): String =
     when (phase) {
         CasePhase.BRIEFING -> localizedUiText(language, "BRIEFING", "BRIEFING")
