@@ -126,7 +126,7 @@ internal fun IntelligenceDatabaseScreen(
                     modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(mission.title, Modifier.weight(1f), color = Color.White,
+                            Text(CaseLocalizedContent.missionTitle(mission, selectedLanguage), Modifier.weight(1f), color = Color.White,
                                 fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             Text(when { completed -> databaseText(selectedLanguage, "VERIFIED", "TERVERIFIKASI"); active -> databaseText(selectedLanguage, "ACTIVE", "AKTIF"); else -> databaseText(selectedLanguage, "ARCHIVED", "TERARSIP") },
                                 color = when { completed -> Color(0xFF8CD5AC); active -> Color(0xFFE0A2AD); else -> Color(0xFF8AA8AE) },
@@ -137,13 +137,13 @@ internal fun IntelligenceDatabaseScreen(
                 }
             }
             selectedMission?.let { mission ->
-                DatabaseDetailPanel(databaseText(selectedLanguage, "MISSION FILE", "BERKAS MISI"), mission.title) {
-                    Text(mission.briefing, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
+                DatabaseDetailPanel(databaseText(selectedLanguage, "MISSION FILE", "BERKAS MISI"), CaseLocalizedContent.missionTitle(mission, selectedLanguage)) {
+                    Text(CaseLocalizedContent.missionBriefing(mission, selectedLanguage), color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
                     Text(databaseText(selectedLanguage, "OBJECTIVES", "SASARAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                     mission.objectives.forEachIndexed { index, objective ->
-                        Text("${index + 1}. ${objective.title}", color = Color.White, fontSize = 11.sp,
+                        Text("${index + 1}. ${CaseLocalizedContent.objectiveTitle(mission, objective, index, selectedLanguage)}", color = Color.White, fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold)
-                        Text(objective.description, color = Color(0xFF9AB4B8), fontSize = 10.sp)
+                        Text(CaseLocalizedContent.objectiveDescription(mission, objective, index, selectedLanguage), color = Color(0xFF9AB4B8), fontSize = 10.sp)
                     }
                     Text(databaseText(selectedLanguage, "REWARD ${mission.rewardXp} XP  ·  CLEARANCE ${mission.requiredClearance}", "HADIAH ${mission.rewardXp} XP  ·  OTORISASI ${mission.requiredClearance}"),
                         color = Color(0xFF8AA8AE), fontSize = 9.sp)
