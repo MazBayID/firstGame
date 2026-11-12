@@ -126,7 +126,7 @@ internal fun OperationsScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text(record.title, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 9.sp)
                             Text(if (analyzed) localizedUiText(selectedLanguage, "ANALYSIS RECORDED", "ANALISIS TERCATAT") else localizedUiText(selectedLanguage, "AWAITING ANALYSIS", "MENUNGGU HASIL ANALISIS"),
                                 color = if (analyzed) Color(0xFF8CD5AC) else Color(0xFF9AB4B8),
@@ -239,7 +239,7 @@ private fun EvidencePanel(
     if (sourceOpened && sourceContent != null) {
         AlertDialog(
             onDismissRequest = { sourceOpened = false },
-            title = { Text(record.title) },
+            title = { Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage)) },
             text = { Text(CaseLocalizedContent.evidenceSource(record.id, sourceContent, selectedLanguage), fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) },
             confirmButton = {
                 TextButton(onClick = {
@@ -253,10 +253,10 @@ private fun EvidencePanel(
     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-            Text(record.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 10.sp)
             if (discovered) {
-                Text(record.summary, color = Color(0xFFC5D3D0), fontSize = 11.sp, lineHeight = 17.sp)
+                Text(CaseLocalizedContent.evidenceSummary(record, selectedLanguage), color = Color(0xFFC5D3D0), fontSize = 11.sp, lineHeight = 17.sp)
                 Text(localizedUiText(selectedLanguage, "EVIDENCE STATUS: ", "STATUS BUKTI: ") + localizedEvidenceStatus(record.status, selectedLanguage), color = Color(0xFF91A8AD), fontSize = 9.sp)
             } else {
                 Text(localizedUiText(selectedLanguage, "The source record is available. Open it to inspect its contents and record it as case evidence.", "Catatan sumber tersedia. Periksa untuk membuka isi dan mencatatnya sebagai bukti kasus."),
