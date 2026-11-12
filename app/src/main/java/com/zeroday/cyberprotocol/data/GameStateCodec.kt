@@ -153,10 +153,6 @@ internal object GameStateCodec {
         val a = optJSONArray(key) ?: return emptySet()
         return buildSet { for (i in 0 until a.length()) add(a.optString(i)) }
     }
-    private fun JSONObject.stringSet(key: String): Set<String> {
-        val a = optJSONArray(key) ?: return emptySet()
-        return buildSet { for (i in 0 until a.length()) add(a.optString(i)) }
-    }
     private fun JSONObject.nullableString(key: String): String? =
         optString(key).takeIf { it.isNotBlank() && it != "null" }
     private inline fun <reified T : Enum<T>> String.toEnum(fallback: T): T =
