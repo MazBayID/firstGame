@@ -35,6 +35,8 @@ import com.zeroday.cyberprotocol.core.model.GameLanguage
 import com.zeroday.cyberprotocol.data.GameLanguagePreferences
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.zeroday.cyberprotocol.core.model.CompetencyTrack
+import com.zeroday.cyberprotocol.core.model.MissionArchetype
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.data.Campaign01Story
@@ -253,7 +255,14 @@ private fun CyberProtocolGameContentBody(
                     if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                     if (result.passed) {
                         val firstCompletion = sessionViewModel.completeMission(
-                            mission.id, mission.rewardXp, mission.requiredClearance
+                            mission.id,
+                            mission.rewardXp,
+                            mission.requiredClearance,
+                            competencyTrack = if (mission.primaryArchetype == MissionArchetype.TECHNICAL) {
+                                CompetencyTrack.TECHNICAL
+                            } else {
+                                CompetencyTrack.INTELLIGENCE
+                            }
                         )
                         sessionViewModel.recordEvidence(
                             com.zeroday.cyberprotocol.core.model.EvidenceRecord(

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.zeroday.cyberprotocol.core.model.CompetencyTrack
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceRelationType
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
@@ -83,9 +84,14 @@ internal class GameSessionViewModel(
     }
 
     /** Returns true only when this call awards the mission for the first time. */
-    fun completeMission(missionId: String, rewardXp: Int, requiredClearance: Int): Boolean {
+    fun completeMission(
+        missionId: String,
+        rewardXp: Int,
+        requiredClearance: Int,
+        competencyTrack: CompetencyTrack? = null
+    ): Boolean {
         val alreadyCompleted = repository.load().completedMissionIds.contains(missionId)
-        CompleteMissionUseCase(repository).complete(missionId, rewardXp, requiredClearance)
+        CompleteMissionUseCase(repository).complete(missionId, rewardXp, requiredClearance, competencyTrack)
         refresh()
         return !alreadyCompleted
     }

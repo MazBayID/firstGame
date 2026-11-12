@@ -1,5 +1,6 @@
 package com.zeroday.cyberprotocol.domain.usecase
 
+import com.zeroday.cyberprotocol.core.model.CompetencyTrack
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
@@ -35,6 +36,22 @@ class GameProgressUseCasesTest {
         val repeated = useCase.complete("first_contact", 100)
         assertEquals(100, repeated.experience)
         assertEquals(setOf("first_contact"), repeated.completedMissionIds)
+    }
+
+    @Test
+    fun competencyExperienceIsSeparateAndAwardedOnceByMissionArchetype() {
+        val repository = MemoryGameStateRepository()
+        val useCase = CompleteMissionUseCase(repository)
+        val technical = useCase.complete("first_contact.signal", 25, competencyTrack = CompetencyTrack.TECHNICAL)
+        assertEquals(25, technical.experience)
+        assertEquals(25, technical.technicalCompetencyXp)
+        assertEquals(0, technical.intelligenceCompetencyXp)
+        val repeated = useCase.complete("first_contact.signal", 25, competencyTrack = CompetencyTrack.TECHNICAL)
+        assertEquals(25, repeated.technicalCompetencyXp)
+        val intelligence = useCase.complete("case.analysis", 40, competencyTrack = CompetencyTrack.INTELLIGENCE)
+        assertEquals(65, intelligence.experience)
+        assertEquals(25, intelligence.technicalCompetencyXp)
+        assertEquals(40, intelligence.intelligenceCompetencyXp)
     }
 
     @Test

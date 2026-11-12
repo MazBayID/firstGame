@@ -22,6 +22,8 @@ class GameStateCodecTest {
             rank = "ANALYST",
             experience = 420,
             clearance = 1,
+            technicalCompetencyXp = 300,
+            intelligenceCompetencyXp = 120,
             unlockedApps = setOf("MESSENGER", "BROWSER", "TERMINAL", "DATABASE", "DOSSIER", "ANALYSIS", "OPERATIONS"),
             caseProgress = mapOf("case_alpha" to com.zeroday.cyberprotocol.core.model.CaseProgress(
                 caseId = "case_alpha",
@@ -51,6 +53,8 @@ class GameStateCodecTest {
 
         assertEquals(state, decoded)
         assertEquals(state.caseProgress, decoded.caseProgress)
+        assertEquals(state.technicalCompetencyXp, decoded.technicalCompetencyXp)
+        assertEquals(state.intelligenceCompetencyXp, decoded.intelligenceCompetencyXp)
     }
 
     @Test

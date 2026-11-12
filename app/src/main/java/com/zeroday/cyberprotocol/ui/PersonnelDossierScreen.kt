@@ -73,6 +73,8 @@ internal fun PersonnelDossierScreen(gameState: GameState, onBack: () -> Unit) {
                 DossierValue("RANK", gameState.rank.replace('_', ' '))
                 DossierValue("PENGALAMAN", "${gameState.experience} XP")
                 DossierValue("CLEARANCE", gameState.clearance.toString())
+                DossierValue("TECHNICAL COMPETENCY", "${gameState.technicalCompetencyXp} XP")
+                DossierValue("INTELLIGENCE COMPETENCY", "${gameState.intelligenceCompetencyXp} XP")
                 DossierValue("KAMPANYE", "FIRST CONTACT  /  $storyProgress OF 14 BEATS")
                 DossierValue("MISI TERVERIFIKASI", "${completed.size} OF ${Campaign01Catalog.missions.size}")
                 DossierValue("REKAMAN BUKTI", gameState.evidence.size.toString())
