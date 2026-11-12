@@ -361,10 +361,10 @@ private fun CyberProtocolGameContentBody(
                         )
                         savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
                         saveStage(storyStage + 1)
-                        debriefTitle = mission.title
+                        debriefTitle = CaseLocalizedContent.missionTitle(mission, selectedLanguage)
                         debriefFeedback = result.feedback
                         debriefXp = if (firstCompletion) mission.rewardXp else 0
-                        debriefClue = mission.nextClue.orEmpty()
+                        debriefClue = CaseLocalizedContent.missionNextClue(mission, selectedLanguage).orEmpty()
                         navigate(GameScreen.DEBRIEF)
                     } else {
                         codeFeedback = result.feedback.ifBlank {
@@ -765,6 +765,7 @@ private fun CyberProtocolGameContentBody(
             }
         }
         GameScreen.DEBRIEF -> MissionDebriefScreen(
+            selectedLanguage = selectedLanguage,
             title = debriefTitle,
             feedback = debriefFeedback,
             xpAwarded = debriefXp,
@@ -797,7 +798,7 @@ private fun CyberProtocolGameContentBody(
             recruitmentInvitation = currentGameState.recruitmentNotificationOpened,
             freyaContactUnlocked = currentGameState.freyaContactOpened,
             nexusUnlocked = currentGameState.nexusContactUnlocked,
-            activeMissionTitle = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it)?.title },
+            activeMissionTitle = currentGameState.activeMissionId?.let { id -> Campaign01Catalog.find(id)?.let { CaseLocalizedContent.missionTitle(it, selectedLanguage) } },
             completedMissionCount = currentGameState.completedMissionIds.size,
             evidenceAssetsAvailable = currentGameState.storyBeat >= 10,
             onReadEvidenceAsset = fileSystem::readEvidenceAsset,
@@ -1535,6 +1536,7 @@ private fun StoryScreen(
 
 @Composable
 private fun MissionDebriefScreen(
+    selectedLanguage: GameLanguage,
     title: String,
     feedback: String,
     xpAwarded: Int,
@@ -1543,23 +1545,23 @@ private fun MissionDebriefScreen(
     nextClue: String?,
     onContinue: () -> Unit
 ) {
-    GamePage("DEBRIEF MISI", "A.E.G.I.S. / HASIL VERIFIKASI", onContinue, null) {
+    GamePage(localizedUiText(selectedLanguage, "MISSION DEBRIEF", "DEBRIEF MISI"), localizedUiText(selectedLanguage, "A.E.G.I.S. / VERIFICATION RESULTS", "A.E.G.I.S. / HASIL VERIFIKASI"), onContinue, null) {
         GamePanel {
-            Text("MISI TERVERIFIKASI", color = CyberPalette.Success, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            Text(localizedUiText(selectedLanguage, "MISSION VERIFIED", "MISI TERVERIFIKASI"), color = CyberPalette.Success, fontSize = 10.sp, fontWeight = FontWeight.Bold)
             Text(title, color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
             Text(feedback, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 22.sp)
             HorizontalDivider(color = CyberPalette.Divider)
-            Text("REWARD  /  +$xpAwarded XP", color = Color(0xFF83C7D0), fontWeight = FontWeight.Bold)
-            Text("TOTAL PENGALAMAN  /  $totalExperience XP", color = Color.White, fontSize = 12.sp)
-            Text("RANK SAAT INI  /  $rank", color = Color.White, fontSize = 12.sp)
+            Text(localizedUiText(selectedLanguage, "REWARD  /  +$xpAwarded XP", "HADIAH  /  +$xpAwarded XP"), color = Color(0xFF83C7D0), fontWeight = FontWeight.Bold)
+            Text(localizedUiText(selectedLanguage, "TOTAL EXPERIENCE  /  $totalExperience XP", "TOTAL PENGALAMAN  /  $totalExperience XP"), color = Color.White, fontSize = 12.sp)
+            Text(localizedUiText(selectedLanguage, "CURRENT RANK  /  $rank", "RANK SAAT INI  /  $rank"), color = Color.White, fontSize = 12.sp)
             if (!nextClue.isNullOrBlank()) {
                 HorizontalDivider(color = CyberPalette.Divider)
-                Text("PETUNJUK BERIKUTNYA", color = Color(0xFF83C7D0),
+                Text(localizedUiText(selectedLanguage, "NEXT CLUE", "PETUNJUK BERIKUTNYA"), color = Color(0xFF83C7D0),
                     fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 Text(nextClue, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 20.sp)
             }
         }
-        CPPrimaryButton("LANJUTKAN OPERASI", onContinue)
+        CPPrimaryButton(localizedUiText(selectedLanguage, "CONTINUE OPERATION", "LANJUTKAN OPERASI"), onContinue)
     }
 }
 
