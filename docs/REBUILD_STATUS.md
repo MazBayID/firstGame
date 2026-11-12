@@ -386,3 +386,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 - The file is mission-allowlisted and read-only; only `identity.py` is player-writable.
 - Freya Messenger and Browser File Repository expose the same workspace asset; briefing/hints teach the intended Terminal `cat` workflow.
 - Regression tests cover catalog contract and persistent read-only mission workspace behavior. Source workflow verification pending.
+
+
+## Final report and onboarding progression clarity — 2026-11-12
+
+- The First Contact report screen now presents the player's actual RX-14 conclusion, action, and rationale from shared CaseProgress before chapter completion.
+- It retains the evidence boundary: the four-second discrepancy remains unresolved and no causal claim is added.
+- Dossier progress now counts the two mandatory Python exercises separately from retired legacy missions retained only for historical saves.
+- Source workflow verification pending.

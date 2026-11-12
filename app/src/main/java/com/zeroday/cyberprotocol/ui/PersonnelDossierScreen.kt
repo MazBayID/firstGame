@@ -30,6 +30,9 @@ internal fun PersonnelDossierScreen(
     onBack: () -> Unit
 ) {
     val completed = Campaign01Catalog.missions.filter { it.id in gameState.completedMissionIds }
+    val guidedTraining = Campaign01Catalog.missions.filter { it.id in Campaign01Catalog.guidedTrainingMissionIds }
+    val completedGuidedTraining = guidedTraining.count { it.id in gameState.completedMissionIds }
+    val completedLegacyMissions = completed.count { it.id in Campaign01Catalog.retiredLegacyStoryMissionIds }
     val nextRank = ProgressionRules.nextRankThreshold(gameState.experience)
     val storyProgress = (gameState.storyBeat - 2).coerceIn(0, 14)
     val casePhase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
@@ -87,7 +90,8 @@ internal fun PersonnelDossierScreen(
                 DossierValue("TECHNICAL COMPETENCY", "${gameState.technicalCompetencyXp} XP")
                 DossierValue("INTELLIGENCE COMPETENCY", "${gameState.intelligenceCompetencyXp} XP")
                 DossierValue("KAMPANYE", "FIRST CONTACT  /  $storyProgress OF 14 BEATS")
-                DossierValue("MISI TERVERIFIKASI", "${completed.size} OF ${Campaign01Catalog.missions.size}")
+                DossierValue("LATIHAN WAJIB TERVERIFIKASI", "$completedGuidedTraining / ${guidedTraining.size}")
+                DossierValue("MISI LEGACY DIARSIPKAN", completedLegacyMissions.toString())
                 DossierValue("REKAMAN BUKTI", gameState.evidence.size.toString())
                 DossierValue("KASUS RX-14", casePhase.name.replace('_', ' '))
                 if (nextRank != null) {

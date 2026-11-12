@@ -524,6 +524,7 @@ private fun CyberProtocolGameContentBody(
                 freyaContactUnlocked = currentGameState.freyaContactOpened,
                 caseComplete = rx14CaseComplete,
                 casePhase = rx14CasePhase,
+                caseProgress = rx14Progress,
                 onOpenOperations = {
                     navigation = navigation.copy(hubReturnScreen = GameScreen.STORY)
                     navigate(GameScreen.OPERATIONS)
@@ -1132,6 +1133,7 @@ private fun StoryScreen(
     freyaContactUnlocked: Boolean,
     caseComplete: Boolean,
     casePhase: CasePhase,
+    caseProgress: CaseProgress,
     onOpenOperations: () -> Unit,
     onOpenAnalysis: () -> Unit,
     hintLevel: Int, onRequestHint: () -> Unit,
@@ -1244,6 +1246,32 @@ private fun StoryScreen(
                 )
             }
         } else {
+            if (stage == 15 && caseComplete) {
+                val caseDefinition = Campaign01CaseCatalog.rx14
+                val analysis = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
+                val decision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
+                GamePanel {
+                    Text("LAPORAN AKHIR AGEN  /  RX-14", color = Color(0xFF83C7D0),
+                        fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
+                    Text("KESIMPULAN ANALISIS", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(analysis?.title ?: "Tidak ada kesimpulan tersimpan",
+                        color = Color(0xFFD1D9DF), fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                    Text(analysis?.feedback.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 11.sp, lineHeight = 17.sp)
+                    HorizontalDivider(color = CyberPalette.Divider)
+                    Text("TINDAKAN OPERASIONAL", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(decision?.title ?: "Tidak ada keputusan tersimpan",
+                        color = Color(0xFFD1D9DF), fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                    Text(decision?.description.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 11.sp, lineHeight = 17.sp)
+                    HorizontalDivider(color = CyberPalette.Divider)
+                    Text("ALASAN YANG DICATAT", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan tersimpan." },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, lineHeight = 17.sp)
+                    Text("STATUS ANOMALI  /  SELISIH EMPAT DETIK TETAP TERBUKA — penyebab belum terbukti.",
+                        color = Color(0xFFE3C17B), fontSize = 10.sp, lineHeight = 16.sp)
+                }
+            }
             when (Campaign01StoryNavigationPolicy.action(stage, casePhase)) {
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_OPERATIONS ->
                     CPPrimaryButton(

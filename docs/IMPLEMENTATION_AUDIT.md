@@ -436,3 +436,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The mission briefing and graduated hints explain how to download the file, inspect it with Terminal `cat`, assign it to `message`, and print it.
 - Freya's Messenger attachment changes with the active onboarding mission and exposes the same persistent workspace asset as Browser File Repository.
 - Catalog and Robolectric workspace tests verify exact content, download, Terminal read, and write protection.
+
+
+## Player-authored First Contact final report
+
+- The final report story beat now assembles the player's persisted RX-14 analytical conclusion, operational action, and written rationale into one report panel.
+- The report explicitly preserves the unresolved four-second discrepancy and does not invent a cause or culprit.
+- The personnel dossier distinguishes the two mandatory onboarding exercises from archived legacy missions, so retired exercises no longer appear as outstanding requirements.
