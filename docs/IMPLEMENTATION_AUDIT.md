@@ -1,6 +1,6 @@
 # Cyber Protocol — Implementation Audit
 
-**Audit baseline:** `main` at `3c89476190461737c51ffdc1044a9b219109fe38`  
+**Audit baseline:** `main` at `9589ca1e18431b3af0a433bd9b5e6378fce38d4c`  
 **Audit date:** 2026-11-12  
 **Scope:** canonical design, story continuity, Android/Kotlin source, Python runner, local persistence, VFS, app surfaces, tests, and CI workflow.  
 **Purpose:** identify what is genuinely implemented, what is partial, and what must be built next. This is a source review; it is not a physical-device acceptance report.
@@ -186,3 +186,36 @@ Acceptance:
 ## 8. Definition of done
 
 A batch is complete only when its behavior contract, code, tests, integration, persistence/migration (where applicable), and documentation agree. A screen alone, successful compilation alone, or development APK alone is not completion. The final release label is reserved for the exact permanently signed APK that passes the required emulator smoke test; physical-device acceptance remains a separate gate.
+
+
+## 9. Refresh against current main
+
+**Refresh commit:** `9589ca1e18431b3af0a433bd9b5e6378fce38d4c`  
+**Refresh date:** 2026-11-12  
+**Result:** the earlier gap assessment remains valid. This refresh rechecked the current source tree and confirmed the following concrete implementation facts:
+
+- `Campaign01Catalog.missions` contains eight First Contact mission definitions: `signal`, `identity`, `audit`, `inventory`, `trace`, `compare`, `normalize`, and `validate_delta`. They are all currently authored as `MissionKind.STORY_CODE`; evaluator IDs are 8–15.
+- `GameState` remains schema version 5. Evidence still has only a free-text `source`, four statuses (`UNVERIFIED`, `INFERRED`, `CONFIRMED`, `DISPUTED`), mission ID, and recorded timestamp. No structured provenance, evidence relation graph, or audit trail is present in the model or codec.
+- `RecordEvidenceUseCase.updateStatus` still allows direct status replacement without reviewer, reason, or transition validation.
+- `CyberProtocolApp.kt` still owns a large portion of application navigation and working-session state. The current file is approximately 92 KB; `GameSessionViewModel` owns campaign mutations but not the complete app session.
+- The Language route remains an informational placeholder stating that English is unavailable. The current Android resource tree does not contain a complete `values/strings.xml` and `values-en/strings.xml` localization implementation.
+- Analysis filters evidence and displays records; Database provides mission/evidence browsing; Operations is still a campaign mission-control view. These are useful foundations, not yet an integrated case workflow or audited evidence-review system.
+- The Python runner's module documentation explicitly describes it as a restricted teaching runner, not a hardened sandbox. Its AST and resource limits must not be represented as process isolation.
+- Existing source tests cover the Python evaluator, First Contact catalog/story, save codec/migration, VFS/workspace policies, app session state, and selected UI/domain behavior. They do not yet cover the missing evidence review model, localization parity, or case/archetype evaluation because those systems do not exist.
+
+### Updated implementation status
+
+| Area | Current status | Evidence / next gate |
+|---|---|---|
+| First Contact story and eight evaluated missions | Implemented foundation; regression-tested | Preserve all existing mission IDs/evaluator contracts |
+| VFS, workspace permissions, RUN/SUBMIT | Implemented foundation; regression-tested | Continue security-boundary and exact-source regression tests |
+| Local campaign persistence | Implemented, schema v5 | New evidence fields require backward-compatible migration |
+| Evidence & Investigation Engine | Partial | Structured provenance, relations, review history, safe transitions |
+| Guided Intelligence RPG case model | Not implemented end-to-end | Case model, archetypes, flexible phases, multi-dimension evaluation |
+| English-first localization | Not implemented | L1 foundation through L5 parity gate |
+| Cross-app case/evidence workflow | Partial | Shared evidence graph and audited review across app surfaces |
+| App shell/session architecture | Partial | Extract navigation/session ownership incrementally |
+| CI development/final APK distinction | Implemented in workflow/docs | Development APK may skip smoke test; final APK must smoke-test exact published binary |
+| Physical-device acceptance | Not completed | Clean install, in-place update, and save-preservation checklist |
+
+This refresh does not introduce story canon or change gameplay implementation. It updates the audit baseline only. The next code batch remains **Batch 02 — Evidence Engine core**, preceded by a small design contract for the evidence schema, provenance, status vocabulary, transitions, review audit entries, and schema-5 migration.
