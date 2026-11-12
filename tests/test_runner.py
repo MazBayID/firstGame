@@ -177,6 +177,21 @@ class RunnerTests(unittest.TestCase):
         ))
         self.assertIn("50000", result["error"])
 
+    def test_evaluator_feedback_is_localized_without_changing_default_english(self):
+        english = json.loads(runner.evaluate_mission('print("wrong")', 1))
+        indonesian = json.loads(runner.evaluate_mission('print("wrong")', 1, "id"))
+        self.assertIn("Test 1/1:", english["feedback"])
+        self.assertIn("Pengujian 1/1:", indonesian["feedback"])
+
+        concept = json.loads(runner.evaluate_mission('print("ACCESS GRANTED")', 9, "id"))
+        self.assertIn("variabel signal", concept["feedback"])
+
+        passed = json.loads(runner.evaluate_mission(
+            'signal = "ACCESS GRANTED"\\nprint(signal)', 9, "id"
+        ))
+        self.assertTrue(passed["passed"])
+        self.assertIn("Semua pemeriksaan misi berhasil", passed["feedback"])
+
     def test_unknown_mission(self):
         self.assertFalse(self.submit("print(1)", 999)["passed"])
 
