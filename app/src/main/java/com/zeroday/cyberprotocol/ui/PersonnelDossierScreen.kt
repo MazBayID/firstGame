@@ -124,7 +124,7 @@ internal fun PersonnelDossierScreen(
                     Text("%02d".format(index + 1), color = Color(0xFF8CD5AC),
                         fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
-                        Text(mission.title, color = Color.White, fontSize = 12.sp,
+                        Text(CaseLocalizedContent.missionTitle(mission, selectedLanguage), color = Color.White, fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold)
                         Text("+${mission.rewardXp} XP  ·  ${mission.id}",
                             color = Color(0xFF8AA8AE), fontSize = 8.sp)
