@@ -51,13 +51,23 @@ class CaseLocalizedContentTest {
     fun caseAnalysisAndDecisionCopyIsLocalizedByStableIds() {
         val definition = Campaign01CaseCatalog.rx14
         definition.analysisOptions.forEach { option ->
-            assertTrue(CaseLocalizedContent.analysisTitle(option, GameLanguage.ENGLISH).isNotBlank())
-            assertTrue(CaseLocalizedContent.analysisDescription(option, GameLanguage.ENGLISH).isNotBlank())
-            assertTrue(CaseLocalizedContent.analysisFeedback(option, GameLanguage.ENGLISH).isNotBlank())
+            assertNotEquals("Missing English analysis title for ${option.id}", option.title,
+                CaseLocalizedContent.analysisTitle(option, GameLanguage.ENGLISH))
+            assertNotEquals("Missing English analysis description for ${option.id}", option.description,
+                CaseLocalizedContent.analysisDescription(option, GameLanguage.ENGLISH))
+            assertNotEquals("Missing English analysis feedback for ${option.id}", option.feedback,
+                CaseLocalizedContent.analysisFeedback(option, GameLanguage.ENGLISH))
+            assertEquals(option.title, CaseLocalizedContent.analysisTitle(option, GameLanguage.INDONESIAN))
+            assertEquals(option.description, CaseLocalizedContent.analysisDescription(option, GameLanguage.INDONESIAN))
+            assertEquals(option.feedback, CaseLocalizedContent.analysisFeedback(option, GameLanguage.INDONESIAN))
         }
         definition.decisionOptions.forEach { option ->
-            assertTrue(CaseLocalizedContent.decisionTitle(option, GameLanguage.ENGLISH).isNotBlank())
-            assertTrue(CaseLocalizedContent.decisionDescription(option, GameLanguage.ENGLISH).isNotBlank())
+            assertNotEquals("Missing English decision title for ${option.id}", option.title,
+                CaseLocalizedContent.decisionTitle(option, GameLanguage.ENGLISH))
+            assertNotEquals("Missing English decision description for ${option.id}", option.description,
+                CaseLocalizedContent.decisionDescription(option, GameLanguage.ENGLISH))
+            assertEquals(option.title, CaseLocalizedContent.decisionTitle(option, GameLanguage.INDONESIAN))
+            assertEquals(option.description, CaseLocalizedContent.decisionDescription(option, GameLanguage.INDONESIAN))
         }
     }
 
