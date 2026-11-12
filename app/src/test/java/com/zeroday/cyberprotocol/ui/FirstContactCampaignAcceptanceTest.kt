@@ -6,6 +6,7 @@ import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01CaseCatalog
+import com.zeroday.cyberprotocol.data.GameStateCodec
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -81,7 +82,9 @@ class FirstContactCampaignAcceptanceTest {
         assertEquals("insufficient_evidence", progress.selectedDecisionId)
         assertTrue(completed.evidence.any { it.id == "transmission_timestamp_discrepancy" })
 
-        val restoredSession = GameSessionViewModel(repository)
+        val serializedSnapshot = GameStateCodec.encode(completed)
+        val restoredState = GameStateCodec.decode(serializedSnapshot)
+        val restoredSession = GameSessionViewModel(MemoryRepository(restoredState))
         assertEquals(completed, restoredSession.gameState)
     }
 }
