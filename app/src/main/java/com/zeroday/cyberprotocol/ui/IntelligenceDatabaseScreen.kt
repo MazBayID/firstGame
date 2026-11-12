@@ -22,11 +22,13 @@ import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 
 @Composable
 internal fun IntelligenceDatabaseScreen(
     gameState: GameState,
+    selectedLanguage: GameLanguage,
     caseDefinition: CaseDefinition,
     caseProgress: CaseProgress,
     onBack: () -> Unit
@@ -68,16 +70,16 @@ internal fun IntelligenceDatabaseScreen(
             Column(Modifier.weight(1f)) {
                 Text("A.E.G.I.S. / INTELLIGENCE INDEX", color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
-                Text("DATABASE INTELIJEN", color = Color.White, fontSize = 23.sp,
+                Text(databaseText(selectedLanguage, "INTELLIGENCE DATABASE", "DATABASE INTELIJEN"), color = Color.White, fontSize = 23.sp,
                     fontWeight = FontWeight.Black)
             }
-            TextButton(onClick = onBack) { Text("KEMBALI", color = Color(0xFFBCE8EA)) }
+            TextButton(onClick = onBack) { Text(databaseText(selectedLanguage, "BACK", "KEMBALI"), color = Color(0xFFBCE8EA)) }
         }
 
         OutlinedTextField(
             value = query, onValueChange = { query = it.take(100) },
             modifier = Modifier.fillMaxWidth(), singleLine = true,
-            label = { Text("Cari indeks, sumber, atau bukti") },
+            label = { Text(databaseText(selectedLanguage, "Search index, source, or evidence", "Cari indeks, sumber, atau bukti")) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White, unfocusedTextColor = Color(0xFFD0D8DE),
                 focusedBorderColor = Color(0xFF83C7D0), unfocusedBorderColor = Color(0xFF3B5158),
@@ -88,20 +90,20 @@ internal fun IntelligenceDatabaseScreen(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(selected = selectedTab == "MISSIONS", onClick = {
                 selectedTab = "MISSIONS"; selectedEvidenceId = null
-            }, label = { Text("INDEKS MISI") })
+            }, label = { Text(databaseText(selectedLanguage, "MISSION INDEX", "INDEKS MISI")) })
             FilterChip(selected = selectedTab == "EVIDENCE", onClick = {
                 selectedTab = "EVIDENCE"; selectedMissionId = null
-            }, label = { Text("BUKTI TERSIMPAN") })
+            }, label = { Text(databaseText(selectedLanguage, "STORED EVIDENCE", "BUKTI TERSIMPAN")) })
             FilterChip(selected = selectedTab == "CASE", onClick = {
                 selectedTab = "CASE"; selectedMissionId = null; selectedEvidenceId = null
-            }, label = { Text("KASUS RX-14") })
+            }, label = { Text(databaseText(selectedLanguage, "RX-14 CASE", "KASUS RX-14")) })
         }
 
         Surface(color = Color(0xFF102A32), shape = RoundedCornerShape(7.dp),
             border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
             Row(Modifier.padding(13.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(if (selectedTab == "MISSIONS") "DOKUMEN MISI" else "REKAMAN BUKTI",
+                    Text(if (selectedTab == "MISSIONS") databaseText(selectedLanguage, "MISSION DOCUMENTS", "DOKUMEN MISI") else databaseText(selectedLanguage, "EVIDENCE RECORDS", "REKAMAN BUKTI"),
                         color = Color(0xFF83C7D0), fontSize = 9.sp, letterSpacing = 1.2.sp,
                         fontWeight = FontWeight.Bold)
                     Text(if (selectedTab == "MISSIONS") "${missions.size} / ${Campaign01Catalog.missions.size} DOKUMEN"
@@ -113,7 +115,7 @@ internal fun IntelligenceDatabaseScreen(
         }
 
         if (selectedTab == "MISSIONS") {
-            if (missions.isEmpty()) EmptyDatabaseNote("Tidak ada dokumen misi yang cocok.")
+            if (missions.isEmpty()) EmptyDatabaseNote(databaseText(selectedLanguage, "No matching mission documents.", "Tidak ada dokumen misi yang cocok."))
             missions.forEach { mission ->
                 val completed = mission.id in gameState.completedMissionIds
                 val active = mission.id == gameState.activeMissionId
@@ -126,7 +128,7 @@ internal fun IntelligenceDatabaseScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(mission.title, Modifier.weight(1f), color = Color.White,
                                 fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                            Text(when { completed -> "TERVERIFIKASI"; active -> "AKTIF"; else -> "TERARSIP" },
+                            Text(when { completed -> databaseText(selectedLanguage, "VERIFIED", "TERVERIFIKASI"); active -> databaseText(selectedLanguage, "ACTIVE", "AKTIF"); else -> databaseText(selectedLanguage, "ARCHIVED", "TERARSIP") },
                                 color = when { completed -> Color(0xFF8CD5AC); active -> Color(0xFFE0A2AD); else -> Color(0xFF8AA8AE) },
                                 fontSize = 8.sp, fontWeight = FontWeight.Bold)
                         }
@@ -137,7 +139,7 @@ internal fun IntelligenceDatabaseScreen(
             selectedMission?.let { mission ->
                 DatabaseDetailPanel("MISSION FILE", mission.title) {
                     Text(mission.briefing, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
-                    Text("OBJECTIVES", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Text(databaseText(selectedLanguage, "OBJECTIVES", "SASARAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                     mission.objectives.forEachIndexed { index, objective ->
                         Text("${index + 1}. ${objective.title}", color = Color.White, fontSize = 11.sp,
                             fontWeight = FontWeight.SemiBold)
@@ -151,8 +153,8 @@ internal fun IntelligenceDatabaseScreen(
             }
         } else if (selectedTab == "EVIDENCE") {
             if (evidence.isEmpty()) EmptyDatabaseNote(
-                if (gameState.evidence.isEmpty()) "Belum ada bukti. Temuan yang lolos verifikasi misi akan masuk ke indeks ini."
-                else "Tidak ada bukti yang cocok dengan pencarian."
+                if (gameState.evidence.isEmpty()) databaseText(selectedLanguage, "No evidence yet. Findings verified by missions will appear in this index.", "Belum ada bukti. Temuan yang lolos verifikasi misi akan masuk ke indeks ini.")
+                else databaseText(selectedLanguage, "No evidence matches the search.", "Tidak ada bukti yang cocok dengan pencarian.")
             )
             evidence.forEach { record ->
                 val color = evidenceColor(record.status)
@@ -165,12 +167,12 @@ internal fun IntelligenceDatabaseScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(record.title, Modifier.weight(1f), color = Color.White,
                                 fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                            Text(evidenceLabel(record.status), color = color, fontSize = 8.sp,
+                            Text(evidenceLabel(record.status, selectedLanguage), color = color, fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold)
                         }
                         Text(record.id, color = Color(0xFF8AA8AE), fontSize = 8.sp)
                         Text(
-                            if (record.id in concealedCaseEvidenceIds) "Isi sumber belum dibuka."
+                            if (record.id in concealedCaseEvidenceIds) databaseText(selectedLanguage, "Source content has not been opened.", "Isi sumber belum dibuka.")
                             else record.summary,
                             color = Color(0xFF9AB4B8), fontSize = 10.sp, maxLines = 2
                         )
@@ -180,7 +182,7 @@ internal fun IntelligenceDatabaseScreen(
             selectedEvidence?.let { record ->
                 DatabaseDetailPanel("EVIDENCE RECORD", record.title) {
                     Text(
-                        if (record.id in concealedCaseEvidenceIds) "Isi sumber terkunci sampai catatan asli diperiksa."
+                        if (record.id in concealedCaseEvidenceIds) databaseText(selectedLanguage, "Source content remains locked until the original record is reviewed.", "Isi sumber terkunci sampai catatan asli diperiksa.")
                         else record.summary,
                         color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
                     )
@@ -189,8 +191,8 @@ internal fun IntelligenceDatabaseScreen(
                     DatabaseValue("PROVENANCE", record.provenance.origin.name + " / " + record.provenance.sourceLabel)
                     record.provenance.sourceAssetId?.let { DatabaseValue("SHARED ASSET", it) }
                     record.provenance.sourcePath?.let { DatabaseValue("SOURCE PATH", it) }
-                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { "No linked evidence" })
-                    DatabaseValue("REVIEW HISTORY", record.reviewHistory.joinToString { "${it.previousStatus} → ${it.newStatus} / ${it.reviewerId}: ${it.reason}" }.ifBlank { "No reviews recorded" })
+                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
+                    DatabaseValue("REVIEW HISTORY", record.reviewHistory.joinToString { "${it.previousStatus} → ${it.newStatus} / ${it.reviewerId}: ${it.reason}" }.ifBlank { databaseText(selectedLanguage, "No reviews recorded", "Belum ada riwayat peninjauan") })
                     DatabaseValue("MISSION", record.missionId)
                     DatabaseValue("RECORD ID", record.id)
                     DatabaseValue("TIMESTAMP", record.recordedAtEpochMillis.toString())
@@ -211,22 +213,22 @@ internal fun IntelligenceDatabaseScreen(
                 DatabaseValue("REQUIRED SOURCES", caseRecords.size.toString())
                 DatabaseValue("DISCOVERED", "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
                 DatabaseValue("ANALYZED", "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
-                DatabaseValue("ANALYTICAL CONCLUSION", analysisConclusion?.title ?: "Belum dipilih")
-                DatabaseValue("CONCLUSION FEEDBACK", analysisConclusion?.feedback ?: "Belum ada kesimpulan tersimpan.")
-                DatabaseValue("OPERATIONAL DECISION", decision?.title ?: "Belum dipilih")
-                DatabaseValue("DECISION RATIONALE", caseProgress.decisionRationale.ifBlank { "Belum ada alasan tersimpan." })
-                DatabaseValue("DEBRIEF", if (caseProgress.debriefViewed) "SELESAI" else "BELUM SELESAI")
+                DatabaseValue("ANALYTICAL CONCLUSION", analysisConclusion?.title ?: databaseText(selectedLanguage, "Not selected", "Belum dipilih"))
+                DatabaseValue("CONCLUSION FEEDBACK", analysisConclusion?.feedback ?: databaseText(selectedLanguage, "No conclusion saved.", "Belum ada kesimpulan tersimpan."))
+                DatabaseValue("OPERATIONAL DECISION", decision?.title ?: databaseText(selectedLanguage, "Not selected", "Belum dipilih"))
+                DatabaseValue("DECISION RATIONALE", caseProgress.decisionRationale.ifBlank { databaseText(selectedLanguage, "No rationale saved.", "Belum ada alasan tersimpan.") })
+                DatabaseValue("DEBRIEF", if (caseProgress.debriefViewed) databaseText(selectedLanguage, "COMPLETE", "SELESAI") else databaseText(selectedLanguage, "INCOMPLETE", "BELUM SELESAI"))
                 caseRecords.forEach { record ->
                     HorizontalDivider(color = Color(0xFF293A40))
                     Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     DatabaseValue("SOURCE", record.provenance.sourceLabel + " / " + record.provenance.origin.name)
-                    DatabaseValue("STATUS", if (record.id in caseProgress.discoveredEvidenceIds) "DIPERIKSA" else "BELUM DIPERIKSA")
-                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { "No linked evidence" })
+                    DatabaseValue("STATUS", if (record.id in caseProgress.discoveredEvidenceIds) databaseText(selectedLanguage, "REVIEWED", "DIPERIKSA") else databaseText(selectedLanguage, "NOT REVIEWED", "BELUM DIPERIKSA"))
+                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
                     record.provenance.sourcePath?.let { DatabaseValue("SOURCE PATH", it) }
                 }
             }
         }
-        Text("Indeks hanya menampilkan data lokal yang tersedia. Tidak ada catatan fiktif yang ditambahkan sebagai bukti hasil investigasi.",
+        Text(databaseText(selectedLanguage, "The index displays only locally available data. No fictional records are added as investigation evidence.", "Indeks hanya menampilkan data lokal yang tersedia. Tidak ada catatan fiktif yang ditambahkan sebagai bukti hasil investigasi."),
             color = Color(0xFF71858B), fontSize = 9.sp, lineHeight = 15.sp)
     }
 }
@@ -261,13 +263,13 @@ private fun EmptyDatabaseNote(message: String) {
     }
 }
 
-private fun evidenceLabel(status: EvidenceStatus): String = when (status) {
-    EvidenceStatus.CONFIRMED -> "TERKONFIRMASI"
-    EvidenceStatus.CORROBORATED -> "DIKOROBORASI"
-    EvidenceStatus.INFERRED -> "DISIMPULKAN"
-    EvidenceStatus.DISPUTED -> "DIPERSELISIHKAN"
-    EvidenceStatus.RETRACTED -> "DICABUT"
-    EvidenceStatus.UNVERIFIED -> "BELUM TERVERIFIKASI"
+private fun evidenceLabel(status: EvidenceStatus, language: GameLanguage): String = when (status) {
+    EvidenceStatus.CONFIRMED -> databaseText(language, "CONFIRMED", "TERKONFIRMASI")
+    EvidenceStatus.CORROBORATED -> databaseText(language, "CORROBORATED", "DIKOROBORASI")
+    EvidenceStatus.INFERRED -> databaseText(language, "INFERRED", "DISIMPULKAN")
+    EvidenceStatus.DISPUTED -> databaseText(language, "DISPUTED", "DIPERSELISIHKAN")
+    EvidenceStatus.RETRACTED -> databaseText(language, "RETRACTED", "DICABUT")
+    EvidenceStatus.UNVERIFIED -> databaseText(language, "UNVERIFIED", "BELUM TERVERIFIKASI")
 }
 
 private fun evidenceColor(status: EvidenceStatus): Color = when (status) {
@@ -278,3 +280,8 @@ private fun evidenceColor(status: EvidenceStatus): Color = when (status) {
     EvidenceStatus.RETRACTED -> Color(0xFF9A879D)
     EvidenceStatus.UNVERIFIED -> Color(0xFF83C7D0)
 }
+
+
+@Composable
+private fun databaseText(language: GameLanguage, english: String, indonesian: String): String =
+    localizedUiText(language, english, indonesian)
