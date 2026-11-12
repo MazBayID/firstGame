@@ -60,8 +60,8 @@ jobs:
           test -s "$SOURCE_APK"
 
           BADGING=$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$SOURCE_APK")
-          ACTUAL_PACKAGE=$(printf '%s\\n' "$BADGING" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p" | head -n 1)
-          ACTUAL_VERSION_CODE=$(printf '%s\\n' "$BADGING" | sed -n "s/.*versionCode='\\([0-9]*\\)'.*/\\1/p" | head -n 1)
+          ACTUAL_PACKAGE=$(echo "$BADGING" | awk -F"'" '/^package:/ {print $2; exit}')
+          ACTUAL_VERSION_CODE=$(echo "$BADGING" | awk -F"'" '{for (i=1; i<=NF; i++) if ($i ~ /^versionCode=/) {sub(/^versionCode=/, "", $i); print $i; exit}}')
 
           test "$ACTUAL_PACKAGE" = "com.zeroday.cyberprotocol"
           test "$ACTUAL_VERSION_CODE" = "6"
@@ -69,7 +69,7 @@ jobs:
           mkdir -p preview_apk
           cp "$SOURCE_APK" preview_apk/cyber-protocol-preview.apk
           APK_SHA256=$(sha256sum preview_apk/cyber-protocol-preview.apk | awk '{print $1}')
-          printf '%s  %s\\n' "$APK_SHA256" "cyber-protocol-preview.apk" > preview_apk/cyber-protocol-preview.apk.sha256
+          echo "$APK_SHA256  cyber-protocol-preview.apk" > preview_apk/cyber-protocol-preview.apk.sha256
 
           echo "Build class: DEBUG PREVIEW (not a final release)" >> "$GITHUB_STEP_SUMMARY"
           echo "Package: $ACTUAL_PACKAGE" >> "$GITHUB_STEP_SUMMARY"
