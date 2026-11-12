@@ -1710,8 +1710,8 @@ private fun MessengerScreen(
                     MessengerContactRow(
                         initials = "A",
                         name = "A.E.G.I.S. / Recruitment Office",
-                        preview = "Seseorang telah memberikan perintah kepada A.E.G.I.S. untuk merekrutmu.",
-                        status = "RESMI",
+                        preview = localizedUiText(selectedLanguage, "Someone has ordered A.E.G.I.S. to recruit you.", "Seseorang telah memberikan perintah kepada A.E.G.I.S. untuk merekrutmu."),
+                        status = localizedUiText(selectedLanguage, "OFFICIAL", "RESMI"),
                         onClick = { onSelectContact("AEGIS") }
                     )
                 }
@@ -1722,19 +1722,19 @@ private fun MessengerScreen(
                     MessengerContactRow(
                         initials = "FK",
                         name = "Freya Knox",
-                        preview = "Halo. Aku Freya. Aku akan mendampingimu selama orientasi.",
-                        status = "MENTOR",
+                        preview = localizedUiText(selectedLanguage, "Hello. I’m Freya. I’ll guide you through your orientation.", "Halo. Aku Freya. Aku akan mendampingimu selama orientasi."),
+                        status = localizedUiText(selectedLanguage, "MENTOR", "MENTOR"),
                         onClick = { onSelectContact("FREYA") }
                     )
                 }
                 if (nexusUnlocked &&
-                    ("NEXUS".contains(search, true) || "sistem komunikasi".contains(search, true))
+                    ("NEXUS".contains(search, true) || ("sistem komunikasi".contains(search, true) || "communication system".contains(search, true)))
                 ) {
                     MessengerContactRow(
                         initials = "NX",
                         name = "NEXUS",
-                        preview = "Kanal sistem A.E.G.I.S. telah diaktifkan.",
-                        status = "SISTEM",
+                        preview = localizedUiText(selectedLanguage, "The A.E.G.I.S. system channel is now active.", "Kanal sistem A.E.G.I.S. telah diaktifkan."),
+                        status = localizedUiText(selectedLanguage, "SYSTEM", "SISTEM"),
                         onClick = { onSelectContact("NEXUS") }
                     )
                 }
@@ -1763,7 +1763,7 @@ private fun MessengerScreen(
                     "AEGIS" -> {
                         ChatBubble(
                             "A.E.G.I.S. / Recruitment Office",
-                            "PEMBERITAHUAN REKRUTMEN RESMI\n\nAtas nama A.E.G.I.S., kami menghubungimu untuk menyampaikan bahwa seseorang telah memberikan perintah kepada organisasi ini untuk merekrutmu. Identitas pemberi perintah tidak disertakan dalam undangan ini.\n\nA.E.G.I.S. adalah organisasi intelijen internasional independen yang berkedudukan di Manila. Rangkaian awal ini dirancang untuk memperkenalkan prosedur, menguji ketelitian, dan menilai kesiapanmu sebelum akses yang lebih luas diberikan.\n\nJika kamu bersedia melanjutkan, buka tautan resmi di bawah untuk melihat rangkaian misi orientasi.",
+                            localizedUiText(selectedLanguage, "OFFICIAL RECRUITMENT NOTICE\n\nOn behalf of A.E.G.I.S., we are contacting you to inform you that someone has ordered this organization to recruit you. The identity of the person who issued the order was not included in this invitation.\n\nA.E.G.I.S. is an independent international intelligence organization headquartered in Manila. This initial sequence is designed to introduce procedures, test your attention to detail, and assess your readiness before broader access is granted.\n\nIf you wish to proceed, open the official link below to view your orientation missions.", "PEMBERITAHUAN REKRUTMEN RESMI\n\nAtas nama A.E.G.I.S., kami menghubungimu untuk menyampaikan bahwa seseorang telah memberikan perintah kepada organisasi ini untuk merekrutmu. Identitas pemberi perintah tidak disertakan dalam undangan ini.\n\nA.E.G.I.S. adalah organisasi intelijen internasional independen yang berkedudukan di Manila. Rangkaian awal ini dirancang untuk memperkenalkan prosedur, menguji ketelitian, dan menilai kesiapanmu sebelum akses yang lebih luas diberikan.\n\nJika kamu bersedia melanjutkan, buka tautan resmi di bawah untuk melihat rangkaian misi orientasi."),
                             false
                         )
                         Surface(
