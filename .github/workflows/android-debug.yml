@@ -2,7 +2,7 @@ name: Android Tests
 
 on:
   push:
-    branches: [main, rebuild/full-game]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
