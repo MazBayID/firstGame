@@ -194,7 +194,7 @@ jobs:
         with:
           name: cyber-protocol-final-smoke-tested
           path: |
-            app/build/outputs/apk/release/app-release.apk
+            release_apk/app-release.apk
             app-release.apk.sha256
           if-no-files-found: error
           retention-days: 14
