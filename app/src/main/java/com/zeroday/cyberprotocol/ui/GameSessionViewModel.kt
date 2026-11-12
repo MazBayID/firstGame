@@ -44,7 +44,7 @@ internal class GameSessionViewModel(
             )
         }
         if (beat >= 10) {
-            recordRecruitmentLead()
+            ensureRecruitmentEvidence()
             saveCheckpoint("story_beat_" + beat)
         }
     }
@@ -167,6 +167,32 @@ internal class GameSessionViewModel(
 
     fun resetCampaign() {
         repository.save(GameState(lastCheckpoint = "new_campaign"))
+        refresh()
+    }
+
+    /**
+     * Repairs missing RX-14 source records for existing saves that already reached
+     * the investigation checkpoint before case progression was introduced.
+     * Existing reviews, provenance, and relation history are preserved by the evidence use case.
+     */
+    fun ensureRecruitmentEvidence() {
+        val current = repository.load()
+        val expectedSourceIds = EvidenceAssetCatalog.assets.map { it.evidenceId }.toSet()
+        val discrepancy = current.evidence.firstOrNull { it.id == "transmission_timestamp_discrepancy" }
+        val sourceRelationsComplete = discrepancy?.relations
+            ?.filter { it.type == EvidenceRelationType.DERIVED_FROM }
+            ?.map { it.relatedEvidenceId }
+            ?.toSet()
+            ?.containsAll(expectedSourceIds) == true
+        val contradictionComplete = current.evidence
+            .firstOrNull { it.id == expectedSourceIds.firstOrNull() }
+            ?.relations
+            ?.any { it.relatedEvidenceId == expectedSourceIds.lastOrNull() && it.type == EvidenceRelationType.CONTRADICTS } == true
+        if (expectedSourceIds.all { id -> current.evidence.any { it.id == id } } &&
+            discrepancy != null && sourceRelationsComplete && contradictionComplete
+        ) return
+
+        recordRecruitmentLead()
         refresh()
     }
 
