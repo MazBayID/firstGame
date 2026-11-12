@@ -139,10 +139,19 @@ class VirtualFileSystem(context: Context) {
                 ""
             }
             "cat" -> {
-                val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
-                    ?: return TerminalResponse("Usage: cat <file>", cwd)
-                if (!canReadPath(target)) return TerminalResponse("Permission denied: file is outside this mission workspace.", cwd)
-                files[target] ?: return TerminalResponse("File tidak ditemukan: $target", cwd)
+                val requestedPath = rest.firstOrNull() ?: return TerminalResponse("Usage: cat <file>", cwd)
+                val sharedEvidenceAsset = if (allowedFiles == null && workspaceRoot == "$root/personal") {
+                    EvidenceAssetCatalog.assets.firstOrNull { it.path == requestedPath }
+                } else null
+                if (sharedEvidenceAsset != null) {
+                    files[sharedEvidenceAsset.path]
+                        ?: return TerminalResponse("File bukti belum tersedia: ${sharedEvidenceAsset.path}", cwd)
+                } else {
+                    val target = resolve(requestedPath, cwd, workspaceRoot)
+                        ?: return TerminalResponse("Usage: cat <file>", cwd)
+                    if (!canReadPath(target)) return TerminalResponse("Permission denied: file is outside this mission workspace.", cwd)
+                    files[target] ?: return TerminalResponse("File tidak ditemukan: $target", cwd)
+                }
             }
             "mkdir" -> {
                 if (allowedFiles != null) return TerminalResponse("Folder creation is disabled in mission workspaces.", cwd)

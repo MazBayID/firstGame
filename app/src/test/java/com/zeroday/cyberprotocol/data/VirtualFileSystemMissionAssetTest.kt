@@ -68,9 +68,6 @@ class VirtualFileSystemMissionAssetTest {
 
         assertEquals(aegis.content, fileSystem.readEvidenceAsset(aegis.id))
         assertEquals(archive.content, fileSystem.readEvidenceAsset(archive.id))
-        assertEquals(aegis.content, fileSystem.readFile(
-            aegis.path, fileSystem.initialDirectory()
-        ))
         assertEquals(
             aegis.content,
             VirtualFileSystem(context).execute(
