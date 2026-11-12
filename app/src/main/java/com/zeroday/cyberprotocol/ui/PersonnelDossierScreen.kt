@@ -141,13 +141,13 @@ internal fun PersonnelDossierScreen(
             border = BorderStroke(1.dp, Color(0xFF2B4149)), modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(caseDefinition.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(CaseLocalizedContent.title(caseDefinition, selectedLanguage), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 DossierValue(dossierText(selectedLanguage, "STATUS", "STATUS"), localizedPhaseName(casePhase, selectedLanguage))
                 DossierValue(dossierText(selectedLanguage, "SOURCES REVIEWED", "SUMBER DIPERIKSA"), "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
                 DossierValue(dossierText(selectedLanguage, "SOURCES ANALYZED", "SUMBER DIANALISIS"), "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
                 Text(dossierText(selectedLanguage, "CONCLUSION", "KESIMPULAN"), color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
-                DossierNote(analysisConclusion?.title ?: dossierText(selectedLanguage, "No conclusion saved.", "Belum ada kesimpulan tersimpan."))
-                DossierValue(dossierText(selectedLanguage, "DECISION", "KEPUTUSAN"), caseDecision?.title ?: dossierText(selectedLanguage, "Not selected", "Belum dipilih"))
+                DossierNote(analysisConclusion?.let { CaseLocalizedContent.analysisTitle(it, selectedLanguage) } ?: dossierText(selectedLanguage, "No conclusion saved.", "Belum ada kesimpulan tersimpan."))
+                DossierValue(dossierText(selectedLanguage, "DECISION", "KEPUTUSAN"), caseDecision?.let { CaseLocalizedContent.decisionTitle(it, selectedLanguage) } ?: dossierText(selectedLanguage, "Not selected", "Belum dipilih"))
                 Text(dossierText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
                 DossierNote(caseProgress.decisionRationale.ifBlank { dossierText(selectedLanguage, "No rationale saved.", "Belum ada alasan tersimpan.") })
                 DossierValue(dossierText(selectedLanguage, "DEBRIEF", "DEBRIEFING"), if (caseProgress.debriefViewed) dossierText(selectedLanguage, "COMPLETE", "SELESAI") else dossierText(selectedLanguage, "INCOMPLETE", "BELUM SELESAI"))
