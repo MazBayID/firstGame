@@ -28,7 +28,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - A code editor with basic Python syntax highlighting and editing helpers.
 - A campaign/story-stage flow, code RUN/SUBMIT actions, and a seven-app hub including the offline A.E.G.I.S. Browser.
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
-- GitHub Actions with source-only validation on development pushes and pull requests. A manually approved Final Release on `main` builds one permanently signed Release APK, installs and smoke-tests that exact binary on an Android Emulator, then publishes the unchanged APK.
+- GitHub Actions with source validation followed by a clearly labeled development Debug APK on pushes to `main` (no emulator smoke test). A manually approved Final Release on `main` builds one permanently signed Release APK, installs and smoke-tests that exact binary on an Android Emulator, then publishes the unchanged APK with an explicit FINAL — EMULATOR SMOKE-TESTED label.
 
 These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the expanded First Contact investigation; a later investigative case remains unapproved.
 
@@ -182,7 +182,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
 
-- The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation. The Android Emulator installed and launched that exact APK; the post-test SHA-256 comparison passed; the unchanged APK and checksum manifest were published; and temporary signing material was removed.
+- The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation. It is now classified historically as an emulator-smoke-tested Final APK under the former artifact naming convention. The Android Emulator installed and launched that exact APK; the post-test SHA-256 comparison passed; the unchanged APK and checksum manifest were published; and temporary signing material was removed.
 - This automated verification does **not** replace physical-device acceptance: clean install, in-place update, and save-data preservation still need testing on the user's Android device.
 
 ### Source Validation and Explicit Final Release pipeline
@@ -199,14 +199,13 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 
 ### Current pipeline verification
 
-- **Verified:** CI run [#119](https://github.com/MazBayID/firstGame/actions/runs/43144903075) completed successfully on 2026-11-12 for commit `c3027dc0e54d0785f6ed80eae631274afee9f60b`. It includes automatic scroll-to-latest in Messenger and Terminal, the preceding saveable Messenger/Browser/Terminal session states, and their regression tests.
-- Run #119 used the former automatic push-to-release workflow. It passed as a historical verified APK candidate; under the new policy, later development commits will run source tests only, and APK-level verification will occur only in an explicitly dispatched Final Release.
-- The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation.
-- The Android Emulator successfully installed and launched that exact APK; the app process remained alive for the smoke-test check.
-- The post-test SHA-256 comparison passed, the unchanged APK and checksum manifest were uploaded as artifact `cyber-protocol-release`, and temporary signing material was removed.
-- GitHub artifact ID: `13908950416`; artifact archive digest: `sha256:a129239077e5a49be711f94d1abc1c94c46c963ff0f5b7a65f28cf01114163f7`; retention expiry: 2026-11-26.
-- This verifies the automated single-APK pipeline for this commit. It does **not** replace physical-device acceptance: clean install, in-place update, and save-data preservation still need testing on the user's Android device.
-- Previous workflow runs listed below are historical evidence only; they do not verify the current APK-level testing sequence.
+- CI run [#123](https://github.com/MazBayID/firstGame/actions/runs/43151248797) passed on 2026-11-12 for commit `160866011518a4563f1ebafdc8a67a712af451e3`. It ran Python runner tests and Release-variant Android/Kotlin unit tests only under the previous workflow definition; it did not produce an APK.
+- The CI policy is now updated: pushes to main and manual dispatches with `final_release=false` run source tests and then publish a clearly labeled development Debug APK without emulator smoke testing.
+- Only a manual dispatch with `final_release=true` creates the permanently signed Final APK. The exact APK must pass package/signature validation and Android Emulator smoke testing before publication, and its artifact must be labeled **FINAL — EMULATOR SMOKE-TESTED**.
+- Latest verified APK available before this policy update: CI run [#119](https://github.com/MazBayID/firstGame/actions/runs/43144903075), source commit `c3027dc0e54d0785f6ed80eae631274afee9f60b`. It includes Messenger/Browser/Terminal session-state persistence and automatic scroll-to-latest in Messenger and Terminal. It passed source tests, signed APK validation, exact-APK emulator install/launch, and post-test SHA-256 verification.
+- Run #119 artifact ID: `13912230989`; archive digest: `sha256:914a2473891b38bb9ac914a281bd9340b1edb1270dbdde54f2f0081e1524fce7`; expires 2026-11-26. Its historical artifact name is `cyber-protocol-release`; the new workflow will use explicit development/final labels.
+- This APK does not include the subsequent gameplay-direction or English-first documentation commits. No APK has yet been built from current main after those changes.
+- Physical-device acceptance remains outstanding: clean install, in-place update, and save-data preservation on the user's Android device.
 
 ### Historical verification observed under the former CI design
 The following older runs predate the current test-only / signed-Release-only workflow separation. Their Debug APK artifacts are historical and must not be used as device-test or distribution builds.

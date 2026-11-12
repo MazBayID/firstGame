@@ -92,14 +92,11 @@ python -m unittest discover -s tests -v
 gradle --no-daemon testReleaseUnitTest
 ```
 
-These commands run tests only; they do not produce an APK.
+- **Pushes to `main`:** CI runs Python and Release-variant Android/Kotlin unit tests, then builds and publishes a Debug development APK. The artifact is explicitly marked **DEVELOPMENT — NOT FINAL — SMOKE TEST NOT RUN**.
+- **Pull requests targeting `main`:** source-level tests only. No installable APK and no release-signing secrets.
+- **Manual dispatch with `final_release=false`:** source tests followed by a development Debug APK, with no emulator smoke test.
+- **Final APK:** manually dispatch **Cyber Protocol — Build, Test & Release** from `main` with `final_release=true`. CI reruns source tests, builds one permanently signed Release APK, validates it, installs and launches that exact APK on an Android Emulator, verifies its SHA-256 is unchanged, then publishes it as **FINAL — EMULATOR SMOKE-TESTED** with a checksum manifest.
+- Development APKs are for early testing and feedback; they are not release-signed and must never be mistaken for Final APKs.
+- Emulator smoke testing does not replace physical-device acceptance: clean installation, in-place update, and save-data preservation must still be checked on an Android device.
 
-- **Pushes to `main`:** the Cyber Protocol workflow runs Python and Release-variant Android/Kotlin unit tests only. It does not build an installable APK, restore signing secrets, start an emulator, or publish an artifact.
-- **Pull requests targeting `main`:** the **Android Tests (PR only)** workflow runs source-level tests only. It never builds or signs an installable APK and never accesses release-signing secrets.
-- **Final Release:** when the game is ready for release, manually run **Cyber Protocol — Build, Test & Release** from the `main` branch and explicitly set the `final_release` input to `true`. The workflow reruns source tests, builds one permanently signed Release APK, validates its package/version/ABI/signature, installs and launches that exact APK on an Android Emulator, verifies its SHA-256 is unchanged, and publishes the same APK plus checksum manifest. It does not rebuild or re-sign after testing.
-- A manual workflow dispatch with `final_release=false` performs source tests only. A push to `main` never triggers emulator testing or APK publication.
-- The permanent keystore is restored only inside the ephemeral Final Release runner and removed at the end of the job.
-
-For physical-device installation, download only the `cyber-protocol-release` artifact from a successful **Cyber Protocol — Build, Test & Release** Final Release run. Emulator smoke testing is not a substitute for physical-device acceptance: clean installation, in-place update, and save-data preservation must still be checked on the Android device.
-
-The project is an evolving game foundation. This repository does not claim that the full v1.0 campaign is complete.
+The permanent keystore is restored only inside the ephemeral Final Release runner and removed at the end of the job. The project is an evolving game foundation; the full v1.0 campaign is not yet complete.

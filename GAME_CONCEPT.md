@@ -1125,47 +1125,50 @@ The intended outcome is that a complete beginner can enter Cyber Protocol withou
 - `main` is the sole long-lived development and release branch. Do not maintain a separate permanent development branch or a parallel APK-producing workflow.
 
 
-# 24. Source Validation, Final Release, and Permanent Signing
+# 24. CI Builds, Development APKs, and Final Release
 
-Cyber Protocol separates continuous development validation from the release of an installable APK. **Normal development commits do not build or publish an APK and do not run an Android Emulator smoke test.** Emulator smoke testing is reserved for an explicitly requested Final Release. A Final Release still follows the single-artifact rule: build once → test that exact APK → publish that same APK.
+Cyber Protocol CI has two distinct APK classes. **Development APKs may be built and published during normal development without an emulator smoke test.** A **Final APK** is a separate, explicitly requested release artifact and must pass the emulator smoke test using the exact APK that is published. Never label or present a development APK as final.
 
-## 24.1 — Development and continuous validation
+## 24.1 — Source validation
 
-- Pushes to `main` run source-level validation: Python runner tests and Release-variant Android/Kotlin unit tests.
-- Pull requests targeting `main` run the source-only Android Tests workflow. It must not access release-signing secrets or produce an installable APK.
-- Normal development CI must not build Debug or Release APKs, restore signing credentials, start an Android Emulator, or publish installable artifacts.
-- A successful development source-test run confirms only the tested source-level checks. It is not a release candidate, APK validation, emulator result, or production-readiness claim.
-- Failed or incomplete source tests block the corresponding development check. Fixes are committed normally and validated again without triggering APK packaging.
+- Pushes to main run Python runner tests and Release-variant Android/Kotlin unit tests first.
+- Pull requests targeting main run source-level tests only; they do not build installable APKs or access release-signing secrets.
+- A failed or incomplete source-test run blocks downstream APK jobs.
+- Source-test success alone does not mean an APK has been built, tested, or approved as final.
 
-## 24.2 — Explicit Final Release gate
+## 24.2 — Development APK (non-final)
 
-- A Final Release is started deliberately through the `workflow_dispatch` entry for the main-branch release workflow, with the `final_release` input explicitly set to `true`.
-- The release workflow first runs the same Python and Android/Kotlin source tests. The signed APK job may start only after those tests pass and only for a manual Final Release dispatch on `main`.
-- After source validation passes, CI builds **exactly one installable game APK** using the production Release configuration and the permanent release-signing identity.
-- CI must not build a separate Debug APK, a second Release APK, or another installable game APK for testing, staging, or distribution.
-- The game APK is built once. CI must not rebuild or re-sign it after testing. The exact file produced by the build step is the file passed to every subsequent APK test and ultimately published.
-- The Final Release job verifies the package identity, version code, supported ABIs, permanent signing certificate, and expected production configuration.
-- The Android Emulator smoke and installation checks run only in this Final Release job and must use that exact built APK, not a separately built test variant.
-- A failed, skipped, cancelled, or incomplete required Final Release check blocks publication. Source-test success alone never authorizes publication.
-- Do not publish a "test APK" and then build another "release APK". Do not replace the tested file with a newly generated file after validation.
-- Record the APK's SHA-256 digest and source commit SHA. Verify the file remains unchanged after the emulator test, then publish that exact APK and its checksum manifest.
-- If validation fails, no artifact is published. Correct the issue and start a new explicit Final Release run for the corrected main-branch commit.
+- After source tests pass, every push to main builds a development Debug APK using `assembleDebug` and publishes it as a development artifact.
+- A manual workflow dispatch with `final_release=false` also builds and publishes this development APK after source tests pass.
+- The development APK does not require the permanent release keystore and does not run an Android Emulator smoke test.
+- The artifact name and included status manifest must clearly say **DEVELOPMENT — NOT FINAL — SMOKE TEST NOT RUN** and record source commit SHA and APK SHA-256.
+- This artifact is suitable for early installation and development feedback. Its successful assembly is not evidence of runtime correctness, release signing, update compatibility, or production readiness.
+- Development APKs must never be named, described, or distributed as Final Release APKs.
 
-## 24.3 — Permanent signing identity
+## 24.3 — Explicit Final APK
 
-- The one installable game APK is signed with the project's permanent Android release keystore. There is no separate debug-signed device-test APK.
-- Every published update must use the same permanent release keystore and signing certificate. Never generate a replacement key for routine builds or updates.
-- Restore the keystore only inside the ephemeral Final Release CI runner, restrict its file permissions, validate the alias without printing secrets, and remove temporary key material after the job.
-- The keystore and passwords are private release credentials. Store them only in the maintainer's secure offline backup and protected GitHub Actions Secrets. Never commit the keystore, Base64 keystore data, passwords, or signing material to Git, logs, artifacts, or this public design file.
-- Verify the APK signature after building and verify the released artifact's digest against the tested APK. Never expose signing secrets in logs or artifacts.
-- The permanent keystore must be backed up securely by the maintainer. Losing it may make future in-place updates impossible for installations signed with that key.
+- A Final APK is built only through a deliberate `workflow_dispatch` on main with `final_release=true`.
+- The workflow reruns source tests before the final packaging job.
+- CI builds exactly one installable APK using the production Release configuration and the permanent release-signing identity.
+- CI validates package identity, monotonically increasing versionCode, supported ABIs, permanent signing certificate, and expected production configuration.
+- The Android Emulator smoke test installs and launches that exact signed APK. It must confirm that the app process remains alive.
+- CI records the APK SHA-256 before smoke testing and verifies the file is unchanged afterward. The exact tested APK and checksum manifest are published together.
+- The final artifact name must clearly identify it as **FINAL — EMULATOR SMOKE-TESTED**. Its artifact status/summary must state that the exact published APK passed the emulator smoke test.
+- A failed, skipped, cancelled, or incomplete required final check blocks publication. No artifact may be labeled final unless every required check passed.
+- Do not rebuild or re-sign the APK after smoke testing. If validation fails, correct the issue and start a new Final Release run.
 
-## 24.4 — Safe updates and device acceptance
+## 24.4 — Permanent signing identity
 
-- The release application must retain its existing `applicationId` across updates. Do not change the package identity after the first externally distributed signed build unless a separate migration strategy is deliberately approved.
-- Every published update must have a `versionCode` strictly greater than the previously distributed build. A version name may describe the release, but Android uses `versionCode` to determine update order.
-- A signed update should install over the existing app without uninstalling it when the application ID and signing identity match and the version code is higher. Preserve local campaign data during normal updates.
-- Database and save-state changes must use explicit, tested migrations. App updates must not silently reset campaign progress, player code, evidence, settings, or workspaces. Back up and recover local state safely when a migration fails.
-- Never recommend uninstalling a user's existing installation as the first response to an update failure. Diagnose package identity, signing-certificate mismatch, version-code ordering, device compatibility, and installer errors first. Warn about data loss before any destructive recovery step.
-- Physical-device installation, update, and acceptance testing must use the exact signed APK produced by the Final Release pipeline. Confirm both clean installation and in-place update over the prior signed build, including preservation of local game data.
-- A Final Release is complete only when source tests, APK validation, the exact-APK emulator smoke test, checksum verification, and publication all pass. Physical-device acceptance remains a separate required validation step before claiming device acceptance or full production readiness.
+- Development APKs use the normal Android Debug signing identity and must not use the permanent release keystore.
+- The Final APK uses the project's permanent Android release keystore. Every published update must use the same key and certificate.
+- Restore the keystore only inside the ephemeral Final Release CI runner, restrict permissions, validate the alias without printing secrets, and remove temporary key material after the job.
+- Store signing credentials only in a secure offline backup and protected GitHub Actions Secrets. Never commit or publish the keystore, passwords, or signing material.
+- Losing the permanent key may make future in-place updates impossible for installations signed with that key.
+
+## 24.5 — Safe updates and device acceptance
+
+- Retain the existing applicationId across updates. Every Final APK must have a versionCode greater than the previously distributed Final APK.
+- Preserve local campaign data, player code, evidence, settings, and workspaces during normal updates. Use explicit tested migrations for save-schema changes.
+- Diagnose package identity, signing-certificate mismatch, version ordering, device compatibility, and installer errors before recommending uninstall. Warn about data loss before destructive recovery.
+- Physical-device acceptance uses the exact signed Final APK: test clean installation, in-place update over the previous signed build, and preservation of local game data.
+- Emulator smoke testing is not a substitute for physical-device acceptance. A Final APK is **CI-final and emulator-smoke-tested** after the final pipeline passes; full device acceptance/production readiness still requires physical-device checks.
