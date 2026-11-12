@@ -245,3 +245,14 @@ This refresh does not introduce story canon or change gameplay implementation. I
 - Decision options may require explicitly listed optional evidence; those requirements are checked independently and deterministically.
 - Bumped save schema to 7. Schema-6 and earlier saves retain existing campaign/evidence state and receive an empty case-progress map.
 - No new post-First-Contact story case is authored in this checkpoint. A playable case remains gated on an approved source chain, primary archetype, optional leads, and decision/evaluation design.
+
+
+## Batch 05 — Localization L1 foundation
+
+- Added a dedicated language preference model for English (en) and Bahasa Indonesia (id).
+- Fresh installations default to English regardless of Android system locale; the Compose resource configuration follows the saved in-game preference.
+- Language preference is stored in a dedicated SharedPreferences file, separate from campaign progress and save schema.
+- Replaced the Language placeholder with a functional selector and an explicit notice that localization coverage is still partial.
+- Added separate default-English and Indonesian Android string resources for the main menu and Language screen.
+- Migrated main-menu labels, descriptions, motto, and footer to stable resource keys.
+- Full localization is not complete. Story dialogue, First Contact briefings/hints, and many operational screens still contain hard-coded Indonesian content; neither language should yet be advertised as fully localized.

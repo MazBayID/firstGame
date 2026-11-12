@@ -12,6 +12,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import android.content.res.Configuration
+import java.util.Locale
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +28,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
+import com.zeroday.cyberprotocol.R
+import com.zeroday.cyberprotocol.core.model.GameLanguage
+import com.zeroday.cyberprotocol.data.GameLanguagePreferences
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zeroday.cyberprotocol.core.model.GameState
@@ -89,6 +96,38 @@ fun CyberProtocolApp() {
 
 @Composable
 private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChange: (Boolean) -> Unit) {
+    val baseContext = LocalContext.current
+    var selectedLanguage by remember {
+        mutableStateOf(GameLanguagePreferences.load(baseContext))
+    }
+    val localizedContext = remember(baseContext, selectedLanguage) {
+        val configuration = Configuration(baseContext.resources.configuration)
+        configuration.setLocale(Locale.forLanguageTag(selectedLanguage.localeTag))
+        baseContext.createConfigurationContext(configuration)
+    }
+    CompositionLocalProvider(
+        LocalContext provides localizedContext,
+        LocalConfiguration provides localizedContext.resources.configuration
+    ) {
+        CyberProtocolGameContentBody(
+            reducedMotion = reducedMotion,
+            onReducedMotionChange = onReducedMotionChange,
+            selectedLanguage = selectedLanguage,
+            onLanguageChange = { language ->
+                GameLanguagePreferences.save(baseContext, language)
+                selectedLanguage = language
+            }
+        )
+    }
+}
+
+@Composable
+private fun CyberProtocolGameContentBody(
+    reducedMotion: Boolean,
+    onReducedMotionChange: (Boolean) -> Unit,
+    selectedLanguage: GameLanguage,
+    onLanguageChange: (GameLanguage) -> Unit
+) {
     val context = LocalContext.current
     val preferences = remember { context.getSharedPreferences("cyber_protocol_campaign_v2", 0) }
     val sessionViewModel: GameSessionViewModel = viewModel(
@@ -688,10 +727,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             onReducedMotionChange = onReducedMotionChange,
             onBack = { navigate(GameScreen.MAIN_MENU) }
         )
-        GameScreen.LANGUAGE -> InfoAppScreen(
-            "BAHASA", "PREFERENSI LOKALISASI",
-            "BAHASA AKTIF: BAHASA INDONESIA\n\nPaket bahasa Inggris belum tersedia. Pilihan bahasa lain akan diaktifkan setelah seluruh dialog, misi, dan antarmuka memiliki terjemahan yang konsisten.",
-            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
+        GameScreen.LANGUAGE -> LanguageScreen(
+            selectedLanguage = selectedLanguage,
+            onLanguageChange = onLanguageChange,
+            onBack = { navigate(GameScreen.MAIN_MENU) }
         )
     }
 
@@ -735,25 +774,25 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
             Text("A.E.G.I.S.", color = Color(0xFFBCE8EA), fontSize = 15.sp, letterSpacing = 5.sp, fontWeight = FontWeight.Bold)
             Text("CYBER PROTOCOL", color = Color.White, fontSize = 29.sp, letterSpacing = 2.2.sp, fontWeight = FontWeight.Black)
             Spacer(Modifier.height(10.dp))
-            Text("PENGETAHUAN ADALAH KEKUATAN.\nINTELIJEN ADALAH TANGGUNG JAWAB.",
+            Text(stringResource(R.string.game_motto),
                 color = Color(0xFF8AA8AE), fontSize = 10.sp, lineHeight = 17.sp,
                 letterSpacing = 1.2.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             Spacer(Modifier.height(46.dp))
             Surface(color = Color(0xFF0B2028).copy(alpha = 0.82f), shape = RoundedCornerShape(4.dp),
                 border = BorderStroke(1.dp, Color(0xFF28515B)), modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MenuButton("LANJUTKAN KAMPANYE", "Lanjutkan berkas rekrutmenmu", onContinue, true, CyberAssets.home)
-                    MenuButton("KAMPANYE BARU", "Mulai Bab 001 — Kontak Pertama", onNewCampaign, icon = CyberAssets.intelligence)
-                    MenuButton("PUSAT APLIKASI", "Buka perangkat A.E.G.I.S.-mu", onHub, icon = CyberAssets.connection)
-                    MenuButton("PROFIL AGEN", "Rank, pengalaman, dan clearance", onProfile, icon = CyberAssets.profile)
-                    MenuButton("ARSIP", "Bukti dan riwayat operasi", onArchives, icon = CyberAssets.archive)
-                    MenuButton("PENCAPAIAN", "Penghargaan dan milestone", onAchievements, icon = CyberAssets.achievements)
-                    MenuButton("PENGATURAN", "Aksesibilitas dan preferensi tampilan", onSettings, icon = CyberAssets.settings)
-                    MenuButton("BAHASA", "Preferensi bahasa permainan", onLanguage, icon = CyberAssets.document)
+                    MenuButton(stringResource(R.string.menu_continue_campaign), stringResource(R.string.menu_continue_campaign_desc), onContinue, true, CyberAssets.home)
+                    MenuButton(stringResource(R.string.menu_new_campaign), stringResource(R.string.menu_new_campaign_desc), onNewCampaign, icon = CyberAssets.intelligence)
+                    MenuButton(stringResource(R.string.menu_app_hub), stringResource(R.string.menu_app_hub_desc), onHub, icon = CyberAssets.connection)
+                    MenuButton(stringResource(R.string.menu_profile), stringResource(R.string.menu_profile_desc), onProfile, icon = CyberAssets.profile)
+                    MenuButton(stringResource(R.string.menu_archives), stringResource(R.string.menu_archives_desc), onArchives, icon = CyberAssets.archive)
+                    MenuButton(stringResource(R.string.menu_achievements), stringResource(R.string.menu_achievements_desc), onAchievements, icon = CyberAssets.achievements)
+                    MenuButton(stringResource(R.string.menu_settings), stringResource(R.string.menu_settings_desc), onSettings, icon = CyberAssets.settings)
+                    MenuButton(stringResource(R.string.menu_language), stringResource(R.string.menu_language_desc), onLanguage, icon = CyberAssets.document)
                 }
             }
             Spacer(Modifier.height(30.dp))
-            Text("MANILA  /  KOMANDO PUSAT  /  AKSES AMAN",
+            Text(stringResource(R.string.menu_footer),
                 color = Color(0xFF55747A), fontSize = 9.sp, letterSpacing = 1.sp)
         }
     }

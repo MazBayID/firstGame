@@ -1,0 +1,28 @@
+<resources>
+    <string name="game_motto">KNOWLEDGE IS POWER.\nINTELLIGENCE IS RESPONSIBILITY.</string>
+    <string name="menu_continue_campaign">CONTINUE CAMPAIGN</string>
+    <string name="menu_continue_campaign_desc">Resume your recruitment file</string>
+    <string name="menu_new_campaign">NEW CAMPAIGN</string>
+    <string name="menu_new_campaign_desc">Start Chapter 001 — First Contact</string>
+    <string name="menu_app_hub">APPLICATION HUB</string>
+    <string name="menu_app_hub_desc">Open your A.E.G.I.S. tools</string>
+    <string name="menu_profile">OPERATIVE PROFILE</string>
+    <string name="menu_profile_desc">Rank, experience, and clearance</string>
+    <string name="menu_archives">ARCHIVES</string>
+    <string name="menu_archives_desc">Evidence and operation history</string>
+    <string name="menu_achievements">ACHIEVEMENTS</string>
+    <string name="menu_achievements_desc">Awards and milestones</string>
+    <string name="menu_settings">SETTINGS</string>
+    <string name="menu_settings_desc">Accessibility and display preferences</string>
+    <string name="menu_language">LANGUAGE</string>
+    <string name="menu_language_desc">Game language preference</string>
+    <string name="menu_footer">MANILA  /  CENTRAL COMMAND  /  SECURE ACCESS</string>
+    <string name="language_title">GAME LANGUAGE</string>
+    <string name="language_description">Choose the preferred display language. Campaign progress and saved work are stored separately.</string>
+    <string name="language_english">English</string>
+    <string name="language_english_description">Default for new installations</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+    <string name="language_indonesian_description">Indonesian language preference</string>
+    <string name="language_partial_coverage_notice">Localization is still in progress. Several story and operational screens still contain Indonesian text. Neither language is yet declared fully localized.</string>
+    <string name="language_back">BACK</string>
+</resources>

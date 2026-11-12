@@ -2,7 +2,7 @@
 
 **Approved product direction:** English-first, Indonesian-supported  
 **Canonical policy:** GAME_CONCEPT.md §3.4  
-**Current implementation state:** Not implemented; the Language destination is still an informational placeholder.
+**Current implementation state:** L1 foundation is implemented; the Language destination persists a preference and the main menu uses localized resources. Full player-facing localization remains incomplete.
 
 ## 1. Product behavior
 
@@ -40,8 +40,8 @@
 ## 4. Rollout sequence
 
 - **L0 — Contract:** approve English-first behavior, terminology boundaries, persistence rules, and parity requirements. (Approved)
-- **L1 — Foundation:** language identifier, English fresh-install default, local preference persistence, and a functional Language screen.
-- **L2 — Shell:** localize main menu, navigation, settings, shared components, and system dialogs.
+- **L1 — Foundation:** language identifier, English fresh-install default independent of Android locale, local preference persistence, and a functional Language screen. (Implemented)
+- **L2 — Shell:** localize main menu, navigation, settings, shared components, and system dialogs. (Main menu resources started; remaining shell coverage in progress)
 - **L3 — Campaign:** localize all First Contact story beats, Messenger dialogue, briefings, objectives, hints, mission feedback, and debriefs.
 - **L4 — Operational apps:** localize Browser, Terminal explanatory UI, Database, Dossier, Analysis, Operations, Profile, Archives, and Achievements.
 - **L5 — Quality gate:** automated key/content parity checks, language-switch persistence tests, regression tests for mission IDs/evaluators, and manual review of both languages on Android.

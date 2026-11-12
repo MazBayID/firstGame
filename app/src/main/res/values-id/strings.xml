@@ -1,0 +1,28 @@
+<resources>
+    <string name="game_motto">PENGETAHUAN ADALAH KEKUATAN.\nINTELIJEN ADALAH TANGGUNG JAWAB.</string>
+    <string name="menu_continue_campaign">LANJUTKAN KAMPANYE</string>
+    <string name="menu_continue_campaign_desc">Lanjutkan berkas rekrutmenmu</string>
+    <string name="menu_new_campaign">KAMPANYE BARU</string>
+    <string name="menu_new_campaign_desc">Mulai Bab 001 — Kontak Pertama</string>
+    <string name="menu_app_hub">PUSAT APLIKASI</string>
+    <string name="menu_app_hub_desc">Buka perangkat A.E.G.I.S.-mu</string>
+    <string name="menu_profile">PROFIL AGEN</string>
+    <string name="menu_profile_desc">Rank, pengalaman, dan clearance</string>
+    <string name="menu_archives">ARSIP</string>
+    <string name="menu_archives_desc">Bukti dan riwayat operasi</string>
+    <string name="menu_achievements">PENCAPAIAN</string>
+    <string name="menu_achievements_desc">Penghargaan dan milestone</string>
+    <string name="menu_settings">PENGATURAN</string>
+    <string name="menu_settings_desc">Aksesibilitas dan preferensi tampilan</string>
+    <string name="menu_language">BAHASA</string>
+    <string name="menu_language_desc">Preferensi bahasa permainan</string>
+    <string name="menu_footer">MANILA  /  KOMANDO PUSAT  /  AKSES AMAN</string>
+    <string name="language_title">BAHASA PERMAINAN</string>
+    <string name="language_description">Pilih bahasa tampilan. Progres kampanye dan pekerjaan tersimpan dikelola secara terpisah.</string>
+    <string name="language_english">English</string>
+    <string name="language_english_description">Bahasa bawaan untuk instalasi baru</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+    <string name="language_indonesian_description">Preferensi bahasa Indonesia</string>
+    <string name="language_partial_coverage_notice">Pelokalan masih berlangsung. Beberapa layar cerita dan operasional masih menggunakan teks bahasa Indonesia. Belum ada bahasa yang dinyatakan selesai sepenuhnya.</string>
+    <string name="language_back">KEMBALI</string>
+</resources>
