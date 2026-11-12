@@ -48,16 +48,22 @@ These foundations are not automatically production-ready. Python file access is 
 - Test path traversal, malformed input, resource exhaustion, and permission boundaries.
 
 ### 3. Complete player experience
+- Keep the A.E.G.I.S. App Hub as a set of connected tools, not a mandatory checklist; the mission design decides which apps are relevant.
 - Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list Messenger, offline A.E.G.I.S. Browser, and remaining App Hub interactions.
 - Continue expanding Analysis and Operations into deeper review/operational workflows. Dossier and Intelligence Database now have dedicated data-backed screens; remaining work is broader cross-linking, archive navigation, and audited evidence review.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
 - Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
 
 ### 4. Mission and learning systems
-- Build mission definitions, objectives, evidence provenance, workspace permissions, RUN/SUBMIT separation, hybrid evaluation, graduated hints, and debriefs.
-- Complete Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as a cohesive playable narrative; the current authored scope has fourteen beats and eight evaluated missions.
-- Ensure each mission provides a fair, level-appropriate code/syntax clue for the next mission, including integer conversion, signed arithmetic, and absolute difference.
-- Introduce SQL, networking, C++, and IoT progressively; Python is the first complete technical track.
+- Use the approved **Guided Intelligence RPG** approach: a case/problem is the gameplay unit, not a mandatory sequence of application visits.
+- Build the five-phase loop—Intelligence Briefing, Investigation, Intelligence Analysis, Operational Decision, and Debriefing & Progression—as flexible experience phases, not five compulsory screens.
+- Author each mission with one primary archetype (Narrative, Investigation, Technical, Analytical, or Operational), optional secondary activities, clear objectives, discoverable information, and fair completion criteria.
+- Develop the Evidence & Investigation Engine as the cross-app source of truth for evidence identity, content/reference, provenance, uncertainty/status, related findings, and audited review actions. Define the schema and allowed status transitions before broad implementation.
+- Expand deterministic hybrid evaluation to distinguish technical execution, evidence discovery, analytical reasoning, and operational decisions. Preserve multiple defensible conclusions where the authored evidence supports them; never require hidden criteria.
+- Preserve RUN/SUBMIT separation, mission workspace permissions, graduated hints, and learning-oriented retry behavior.
+- Preserve Campaign 01 — THE RECRUITMENT / Chapter 001 — FIRST CONTACT as the guided beginner chapter with fourteen story beats and eight evaluated Python missions. Do not rewrite its approved narrative merely to force mission variety.
+- Use code/syntax clues when they naturally foreshadow the next technical concept; do not force them into every mission archetype.
+- Introduce SQL, networking, C++, and IoT progressively when campaign problems justify them; Python is the first technical track.
 
 ### 5. Progression and persistence
 - Implement rank, XP, clearance, unlock rules, archives, personal workspace, mission workspaces, explicit code saving, and meaningful autosave checkpoints.
@@ -216,7 +222,7 @@ The following older runs predate the current test-only / signed-Release-only wor
 - Mission workspace permissions now have Robolectric coverage for read-only asset downloads, persistence across VFS instances, Terminal cat access, write denial, and path-traversal denial. Complete Operations-specific terminal-session integration.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Expand the current data-backed Database and Dossier surfaces into fully interactive, story-linked workspaces. Analysis now supports evidence search/filter and Operations now supports active-mission resume; additional review workflows and data navigation remain.
-- Complete the campaign's investigative operation only after its proposed case concept is approved; expand hybrid evaluation and evidence-backed reasoning beyond the current opening missions.
+- Implement the approved Guided Intelligence RPG loop and Evidence & Investigation Engine through a small, complete vertical slice; author the first post-First-Contact investigative case only after its evidence chain, primary archetype, optional leads, and deterministic evaluation are specified. The design direction is approved, but the engine and new case are not yet implemented.
 - Save-snapshot round trips, previous-good-snapshot recovery, corrupt-snapshot preservation, legacy story migration, and previous-schema migration now have Robolectric coverage. Add archive-retention tests and expand clearance progression.
 - Finish ViewModel-driven state ownership and remaining App Hub interactions; implement complete Indonesian/English localization and the cinematic Campaign presentation overhaul; add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.

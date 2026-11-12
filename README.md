@@ -31,6 +31,22 @@ The approved First Contact chapter currently contains **14 story beats and eight
 
 The closing report records a four-second difference between two fictional receipt timestamps. The difference is observable; its cause remains unverified. The chapter does not identify a culprit or claim tampering.
 
+## Gameplay approach
+
+Cyber Protocol uses a **Guided Intelligence RPG** structure. The campaign gives the player clear story context, objectives, and fair guidance while preserving freedom to choose a reasonable investigative approach.
+
+The core loop is:
+
+1. **Intelligence Briefing** — understand the situation, objective, and unknowns.
+2. **Investigation** — inspect relevant sources and use the tools that fit the case.
+3. **Intelligence Analysis** — compare evidence, test hypotheses, and distinguish facts from assumptions.
+4. **Operational Decision** — submit a supported conclusion, choose an authorized next action, or request more verification.
+5. **Debriefing & Progression** — receive deterministic feedback, record findings, and advance the campaign.
+
+Missions use five primary archetypes: Narrative, Investigation, Technical, Analytical, and Operational. A mission may combine activities, but it has one dominant experience. The player is solving a problem, not completing a mandatory sequence of apps. Python and other technical skills are used when the case genuinely calls for them; not every mission requires code.
+
+The **Evidence & Investigation Engine** is the connective foundation for source provenance, evidence records, corroboration, uncertainty, and case findings across the in-world apps. Its detailed schema and the first full investigative case remain design/implementation work. First Contact remains the guided beginner chapter with its existing fourteen story beats and eight evaluated Python missions.
+
 ## Core systems
 
 - **First-person player identity:** the player is the operative; no player-avatar portrait is required.

@@ -321,112 +321,179 @@ Freya Knox is a major recurring character, the player's primary human mentor, an
 - Failure should produce meaningful feedback and learning opportunities, not merely a generic “wrong” screen.
 - Maintain continuity across chapters and preserve authored story flags and established campaign state. Initial predefined dialogue choices remain cosmetic and must not create consequential relationship or access branches.
 
-# 7. Core Gameplay Loop
+# 7. Core Gameplay — Intelligence-Driven RPG
 
-Cyber Protocol is a connected intelligence-operation experience. The player receives information through in-world communications and the simulated A.E.G.I.S. Intranet, investigates through authorized applications, performs technical work in the Code Editor and Terminal, and submits findings through the operation's designated interface.
+Cyber Protocol uses a **Guided Intelligence RPG** approach: the campaign provides clear narrative context, objectives, and fair guidance, while the player retains meaningful freedom in how to investigate and which relevant tools to use.
 
-The game combines a clear guided structure with meaningful player agency. It is neither a rigid sequence of tutorial screens nor an unrestricted sandbox.
+The central gameplay unit is **a problem to understand and resolve**, not a checklist of applications to visit. Messenger, Browser, Terminal, Code Editor, Dossier, Intelligence Database, Analysis, and Operations are tools inside one connected A.E.G.I.S. environment. They are not mandatory stops in a fixed sequence.
 
-- **Story-led context:** story scenes and character messages establish why an operation matters.
-- **Messenger-led communication:** A.E.G.I.S. and Freya deliver instructions, links, explanations, and attachments through Secure Messenger.
-- **Intranet-led assignments:** the simulated Browser provides the official portal for login, mission briefings, file repositories, reports, and submission workflows when required.
-- **Evidence and files:** supporting files are genuinely present in the game-managed virtual filesystem, with permissions and provenance appropriate to the operation.
-- **Terminal and Code Editor:** the player writes and edits code in the Code Editor, executes it through the Terminal, and inspects actual output and errors.
-- **Player agency:** the player can inspect evidence, test ideas, compare information, and decide what to submit rather than merely pressing Continue.
-- **Freya-led instruction:** Freya explains unfamiliar tools and concepts before expecting the player to use them. Guidance decreases gradually as demonstrated understanding grows.
-- **Persistent context:** moving between Messenger, Browser, Dossier, Database, Code Editor, and Terminal preserves the active operation, files, and current work according to the save rules.
+The player fantasy is to become a capable intelligence operative: receive incomplete information, investigate its source and reliability, make sense of evidence, decide what the organization should do, and understand the consequences. Programming is one important operational capability, not the purpose of every mission.
 
-The intended operation cycle:
+## 7.1 Core Gameplay Loop
 
-1. **Story event / recruitment communication** — a new development is introduced.
-2. **Freya's guidance** — the player receives the explanation or practice needed for unfamiliar tools and concepts.
-3. **Intranet access / briefing** — the player opens the authorized portal and reads the assignment where applicable.
-4. **File delivery / repository** — the player receives or retrieves supporting files and verifies where they are stored.
-5. **Investigation** — the player reads dossiers, evidence, messages, and authorized database records.
-6. **Technical work** — the player edits a Python script and uses the Terminal to run it against permitted virtual files or datasets.
-7. **Freya / NEXUS support** — Freya teaches and gives graduated hints; NEXUS supplies secondary diagnostics and system references.
-8. **Submission** — the player submits the result through the appropriate in-world interface.
-9. **Evaluation and debrief** — the game checks actual behavior and learning objectives, explains the result, and records evidence/report outcomes.
-10. **Progression** — story, XP, rank, clearance, skills, and the next operation advance according to authored rules.
+The campaign follows five experience phases. These are design phases, not five mandatory screens or applications.
 
-The exact apps used depend on the operation; do not force every tool into every mission. Browser and Messenger are simulated in-game applications and do not require public internet access.
+1. **INTELLIGENCE BRIEFING** — A story event, contact, report, alert, or assignment establishes what happened, why it matters, what is known, and what remains uncertain. The player receives a clear primary objective and any essential constraints.
+2. **INVESTIGATION** — The player examines relevant sources and chooses reasonable approaches. They may read messages and dossiers, inspect files, browse the fictional intranet, query available records, ask an authorized contact, or use technical tools when the case calls for them. The exact toolset depends on the mission.
+3. **INTELLIGENCE ANALYSIS** — The player compares sources, identifies inconsistencies, organizes findings, tests hypotheses, and distinguishes verified facts from assumptions. Analysis should help the player reason; it must not automatically solve the case.
+4. **OPERATIONAL DECISION** — The player submits a conclusion, selects an action, requests verification, or explains that the available information is insufficient. Decisions must be grounded in what the player could reasonably discover.
+5. **DEBRIEFING & PROGRESSION** — A.E.G.I.S. evaluates the relevant criteria, explains what the player established and what remains unresolved, records appropriate evidence/report outcomes, and advances authored story and progression gates.
 
-**Run and Submit remain separate actions.** RUN executes the player's code and displays actual output/errors. SUBMIT evaluates the authored mission requirements. Running code alone must never silently complete a mission.
+A mission may compress, repeat, or omit phases when appropriate. A short narrative mission may need no technical investigation. A focused coding exercise may move directly from briefing to technical work and debrief. A complex case may revisit investigation after analysis exposes a gap. Never force all five phases into a rigid five-screen template.
 
-# 7.1 Mission-to-Mission Code Clues
+## 7.2 Guided Freedom — Player Agency Without an Unrestricted Sandbox
 
-Every mission should contain a **code- or syntax-based clue pointing toward the next mission**.
+The primary structure is **Guided Intelligence RPG**, not a fully open-ended simulator.
 
-- The clue should emerge naturally from the mission's story, evidence, terminal output, decrypted message, dossier, or debriefing.
-- It may be a short code fragment, a syntax pattern, a function name, a variable, or a technical term that foreshadows the next concept or operation.
-- The clue should create curiosity and give the player a useful preview of what comes next, without simply revealing the next mission's full solution.
-- Where appropriate, the next mission should make the connection clear and reward the player for recognizing or remembering the clue.
-- Clues must match the player's current learning level. Do not introduce unexplained advanced syntax too early.
-- Keep clues coherent with campaign continuity; they should feel like meaningful intelligence breadcrumbs, not random easter eggs.
-- The clue is a narrative/learning bridge. It must not become an unfair blocker: the next mission should still provide the explanation or graduated hints needed to learn its new concept.
+- The story establishes the case, stakes, primary objective, and the player's authorized scope.
+- The game makes relevant evidence and available tools discoverable without requiring the player to guess hidden controls.
+- Players may choose the order of reasonable investigative actions and use any supported tool that fits the task.
+- Optional sources, deeper inspection, and corroboration may improve confidence or reveal context, but must not become arbitrary busywork.
+- Essential story progression must not depend on an obscure optional clue unless the mission clearly teaches the player how to find it.
+- The game may offer contextual prompts, Freya's graduated guidance, and NEXUS diagnostics. Guidance should reduce as the player demonstrates competence, without withholding essential information unfairly.
+- Do not simulate freedom through meaningless choices. A choice is meaningful only when it changes the player's approach, the information available, the quality/confidence of the result, or a later authored outcome.
+- The initial version keeps predefined dialogue replies cosmetic, as established in §3.3. Do not add relationship meters or persistent dialogue branches without a separate approval.
+
+This approach should feel guided but not like a walkthrough. The player knows what problem they are solving, but is not told every tap or every line of code in advance.
+
+## 7.3 Mission Archetypes
+
+Every mission has one **primary archetype**. It may combine secondary activities, but the primary archetype determines its dominant player experience and evaluation emphasis.
+
+| Archetype | Primary activity | Example |
+|---|---|---|
+| Narrative | Experience a story event, communicate, understand motives and context | Receive a new assignment from Freya |
+| Investigation | Find, inspect, compare, and corroborate information | Trace the origin of an anomalous transmission |
+| Technical | Use code or a technical tool to solve a defined problem | Write Python to parse a set of event records |
+| Analytical | Interpret evidence, test a hypothesis, and justify a conclusion | Determine what two conflicting logs actually establish |
+| Operational | Choose a proportionate next action under stated constraints | Continue monitoring, request corroboration, or pause an operation |
+
+Archetypes are not separate game modes and do not require separate application systems. A mission can be, for example, an Investigation mission with a small Technical task and an Analytical conclusion. Avoid making every mission a blend of all five; one clear dominant activity helps pacing and player expectations.
+
+## 7.4 Evidence & Investigation Engine — Core Cross-Mission System
+
+The Evidence & Investigation Engine is the central connective system for investigative gameplay. It gives evidence a consistent identity and history across Messenger, Browser, VFS, Terminal, Dossier, Intelligence Database, Analysis, Operations, and debriefs.
+
+An evidence record should be able to represent, as appropriate to its source:
+
+- A stable evidence identifier and title.
+- Its content or a reference to the underlying mission asset/data.
+- Source and provenance: who or what supplied it, through which in-world channel, and in which mission/context it was obtained.
+- Relevant timestamps and source metadata.
+- A concise finding/summary that does not overstate what the source proves.
+- An epistemic status such as unverified, corroborated, verified, or disputed, where that distinction is supported by the case.
+- Links to related evidence, reports, hypotheses, or mission objectives when authored.
+- Review/update history for status changes that require an audited action.
+
+The exact status vocabulary and transitions must be defined by the case and supported by the data model; do not automatically promote evidence to VERIFIED merely because a file was opened or a script ran.
+
+**Evidence principles**
+- Finding information is not the same as verifying it.
+- A technically correct result does not automatically prove an interpretation or a cause.
+- Two records that agree may corroborate a claim only when their sources are sufficiently independent and relevant.
+- Conflicting evidence should remain visible; do not silently discard inconvenient records.
+- Preserve original source material. Analysis creates findings or derived records; it must not rewrite source evidence.
+- Evidence status changes must be attributable to an explicit, testable review action.
+- Optional evidence may enrich the case, but the player must have enough discoverable information to complete the authored primary objective fairly.
+
+**Application responsibilities**
+- Messenger and Browser deliver or expose sources.
+- The VFS preserves the actual mission file, permissions, and provenance.
+- Terminal and Code Editor inspect or process permitted data.
+- Dossier presents authored case context and documents.
+- Intelligence Database indexes records and findings.
+- Analysis helps compare and organize evidence.
+- Operations presents objectives, current state, submission, and debrief access.
+
+These are responsibilities, not a requirement to open every app in every mission. Reuse one underlying evidence record and source asset across these views; do not create disconnected copies that can disagree.
+
+## 7.5 Technical Work as a Means, Not a Mandatory Gate
+
+- Use Python, Terminal, SQL, networking concepts, C++, or IoT only when they naturally solve a mission problem or teach a planned competency.
+- A mission must not require code merely to make the game appear technical.
+- A technical mission must explain why the operation needs the technical task and what its result means in the case.
+- Not every mission requires the player to write code. Narrative, investigative, analytical, and operational missions may be completed through other supported interactions.
+- When code is required, introduce the necessary concept at the player's level and provide fair graduated hints.
+- The Code Editor remains where the player writes and edits code; Terminal remains where code is executed and output/errors are inspected.
+- **RUN and SUBMIT remain separate.** RUN executes the exact current source and displays actual output/errors. SUBMIT evaluates the authored mission criteria. A successful run alone never completes a mission.
+- The evaluator must distinguish technical correctness from the quality of the player's investigative interpretation.
+
+## 7.6 Mission-to-Mission Code Clues
+
+The opening learning campaign may use authored code/syntax clues to foreshadow the next technical concept. These clues should emerge naturally from a story event, evidence, terminal output, or debrief.
+
+- Clues must match the player's current learning level and create curiosity without revealing the next solution.
+- Use a code clue when the next mission genuinely advances a technical concept; do not force a syntax easter egg into every narrative or operational mission.
+- A clue is a narrative/learning bridge, never an unfair blocker. The next mission must still teach or explain its new concept.
+- Preserve the established clues in First Contact unless a later approved story revision replaces them.
 
 # 8. Learning Through Operations
 
-Programming is an in-world tool. Introduce concepts gradually and tie each skill to an operational purpose.
+Programming and technical disciplines are in-world capabilities. They are introduced when a story problem gives the player a reason to learn and apply them.
 
 Potential progression:
 
 | Learning area | Example concepts | Possible fictional use |
 |---|---|---|
-| Python fundamentals | `print()`, text, variables, types | System messages and basic records |
+| Python fundamentals | `print()`, text, variables, types | Read and produce basic system records |
 | Input and logic | `input()`, comparisons, `if/else` | Interactive verification and decisions |
-| Iteration | loops, lists, indexing | Reviewing batches of records |
+| Iteration | loops, lists, indexing | Review batches of event records |
 | Functions and data | functions, strings, dictionaries | Reusable analysis procedures |
 | Data processing | filtering, sorting, structured data | Intelligence analysis |
-| SQL | queries and relational data | Searching a simulated case database |
-| Networking | addressing, protocols, request/response concepts | Understanding simulated infrastructure |
+| SQL | queries and relational data | Search a simulated case database |
+| Networking | addressing, protocols, request/response | Understand simulated infrastructure |
 | C++ | types, functions, memory and embedded foundations | Technical Division and device systems |
 | IoT | sensors, microcontrollers, signals | Fictional device telemetry and monitoring |
 | Automation | Python, JavaScript, Bash concepts | Repetitive authorized workflow automation |
 
-This is a candidate learning map, not a requirement to teach every topic in a fixed order. The campaign should determine when a concept is introduced. Do not overload early missions.
+This is a candidate learning map, not a requirement to teach every topic in a fixed order. Python is the first technical track. The campaign determines when other disciplines become relevant; do not overload early missions.
 
 ## 8.1 Hybrid Mission Evaluation
 
-Mission evaluation uses a **hybrid approach**. The evaluator selects checks appropriate to the task rather than requiring every task to use one exact-answer rule.
+Evaluation is deterministic and configured for the mission's primary archetype and objectives. It must not rely on an unconstrained AI model as the authority for core mission completion.
 
-- **Technical tasks:** validate required behavior, relevant concept use, execution results, and task constraints. Where multiple implementations satisfy the requirements, accept them; do not demand identical source code unless a specific syntax form is itself the learning objective.
-- **Investigative tasks:** assess whether the player's conclusion is supported by the available evidence and whether uncertainty is represented responsibly. Accept different defensible conclusions or wording when they meet the evidence criteria.
-- **Combined tasks:** evaluate both technical correctness and investigative reasoning as distinct dimensions. A program can work correctly while the interpretation of its data is weak, and a sound observation does not excuse a failed technical requirement.
-- **Feedback:** explain which criteria were met, which need attention, and why. Offer contextual hints or another attempt where appropriate instead of a generic pass/fail message.
-- **Mission configuration:** define explicit criteria and acceptable outcomes for each task. Do not use an AI model or unconstrained subjective judgment as the authority for core mission completion.
+- **Technical criteria:** validate required behavior, relevant concept use where it is the learning objective, execution results, and task constraints. Accept different implementations when they satisfy the defined requirements.
+- **Investigative criteria:** evaluate whether the player found the required source(s), used relevant evidence, distinguished observation from inference, and reached a conclusion supported by the available material.
+- **Analytical criteria:** evaluate required relationships, comparisons, uncertainty handling, and the reasoning criteria authored for the case. Accept multiple defensible conclusions where the evidence permits them.
+- **Operational criteria:** evaluate whether the selected action is allowed, proportionate to the known facts, and consistent with the stated mission constraints.
+- **Narrative criteria:** evaluate authored progression gates and required story interactions without pretending cosmetic dialogue choices have consequences.
+- **Combined missions:** report technical and reasoning dimensions separately. A correct script does not automatically make an interpretation correct; a sound observation does not excuse a failed technical requirement.
+- **Feedback:** explain which criteria were met, which need attention, and why. Give contextual hints or another attempt instead of a generic pass/fail response.
+- **Mission configuration:** define evidence requirements, acceptable outcomes, optional findings, evaluation rules, and progression effects explicitly. Do not judge a player's conclusion using criteria that were never discoverable or taught.
 
-## 8.2 Failure and Retry
+## 8.2 Failure, Uncertainty, and Retry
 
-The initial version uses a **retry-first, learning-oriented failure model**.
+The initial version uses a retry-first, learning-oriented model.
 
-- When a submission fails, explain which requirement was not met and why, using feedback appropriate to the player's current skill level.
-- Let the player correct the work and submit again. Failure does not immediately end the operation or impose a narrative punishment.
-- Provide graduated hints when useful: begin with a reminder about the relevant concept, then a more specific direction, and only provide stronger guidance when the player needs it. Hints should support learning rather than automatically reveal the complete answer.
-- Preserve the player's working context and relevant progress between attempts so a failed submission does not force them to restart the entire operation.
-- A failed attempt does not reduce rank, XP, relationship values, mission access, or story progress in the initial version. Do not add a retry counter penalty or consequence-based failure branch at this stage.
-- A mission is completed only when its authored evaluation criteria are met. RUN remains available for experimentation, while SUBMIT checks the current work.
-- Explain success as well as failure: show which requirements were satisfied and what the player has demonstrated.
+- A failed technical submission explains which requirement was not met and preserves the player's working context.
+- An unsupported investigative conclusion should explain which evidence is missing, conflicting, or insufficient; it must not label a reasonable uncertainty statement as failure.
+- Where appropriate, the player may request more information, inspect another source, or submit a qualified conclusion such as "insufficient evidence."
+- Failure does not immediately end an operation or impose a narrative punishment in the initial version.
+- A failed attempt does not reduce rank, XP, relationship values, mission access, or story progress. Do not add retry-counter penalties or consequence branches at this stage.
+- Provide graduated hints: conceptual reminder first, then a more specific direction, then stronger help only when needed.
+- Preserve the player's work and relevant progress between attempts.
+- Explain success as well as failure: show what the player demonstrated and what remains unresolved.
+- A mission completes only when its authored completion criteria are met. RUN remains available for experimentation; SUBMIT evaluates the current eligible work.
 
-The goal is to make experimentation safe and mistakes useful. More consequential failure systems may be considered in a later design phase, but they are not part of the initial version.
+More consequential operational failure, time pressure, or story branching may be considered in a later design phase, but is not part of the initial version unless separately approved.
 
-Keep **Run** and **Submit** separate: Run executes the player's work; Submit evaluates it against the mission's defined criteria.
+## 8.3 Teaching and Evaluation Principles
 
-## 8.1 Teaching and evaluation principles
-
-- Freya is the primary teacher for terminal use and Python. She introduces concepts from zero, explains what commands and syntax mean, demonstrates when useful, and guides the player through hands-on practice.
-- LEARN provides an optional, reviewable reference for concepts already introduced or available to study. It supplements Freya's in-world instruction; it does not replace mentor-led onboarding.
+- Freya is the primary human teacher for terminal use and Python. She introduces concepts from zero, explains what commands and syntax mean, demonstrates when useful, and guides hands-on practice.
+- NEXUS provides secondary diagnostics, reference material, and contextual technical support; it does not replace Freya or solve the case.
+- LEARN provides an optional, reviewable reference for concepts already introduced or available to study. It supplements Freya's instruction.
 - PRACTICE provides safe exercises where the player can experiment without risking protected mission evidence or campaign state.
-- MISSION applies learned skills to a story-driven operational objective.
-- Teach the purpose and behavior of commands and code, not only the exact text to type. Explain expected output and how to recognize errors.
-- Hints are graduated: begin with observation or a conceptual reminder, then offer a syntax cue, then more specific guidance if needed. A complete solution is not the default.
-- Evaluators check actual execution, required behavior, and intended concept use where appropriate, not merely whether output text matches.
-- Explain errors in accessible language and connect them to the concept being learned.
+- MISSION applies learned skills to a story-driven objective.
+- Teach purpose, behavior, expected output, and error interpretation—not only exact text to type.
+- Hints are graduated and should support learning rather than reveal a complete answer by default.
+- Evaluators check actual execution, required behavior, and intended concept use where appropriate, not merely matching output text.
 - Keep tutorials, mission files, terminal commands, Python capabilities, and evaluator criteria consistent and testable. Never instruct the player to use an unavailable file, command, or language feature.
 
 # 9. Player Progression
 
-The current proposed rank sequence:
+Progression combines organizational standing with demonstrated capability. Rank and clearance remain the visible career path; competency records describe what the player has actually learned and demonstrated.
+
+The current proposed rank sequence remains:
 
 1. Civilian
 2. Recruit
@@ -438,15 +505,38 @@ The current proposed rank sequence:
 8. Special Agent
 9. Elite Operative
 
-Progression should represent more than a numerical level. Rank and clearance may unlock:
+## 9.1 Rank and Clearance
+
+Rank represents the player's recognized standing and career advancement within A.E.G.I.S. Clearance represents authorization to access specific divisions, records, tools, and operations. They may be related, but they are not interchangeable.
+
+Unlocks may include:
 - New divisions and operational areas.
-- More complex dossiers and cases.
-- New tools and simulated environments.
-- New learning tracks and technical skills.
-- New characters, story branches, and responsibilities.
+- More complex dossiers, cases, and reports.
+- Additional tools and simulated environments.
+- New technical learning tracks.
+- New characters, story responsibilities, and authored campaign content.
 - Achievements, records, and profile distinctions.
 
-XP, skill development, rank, clearance, mission completion, achievements, and story flags should be coherent and persistent. Rewards must not be accidentally granted repeatedly when loading or replaying a mission.
+Do not grant sensitive access solely because the player accumulated generic XP. Use authored story gates and explicit clearance requirements where appropriate.
+
+## 9.2 Demonstrated Competencies
+
+Track two broad competency dimensions:
+
+- **Technical Competency:** demonstrated ability in relevant technical areas such as Python, terminal use, data handling, networking, SQL, C++, or IoT.
+- **Intelligence Competency:** demonstrated ability to inspect sources, preserve provenance, corroborate information, compare records, identify contradictions, distinguish facts from inference, and communicate uncertainty.
+
+Competency records should be evidence-based: record which skill or criterion was demonstrated, in which mission or exercise, and at what level. Do not invent a large skill tree, hidden numerical attributes, or arbitrary stat bonuses in the initial version.
+
+A player may have a high rank while still developing a technical skill, or demonstrate strong analysis while remaining a beginner programmer. The game should represent these profiles honestly.
+
+## 9.3 XP, Rewards, and Replay
+
+- XP rewards successful authored milestones and meaningful optional achievements; do not reward repetitive app visits or repeated submissions.
+- Rank thresholds, clearance gates, achievements, mission completion, and story flags must be deterministic and persistent.
+- Rewards must not be granted repeatedly by loading, replaying, or resubmitting a completed mission.
+- Optional evidence and deeper investigation may improve the debrief or award a specific achievement when authored, but must not create arbitrary grind.
+- Keep progression readable. The player should understand why a rank, clearance, competency record, or reward changed.
 
 # 10. Visual and Audio Direction
 
@@ -582,24 +672,30 @@ If a proposed change would materially alter the core experience, explain the imp
 
 # 15. Open Design Work
 
-These areas need further design and validation; do not invent them as settled canon:
+The following direction is now approved as the gameplay foundation: **Guided Intelligence RPG with an Intelligence-driven core loop** (§7–§9). Do not treat the core approach as undecided or revert to a rigid application checklist.
 
-- Full GDD with chapter-by-chapter campaign and detailed narrative scripts.
-- Named human characters, their histories, motivations, relationships, and dialogue.
+The following details remain open and must be designed deliberately before implementation:
+- Full campaign GDD with chapter-by-chapter missions, objectives, authored scenes, and narrative scripts.
+- Exact evidence schema, provenance fields, status vocabulary, permitted status transitions, relationship links, and audited review actions.
+- Detailed mission authoring contract for primary archetype, required/optional evidence, acceptable conclusions, uncertainty handling, evaluation criteria, hints, and debrief.
+- Case-specific investigation flows, optional leads, corroboration paths, and fair completion conditions.
+- Detailed rank thresholds, clearance matrix, competency levels, XP economy, optional rewards, and replay policy.
+- Whether and when later campaigns introduce consequential operational choices, time pressure, or branching outcomes.
+- Named human characters, histories, motivations, relationships, and dialogue beyond already approved canon.
 - Detailed A.E.G.I.S. leadership and internal politics.
-- Exact mission content, evidence chains, and branching consequences.
 - Final menu and operational UI wireframes.
 - Localization workflow and complete translated content.
 - NEXUS dialogue model, context rules, and offline/online implementation boundaries.
-- Detailed rank thresholds, XP economy, clearance model, and replay rules.
 - Final technical architecture and Android performance strategy.
 - Audio direction, accessibility, and cinematic asset pipeline.
 
-Develop these systematically. Mark proposals as proposals until approved or clearly established by the user.
+The five mission archetypes and five-phase gameplay loop are design tools, not a mandate to create five separate modes or screens. Begin implementation with the smallest reusable vertical slice that demonstrates a complete evidence-backed case. Preserve First Contact as the guided beginner/onboarding chapter; do not rewrite its approved story or eight evaluated Python missions merely to force variety into the opening.
+
+Develop open details systematically. Mark unapproved specifics as proposals until the user approves them.
 
 ---
 
-**North Star:** Make the player feel that they are living inside a cinematic intelligence operation, learning and applying real technical concepts as an operative of A.E.G.I.S. Every screen, story beat, mission, and system should serve that experience.
+**North Star:** Make the player feel that they are living inside a cinematic intelligence operation, learning and applying real technical concepts as an operative of A.E.G.I.S. The campaign guides the player toward meaningful problems; the player investigates with relevant tools, reasons from evidence, and understands the result. Every screen, story beat, mission, and system must serve that experience.
 
 # 16. Runtime, Persistence, and Connectivity Decisions
 
