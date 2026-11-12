@@ -74,3 +74,21 @@ The selected language is now passed into the campaign timeline, story mission wo
 The shared First Contact content resolver now supplies English variants for all eight catalog missions: titles, briefings, next clues, objectives, objective descriptions, and graduated hints. The Story, optional Training Simulator, Browser Mission Control, Intelligence Database, and Personnel Dossier use these localized mission values where those details are shown.
 
 A new unit-test suite checks the RX-14 translations, all eight mission-content mappings, and stable language behavior. The current implementation still uses a transitional Kotlin presentation resolver with inline language pairs rather than the final stable resource/message-key system described in the technical direction. Do not mark L2–L5 complete until all remaining player-facing routes and evaluator feedback are covered, a missing-key/content parity check exists, and both language journeys receive manual Android review.
+
+
+## Implementation checkpoint — 2026-11-12 (A.E.G.I.S. profile and evaluator feedback)
+
+The selected language now also controls the Operative Profile, Archives, Achievements, Terminal guidance labels, and the displayed mission-workspace label. Archived mission titles use the same stable-ID content resolver as Story and Browser Mission Control. Evidence status labels are translated only at the presentation boundary; enum values and persisted records remain unchanged.
+
+The Python evaluator now accepts an optional language tag. English remains the default for compatibility with existing callers and test fixtures; the Android service passes the selected in-game language for story and optional practice submissions. Evaluator-authored concept guidance, pass feedback, and test mismatch summaries have Indonesian variants. Python syntax errors, runtime errors, identifiers, and expected literal output are intentionally left technical and unchanged.
+
+The Python test suite now includes a language-parity check for evaluator feedback. The latest CI run before this checkpoint exposed a malformed newline in that new test fixture; the fixture has been corrected and a fresh CI run is required before this batch can be considered verified.
+
+### Remaining localization gates
+
+- Localize the Terminal's system-authored help and error messages without translating player files, command names, paths, code, or command output.
+- Review evidence titles/summaries and story/mission feedback for both languages, including old-save fallbacks.
+- Complete Profile/Archives/Achievements content review and ensure all rank, clearance, status, and checkpoint labels are understandable.
+- Replace transitional inline bilingual strings with a stable message-key/resource strategy, or document and test the approved alternative if a full resource migration is not justified.
+- Add an automated completeness/parity check covering every player-facing route and authored content ID.
+- Perform manual English and Indonesian journeys on Android, including language switching mid-campaign, force-stop/relaunch, save migration, and end-to-end First Contact completion.
