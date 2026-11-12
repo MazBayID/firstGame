@@ -36,4 +36,13 @@ object EvidenceAssetCatalog {
         )
     )
     fun find(assetId: String): EvidenceAsset? = assets.firstOrNull { it.id == assetId }
+
+    /** Returns an asset only when Terminal successfully cats its exact canonical source path. */
+    fun sourceAssetReadByTerminal(command: String, output: String): EvidenceAsset? {
+        val normalized = command.trim()
+        if (!normalized.startsWith("cat ")) return null
+        val requestedPath = normalized.removePrefix("cat ").trim().removeSurrounding("\"").removeSurrounding("'")
+        if (requestedPath.isBlank()) return null
+        return assets.firstOrNull { it.path == requestedPath && it.content == output }
+    }
 }

@@ -356,3 +356,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Personnel Dossier now includes the RX-14 case history alongside rank, XP, competency, and mission history.
 - Both screens read the same persisted CaseProgress and reward ledger as Operations and Analysis; they do not create parallel state.
 - Source workflow verification is pending.
+
+
+## Terminal source inspection integration
+
+- A successful `cat` of an exact canonical RX-14 source path in the personal virtual workspace records that source as inspected, subject to the same case-phase policy used by Messenger and Browser.
+- Failed reads, arbitrary file output, and mission-sandbox reads do not create case discoveries.
+- The source record is matched against both its canonical path and exact immutable content before the shared case state is updated.
+- Unit tests cover successful source reads and reject unrelated commands or failed output.

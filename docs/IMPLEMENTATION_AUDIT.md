@@ -404,3 +404,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Intelligence Database exposes a read-only RX-14 case file view backed by the same GameState and CaseProgress used by the other A.E.G.I.S. apps.
 - Personnel Dossier includes case completion, evidence counts, analytical conclusion, operational decision/rationale, debrief state, and reward history.
 - No duplicate or screen-local case state is introduced. Source tests and manual navigation verification remain pending.
+
+
+## Terminal source inspection integration
+
+- The virtual Terminal now participates in the RX-14 source workflow. Only a successful `cat` of an approved canonical source path with the exact catalog content is treated as deliberate inspection.
+- The same `CasePhaseEvaluator.canDiscoverEvidence` policy gates the resulting discovery update. Mission workspaces and failed reads cannot mark case evidence as discovered.
+- The matching helper is unit-tested against valid reads, failed output, and unrelated commands.

@@ -359,6 +359,11 @@ private fun CyberProtocolGameContentBody(
         }
         appendTerminalOutput("\n$ $input\n")
         val output = response.output
+        if (activeMission == null) {
+            com.zeroday.cyberprotocol.data.EvidenceAssetCatalog
+                .sourceAssetReadByTerminal(input, output)
+                ?.let { recordRx14Evidence(it.evidenceId) }
+        }
         if (output.startsWith("PYTHON_LAUNCH:")) {
             val fileName = output.removePrefix("PYTHON_LAUNCH:")
             val source = if (activeMission == null) {

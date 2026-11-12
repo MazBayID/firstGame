@@ -75,6 +75,16 @@ class VirtualFileSystemMissionAssetTest {
             ).output
         )
         assertEquals(aegis.content, VirtualFileSystem(context).readEvidenceAsset(aegis.id))
+        assertEquals(
+            aegis,
+            EvidenceAssetCatalog.sourceAssetReadByTerminal("cat ${aegis.path}", aegis.content)
+        )
+        assertEquals(null, EvidenceAssetCatalog.sourceAssetReadByTerminal(
+            "cat ${aegis.path}", "File tidak ditemukan"
+        ))
+        assertEquals(null, EvidenceAssetCatalog.sourceAssetReadByTerminal(
+            "ls ${aegis.path}", aegis.content
+        ))
     }
 
     @Test
