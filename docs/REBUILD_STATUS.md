@@ -243,3 +243,12 @@ Implementation requirements:
 - Allow a qualified 'insufficient evidence' outcome when the sources do not establish a cause.
 - Retire or migrate old evaluator IDs and mission-save state deliberately; preserve drafts and earned progress where safely possible.
 - No new culprit, tampering claim, or additional story case is authorized by this gameplay change.
+## Guided gameplay implementation update — 2026-11-12
+
+- **Implemented foundation:** Operations now renders the RX-14 case as a five-phase case flow instead of a fixed mission checklist.
+- **Implemented foundation:** Case briefing, discovery of the two shared receipt evidence records, analysis acknowledgement, decision selection, and debrief completion persist through the existing case-progress use cases.
+- **Implemented foundation:** Players may choose to state that evidence is insufficient; alternative decisions request clock-sync or processing-queue logs without asserting a culprit.
+- **Test added:** an end-to-end domain progression test covers the complete RX-14 case and its uncertainty outcome.
+- **Still in progress:** the story screen continues to route through the legacy eight Python missions. Their mechanics must be progressively refactored into beginner training/optional practice or retained only where they naturally support the case.
+- **Still in progress:** direct cross-app case integration, richer analytical reasoning, decision rationale capture, competency rewards, and emulator smoke testing.
+- **Build gate:** the missing story-localization import discovered in CI was fixed. The new Operations integration is awaiting CI verification; no new APK is declared release-ready.

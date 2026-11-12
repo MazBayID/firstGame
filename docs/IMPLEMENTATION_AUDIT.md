@@ -301,3 +301,14 @@ Next implementation direction:
 4. Provide deterministic, fair decision evaluation, including a valid insufficient-evidence outcome.
 5. Migrate old saves and drafts safely when catalog/evaluator contracts change.
 6. Do not author an unapproved culprit, tampering explanation, or separate new case.
+## RX-14 guided Operations vertical slice — 2026-11-12
+
+Implemented on the current branch:
+- Added a data-authored First Contact RX-14 case contract using the same two evidence IDs installed from the shared immutable VFS evidence assets.
+- Replaced the Operations screen's fixed eight-mission list with a case-control experience: briefing, source inspection, analysis acknowledgement, operational decision, and debrief.
+- Wired Operations actions to the persisted case-progress use cases and GameState.caseProgress.
+- Added a valid 'insufficient evidence' decision alongside proportionate requests for clock-synchronization and processing-queue logs.
+- Added a progression test that completes RX-14 without inventing a cause for the four-second discrepancy.
+- Fixed the missing Campaign01StoryLocalization import found by CI.
+
+This is a first playable case-flow vertical slice, not a complete campaign conversion. The existing story screen still contains the legacy eight Python mission sequence; those missions have not yet been merged, retired, or moved into optional practice. Messenger/Browser/Database navigation is not yet automatically linked to case evidence discovery; Operations currently exposes the shared evidence records as the case's inspection surface. Verify UI behavior on an emulator before claiming the slice is fully playable.
