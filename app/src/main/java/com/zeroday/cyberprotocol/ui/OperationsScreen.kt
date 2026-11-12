@@ -97,7 +97,7 @@ internal fun OperationsScreen(
             }
             CasePhase.INVESTIGATION -> {
                 SectionLabel(localizedUiText(selectedLanguage, "02  /  INVESTIGATION", "02  /  INVESTIGASI"))
-                InfoPanel("Periksa dua catatan penerimaan RX-14. Perbedaan waktu adalah fakta yang perlu dicatat, bukan bukti otomatis adanya manipulasi.")
+                InfoPanel(localizedUiText(selectedLanguage, "Inspect the two RX-14 intake records. The time difference is a fact to record, not automatic proof of tampering.", "Periksa dua catatan penerimaan RX-14. Perbedaan waktu adalah fakta yang perlu dicatat, bukan bukti otomatis adanya manipulasi."))
                 records.forEach { record ->
                     val found = record.id in caseProgress.discoveredEvidenceIds
                     EvidencePanel(
@@ -107,7 +107,8 @@ internal fun OperationsScreen(
                         sourceContent = if (found) null else onReadSource(record.id),
                         actionLabel = if (found) localizedUiText(selectedLanguage, "ALREADY REVIEWED", "SUDAH DIPERIKSA") else localizedUiText(selectedLanguage, "OPEN ORIGINAL SOURCE", "BUKA SUMBER ASLI"),
                         actionEnabled = !found,
-                        onAction = { onDiscoverEvidence(record.id) }
+                        onAction = { onDiscoverEvidence(record.id) },
+                        selectedLanguage = selectedLanguage
                     )
                 }
                 Text(caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
@@ -116,7 +117,7 @@ internal fun OperationsScreen(
             }
             CasePhase.ANALYSIS -> {
                 SectionLabel(localizedUiText(selectedLanguage, "03  /  INTELLIGENCE ANALYSIS", "03  /  ANALISIS INTELIJEN"))
-                InfoPanel("Kedua sumber wajib telah dibuka. Gunakan ruang Analisis untuk mencatat hasil pemeriksaan tiap sumber dan memilih kesimpulan yang benar-benar didukung bukti.")
+                InfoPanel(localizedUiText(selectedLanguage, "Both required sources have been opened. Use the Analysis workspace to record each source review and select a conclusion supported by the evidence.", "Kedua sumber wajib telah dibuka. Gunakan ruang Analisis untuk mencatat hasil pemeriksaan tiap sumber dan memilih kesimpulan yang benar-benar didukung bukti."))
                 records.forEach { record ->
                     val analyzed = record.id in caseProgress.analyzedEvidenceIds
                     Surface(
@@ -138,7 +139,7 @@ internal fun OperationsScreen(
             CasePhase.OPERATIONAL_DECISION -> {
                 SectionLabel(localizedUiText(selectedLanguage, "04  /  OPERATIONAL DECISION", "04  /  KEPUTUSAN OPERASIONAL"))
                 InfoPanel(analysisConclusion?.feedback
-                    ?: "Dua sumber telah dianalisis. Pilih tindakan yang proporsional dengan bukti yang tersedia.")
+                    ?: localizedUiText(selectedLanguage, "Both sources have been analyzed. Choose an action proportionate to the available evidence.", "Dua sumber telah dianalisis. Pilih tindakan yang proporsional dengan bukti yang tersedia."))
                 OutlinedTextField(
                     value = decisionRationale,
                     onValueChange = onDecisionRationaleChange,
@@ -147,7 +148,7 @@ internal fun OperationsScreen(
                     label = { Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN")) },
                     placeholder = { Text("Jelaskan fakta dan batas bukti yang mendukung tindakanmu.") }
                 )
-                Text("Alasan ini disimpan bersama keputusan dan ditampilkan saat debrief.",
+                Text(localizedUiText(selectedLanguage, "This rationale is saved with your decision and shown during the debrief.", "Alasan ini disimpan bersama keputusan dan ditampilkan saat debrief."),
                     color = Color(0xFF91A8AD), fontSize = 10.sp, lineHeight = 15.sp)
                 caseDefinition.decisionOptions.forEach { option ->
                     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
@@ -169,7 +170,7 @@ internal fun OperationsScreen(
             }
             CasePhase.DEBRIEFING -> {
                 SectionLabel(localizedUiText(selectedLanguage, "05  /  DEBRIEFING", "05  /  DEBRIEFING"))
-                InfoPanel("Keputusanmu telah dicatat. Tinjau kembali apa yang didukung sumber dan apa yang masih belum diketahui.")
+                InfoPanel(localizedUiText(selectedLanguage, "Your decision has been recorded. Review what the sources support and what remains unknown.", "Keputusanmu telah dicatat. Tinjau kembali apa yang didukung sumber dan apa yang masih belum diketahui."))
                 analysisConclusion?.let {
                     Text(localizedUiText(selectedLanguage, "ANALYSIS CONCLUSION", "KESIMPULAN ANALISIS"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                     Text(it.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
@@ -182,7 +183,7 @@ internal fun OperationsScreen(
                 }
                 Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 InfoPanel(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan yang tersimpan pada save lama." })
-                InfoPanel("Fakta: dua catatan menyebut RX-14 dan waktu penerimaannya berselisih empat detik. Penyebabnya belum dapat dipastikan. Tidak ada dasar untuk menunjuk pelaku atau menyatakan manipulasi.")
+                InfoPanel(localizedUiText(selectedLanguage, "Fact: two records reference RX-14 and their intake times differ by four seconds. The cause has not been established. There is no basis to identify an actor or claim tampering.", "Fakta: dua catatan menyebut RX-14 dan waktu penerimaannya berselisih empat detik. Penyebabnya belum dapat dipastikan. Tidak ada dasar untuk menunjuk pelaku atau menyatakan manipulasi."))
                 PrimaryAction(localizedUiText(selectedLanguage, "COMPLETE DEBRIEF", "SELESAIKAN DEBRIEF"), onAcknowledgeDebrief)
             }
             CasePhase.COMPLETE -> {
@@ -205,7 +206,7 @@ internal fun OperationsScreen(
             }
         }
 
-        Text("Pusat Operasi mengelola kasus dan keputusan. Aplikasi lain adalah alat investigasi; membuka aplikasi bukan syarat progres dengan sendirinya.",
+        Text(localizedUiText(selectedLanguage, "Operations manages the case and its decisions. Other apps are investigative tools; opening an app does not itself advance the case.", "Pusat Operasi mengelola kasus dan keputusan. Aplikasi lain adalah alat investigasi; membuka aplikasi bukan syarat progres dengan sendirinya."),
             color = Color(0xFF71858B), fontSize = 10.sp, lineHeight = 16.sp)
     }
 }
@@ -231,7 +232,8 @@ private fun EvidencePanel(
     sourceContent: String?,
     actionLabel: String,
     actionEnabled: Boolean,
-    onAction: () -> Unit
+    onAction: () -> Unit,
+    selectedLanguage: GameLanguage
 ) {
     var sourceOpened by remember(record.id) { mutableStateOf(false) }
     if (sourceOpened && sourceContent != null) {
@@ -255,9 +257,9 @@ private fun EvidencePanel(
             Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 10.sp)
             if (discovered) {
                 Text(record.summary, color = Color(0xFFC5D3D0), fontSize = 11.sp, lineHeight = 17.sp)
-                Text("STATUS BUKTI: " + record.status.name, color = Color(0xFF91A8AD), fontSize = 9.sp)
+                Text(localizedUiText(selectedLanguage, "EVIDENCE STATUS: ", "STATUS BUKTI: ") + localizedEvidenceStatus(record.status, selectedLanguage), color = Color(0xFF91A8AD), fontSize = 9.sp)
             } else {
-                Text("Catatan sumber tersedia. Periksa untuk membuka isi dan mencatatnya sebagai bukti kasus.",
+                Text(localizedUiText(selectedLanguage, "The source record is available. Open it to inspect its contents and record it as case evidence.", "Catatan sumber tersedia. Periksa untuk membuka isi dan mencatatnya sebagai bukti kasus."),
                     color = Color(0xFF91A8AD), fontSize = 10.sp, lineHeight = 15.sp)
             }
             if (analyzed) Text(localizedUiText(selectedLanguage, "ANALYSIS RECORDED", "ANALISIS TERCATAT"), color = Color(0xFF8CD5AC), fontSize = 9.sp, fontWeight = FontWeight.Bold)

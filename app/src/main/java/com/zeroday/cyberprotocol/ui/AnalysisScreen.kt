@@ -107,6 +107,7 @@ internal fun AnalysisScreen(
             phase = casePhase,
             selectedConclusion = caseConclusion,
             records = caseRecords,
+            selectedLanguage = selectedLanguage,
             onAnalyzeEvidence = onAnalyzeCaseEvidence,
             onSelectConclusion = onSelectAnalysisConclusion
         )
@@ -195,6 +196,7 @@ internal fun AnalysisScreen(
                 EvidenceRecordCard(
                     record = record,
                     concealed = record.id in concealedCaseEvidenceIds,
+                    selectedLanguage = selectedLanguage,
                     onReview = {
                         val targets = EvidenceReviewPolicy.allowedTransitions(record.status)
                         if (targets.isNotEmpty()) {
@@ -253,7 +255,7 @@ internal fun AnalysisScreen(
 }
 
 @Composable
-private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, onReview: () -> Unit) {
+private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selectedLanguage: GameLanguage, onReview: () -> Unit) {
     val (label, tint) = when (record.status) {
         EvidenceStatus.CONFIRMED -> localizedUiText(selectedLanguage, "CONFIRMED", "TERKONFIRMASI") to Color(0xFF8CD5AC)
         EvidenceStatus.CORROBORATED -> "DIKOROBORASI" to Color(0xFF9BC7E8)
@@ -305,6 +307,7 @@ private fun CaseAnalysisWorkspace(
     phase: CasePhase,
     selectedConclusion: com.zeroday.cyberprotocol.core.model.CaseAnalysisOption?,
     records: List<EvidenceRecord>,
+    selectedLanguage: GameLanguage,
     onAnalyzeEvidence: (String) -> Unit,
     onSelectConclusion: (String) -> Unit
 ) {
@@ -318,9 +321,9 @@ private fun CaseAnalysisWorkspace(
             Text("CASE WORKSPACE  /  RX-14", color = Color(0xFF83C7D0),
                 fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
             Text(definition.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Text("FASE  /  " + phase.name.replace('_', ' '), color = Color(0xFF9AB4B8),
+            Text(localizedUiText(selectedLanguage, "PHASE  /  ", "FASE  /  ") + localizedPhaseName(phase, selectedLanguage), color = Color(0xFF9AB4B8),
                 fontSize = 9.sp, fontWeight = FontWeight.Bold)
-            Text("Analisis hanya dapat dilakukan pada sumber yang sudah diperiksa. Pilih kesimpulan setelah semua sumber wajib dianalisis.",
+            Text(localizedUiText(selectedLanguage, "Analysis is available only for reviewed sources. Select a conclusion after every required source has been analyzed.", "Analisis hanya dapat dilakukan pada sumber yang sudah diperiksa. Pilih kesimpulan setelah semua sumber wajib dianalisis."),
                 color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
             records.forEach { record ->
                 val discovered = record.id in progress.discoveredEvidenceIds
@@ -332,13 +335,13 @@ private fun CaseAnalysisWorkspace(
                         Text(record.provenance.sourceLabel + "  /  " + record.provenance.origin.name,
                             color = Color(0xFF83C7D0), fontSize = 8.sp)
                         Text(
-                            if (discovered) record.summary else "Isi sumber terkunci sampai catatan asli diperiksa.",
+                            if (discovered) record.summary else localizedUiText(selectedLanguage, "Source contents remain locked until the original record is reviewed.", "Isi sumber terkunci sampai catatan asli diperiksa."),
                             color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp
                         )
                         Text(when {
                             analyzed -> "ANALISIS TERCATAT"
-                            discovered -> "SIAP DIANALISIS"
-                            else -> "SUMBER BELUM DIPERIKSA — gunakan Messenger, Browser, atau Operations"
+                            discovered -> localizedUiText(selectedLanguage, "READY FOR ANALYSIS", "SIAP DIANALISIS")
+                            else -> localizedUiText(selectedLanguage, "SOURCE NOT REVIEWED — use Messenger, Browser, or Operations", "SUMBER BELUM DIPERIKSA — gunakan Messenger, Browser, atau Operations")
                         }, color = if (analyzed) Color(0xFF8CD5AC) else Color(0xFF9AB4B8),
                             fontSize = 8.sp, fontWeight = FontWeight.Bold)
                         OutlinedButton(
@@ -346,7 +349,7 @@ private fun CaseAnalysisWorkspace(
                             enabled = phase == CasePhase.ANALYSIS && discovered && !analyzed,
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
-                        ) { Text(if (analyzed) "SUDAH DIANALISIS" else "CATAT HASIL ANALISIS") }
+                        ) { Text(if (analyzed) localizedUiText(selectedLanguage, "ALREADY ANALYZED", "SUDAH DIANALISIS") else localizedUiText(selectedLanguage, "RECORD ANALYSIS", "CATAT HASIL ANALISIS")) }
                     }
                 }
             }
