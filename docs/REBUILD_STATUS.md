@@ -172,6 +172,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Extracted terminal command, current-directory, output-buffer, and execution-busy state into a saveable `TerminalSessionState`; terminal output remains bounded to 24,000 characters, and an interrupted in-flight command restores as idle. Added unit tests for output bounds, clear behavior, workspace-state preservation, and save/restore behavior.
 - Grouped A.E.G.I.S. Browser authentication, current page, and return destination into a saveable `BrowserSessionState`; authentication remains persisted through the existing local preference store. Added regression tests for initial login/home routing, Messenger return context, and session restoration.
 - Grouped Secure Messenger contact selection, return destination, and Freya/NEXUS reply histories into a saveable `MessengerSessionState`; preserved the existing SharedPreferences keys, separator, and 50-reply history limit. Added tests for contact separation, reply bounds, unsupported contacts, and Saver restoration.
+- Added automatic scroll-to-latest behavior in Secure Messenger whenever a conversation is opened or a new reply is appended, and in Terminal whenever command output changes. Both use Compose scroll state and animate to the latest content after layout.
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
 

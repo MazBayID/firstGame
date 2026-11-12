@@ -1178,6 +1178,12 @@ private fun MessengerScreen(
 ) {
     var search by rememberSaveable { mutableStateOf("") }
     var attachmentFeedback by rememberSaveable { mutableStateOf("") }
+    val chatScrollState = rememberScrollState()
+
+    LaunchedEffect(selectedContact, replies.size) {
+        withFrameNanos { }
+        chatScrollState.animateScrollTo(chatScrollState.maxValue)
+    }
     val contactName = when (selectedContact) {
         "AEGIS" -> "A.E.G.I.S. / Recruitment Office"
         "FREYA" -> "Freya Knox"
@@ -1301,7 +1307,7 @@ private fun MessengerScreen(
         } else {
             Column(
                 Modifier.weight(1f).fillMaxWidth().background(Color(0xFF0B141A))
-                    .verticalScroll(rememberScrollState()).padding(horizontal = 14.dp, vertical = 16.dp),
+                    .verticalScroll(chatScrollState).padding(horizontal = 14.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text("PESAN TERENKRIPSI  ·  A.E.G.I.S.",
@@ -1546,13 +1552,20 @@ private fun TerminalScreen(
     currentDirectory: String, workspaceLabel: String, command: String, onCommandChange: (String) -> Unit,
     output: String, busy: Boolean, onExecute: () -> Unit, onBack: () -> Unit
 ) {
+    val outputScrollState = rememberScrollState()
+
+    LaunchedEffect(output) {
+        withFrameNanos { }
+        outputScrollState.animateScrollTo(outputScrollState.maxValue)
+    }
+
     GamePage("TERMINAL", workspaceLabel, onBack, null) {
         GamePanel {
             Text(currentDirectory, color = Color(0xFF8CC8A2), fontSize = 10.sp, fontFamily = FontFamily.Monospace)
             Surface(color = Color(0xFF070B0E), shape = RoundedCornerShape(8.dp),
                 border = BorderStroke(1.dp, Color(0xFF263B35))) {
                 Text(output, Modifier.fillMaxWidth().heightIn(min = 240.dp, max = 430.dp)
-                    .verticalScroll(rememberScrollState()).padding(12.dp),
+                    .verticalScroll(outputScrollState).padding(12.dp),
                     color = Color(0xFFB7D9C2), fontFamily = FontFamily.Monospace, fontSize = 11.sp, lineHeight = 17.sp)
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
