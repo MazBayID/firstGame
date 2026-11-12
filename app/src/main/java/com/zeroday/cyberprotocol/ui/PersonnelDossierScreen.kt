@@ -19,6 +19,7 @@ import com.zeroday.cyberprotocol.core.model.CaseDefinition
 import com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator
 import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.domain.usecase.ProgressionRules
 
@@ -27,6 +28,7 @@ internal fun PersonnelDossierScreen(
     gameState: GameState,
     caseDefinition: CaseDefinition,
     caseProgress: CaseProgress,
+    selectedLanguage: GameLanguage,
     onBack: () -> Unit
 ) {
     val completed = Campaign01Catalog.missions.filter { it.id in gameState.completedMissionIds }
@@ -48,12 +50,12 @@ internal fun PersonnelDossierScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("A.E.G.I.S. / PERSONNEL RECORD", color = Color(0xFF83C7D0),
+                Text(dossierText(selectedLanguage, "A.E.G.I.S. / PERSONNEL RECORD", "A.E.G.I.S. / BERKAS PERSONEL"), color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
-                Text("BERKAS PERSONEL", color = Color.White, fontSize = 24.sp,
+                Text(dossierText(selectedLanguage, "PERSONNEL DOSSIER", "BERKAS PERSONEL"), color = Color.White, fontSize = 24.sp,
                     fontWeight = FontWeight.Black)
             }
-            TextButton(onClick = onBack) { Text("KEMBALI", color = Color(0xFFBCE8EA)) }
+            TextButton(onClick = onBack) { Text(dossierText(selectedLanguage, "BACK", "KEMBALI"), color = Color(0xFFBCE8EA)) }
         }
 
         Surface(
@@ -63,15 +65,15 @@ internal fun PersonnelDossierScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("IDENTITAS REKRUT", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                Text(dossierText(selectedLanguage, "RECRUIT IDENTITY", "IDENTITAS REKRUT"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
-                Text("AGEN MAGANG", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Black)
-                Text("ORGANISASI  /  A.E.G.I.S.", color = Color(0xFFB8C9CC), fontSize = 10.sp)
-                Text("PENEMPATAN  /  MANILA COMMAND", color = Color(0xFFB8C9CC), fontSize = 10.sp)
+                Text(dossierText(selectedLanguage, "TRAINEE AGENT", "AGEN MAGANG"), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Black)
+                Text("ORGANIZATION  /  A.E.G.I.S.", color = Color(0xFFB8C9CC), fontSize = 10.sp)
+                Text("ASSIGNMENT  /  MANILA COMMAND", color = Color(0xFFB8C9CC), fontSize = 10.sp)
                 HorizontalDivider(color = Color(0xFF31545B))
-                DossierValue("MENTOR", if (gameState.freyaContactOpened) "FREYA KNOX" else "BELUM DITETAPKAN")
-                DossierValue("SISTEM PENDAMPING", if (gameState.nexusContactUnlocked) "NEXUS / AKTIF" else "BELUM DIAKTIFKAN")
-                DossierValue("STATUS REKRUTMEN", if (gameState.recruitmentNotificationOpened) "UNDANGAN DIBUKA" else "MENUNGGU KONFIRMASI")
+                DossierValue("MENTOR", if (gameState.freyaContactOpened) "FREYA KNOX" else dossierText(selectedLanguage, "NOT ASSIGNED", "BELUM DITETAPKAN"))
+                DossierValue("SISTEM PENDAMPING", if (gameState.nexusContactUnlocked) "NEXUS / AKTIF" else dossierText(selectedLanguage, "NOT ACTIVATED", "BELUM DIAKTIFKAN"))
+                DossierValue("STATUS REKRUTMEN", if (gameState.recruitmentNotificationOpened) dossierText(selectedLanguage, "INVITATION OPENED", "UNDANGAN DIBUKA") else dossierText(selectedLanguage, "AWAITING CONFIRMATION", "MENUNGGU KONFIRMASI"))
             }
         }
 
@@ -82,22 +84,22 @@ internal fun PersonnelDossierScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("KUALIFIKASI DAN PROGRES", color = Color(0xFF83C7D0),
+                Text(dossierText(selectedLanguage, "QUALIFICATIONS AND PROGRESS", "KUALIFIKASI DAN PROGRES"), color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
                 DossierValue("RANK", gameState.rank.replace('_', ' '))
-                DossierValue("PENGALAMAN", "${gameState.experience} XP")
+                DossierValue("EXPERIENCE", "${gameState.experience} XP")
                 DossierValue("CLEARANCE", gameState.clearance.toString())
                 DossierValue("TECHNICAL COMPETENCY", "${gameState.technicalCompetencyXp} XP")
                 DossierValue("INTELLIGENCE COMPETENCY", "${gameState.intelligenceCompetencyXp} XP")
-                DossierValue("KAMPANYE", "FIRST CONTACT  /  $storyProgress OF 14 BEATS")
-                DossierValue("LATIHAN WAJIB TERVERIFIKASI", "$completedGuidedTraining / ${guidedTraining.size}")
-                DossierValue("LATIHAN TAMBAHAN TERVERIFIKASI", completedLegacyMissions.toString())
-                DossierValue("REKAMAN BUKTI", gameState.evidence.size.toString())
-                DossierValue("KASUS RX-14", casePhase.name.replace('_', ' '))
+                DossierValue("CAMPAIGN", "FIRST CONTACT  /  $storyProgress OF 14 BEATS")
+                DossierValue("REQUIRED TRAINING VERIFIED", "$completedGuidedTraining / ${guidedTraining.size}")
+                DossierValue("OPTIONAL TRAINING VERIFIED", completedLegacyMissions.toString())
+                DossierValue("EVIDENCE RECORDS", gameState.evidence.size.toString())
+                DossierValue("RX-14 CASE", casePhase.name.replace('_', ' '))
                 if (nextRank != null) {
                     val currentFloor = ProgressionRules.rankThreshold(gameState.rank)
                     val remaining = (nextRank - gameState.experience).coerceAtLeast(0)
-                    Text("PROGRES RANK BERIKUTNYA  /  $remaining XP TERSISA",
+                    Text(dossierText(selectedLanguage, "NEXT RANK PROGRESS  /  $remaining XP REMAINING", "PROGRES RANK BERIKUTNYA  /  $remaining XP TERSISA"),
                         color = Color(0xFF8AA8AE), fontSize = 9.sp)
                     LinearProgressIndicator(
                         progress = { ((gameState.experience - currentFloor).coerceAtLeast(0).toFloat() /
@@ -106,15 +108,15 @@ internal fun PersonnelDossierScreen(
                         color = Color(0xFFB85B70), trackColor = Color(0xFF263A40)
                     )
                 } else {
-                    Text("RANK TERTINGGI TERCAPAI", color = Color(0xFF8CD5AC), fontSize = 9.sp)
+                    Text(dossierText(selectedLanguage, "HIGHEST RANK REACHED", "RANK TERTINGGI TERCAPAI"), color = Color(0xFF8CD5AC), fontSize = 9.sp)
                 }
             }
         }
 
-        Text("RIWAYAT KUALIFIKASI", color = Color(0xFF83C7D0), fontSize = 9.sp,
+        Text(dossierText(selectedLanguage, "QUALIFICATION HISTORY", "RIWAYAT KUALIFIKASI"), color = Color(0xFF83C7D0), fontSize = 9.sp,
             letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
         if (completed.isEmpty()) {
-            DossierNote("Belum ada misi yang terverifikasi. Hasil operasi akan dicatat di sini setelah evaluator menyetujuinya.")
+            DossierNote(dossierText(selectedLanguage, "No missions have been verified. Operation results will appear here after evaluator approval.", "Belum ada misi yang terverifikasi. Hasil operasi akan dicatat di sini setelah evaluator menyetujuinya."))
         } else {
             completed.forEachIndexed { index, mission ->
                 Row(verticalAlignment = Alignment.CenterVertically,
@@ -127,12 +129,12 @@ internal fun PersonnelDossierScreen(
                         Text("+${mission.rewardXp} XP  ·  ${mission.id}",
                             color = Color(0xFF8AA8AE), fontSize = 8.sp)
                     }
-                    Text("LULUS", color = Color(0xFF8CD5AC), fontSize = 8.sp,
+                    Text(dossierText(selectedLanguage, "PASSED", "LULUS"), color = Color(0xFF8CD5AC), fontSize = 8.sp,
                         fontWeight = FontWeight.Bold)
                 }
             }
         }
-        Text("RIWAYAT KASUS", color = Color(0xFF83C7D0), fontSize = 9.sp,
+        Text(dossierText(selectedLanguage, "CASE HISTORY", "RIWAYAT KASUS"), color = Color(0xFF83C7D0), fontSize = 9.sp,
             letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
         Surface(
             color = Color(0xFF111B22), shape = RoundedCornerShape(8.dp),
@@ -141,18 +143,18 @@ internal fun PersonnelDossierScreen(
             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(caseDefinition.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 DossierValue("STATUS", casePhase.name.replace('_', ' '))
-                DossierValue("SUMBER DIPERIKSA", "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
-                DossierValue("SUMBER DIANALISIS", "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
-                Text("KESIMPULAN", color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
-                DossierNote(analysisConclusion?.title ?: "Belum ada kesimpulan tersimpan.")
-                DossierValue("KEPUTUSAN", caseDecision?.title ?: "Belum dipilih")
-                Text("ALASAN KEPUTUSAN", color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
-                DossierNote(caseProgress.decisionRationale.ifBlank { "Belum ada alasan tersimpan." })
-                DossierValue("DEBRIEF", if (caseProgress.debriefViewed) "SELESAI" else "BELUM SELESAI")
-                DossierValue("REWARD", if (caseDefinition.id in gameState.completedMissionIds) "+100 XP" else "BELUM DITERIMA")
+                DossierValue("SOURCES REVIEWED", "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                DossierValue("SOURCES ANALYZED", "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                Text("CONCLUSION", color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                DossierNote(analysisConclusion?.title ?: dossierText(selectedLanguage, "No conclusion saved.", "Belum ada kesimpulan tersimpan."))
+                DossierValue("DECISION", caseDecision?.title ?: dossierText(selectedLanguage, "Not selected", "Belum dipilih"))
+                Text("DECISION RATIONALE", color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                DossierNote(caseProgress.decisionRationale.ifBlank { dossierText(selectedLanguage, "No rationale saved.", "Belum ada alasan tersimpan.") })
+                DossierValue("DEBRIEF", if (caseProgress.debriefViewed) dossierText(selectedLanguage, "COMPLETE", "SELESAI") else dossierText(selectedLanguage, "INCOMPLETE", "BELUM SELESAI"))
+                DossierValue("REWARD", if (caseDefinition.id in gameState.completedMissionIds) "+100 XP" else dossierText(selectedLanguage, "NOT AWARDED", "BELUM DITERIMA"))
             }
         }
-        DossierNote("Berkas ini merupakan catatan lokal simulasi A.E.G.I.S. Identitas pribadi pemain tidak dikumpulkan atau dikirim ke server.")
+        DossierNote(dossierText(selectedLanguage, "This dossier is a local A.E.G.I.S. simulation record. The player’s personal identity is not collected or sent to a server.", "Berkas ini merupakan catatan lokal simulasi A.E.G.I.S. Identitas pribadi pemain tidak dikumpulkan atau dikirim ke server."))
     }
 }
 
@@ -173,3 +175,7 @@ private fun DossierNote(value: String) {
             fontSize = 10.sp, lineHeight = 16.sp)
     }
 }
+
+
+internal fun dossierText(language: GameLanguage, english: String, indonesian: String): String =
+    if (language == GameLanguage.ENGLISH) english else indonesian
