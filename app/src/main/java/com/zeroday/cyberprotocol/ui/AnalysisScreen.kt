@@ -276,14 +276,14 @@ private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selec
                     letterSpacing = 0.8.sp, modifier = Modifier.weight(1f))
                 Text(record.id, color = Color(0xFF71858B), fontSize = 8.sp)
             }
-            Text(record.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
             Text(
                 if (concealed) "ISI SUMBER TERSEMBUNYI — periksa sumber asli melalui Operasi atau Browser."
-                else record.summary,
+                else CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
                 color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
             )
             HorizontalDivider(color = Color(0xFF293A40))
-            Text(localizedUiText(selectedLanguage, "SOURCE  /  ${record.source}", "SUMBER  /  ${record.source}"), color = Color(0xFF83C7D0), fontSize = 9.sp,
+            Text(localizedUiText(selectedLanguage, "SOURCE  /  ${CaseLocalizedContent.evidenceSource(record, selectedLanguage)}", "SUMBER  /  ${CaseLocalizedContent.evidenceSource(record, selectedLanguage)}"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                 lineHeight = 14.sp)
             Text(localizedUiText(selectedLanguage, "MISSION  /  ${record.missionId}", "MISI  /  ${record.missionId}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
             Text(localizedUiText(selectedLanguage, "ORIGIN  /  ${record.provenance.origin.name}", "ASAL  /  ${record.provenance.origin.name}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
@@ -331,7 +331,7 @@ private fun CaseAnalysisWorkspace(
                 Surface(color = Color(0xFF111B22), shape = RoundedCornerShape(6.dp),
                     border = BorderStroke(1.dp, Color(0xFF263F48)), modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(11.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                        Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         Text(record.provenance.sourceLabel + "  /  " + record.provenance.origin.name,
                             color = Color(0xFF83C7D0), fontSize = 8.sp)
                         Text(
