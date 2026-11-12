@@ -439,3 +439,24 @@ Only after this journey is complete should we schedule a release-candidate batch
 - The optional Training Simulator exposes the six retired coding exercises without reintroducing them as story gates. RUN executes in each exercise's mission workspace; SUBMIT requires the exact successfully-run source; first completion awards Technical XP once. Tests verify unlock, save recovery, and no story/case progression side effects.
 - Navigation return-path corrections, active-achievement cleanup, and the fourteen-beat progress indicator are included in this source baseline.
 - Remaining gates are listed in the latest refresh of `docs/IMPLEMENTATION_AUDIT.md`; physical-device acceptance and full language parity are not complete.
+
+
+## Selected-language campaign coverage checkpoint — 2026-11-12
+
+The latest localization batch extends the selected-language preference through the main menu, campaign timeline, story mission workspace, mission debrief, App Hub, settings, language selector, recruitment/Freya notifications, RX-14 Operations and Analysis, optional Training Simulator, Browser mission content, Intelligence Database mission content, and Personnel Dossier mission history. All eight authored First Contact mission definitions now have English display mappings for title, briefing, objectives, objective descriptions, next clue, and hints. RX-14 title, briefing, analysis options/feedback, and operational decisions also have English display mappings.
+
+The localization resolver is presentation-only. Stable mission/evidence IDs, original VFS assets, Python code, terminal paths, evaluator fixtures, and progression rules are unchanged. Unit tests were added for the authored case and mission mappings. The resolver is currently an incremental implementation; stable message keys and automated missing-variant parity validation remain outstanding.
+
+### Remaining localization acceptance work
+
+- Complete selected-language coverage in Terminal help/errors, Profile, Archives, Achievements, remaining Browser/Database/Dossier metadata, and all player-facing evidence review history.
+- Translate and review evaluator-generated feedback and runtime validation messages without changing evaluator-sensitive literal output.
+- Add a missing-key/content-variant validation test and language-switch regression proving campaign progress, drafts, workspaces, evidence, and unlocks are unchanged.
+- Manually review both language journeys on Android at narrow and wide layouts.
+
+### CI workflow maintenance
+
+- The preview APK metadata validator now extracts versionCode using a quote-aware match rather than splitting the entire aapt line on whitespace-sensitive awk fields.
+- The Final Release workflow stages the exact SHA-256-verified APK at the artifact upload path after emulator smoke testing.
+- Release source-test concurrency was changed to avoid cancelling an in-progress test run when a newer development commit arrives.
+- These workflow changes do not mark the game or release process production-complete. The permanently signed Final APK still requires an explicitly approved dispatch and exact-binary emulator smoke test.
