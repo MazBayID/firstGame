@@ -51,7 +51,7 @@ internal fun PracticeScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("A.E.G.I.S. / TRAINING SIMULATOR", color = Color(0xFF83C7D0),
+                Text(localizedUiText(selectedLanguage, "A.E.G.I.S. / TRAINING SIMULATOR", "A.E.G.I.S. / SIMULATOR LATIHAN"), color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "OPTIONAL TRAINING", "LATIHAN TAMBAHAN"), color = Color.White, fontSize = 22.sp,
                     fontWeight = FontWeight.Black)
@@ -142,7 +142,7 @@ internal fun PracticeScreen(
             if (hintLevel < 3) OutlinedButton(onClick = onRequestHint) {
                 Text(localizedUiText(selectedLanguage, "REQUEST HINT ${hintLevel + 1}/3", "MINTA PETUNJUK ${hintLevel + 1}/3"))
             }
-            CodeEditor(code, onCodeChange, "EDITOR KODE PYTHON 3", 190)
+            CodeEditor(code, onCodeChange, localizedUiText(selectedLanguage, "PYTHON 3 CODE EDITOR", "EDITOR KODE PYTHON 3"), 190)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onSave, modifier = Modifier.weight(1f)) { Text(localizedUiText(selectedLanguage, "SAVE DRAFT", "SIMPAN DRAF")) }
                 Button(onClick = onRun, enabled = !busy, modifier = Modifier.weight(1f)) {
