@@ -186,7 +186,7 @@ internal fun IntelligenceDatabaseScreen(
                         else record.summary,
                         color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
                     )
-                    DatabaseValue("STATUS", evidenceLabel(record.status))
+                    DatabaseValue("STATUS", evidenceLabel(record.status, selectedLanguage))
                     DatabaseValue("SOURCE", record.source)
                     DatabaseValue("PROVENANCE", record.provenance.origin.name + " / " + record.provenance.sourceLabel)
                     record.provenance.sourceAssetId?.let { DatabaseValue("SHARED ASSET", it) }
