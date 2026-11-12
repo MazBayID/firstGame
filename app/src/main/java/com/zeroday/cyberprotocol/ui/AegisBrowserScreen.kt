@@ -95,8 +95,8 @@ internal fun AegisBrowserScreen(
     ) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                Text("A.E.G.I.S. BROWSER", color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black)
-                Text("INTRANET NODE  /  LOCAL OFFLINE NETWORK", color = Color(0xFF83C7D0), fontSize = 9.sp)
+                Text(browserText(selectedLanguage, "A.E.G.I.S. BROWSER", "A.E.G.I.S. BROWSER"), color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black)
+                Text(browserText(selectedLanguage, "INTRANET NODE  /  LOCAL OFFLINE NETWORK", "NODE INTRANET  /  JARINGAN LOKAL OFFLINE"), color = Color(0xFF83C7D0), fontSize = 9.sp)
             }
             OutlinedButton(onClick = onClose) { Text(browserText(selectedLanguage, "EXIT", "KELUAR")) }
         }
@@ -104,7 +104,7 @@ internal fun AegisBrowserScreen(
 
         if (!authenticated) {
             BrowserPanel {
-                Text("SECURE ACCESS", color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(browserText(selectedLanguage, "SECURE ACCESS", "AKSES AMAN"), color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Text(browserText(selectedLanguage, "A.E.G.I.S. internal portal", "Portal internal A.E.G.I.S."), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Text(
                     browserText(selectedLanguage, "Sign in with the fictional credentials provided by Freya. This portal runs locally in the game and sends no data to the internet.", "Masuk menggunakan kredensial fiktif yang diberikan Freya. Portal ini berjalan lokal di dalam game dan tidak mengirim data ke internet."),
@@ -145,7 +145,7 @@ internal fun AegisBrowserScreen(
             BrowserNavigation(page, selectedLanguage, onPageChange)
             when (page) {
                 "mission" -> BrowserPanel {
-                    Text("MISSION CONTROL", color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(browserText(selectedLanguage, "MISSION CONTROL", "KENDALI MISI"), color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     if (mission == null) {
                         Text(browserText(selectedLanguage, "No active operation.", "Belum ada operasi aktif."), color = Color.White, fontSize = 18.sp)
                         Text(browserText(selectedLanguage, "Return to Campaign to continue the orientation sequence.", "Kembali ke Campaign untuk melanjutkan rangkaian orientasi."), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -158,7 +158,7 @@ internal fun AegisBrowserScreen(
                         }
                         HorizontalDivider(color = Color(0xFF26343D))
                         Text(browserText(selectedLanguage, "OPERATION REQUIREMENTS", "PERSYARATAN OPERASI"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                        Text("CLEARANCE MINIMUM  /  ${mission.requiredClearance}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                        Text(browserText(selectedLanguage, "MINIMUM CLEARANCE  /  ${mission.requiredClearance}", "OTORISASI MINIMUM  /  ${mission.requiredClearance}"), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                         mission.allowedFiles.sorted().forEach { fileName ->
                             Text(
                                 "${fileName}  /  " + if (fileName in mission.writableFiles) browserText(selectedLanguage, "READ-WRITE", "BACA-TULIS") else browserText(selectedLanguage, "READ ONLY", "HANYA BACA"),
@@ -194,7 +194,7 @@ internal fun AegisBrowserScreen(
                         mission.initialFiles.toSortedMap().forEach { (fileName, content) ->
                             Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                                 Text(fileName, color = Color.White, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
-                                Text("A.E.G.I.S. / ${content.length} karakter / hanya baca", color = Color(0xFF9BAEB4), fontSize = 9.sp)
+                                Text(browserText(selectedLanguage, "A.E.G.I.S. / ${content.length} characters / read only", "A.E.G.I.S. / ${content.length} karakter / hanya baca"), color = Color(0xFF9BAEB4), fontSize = 9.sp)
                                 if (fileName in downloadedFiles || fileName in downloadedInSession) {
                                     Text(browserText(selectedLanguage, "SAVED IN MISSION WORKSPACE", "TERSIMPAN DI RUANG KERJA MISI"), color = Color(0xFF83C7D0), fontSize = 10.sp)
                                 } else {
@@ -233,9 +233,9 @@ internal fun AegisBrowserScreen(
                                 else record.summary,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp
                             )
-                            Text("${record.status.name}  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp)
+                            Text("${localizedEvidenceStatus(record.status, selectedLanguage)}  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp)
                             record.provenance.sourceAssetId?.let { assetId ->
-                                Text(browserText(selectedLanguage, "SHARED SOURCE  /  $assetId", "SHARED SOURCE  /  $assetId"), color = Color(0xFF9AB4B8), fontSize = 8.sp)
+                                Text(browserText(selectedLanguage, "SHARED SOURCE  /  $assetId", "SUMBER BERSAMA  /  $assetId"), color = Color(0xFF9AB4B8), fontSize = 8.sp)
                                 record.provenance.sourcePath?.let { path ->
                                     Text(path, color = Color(0xFF71858B), fontSize = 8.sp)
                                 }
@@ -254,9 +254,9 @@ internal fun AegisBrowserScreen(
                 "profile" -> BrowserPanel {
                     Text(browserText(selectedLanguage, "AGENT PROFILE", "PROFIL AGEN"), color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Text("RECRUIT-014", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                    Text("RANK  /  ${gameState.rank.replace('_', ' ')}", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("EXPERIENCE  /  ${gameState.experience} XP", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text("CLEARANCE  /  ${gameState.clearance}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(browserText(selectedLanguage, "RANK  /  ${gameState.rank.replace('_', ' ')}", "PANGKAT  /  ${gameState.rank.replace('_', ' ')}"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(browserText(selectedLanguage, "EXPERIENCE  /  ${gameState.experience} XP", "PENGALAMAN  /  ${gameState.experience} XP"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(browserText(selectedLanguage, "CLEARANCE  /  ${gameState.clearance}", "OTORISASI  /  ${gameState.clearance}"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(browserText(selectedLanguage, "MISSIONS COMPLETED  /  ${gameState.completedMissionIds.size}", "MISI SELESAI  /  ${gameState.completedMissionIds.size}"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 "archive" -> BrowserPanel {
@@ -273,7 +273,7 @@ internal fun AegisBrowserScreen(
                 }
                 else -> BrowserPanel {
                     Text(browserText(selectedLanguage, "WELCOME TO A.E.G.I.S.", "SELAMAT DATANG DI A.E.G.I.S."), color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    Text("Internal Operations Network", color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
+                    Text(browserText(selectedLanguage, "Internal Operations Network", "Jaringan Operasi Internal"), color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
                     Text(
                         browserText(selectedLanguage, "This portal provides access to assignments, the file repository, intelligence reports, and personnel profiles. All content is an offline simulation.", "Portal ini menyediakan akses ke penugasan, repositori berkas, laporan intelijen, dan profil personel. Seluruh konten merupakan simulasi offline."),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
