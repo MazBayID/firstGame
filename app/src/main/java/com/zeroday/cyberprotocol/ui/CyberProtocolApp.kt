@@ -142,16 +142,16 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         )
     }
     var terminalReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
-    var freyaReplies by remember {
-        mutableStateOf(messengerPreferences.getString("freya_replies", "").orEmpty()
-            .split("\u001F").filter { it.isNotBlank() })
+    var messengerSession by rememberSaveable(stateSaver = MessengerSessionState.Saver) {
+        mutableStateOf(
+            MessengerSessionState(
+                freyaReplies = messengerPreferences.getString("freya_replies", "").orEmpty()
+                    .split("\u001F").filter { it.isNotBlank() },
+                nexusReplies = messengerPreferences.getString("nexus_replies", "").orEmpty()
+                    .split("\u001F").filter { it.isNotBlank() }
+            )
+        )
     }
-    var nexusReplies by remember {
-        mutableStateOf(messengerPreferences.getString("nexus_replies", "").orEmpty()
-            .split("\u001F").filter { it.isNotBlank() })
-    }
-    var messengerContact by rememberSaveable { mutableStateOf("") }
-    var messengerReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
     var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
     var debriefTitle by rememberSaveable { mutableStateOf("") }
     var debriefFeedback by rememberSaveable { mutableStateOf("") }
@@ -372,10 +372,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         } else if (screen == GameScreen.TERMINAL) {
             navigate(runCatching { GameScreen.valueOf(terminalReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
         } else if (screen == GameScreen.MESSENGER) {
-            if (messengerContact.isNotBlank()) {
-                messengerContact = ""
+            if (messengerSession.selectedContact.isNotBlank()) {
+                messengerSession = messengerSession.copy(selectedContact = "")
             } else {
-                navigate(runCatching { GameScreen.valueOf(messengerReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+                navigate(runCatching { GameScreen.valueOf(messengerSession.returnScreen) }.getOrDefault(GameScreen.APP_HUB))
             }
         } else {
             navigation = navigation.back(storyStage, messengerHasSelectedContact = false)
@@ -399,8 +399,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     onOpenMessage = {
                         sessionViewModel.openRecruitmentInvitation()
                         if (storyStage < 2) saveStage(2)
-                        messengerContact = "AEGIS"
-                        messengerReturnScreen = GameScreen.CAMPAIGN.name
+                        messengerSession = messengerSession.copy(selectedContact = "AEGIS")
+                        messengerSession = messengerSession.copy(returnScreen = GameScreen.CAMPAIGN.name)
                         navigate(GameScreen.MESSENGER)
                     }
                 )
@@ -492,8 +492,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 FreyaNotificationDialog(
                     onOpenMessage = {
                         sessionViewModel.openFreyaIntroduction()
-                        messengerContact = "FREYA"
-                        messengerReturnScreen = GameScreen.STORY.name
+                        messengerSession = messengerSession.copy(selectedContact = "FREYA")
+                        messengerSession = messengerSession.copy(returnScreen = GameScreen.STORY.name)
                         navigate(GameScreen.MESSENGER)
                     }
                 )
@@ -514,17 +514,17 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             gameState = currentGameState,
             onClose = { navigate(navigation.hubReturnScreen) },
             onOpen = { target ->
-                if (target == GameScreen.MESSENGER) messengerReturnScreen = GameScreen.APP_HUB.name
+                if (target == GameScreen.MESSENGER) messengerSession = messengerSession.copy(returnScreen = GameScreen.APP_HUB.name)
                 if (target == GameScreen.BROWSER) browserSession = browserSession.copy(returnScreen = GameScreen.APP_HUB.name)
                 if (target == GameScreen.TERMINAL) terminalReturnScreen = GameScreen.APP_HUB.name
                 navigate(target)
             }
         )
         GameScreen.MESSENGER -> MessengerScreen(
-            selectedContact = messengerContact,
-            onSelectContact = { messengerContact = it },
+            selectedContact = messengerSession.selectedContact,
+            onSelectContact = { contact -> messengerSession = messengerSession.copy(selectedContact = contact) },
             onClose = {
-                navigate(runCatching { GameScreen.valueOf(messengerReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+                navigate(runCatching { GameScreen.valueOf(messengerSession.returnScreen) }.getOrDefault(GameScreen.APP_HUB))
             },
             recruitmentInvitation = currentGameState.recruitmentNotificationOpened,
             freyaContactUnlocked = currentGameState.freyaContactOpened,
@@ -533,12 +533,12 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             completedMissionCount = currentGameState.completedMissionIds.size,
             onOpenMissionLink = {
                 if (storyStage < 2) saveStage(2)
-                messengerContact = ""
+                messengerSession = messengerSession.copy(selectedContact = "")
                 navigate(GameScreen.STORY)
             },
             onOpenNexusLink = {
                 sessionViewModel.unlockNexusContact()
-                messengerContact = "NEXUS"
+                messengerSession = messengerSession.copy(selectedContact = "NEXUS")
             },
             onOpenIntranetLink = {
                 browserSession = browserSession.copy(returnScreen = GameScreen.MESSENGER.name)
@@ -546,14 +546,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 navigate(GameScreen.BROWSER)
             },
             onDownloadMissionFile = ::downloadMissionFile,
-            replies = if (messengerContact == "FREYA") freyaReplies else nexusReplies,
+            replies = messengerSession.repliesFor(messengerSession.selectedContact),
             onReply = { reply ->
-                if (messengerContact == "FREYA") {
-                    freyaReplies = (freyaReplies + reply).takeLast(50)
-                    messengerPreferences.edit().putString("freya_replies", freyaReplies.joinToString("\u001F")).apply()
-                } else if (messengerContact == "NEXUS") {
-                    nexusReplies = (nexusReplies + reply).takeLast(50)
-                    messengerPreferences.edit().putString("nexus_replies", nexusReplies.joinToString("\u001F")).apply()
+                val contact = messengerSession.selectedContact
+                val updatedSession = messengerSession.appendReply(contact, reply)
+                messengerSession = updatedSession
+                when (contact) {
+                    "FREYA" -> messengerPreferences.edit()
+                        .putString("freya_replies", updatedSession.freyaReplies.joinToString("\u001F"))
+                        .apply()
+                    "NEXUS" -> messengerPreferences.edit()
+                        .putString("nexus_replies", updatedSession.nexusReplies.joinToString("\u001F"))
+                        .apply()
                 }
             }
         )
