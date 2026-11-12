@@ -19,6 +19,22 @@ class Campaign01StoryTest {
     }
 
     @Test
+    fun englishAndIndonesianStoryVariantsHaveExactParityWithoutChangingMissionContracts() {
+        assertEquals(Campaign01Story.beats.size, Campaign01StoryLocalization.englishBeats.size)
+        Campaign01Story.beats.indices.forEach { index ->
+            val indonesian = Campaign01Story.localizedBeat(index, com.zeroday.cyberprotocol.core.model.GameLanguage.INDONESIAN)
+            val english = Campaign01Story.localizedBeat(index, com.zeroday.cyberprotocol.core.model.GameLanguage.ENGLISH)
+            assertEquals(Campaign01Story.beats[index], indonesian)
+            assertEquals(Campaign01StoryLocalization.englishBeats[index], english)
+            assertTrue(english.title.isNotBlank())
+            assertTrue(english.body.isNotBlank())
+            assertTrue(english.button.isNotBlank())
+        }
+        assertEquals("A.E.G.I.S. ORIENTATION", Campaign01StoryLocalization.englishBeats.first().title)
+        assertEquals("INVESTIGATION REPORT", Campaign01StoryLocalization.englishBeats.last().title)
+    }
+
+    @Test
     fun missionStarterDraftsContainObjectivesButNoExecutableSolutions() {
         val stages = listOf(4, 5, 8, 9, 11, 12, 13, 14)
         stages.forEachIndexed { index, stage ->
