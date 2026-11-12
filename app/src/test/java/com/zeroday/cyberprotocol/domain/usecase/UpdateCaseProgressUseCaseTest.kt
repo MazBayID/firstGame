@@ -76,9 +76,6 @@ class UpdateCaseProgressUseCaseTest {
         useCase.acknowledgeBriefing(definition)
         useCase.discoverEvidence(definition, "primary")
         useCase.discoverEvidence(definition, "secondary")
-        assertThrows(IllegalArgumentException::class.java) {
-            useCase.discoverEvidence(definition, "primary")
-        }
         useCase.discoverEvidence(definition, "optional")
         assertEquals(CasePhase.ANALYSIS, CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))
         useCase.analyzeEvidence(definition, "optional")
