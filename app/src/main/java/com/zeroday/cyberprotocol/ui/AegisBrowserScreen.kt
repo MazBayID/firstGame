@@ -62,6 +62,8 @@ internal fun AegisBrowserScreen(
     evidence: List<EvidenceRecord>,
     downloadedFiles: Set<String>,
     onReadEvidenceAsset: (String) -> String?,
+    canRecordEvidence: (String) -> Boolean,
+    onRecordEvidence: (String) -> Unit,
     onPageChange: (String) -> Unit,
     onAuthenticate: (String, String) -> Boolean,
     onDownloadFile: (String) -> Boolean,
@@ -75,7 +77,7 @@ internal fun AegisBrowserScreen(
     var accessCode by rememberSaveable { mutableStateOf("") }
     var loginError by remember { mutableStateOf("") }
     var downloadFeedback by remember { mutableStateOf("") }
-    var evidenceAssetPreview by remember { mutableStateOf<Pair<String, String>?>(null) }
+    var evidenceAssetPreview by remember { mutableStateOf<Triple<String, String, String>?>(null) }
     var downloadedInSession by remember { mutableStateOf(emptySet<String>()) }
 
     Column(
@@ -228,7 +230,7 @@ internal fun AegisBrowserScreen(
                                 OutlinedButton(
                                     onClick = {
                                         val content = onReadEvidenceAsset(assetId)
-                                        evidenceAssetPreview = content?.let { record.title to it }
+                                        evidenceAssetPreview = content?.let { Triple(record.id, record.title, it) }
                                     },
                                     modifier = Modifier.fillMaxWidth()
                                 ) { Text("BUKA SUMBER ASLI") }
@@ -273,13 +275,18 @@ internal fun AegisBrowserScreen(
                 }
             }
         }
-        evidenceAssetPreview?.let { (title, content) ->
+        evidenceAssetPreview?.let { (evidenceId, title, content) ->
             AlertDialog(
                 onDismissRequest = { evidenceAssetPreview = null },
                 title = { Text(title) },
                 text = { Text(content, fontFamily = FontFamily.Monospace, fontSize = 11.sp) },
                 confirmButton = {
-                    TextButton(onClick = { evidenceAssetPreview = null }) { Text("TUTUP") }
+                    TextButton(onClick = {
+                        onRecordEvidence(evidenceId)
+                        evidenceAssetPreview = null
+                    }) {
+                        Text(if (canRecordEvidence(evidenceId)) "CATAT SEBAGAI DIPERIKSA" else "TUTUP")
+                    }
                 }
             )
         }

@@ -28,12 +28,7 @@ class UpdateCaseProgressUseCase(private val repository: GameStateRepository) {
         require(current.evidence.any { it.id == evidenceId }) { "Evidence record not found." }
         val progress = current.caseProgress[definition.id] ?: CaseProgress(definition.id)
         if (evidenceId in progress.discoveredEvidenceIds) return current
-        val phase = CasePhaseEvaluator.phase(definition, progress)
-        val isRequired = evidenceId in definition.requiredEvidenceIds
-        require(
-            phase == CasePhase.INVESTIGATION ||
-                (!isRequired && phase == CasePhase.ANALYSIS)
-        ) {
+        require(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, evidenceId)) {
             "Required evidence is inspected during investigation; optional leads may also be inspected during analysis."
         }
         return update(definition) { it.copy(discoveredEvidenceIds = it.discoveredEvidenceIds + evidenceId) }

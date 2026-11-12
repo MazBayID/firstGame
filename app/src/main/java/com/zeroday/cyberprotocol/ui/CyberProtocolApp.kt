@@ -222,6 +222,19 @@ private fun CyberProtocolGameContentBody(
         sessionViewModel.retireLegacyStoryMission()
     }
 
+    fun canRecordRx14Evidence(evidenceId: String): Boolean {
+        val latest = sessionViewModel.gameState
+        val definition = Campaign01CaseCatalog.rx14
+        val progress = latest.caseProgress[definition.id] ?: CaseProgress(definition.id)
+        return CasePhaseEvaluator.canDiscoverEvidence(definition, progress, evidenceId)
+    }
+
+    fun recordRx14Evidence(evidenceId: String) {
+        if (canRecordRx14Evidence(evidenceId)) {
+            sessionViewModel.discoverCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
+        }
+    }
+
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 16)
         preferences.edit().putInt("story_stage", storyStage).apply()
@@ -602,6 +615,8 @@ private fun CyberProtocolGameContentBody(
             completedMissionCount = currentGameState.completedMissionIds.size,
             evidenceAssetsAvailable = currentGameState.storyBeat >= 10,
             onReadEvidenceAsset = fileSystem::readEvidenceAsset,
+            canRecordEvidence = ::canRecordRx14Evidence,
+            onRecordEvidence = ::recordRx14Evidence,
             onOpenMissionLink = {
                 if (storyStage < 2) saveStage(2)
                 messengerSession = messengerSession.copy(selectedContact = "")
@@ -640,6 +655,8 @@ private fun CyberProtocolGameContentBody(
             evidence = currentGameState.evidence,
             downloadedFiles = activeWorkspace?.listFiles()?.toSet().orEmpty(),
             onReadEvidenceAsset = fileSystem::readEvidenceAsset,
+            canRecordEvidence = ::canRecordRx14Evidence,
+            onRecordEvidence = ::recordRx14Evidence,
             onPageChange = { browserSession = browserSession.copy(page = it) },
             onAuthenticate = { agentId, accessCode ->
                 val accepted = AegisIntranetAccess.authenticate(agentId, accessCode)
@@ -1281,6 +1298,8 @@ private fun MessengerScreen(
     completedMissionCount: Int,
     evidenceAssetsAvailable: Boolean,
     onReadEvidenceAsset: (String) -> String?,
+    canRecordEvidence: (String) -> Boolean,
+    onRecordEvidence: (String) -> Unit,
     onOpenMissionLink: () -> Unit,
     onOpenNexusLink: () -> Unit,
     onOpenIntranetLink: () -> Unit,
@@ -1290,7 +1309,7 @@ private fun MessengerScreen(
 ) {
     var search by rememberSaveable { mutableStateOf("") }
     var attachmentFeedback by rememberSaveable { mutableStateOf("") }
-    var evidenceAssetPreview by remember { mutableStateOf<Pair<String, String>?>(null) }
+    var evidenceAssetPreview by remember { mutableStateOf<Triple<String, String, String>?>(null) }
     val chatScrollState = rememberScrollState()
 
     LaunchedEffect(selectedContact, replies.size) {
@@ -1549,7 +1568,7 @@ private fun MessengerScreen(
                             com.zeroday.cyberprotocol.data.EvidenceAssetCatalog.assets.forEach { asset ->
                                 Surface(
                                     onClick = {
-                                        evidenceAssetPreview = onReadEvidenceAsset(asset.id)?.let { asset.title to it }
+                                        evidenceAssetPreview = onReadEvidenceAsset(asset.id)?.let { Triple(asset.evidenceId, asset.title, it) }
                                     },
                                     color = Color(0xFF202E3B),
                                     shape = RoundedCornerShape(14.dp),
@@ -1616,13 +1635,18 @@ private fun MessengerScreen(
                 }
             }
         }
-        evidenceAssetPreview?.let { (title, content) ->
+        evidenceAssetPreview?.let { (evidenceId, title, content) ->
             AlertDialog(
                 onDismissRequest = { evidenceAssetPreview = null },
                 title = { Text(title) },
                 text = { Text(content, fontFamily = FontFamily.Monospace, fontSize = 11.sp) },
                 confirmButton = {
-                    TextButton(onClick = { evidenceAssetPreview = null }) { Text("TUTUP") }
+                    TextButton(onClick = {
+                        onRecordEvidence(evidenceId)
+                        evidenceAssetPreview = null
+                    }) {
+                        Text(if (canRecordEvidence(evidenceId)) "CATAT SEBAGAI DIPERIKSA" else "TUTUP")
+                    }
                 }
             )
         }

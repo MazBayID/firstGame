@@ -303,3 +303,12 @@ Implementation requirements:
 A complete First Contact experience must be playable from a fresh save to its chapter debrief without developer instructions or hidden navigation. Every required objective can be found and completed; optional leads remain optional; technical tasks are used only where story-relevant; evidence retains source/provenance; analytical and operational conclusions receive fair deterministic feedback; save/reload does not break progression; and the player can understand what happened and why.
 
 Only after this journey is complete should we schedule a release-candidate batch for full regression, APK packaging, emulator smoke testing, and physical-device acceptance.
+
+
+### Shared source inspection across A.E.G.I.S. apps
+
+- Messenger attachments and Browser Intelligence Reports now expose the same original RX-14 source content from the shared VirtualFileSystem.
+- After reading a source, the player can explicitly record it as inspected from either app while the case is in the correct phase.
+- Operations consumes the same persisted case-progress state, so a source inspected in Messenger or Browser is not presented as undiscovered again.
+- A shared domain policy controls when required and optional evidence can be discovered. Required sources are inspected during Investigation; optional leads may also be inspected during Analysis.
+- Unit tests cover the discovery policy. CI and integrated navigation verification remain pending.

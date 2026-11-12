@@ -352,3 +352,12 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Unit tests remain a development safety net. They are not the primary deliverable of a feature batch.
 - Do not start release packaging until First Contact can be played end-to-end from a fresh save through the chapter debrief and all integrated acceptance criteria in `docs/REBUILD_STATUS.md` pass.
 - Feature completion requires a connected player journey: authored content, domain behavior, app navigation, UI feedback, persistence/recovery, and progression. A compile, isolated screen, button, or APK does not satisfy this contract.
+
+
+## Cross-app RX-14 source inspection
+
+- Messenger attachment previews and Browser Intelligence Reports read the original RX-14 receipt assets from the same VirtualFileSystem paths used by Operations.
+- A deliberate confirmation from either Messenger or Browser can record the source as discovered in the shared case-progress record, subject to the active case phase.
+- Operations reads the same persisted discovery state; it does not create duplicate evidence records.
+- `CasePhaseEvaluator.canDiscoverEvidence` is the shared domain policy for source discovery, including the optional-lead analysis window.
+- Domain tests cover phase-aware source discovery. Manual navigation and UI interaction still require integrated acceptance.

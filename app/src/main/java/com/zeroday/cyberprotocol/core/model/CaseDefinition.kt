@@ -83,6 +83,20 @@ object CasePhaseEvaluator {
         return CasePhase.COMPLETE
     }
 
+    fun canDiscoverEvidence(
+        definition: CaseDefinition,
+        progress: CaseProgress,
+        evidenceId: String
+    ): Boolean {
+        require(definition.id == progress.caseId)
+        val isRequired = evidenceId in definition.requiredEvidenceIds
+        if (!isRequired && evidenceId !in definition.optionalEvidenceIds) return false
+        if (evidenceId in progress.discoveredEvidenceIds) return false
+        val currentPhase = phase(definition, progress)
+        return currentPhase == CasePhase.INVESTIGATION ||
+            (!isRequired && currentPhase == CasePhase.ANALYSIS)
+    }
+
     fun canSelectDecision(
         definition: CaseDefinition,
         progress: CaseProgress,

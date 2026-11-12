@@ -35,6 +35,19 @@ class CasePhaseEvaluatorTest {
         assertEquals(CasePhase.COMPLETE, CasePhaseEvaluator.phase(definition, progress))
     }
 
+    @Test fun evidenceDiscoveryPolicyKeepsRequiredAndOptionalLeadsInTheirPhases() {
+        var progress = CaseProgress("case_alpha")
+        assertFalse(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, "ev_primary"))
+        progress = progress.copy(briefingAcknowledged = true)
+        assertTrue(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, "ev_primary"))
+        assertTrue(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, "ev_optional"))
+        progress = progress.copy(discoveredEvidenceIds = setOf("ev_primary", "ev_secondary"))
+        assertEquals(CasePhase.ANALYSIS, CasePhaseEvaluator.phase(definition, progress))
+        assertFalse(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, "ev_primary"))
+        assertTrue(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, "ev_optional"))
+        assertFalse(CasePhaseEvaluator.canDiscoverEvidence(definition, progress, "unknown"))
+    }
+
     @Test fun optionalEvidenceDoesNotBlockCaseProgressOrEveryDecision() {
         val progress = CaseProgress(
             caseId = "case_alpha",
