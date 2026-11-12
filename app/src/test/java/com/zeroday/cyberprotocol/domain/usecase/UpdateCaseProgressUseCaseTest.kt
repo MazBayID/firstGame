@@ -40,11 +40,14 @@ class UpdateCaseProgressUseCaseTest {
         useCase.analyzeEvidence(definition, "primary")
         assertThrows(IllegalArgumentException::class.java) { useCase.selectDecision(definition, "monitor") }
         useCase.analyzeEvidence(definition, "secondary")
+        useCase.analyzeEvidence(definition, "primary")
         assertEquals(CasePhase.OPERATIONAL_DECISION,
             CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))
         useCase.selectDecision(definition, "monitor")
+        useCase.selectDecision(definition, "monitor")
         assertEquals(CasePhase.DEBRIEFING,
             CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))
+        useCase.acknowledgeDebrief(definition)
         useCase.acknowledgeDebrief(definition)
         assertEquals(CasePhase.COMPLETE,
             CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))

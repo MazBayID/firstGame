@@ -52,14 +52,16 @@ class UpdateCaseProgressUseCase(private val repository: GameStateRepository) {
     }
 
     fun selectDecision(definition: CaseDefinition, decisionId: String): GameState {
-        val progress = repository.load().caseProgress[definition.id] ?: CaseProgress(definition.id)
+        val current = repository.load()
+        val progress = current.caseProgress[definition.id] ?: CaseProgress(definition.id)
+        if (progress.selectedDecisionId == decisionId) return current
         require(CasePhaseEvaluator.phase(definition, progress) == CasePhase.OPERATIONAL_DECISION) {
             "Required evidence must be discovered and analyzed before an operational decision."
         }
         require(CasePhaseEvaluator.canSelectDecision(definition, progress, decisionId)) {
             "This decision requires additional evidence."
         }
-        require(progress.selectedDecisionId == null || progress.selectedDecisionId == decisionId) {
+        require(progress.selectedDecisionId == null) {
             "A decision has already been recorded for this case."
         }
         return update(definition) { it.copy(selectedDecisionId = decisionId) }

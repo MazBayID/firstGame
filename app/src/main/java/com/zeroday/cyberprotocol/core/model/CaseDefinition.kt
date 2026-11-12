@@ -61,6 +61,9 @@ data class CaseProgress(
         require(caseId.isNotBlank())
         require(discoveredEvidenceIds.none { it.isBlank() })
         require(analyzedEvidenceIds.none { it.isBlank() })
+        require(analyzedEvidenceIds.all { it in discoveredEvidenceIds }) {
+            "Analyzed evidence must have been discovered first."
+        }
         require(selectedDecisionId == null || selectedDecisionId.isNotBlank())
     }
 }

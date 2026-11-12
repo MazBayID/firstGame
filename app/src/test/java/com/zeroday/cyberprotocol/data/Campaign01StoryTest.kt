@@ -29,9 +29,14 @@ class Campaign01StoryTest {
             assertTrue(english.title.isNotBlank())
             assertTrue(english.body.isNotBlank())
             assertTrue(english.button.isNotBlank())
+            assertEquals(indonesian.completedButton != null, english.completedButton != null)
         }
         assertEquals("A.E.G.I.S. ORIENTATION", Campaign01StoryLocalization.englishBeats.first().title)
         assertEquals("INVESTIGATION REPORT", Campaign01StoryLocalization.englishBeats.last().title)
+        assertEquals("BUKA PUSAT OPERASI", Campaign01Story.beats[12].button)
+        assertEquals("LANJUTKAN KE LAPORAN", Campaign01Story.beats[12].completedButton)
+        assertEquals("OPEN OPERATIONS", Campaign01StoryLocalization.englishBeats[12].button)
+        assertEquals("CONTINUE TO REPORT", Campaign01StoryLocalization.englishBeats[12].completedButton)
     }
 
     @Test

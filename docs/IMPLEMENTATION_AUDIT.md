@@ -325,3 +325,20 @@ The Operations investigation phase now opens the original receipt text from the 
 - Existing completed mission IDs, earned XP, player drafts, and workspace files are preserved. Startup clears only a retired legacy mission's active pointer.
 - The six old mission definitions/evaluator contracts remain temporarily for historical save and archive compatibility. A separate optional-practice interface has not yet been built.
 - RX-14 progression is independent of completion of the six retired exercises.
+
+
+## Editor submission control — direct mission submission
+
+- The First Contact code editor exposes a dedicated **KIRIM / SUBMIT MISI** action alongside Save and Run.
+- Save remains draft persistence only; Run remains execution only; Submit invokes the existing deterministic mission evaluator.
+- Submit is enabled only when the exact current editor source matches the last successful run source. Editing after Run invalidates the eligible submission.
+- Browser Mission Control remains a secondary submission entry point; both routes use the same submission function and policy.
+- CI run #165 passed source tests and built the development Debug APK. Device-level interaction and final emulator smoke testing remain outstanding.
+
+## RX-14 story completion gate and progression safety
+
+- The story no longer advances to its final investigation report until the persisted RX-14 case reaches `CasePhase.COMPLETE`.
+- The stage-14 story action opens Operations directly while retaining Story as the hub return destination. After the player completes the case and returns, the action changes to continue to the report.
+- Repeated analysis of an already analyzed evidence record and repeated submission of the same operational decision are idempotent.
+- `CaseProgress` enforces that analyzed evidence must be a subset of discovered evidence, preventing invalid persisted snapshots from representing impossible investigation state.
+- Automated tests cover story-button parity, case progression, and safe repeated actions. CI and emulator verification are still required.

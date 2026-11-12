@@ -38,6 +38,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zeroday.cyberprotocol.core.model.CompetencyTrack
 import com.zeroday.cyberprotocol.core.model.MissionArchetype
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.core.model.CaseProgress
+import com.zeroday.cyberprotocol.core.model.CasePhase
+import com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.data.Campaign01CaseCatalog
 import com.zeroday.cyberprotocol.data.Campaign01Story
@@ -139,6 +142,9 @@ private fun CyberProtocolGameContentBody(
     )
     val initialGameState = sessionViewModel.gameState
     val currentGameState = sessionViewModel.gameState
+    val rx14Progress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
+        ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID)
+    val rx14CaseComplete = CasePhaseEvaluator.phase(Campaign01CaseCatalog.rx14, rx14Progress) == CasePhase.COMPLETE
     val fileSystem = remember { VirtualFileSystem(context) }
     val activeMission = currentGameState.activeMissionId?.let(Campaign01Catalog::find)
     val activeWorkspace = remember(activeMission?.id) {
@@ -493,6 +499,11 @@ private fun CyberProtocolGameContentBody(
                 stage = beatIndex,
                 mission = authoredMission,
                 freyaContactUnlocked = currentGameState.freyaContactOpened,
+                caseComplete = rx14CaseComplete,
+                onOpenOperations = {
+                    navigation = navigation.copy(hubReturnScreen = GameScreen.STORY)
+                    navigate(GameScreen.OPERATIONS)
+                },
                 hintLevel = hintLevel,
                 onRequestHint = { hintLevel = (hintLevel + 1).coerceAtMost(3) },
                 code = code,
@@ -1066,6 +1077,8 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
 private fun StoryScreen(
     beat: StoryBeat, stage: Int, mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?,
     freyaContactUnlocked: Boolean,
+    caseComplete: Boolean,
+    onOpenOperations: () -> Unit,
     hintLevel: Int, onRequestHint: () -> Unit,
     code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
     output: String, feedback: String, saveStatus: String, canSubmit: Boolean,
@@ -1175,8 +1188,11 @@ private fun StoryScreen(
                     fontSize = 10.sp
                 )
             }
+        } else if (stage == 14 && !caseComplete) {
+            CPPrimaryButton(beat.button, onOpenOperations)
         } else {
-            CPPrimaryButton(beat.button, onContinue)
+            val nextLabel = if (stage == 14) beat.completedButton ?: beat.button else beat.button
+            CPPrimaryButton(nextLabel, onContinue)
         }
         Text("TITIK SIMPAN " + (stage - 1) + " / 12", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
     }

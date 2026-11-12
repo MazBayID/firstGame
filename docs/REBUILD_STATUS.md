@@ -257,3 +257,19 @@ Implementation requirements:
 
 - Operations now requires the player to open the original VFS receipt content before recording a source as discovered. Evidence inspection and analysis remain separate actions. This is an incremental vertical slice, not completion of the overall First Contact gameplay redesign.
 - CI run #158 passed source tests and built the development Debug APK. Final release was skipped; emulator smoke testing and physical-device acceptance remain outstanding.
+
+
+### Editor submission visibility fix
+
+- Added a dedicated Submit action directly beneath the First Contact code editor.
+- Save persists a draft, Run executes code, and Submit invokes the deterministic mission evaluator as separate actions.
+- Submit is enabled only when the exact current source matches the last successful Run. Editing after Run invalidates the eligible submission.
+- Browser Mission Control remains a secondary entry point to the same evaluator path.
+- CI run #165 passed source tests and built the development Debug APK. Device-level interaction and final emulator smoke testing remain outstanding.
+
+### Case completion gate and repeat-action safety
+
+- The final First Contact report is now gated by the RX-14 case reaching its persisted COMPLETE phase. The story action opens Operations and returns to the story after the case is completed.
+- Repeating an already completed evidence-analysis action or submitting the same decision again is safe and does not corrupt case progress.
+- Case snapshots now reject analyzed evidence IDs that were never discovered.
+- CI verification is pending for this batch. This is still a development build; emulator and physical-device acceptance remain outstanding.

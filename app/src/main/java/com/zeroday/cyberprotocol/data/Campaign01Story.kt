@@ -4,7 +4,8 @@ data class StoryBeat(
     val title: String,
     val eyebrow: String,
     val body: String,
-    val button: String = "LANJUTKAN"
+    val button: String = "LANJUTKAN",
+    val completedButton: String? = null
 )
 
 /** Authored narrative for the approved First Contact chapter. */
@@ -48,7 +49,8 @@ object Campaign01Story {
             "TINJAU KESIMPULAN"),
         StoryBeat("KEPUTUSAN OPERASIONAL", "OPERASI 001-F  /  RESPONSE REVIEW",
             "Pemeriksaan sumber belum menjelaskan mengapa dua sistem mencatat waktu berbeda. Sebagai analis, kamu harus memilih langkah yang sebanding dengan kekuatan bukti.\n\nKamu dapat mencatat anomali, meminta log sinkronisasi atau antrean pemrosesan, maupun menyatakan bahwa bukti saat ini belum cukup untuk menentukan penyebabnya. Tidak ada kewajiban untuk menebak.",
-            "PILIH TINDAKAN DI OPERATIONS"),
+            "BUKA PUSAT OPERASI",
+            completedButton = "LANJUTKAN KE LAPORAN"),
         StoryBeat("LAPORAN INVESTIGASI", "A.E.G.I.S.  /  FIRST CONTACT REVIEW",
             "Dua sumber mencatat referensi transmisi yang sama dengan waktu penerimaan berbeda empat detik. Selisih tersebut kini dapat ditunjukkan melalui catatan yang memiliki sumber dan indeks jelas. Temuan ini tetap belum membuktikan manipulasi. Perbedaan dapat berasal dari antrean pemrosesan, sinkronisasi jam, atau mekanisme pencatatan. Freya menerima laporanmu dan menandai anomali ini untuk pemeriksaan lanjutan setelah bukti tambahan tersedia. Kamu menyelesaikan orientasi First Contact bukan karena semua pertanyaan sudah terjawab, tetapi karena kamu telah belajar membedakan fakta, dugaan, dan hal yang belum diketahui.",
             "SELESAIKAN FIRST CONTACT")

@@ -43,7 +43,8 @@ object Campaign01StoryLocalization {
             "REVIEW CONCLUSION"),
         StoryBeat("OPERATIONAL DECISION", "OPERATION 001-F  /  RESPONSE REVIEW",
             "The source inspection has not established why the two systems recorded different times. As an analyst, you must choose a response proportionate to the strength of the evidence.\n\nYou may record the anomaly, request clock-synchronization or processing-queue logs, or state that the current evidence is insufficient to determine its cause. You are not required to guess.",
-            "CHOOSE AN ACTION IN OPERATIONS"),
+            "OPEN OPERATIONS",
+            completedButton = "CONTINUE TO REPORT"),
         StoryBeat("INVESTIGATION REPORT", "A.E.G.I.S.  /  FIRST CONTACT REVIEW",
             "Two sources record the same transmission reference with receipt times four seconds apart. You can now demonstrate the difference using records with clear origins and indexes. This finding still does not prove tampering. The discrepancy may come from a processing queue, clock synchronization, or the recording mechanism. Freya accepts your report and flags the anomaly for further review when additional evidence becomes available. You complete First Contact not because every question has been answered, but because you have learned to distinguish facts, inferences, and unknowns.",
             "COMPLETE FIRST CONTACT")
