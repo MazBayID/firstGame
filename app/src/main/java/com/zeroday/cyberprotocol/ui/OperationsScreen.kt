@@ -82,8 +82,8 @@ internal fun OperationsScreen(
                 )
                 Text(localizedUiText(selectedLanguage, "PHASE " + phaseNumber + " OF 5  ·  " + localizedPhaseName(phase, selectedLanguage), "TAHAP " + phaseNumber + " DARI 5  ·  " + localizedPhaseName(phase, selectedLanguage)),
                     color = Color(0xFF9AB4B8), fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                Text("RANK " + gameState.rank.replace('_', ' ') + "   ·   " + gameState.experience +
-                    " XP   ·   CLEARANCE " + gameState.clearance, color = Color(0xFFB8C9CC), fontSize = 10.sp)
+                Text(localizedUiText(selectedLanguage, "RANK ", "PANGKAT ") + localizedRankName(gameState.rank, selectedLanguage) + "   ·   " + gameState.experience +
+                    " XP   ·   " + localizedUiText(selectedLanguage, "CLEARANCE ", "OTORISASI ") + gameState.clearance, color = Color(0xFFB8C9CC), fontSize = 10.sp)
             }
         }
 
