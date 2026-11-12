@@ -25,7 +25,7 @@ class GameStateCodecTest {
             clearance = 1,
             technicalCompetencyXp = 300,
             intelligenceCompetencyXp = 120,
-            unlockedApps = setOf("MESSENGER", "BROWSER", "TERMINAL", "DATABASE", "DOSSIER", "ANALYSIS", "OPERATIONS"),
+            unlockedApps = setOf("MESSENGER", "BROWSER", "TERMINAL", "DATABASE", "DOSSIER", "ANALYSIS", "OPERATIONS", "PRACTICE"),
             caseProgress = mapOf("case_alpha" to com.zeroday.cyberprotocol.core.model.CaseProgress(
                 caseId = "case_alpha",
                 briefingAcknowledged = true,
