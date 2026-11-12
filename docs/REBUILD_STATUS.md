@@ -252,3 +252,7 @@ Implementation requirements:
 - **Still in progress:** the story screen continues to route through the legacy eight Python missions. Their mechanics must be progressively refactored into beginner training/optional practice or retained only where they naturally support the case.
 - **Still in progress:** direct cross-app case integration, richer analytical reasoning, decision rationale capture, competency rewards, and emulator smoke testing.
 - **Build gate:** the missing story-localization import discovered in CI was fixed. The new Operations integration is awaiting CI verification; no new APK is declared release-ready.
+
+## RX-14 case interaction update
+
+- Operations now requires the player to open the original VFS receipt content before recording a source as discovered. Evidence inspection and analysis remain separate actions. This UI change is an incremental vertical slice, not completion of the overall First Contact gameplay redesign; CI verification is pending.

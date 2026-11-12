@@ -312,3 +312,7 @@ Implemented on the current branch:
 - Fixed the missing Campaign01StoryLocalization import found by CI.
 
 This is a first playable case-flow vertical slice, not a complete campaign conversion. The existing story screen still contains the legacy eight Python mission sequence; those missions have not yet been merged, retired, or moved into optional practice. Messenger/Browser/Database navigation is not yet automatically linked to case evidence discovery; Operations currently exposes the shared evidence records as the case's inspection surface. Verify UI behavior on an emulator before claiming the slice is fully playable.
+
+## RX-14 Operations source-inspection interaction
+
+The Operations investigation phase now opens the original receipt text from the shared VirtualFileSystem before the player can mark that source as inspected. The confirmation action records discovery only after the player has viewed the source dialog. The analysis phase remains a separate action. This is an incremental UI vertical slice; the broader redesign of the legacy eight-mission campaign catalog and save migration is still pending. CI verification for this interaction is pending.
