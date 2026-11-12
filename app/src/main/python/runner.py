@@ -345,7 +345,7 @@ def _localize_evaluator_feedback(feedback, language):
     if feedback in translations:
         return translations[feedback]
     if feedback.startswith("Execution failed in test "):
-        return feedback.replace("Execution failed in test ", "Eksekusi gagal pada pengujian ", 1) + "."
+        return feedback.replace("Execution failed in test ", "Eksekusi gagal pada pengujian ", 1)
     if feedback.startswith("Test ") and ": expected " in feedback and ", got " in feedback:
         return feedback.replace("Test ", "Pengujian ", 1).replace(": expected ", ": diharapkan ", 1).replace(", got ", ", hasil aktual ", 1)
     return feedback
