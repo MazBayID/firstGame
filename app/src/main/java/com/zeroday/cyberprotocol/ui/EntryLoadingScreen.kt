@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -38,6 +39,7 @@ import kotlinx.coroutines.withContext
 /** Entry-only cinematic loader. Frames are decoded one at a time to cap memory use. */
 @Composable
 fun EntryLoadingScreen(
+    selectedLanguage: GameLanguage,
     ready: Boolean,
     error: String?,
     onRetry: () -> Unit,
@@ -87,7 +89,7 @@ fun EntryLoadingScreen(
         currentBitmap?.let { bitmap ->
             Image(
                 bitmap = bitmap.asImageBitmap(),
-                contentDescription = "Animasi pembukaan Cyber Protocol",
+                contentDescription = localizedUiText(selectedLanguage, "Cyber Protocol opening animation", "Animasi pembukaan Cyber Protocol"),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -106,8 +108,8 @@ fun EntryLoadingScreen(
                 letterSpacing = 2.sp
             )
             Text(
-                if (error == null) "MENYIAPKAN LINGKUNGAN OPERASI"
-                else "INISIALISASI GAGAL",
+                if (error == null) localizedUiText(selectedLanguage, "PREPARING OPERATIONS ENVIRONMENT", "MENYIAPKAN LINGKUNGAN OPERASI")
+                else localizedUiText(selectedLanguage, "INITIALIZATION FAILED", "INISIALISASI GAGAL"),
                 color = Color(0xFFB7C4CC),
                 fontFamily = FontFamily.Monospace,
                 fontSize = 9.sp,
@@ -119,7 +121,7 @@ fun EntryLoadingScreen(
                     color = MaterialTheme.colorScheme.error,
                     fontSize = 11.sp
                 )
-                Button(onClick = onRetry) { Text("COBA LAGI") }
+                Button(onClick = onRetry) { Text(localizedUiText(selectedLanguage, "RETRY", "COBA LAGI")) }
             }
         }
     }

@@ -227,13 +227,13 @@ internal fun AegisBrowserScreen(
                         evidence.sortedByDescending { it.recordedAtEpochMillis }.forEach { record ->
                             val concealed = record.id in caseDefinition.requiredEvidenceIds &&
                                 record.id !in caseProgress.discoveredEvidenceIds
-                            Text(record.title, color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontWeight = FontWeight.Bold)
                             Text(
                                 if (concealed) browserText(selectedLanguage, "Source content has not been opened. Use the original source button to inspect it.", "Isi sumber belum dibuka. Gunakan tombol sumber asli untuk memeriksanya.")
-                                else record.summary,
+                                else CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp
                             )
-                            Text("${localizedEvidenceStatus(record.status, selectedLanguage)}  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp)
+                            Text("${localizedEvidenceStatus(record.status, selectedLanguage)}  /  ${CaseLocalizedContent.evidenceSource(record, selectedLanguage)}", color = Color(0xFF83C7D0), fontSize = 9.sp)
                             record.provenance.sourceAssetId?.let { assetId ->
                                 Text(browserText(selectedLanguage, "SHARED SOURCE  /  $assetId", "SUMBER BERSAMA  /  $assetId"), color = Color(0xFF9AB4B8), fontSize = 8.sp)
                                 record.provenance.sourcePath?.let { path ->
@@ -242,7 +242,7 @@ internal fun AegisBrowserScreen(
                                 OutlinedButton(
                                     onClick = {
                                         val content = onReadEvidenceAsset(assetId)
-                                        evidenceAssetPreview = content?.let { Triple(record.id, record.title, it) }
+                                        evidenceAssetPreview = content?.let { Triple(record.id, CaseLocalizedContent.evidenceTitle(record, selectedLanguage), it) }
                                     },
                                     modifier = Modifier.fillMaxWidth()
                                 ) { Text(browserText(selectedLanguage, "OPEN ORIGINAL SOURCE", "BUKA SUMBER ASLI")) }
@@ -254,7 +254,7 @@ internal fun AegisBrowserScreen(
                 "profile" -> BrowserPanel {
                     Text(browserText(selectedLanguage, "AGENT PROFILE", "PROFIL AGEN"), color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Text("RECRUIT-014", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                    Text(browserText(selectedLanguage, "RANK  /  ${gameState.rank.replace('_', ' ')}", "PANGKAT  /  ${gameState.rank.replace('_', ' ')}"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(browserText(selectedLanguage, "RANK  /  ${localizedRankName(gameState.rank, selectedLanguage)}", "PANGKAT  /  ${localizedRankName(gameState.rank, selectedLanguage)}"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(browserText(selectedLanguage, "EXPERIENCE  /  ${gameState.experience} XP", "PENGALAMAN  /  ${gameState.experience} XP"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(browserText(selectedLanguage, "CLEARANCE  /  ${gameState.clearance}", "OTORISASI  /  ${gameState.clearance}"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(browserText(selectedLanguage, "MISSIONS COMPLETED  /  ${gameState.completedMissionIds.size}", "MISI SELESAI  /  ${gameState.completedMissionIds.size}"), color = MaterialTheme.colorScheme.onSurfaceVariant)

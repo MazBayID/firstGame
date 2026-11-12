@@ -119,3 +119,10 @@ Regression coverage now checks bilingual story beats, all eight mission content 
 - Review any remaining mixed-language technical labels and old-save fallback text.
 - Run complete English and Indonesian journeys on physical Android devices, including fresh install, mid-campaign language switching, force-stop/relaunch, save migration, and end-to-end debrief.
 - Keep runtime exceptions, source code, commands, paths, player-authored rationale, and literal evaluator output unchanged where translation would corrupt their meaning or verification.
+
+
+## Implementation checkpoint — 2026-11-12 (startup and Browser evidence parity)
+
+The startup loading/retry screen now uses the saved game-language preference before the main game composition is created. The same initial preference is passed into the game state, avoiding a separate first-frame language fallback. Browser evidence reports now render localized titles, summaries, provenance source labels, and preview titles through the shared content resolver; stored evidence and original source bytes remain unchanged. Browser and Profile rank displays use the presentation-layer rank label.
+
+This checkpoint extends L2/L4 coverage but does not close localization acceptance. Manual Android review and a full missing-content audit remain required.

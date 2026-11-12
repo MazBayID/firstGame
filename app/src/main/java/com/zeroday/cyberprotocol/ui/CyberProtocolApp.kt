@@ -60,6 +60,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun CyberProtocolApp() {
     val context = LocalContext.current
+    val startupLanguage = remember { GameLanguagePreferences.load(context) }
     var startupReady by remember { mutableStateOf(false) }
     var startupError by remember { mutableStateOf<String?>(null) }
     var startupAttempt by remember { mutableIntStateOf(0) }
@@ -82,6 +83,7 @@ fun CyberProtocolApp() {
 
     if (!startupReady) {
         EntryLoadingScreen(
+            selectedLanguage = startupLanguage,
             ready = startupReady,
             error = startupError,
             onRetry = {
@@ -94,6 +96,7 @@ fun CyberProtocolApp() {
         return
     }
     CyberProtocolGameContent(
+        initialLanguage = startupLanguage,
         reducedMotion = reducedMotion,
         onReducedMotionChange = { enabled ->
             reducedMotion = enabled
@@ -103,10 +106,14 @@ fun CyberProtocolApp() {
 }
 
 @Composable
-private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChange: (Boolean) -> Unit) {
+private fun CyberProtocolGameContent(
+    initialLanguage: GameLanguage,
+    reducedMotion: Boolean,
+    onReducedMotionChange: (Boolean) -> Unit
+) {
     val baseContext = LocalContext.current
     var selectedLanguage by remember {
-        mutableStateOf(GameLanguagePreferences.load(baseContext))
+        mutableStateOf(initialLanguage)
     }
     val localizedContext = remember(baseContext, selectedLanguage) {
         val configuration = Configuration(baseContext.resources.configuration)
