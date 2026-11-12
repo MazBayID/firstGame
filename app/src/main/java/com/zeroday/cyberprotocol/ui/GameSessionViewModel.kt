@@ -7,6 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
+import com.zeroday.cyberprotocol.core.model.EvidenceRelationType
+import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
@@ -90,6 +92,26 @@ internal class GameSessionViewModel(
 
     fun recordEvidence(record: EvidenceRecord) {
         RecordEvidenceUseCase(repository).record(record)
+        refresh()
+    }
+
+    fun reviewEvidence(evidenceId: String, status: EvidenceStatus, reason: String) {
+        RecordEvidenceUseCase(repository).review(
+            evidenceId = evidenceId,
+            status = status,
+            reviewerId = "operative:player",
+            reason = reason
+        )
+        refresh()
+    }
+
+    fun relateEvidence(
+        evidenceId: String,
+        relatedEvidenceId: String,
+        type: EvidenceRelationType,
+        note: String = ""
+    ) {
+        RecordEvidenceUseCase(repository).relate(evidenceId, relatedEvidenceId, type, note)
         refresh()
     }
 

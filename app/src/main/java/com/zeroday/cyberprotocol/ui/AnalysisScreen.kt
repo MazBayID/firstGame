@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.domain.usecase.EvidenceReviewPolicy
 
 /** Pure evidence filtering shared by the analysis surface and its tests. */
 internal object EvidenceAnalysisFilter {
@@ -43,9 +44,16 @@ internal object EvidenceAnalysisFilter {
 }
 
 @Composable
-internal fun AnalysisScreen(gameState: GameState, onBack: () -> Unit) {
+internal fun AnalysisScreen(
+    gameState: GameState,
+    onBack: () -> Unit,
+    onReviewEvidence: (String, EvidenceStatus, String) -> Unit
+) {
     var selectedStatus by rememberSaveable { mutableStateOf("ALL") }
     var query by rememberSaveable { mutableStateOf("") }
+    var reviewTarget by remember { mutableStateOf<EvidenceRecord?>(null) }
+    var reviewStatus by remember { mutableStateOf(EvidenceStatus.UNVERIFIED) }
+    var reviewReason by remember { mutableStateOf("") }
     val status = when (selectedStatus) {
         "UNVERIFIED" -> EvidenceStatus.UNVERIFIED
         "INFERRED" -> EvidenceStatus.INFERRED
@@ -133,7 +141,7 @@ internal fun AnalysisScreen(gameState: GameState, onBack: () -> Unit) {
                     Text("${filtered.size} DARI ${gameState.evidence.size} REKAMAN",
                         color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
                 }
-                Text("READ ONLY", color = Color(0xFF8AA8AE), fontSize = 9.sp,
+                Text("AUDITED REVIEW", color = Color(0xFF8AA8AE), fontSize = 9.sp,
                     fontWeight = FontWeight.Bold)
             }
         }
@@ -154,18 +162,65 @@ internal fun AnalysisScreen(gameState: GameState, onBack: () -> Unit) {
                 )
             }
         } else {
-            filtered.forEach { record -> EvidenceRecordCard(record) }
+            filtered.forEach { record ->
+                EvidenceRecordCard(record, onReview = {
+                    val targets = EvidenceReviewPolicy.allowedTransitions(record.status)
+                    if (targets.isNotEmpty()) {
+                        reviewTarget = record
+                        reviewStatus = targets.first()
+                        reviewReason = ""
+                    }
+                })
+            }
         }
 
         Text(
-            "Status bukti tidak dapat diubah dari layar ini. Setiap perubahan klasifikasi harus berasal dari proses peninjauan yang memiliki alasan dan jejak audit.",
+            "Setiap perubahan klasifikasi memerlukan alasan dan tercatat bersama identitas peninjau dalam riwayat audit.",
             color = Color(0xFF71858B), fontSize = 10.sp, lineHeight = 16.sp
         )
+        reviewTarget?.let { target ->
+            val targets = EvidenceReviewPolicy.allowedTransitions(target.status).toList()
+            AlertDialog(
+                onDismissRequest = { reviewTarget = null },
+                title = { Text("TINJAU KLASIFIKASI") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(target.title, fontWeight = FontWeight.Bold)
+                        targets.forEach { candidate ->
+                            FilterChip(
+                                selected = reviewStatus == candidate,
+                                onClick = { reviewStatus = candidate },
+                                label = { Text(candidate.name.replace('_', ' ')) }
+                            )
+                        }
+                        OutlinedTextField(
+                            value = reviewReason,
+                            onValueChange = { reviewReason = it.take(400) },
+                            label = { Text("Alasan peninjauan") },
+                            placeholder = { Text("Jelaskan sumber atau temuan yang mendasari perubahan") },
+                            minLines = 2
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        enabled = reviewReason.isNotBlank() && reviewStatus in targets,
+                        onClick = {
+                            onReviewEvidence(target.id, reviewStatus, reviewReason.trim())
+                            reviewTarget = null
+                        }
+                    ) { Text("SIMPAN REVIEW") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { reviewTarget = null }) { Text("BATAL") }
+                }
+            )
+        }
     }
 }
 
 @Composable
-private fun EvidenceRecordCard(record: EvidenceRecord) {
+private fun EvidenceRecordCard(record: EvidenceRecord, onReview: () -> Unit) {
     val (label, tint) = when (record.status) {
         EvidenceStatus.CONFIRMED -> "TERKONFIRMASI" to Color(0xFF8CD5AC)
         EvidenceStatus.CORROBORATED -> "DIKOROBORASI" to Color(0xFF9BC7E8)
@@ -195,6 +250,12 @@ private fun EvidenceRecordCard(record: EvidenceRecord) {
             Text("ASAL  /  ${record.provenance.origin.name}", color = Color(0xFF8AA8AE), fontSize = 9.sp)
             Text("RELASI  /  ${record.relations.size}  ·  RIWAYAT REVIEW  /  ${record.reviewHistory.size}",
                 color = Color(0xFF8AA8AE), fontSize = 9.sp)
+            if (EvidenceReviewPolicy.allowedTransitions(record.status).isNotEmpty()) {
+                TextButton(onClick = onReview) { Text("TINJAU BUKTI") }
+            } else {
+                Text("STATUS FINAL — TIDAK DAPAT DIAKTIFKAN KEMBALI",
+                    color = Color(0xFF9A879D), fontSize = 8.sp)
+            }
         }
     }
 }

@@ -16,6 +16,14 @@ class EvidenceEngineTest {
     private fun record(id: String, status: EvidenceStatus = EvidenceStatus.UNVERIFIED) =
         EvidenceRecord(id, "Evidence $id", "A fictional observation.", "A.E.G.I.S.", status, "case.test")
 
+    @Test fun transitionPolicyIsSharedWithReviewUi() {
+        assertEquals(
+            setOf(EvidenceStatus.DISPUTED, EvidenceStatus.RETRACTED),
+            EvidenceReviewPolicy.allowedTransitions(EvidenceStatus.CONFIRMED)
+        )
+        assertEquals(emptySet<EvidenceStatus>(), EvidenceReviewPolicy.allowedTransitions(EvidenceStatus.RETRACTED))
+    }
+
     @Test fun reviewRequiresReviewerAndReason() {
         val repo = MemoryRepository(); val useCase = RecordEvidenceUseCase(repo); useCase.record(record("a"))
         assertThrows(IllegalArgumentException::class.java) { useCase.review("a", EvidenceStatus.INFERRED, " ", "Reason") }

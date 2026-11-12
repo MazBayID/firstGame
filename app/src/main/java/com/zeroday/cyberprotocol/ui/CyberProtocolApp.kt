@@ -613,7 +613,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         )
         GameScreen.ANALYSIS -> AnalysisScreen(
             gameState = currentGameState,
-            onBack = { navigate(GameScreen.APP_HUB) }
+            onBack = { navigate(GameScreen.APP_HUB) },
+            onReviewEvidence = { evidenceId, status, reason ->
+                sessionViewModel.reviewEvidence(evidenceId, status, reason)
+            }
         )
         GameScreen.OPERATIONS -> OperationsScreen(
             gameState = currentGameState,

@@ -39,7 +39,7 @@ class RecordEvidenceUseCase(private val repository: GameStateRepository) {
         val record = current.evidence.firstOrNull { it.id == evidenceId }
             ?: throw IllegalArgumentException("Evidence record not found.")
         if (record.status == status) return current
-        require(status in allowedTransitions(record.status)) {
+        require(status in EvidenceReviewPolicy.allowedTransitions(record.status)) {
             "Unsupported evidence status transition: ${record.status} -> $status"
         }
         val review = EvidenceReviewEntry(record.status, status, reviewerId, reason, reviewedAtEpochMillis)
@@ -77,7 +77,10 @@ class RecordEvidenceUseCase(private val repository: GameStateRepository) {
         return repository.load()
     }
 
-    private fun allowedTransitions(from: EvidenceStatus): Set<EvidenceStatus> = when (from) {
+}
+
+object EvidenceReviewPolicy {
+    fun allowedTransitions(from: EvidenceStatus): Set<EvidenceStatus> = when (from) {
         EvidenceStatus.UNVERIFIED -> setOf(EvidenceStatus.INFERRED, EvidenceStatus.CORROBORATED, EvidenceStatus.CONFIRMED, EvidenceStatus.DISPUTED)
         EvidenceStatus.INFERRED -> setOf(EvidenceStatus.CORROBORATED, EvidenceStatus.CONFIRMED, EvidenceStatus.DISPUTED, EvidenceStatus.RETRACTED)
         EvidenceStatus.CORROBORATED -> setOf(EvidenceStatus.INFERRED, EvidenceStatus.CONFIRMED, EvidenceStatus.DISPUTED, EvidenceStatus.RETRACTED)
