@@ -1052,28 +1052,12 @@ private fun CyberProtocolGameContentBody(
             caseProgress = rx14Progress,
             onBack = { navigate(GameScreen.MAIN_MENU) }
         )
-        GameScreen.ACHIEVEMENTS -> InfoAppScreen(
-            localizedUiText(selectedLanguage, "ACHIEVEMENTS", "PENCAPAIAN"),
-            localizedUiText(selectedLanguage, "A.E.G.I.S. / AWARDS", "A.E.G.I.S. / PENGHARGAAN"),
-            buildString {
-                val awards = listOf(
-                    localizedUiText(selectedLanguage, "First Signal", "Sinyal Pertama") to ("first_contact.signal" in currentGameState.completedMissionIds),
-                    localizedUiText(selectedLanguage, "Identity Verified", "Identitas Terverifikasi") to ("first_contact.identity" in currentGameState.completedMissionIds),
-                    localizedUiText(selectedLanguage, "RX-14 Case Resolved", "Kasus RX-14 Dituntaskan") to rx14CaseComplete
-                )
-                awards.forEach { (title, earned) ->
-                    append(if (earned) localizedUiText(selectedLanguage, "[EARNED] ", "[DIPEROLEH] ")
-                        else localizedUiText(selectedLanguage, "[NOT YET EARNED] ", "[BELUM DICAPAI] "))
-                    append(title).append("\n")
-                }
-                append("\n")
-                append(if (rx14CaseComplete) {
-                    localizedUiText(selectedLanguage, "FIRST CONTACT / FINAL REPORT VERIFIED", "FIRST CONTACT / LAPORAN AKHIR TERVERIFIKASI")
-                } else {
-                    localizedUiText(selectedLanguage, "FIRST CONTACT / CASE IN PROGRESS", "FIRST CONTACT / KASUS MASIH BERJALAN")
-                })
-            },
-            CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
+        GameScreen.ACHIEVEMENTS -> AchievementsScreen(
+            gameState = currentGameState,
+            selectedLanguage = selectedLanguage,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = rx14Progress,
+            onBack = { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.SETTINGS -> SettingsScreen(
             selectedLanguage = selectedLanguage,
