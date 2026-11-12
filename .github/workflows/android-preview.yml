@@ -6,11 +6,19 @@ on:
     paths:
       - ".github/workflows/android-preview.yml"
       - "app/**"
+      - "gradle/**"
+      - "**/*.gradle"
+      - "**/*.gradle.kts"
+      - "gradle.properties"
+      - "settings.gradle"
+      - "settings.gradle.kts"
+      - "build.gradle"
+      - "build.gradle.kts"
   workflow_dispatch:
 
 concurrency:
   group: cyber-protocol-preview-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
