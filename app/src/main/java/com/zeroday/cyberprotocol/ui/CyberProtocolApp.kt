@@ -1038,23 +1038,12 @@ private fun CyberProtocolGameContentBody(
                 sessionViewModel.acknowledgeCaseDebrief(Campaign01CaseCatalog.rx14)
             }
         )
-        GameScreen.PROFILE -> InfoAppScreen(
-            localizedUiText(selectedLanguage, "OPERATIVE PROFILE", "PROFIL AGEN"),
-            localizedUiText(selectedLanguage, "A.E.G.I.S. / PERSONNEL IDENTITY", "A.E.G.I.S. / IDENTITAS PERSONEL"),
-            buildString {
-                append(localizedUiText(selectedLanguage, "IDENTITY: TRAINEE AGENT\n", "IDENTITAS: AGEN MAGANG\n"))
-                append(localizedUiText(selectedLanguage, "RANK: ", "PANGKAT: ")).append(localizedRankName(currentGameState.rank, selectedLanguage)).append("\n")
-                append(localizedUiText(selectedLanguage, "EXPERIENCE: ", "PENGALAMAN: ")).append(currentGameState.experience).append(" XP\n")
-                append(localizedUiText(selectedLanguage, "CLEARANCE LEVEL: ", "TINGKAT AKSES: ")).append(currentGameState.clearance).append("\n")
-                append(localizedUiText(selectedLanguage, "CAMPAIGN: ", "KAMPANYE: ")).append(currentGameState.campaignId).append("\n")
-                append(localizedUiText(selectedLanguage, "MISSIONS COMPLETED: ", "MISI SELESAI: ")).append(currentGameState.completedMissionIds.size).append("\n")
-                append(localizedUiText(selectedLanguage, "EVIDENCE RECORDED: ", "BUKTI TERCATAT: ")).append(currentGameState.evidence.size).append("\n")
-                append(localizedUiText(selectedLanguage, "CHECKPOINT: ", "TITIK SIMPAN: ")).append(currentGameState.lastCheckpoint).append("\n")
-                val nextRankXp = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.nextRankThreshold(currentGameState.experience)
-                if (nextRankXp == null) append(localizedUiText(selectedLanguage, "MAXIMUM RANK REACHED", "RANK MAKSIMUM TERCAPAI"))
-                else append(localizedUiText(selectedLanguage, "NEXT RANK IN: ", "MENUJU RANK BERIKUTNYA: ")).append(nextRankXp - currentGameState.experience).append(" XP")
-            },
-            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
+        GameScreen.PROFILE -> OperativeProfileScreen(
+            gameState = currentGameState,
+            selectedLanguage = selectedLanguage,
+            caseDefinition = Campaign01CaseCatalog.rx14,
+            caseProgress = rx14Progress,
+            onBack = { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.ARCHIVES -> ArchivesScreen(
             gameState = currentGameState,
