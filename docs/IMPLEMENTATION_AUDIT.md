@@ -389,3 +389,11 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Operations routes into Analysis and restores its own context on return through the A.E.G.I.S. hub.
 - The Analysis app and Operations consume the same persisted `CaseProgress`; no parallel analysis state is introduced.
 - Automated domain coverage exists for the gating rules. CI and manual navigation checks are pending.
+
+
+## Operational decision draft persistence
+
+- The player's decision rationale is now written into the case save while typing, not only when a decision option is selected.
+- Returning to Operations restores the exact draft from CaseProgress; selecting a decision commits the same rationale into the debrief record.
+- Draft edits are accepted only during OPERATIONAL_DECISION and remain capped at 600 characters. The case phase does not advance until a decision is explicitly selected.
+- Regression coverage checks draft persistence, phase gating, and the storage limit.

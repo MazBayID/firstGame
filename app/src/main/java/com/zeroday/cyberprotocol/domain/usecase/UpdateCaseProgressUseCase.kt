@@ -60,6 +60,18 @@ class UpdateCaseProgressUseCase(private val repository: GameStateRepository) {
         return update(definition) { it.copy(analysisConclusionId = conclusionId) }
     }
 
+    /** Saves an unfinished operational rationale without advancing the case phase. */
+    fun saveDecisionRationaleDraft(definition: CaseDefinition, rationale: String): GameState {
+        require(rationale.length <= 600) { "Decision rationale is too long." }
+        val current = repository.load()
+        val progress = current.caseProgress[definition.id] ?: CaseProgress(definition.id)
+        require(CasePhaseEvaluator.phase(definition, progress) == CasePhase.OPERATIONAL_DECISION) {
+            "A decision rationale can only be edited during the operational decision phase."
+        }
+        if (progress.decisionRationale == rationale) return current
+        return update(definition) { it.copy(decisionRationale = rationale) }
+    }
+
     fun selectDecision(definition: CaseDefinition, decisionId: String, rationale: String): GameState {
         val current = repository.load()
         val progress = current.caseProgress[definition.id] ?: CaseProgress(definition.id)

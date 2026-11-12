@@ -33,6 +33,7 @@ internal fun OperationsScreen(
     onReadSource: (String) -> String?,
     onDiscoverEvidence: (String) -> Unit,
     onOpenAnalysis: () -> Unit,
+    onDecisionRationaleChange: (String) -> Unit,
     onSelectDecision: (String, String) -> Unit,
     onAcknowledgeDebrief: () -> Unit
 ) {
@@ -49,7 +50,7 @@ internal fun OperationsScreen(
     }
     val decision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
     val analysisConclusion = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
-    var decisionRationale by remember(caseProgress.caseId) { mutableStateOf(caseProgress.decisionRationale) }
+    val decisionRationale = caseProgress.decisionRationale
 
     Column(
         Modifier.fillMaxSize()
@@ -139,7 +140,7 @@ internal fun OperationsScreen(
                     ?: "Dua sumber telah dianalisis. Pilih tindakan yang proporsional dengan bukti yang tersedia.")
                 OutlinedTextField(
                     value = decisionRationale,
-                    onValueChange = { decisionRationale = it.take(600) },
+                    onValueChange = onDecisionRationaleChange,
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     label = { Text("ALASAN KEPUTUSAN") },

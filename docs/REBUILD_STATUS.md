@@ -340,3 +340,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 - The player can enter Analysis directly from the hub or through Operations; returning through the hub restores the correct Operations context.
 - The same Analysis app continues to support general evidence status review and audit reasons.
 - Domain tests already cover the phase/conclusion rules; UI compilation and integrated navigation verification are pending.
+
+
+## Operational decision draft integration — 2026-11-12
+
+- Persist decision rationale edits immediately through the shared GameStateRepository and ViewModel.
+- Operations now renders the saved CaseProgress rationale as its controlled field, so leaving and returning to the screen cannot silently discard the draft.
+- The decision remains a separate explicit action; a draft alone never enters debrief or awards progression.
+- Added domain regression tests for phase gating and the 600-character cap. Source workflow result is pending.

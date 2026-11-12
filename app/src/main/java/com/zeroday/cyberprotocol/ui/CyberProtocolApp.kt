@@ -741,6 +741,9 @@ private fun CyberProtocolGameContentBody(
                 navigation = navigation.copy(hubReturnScreen = GameScreen.OPERATIONS)
                 navigate(GameScreen.ANALYSIS)
             },
+            onDecisionRationaleChange = { rationale ->
+                sessionViewModel.saveCaseDecisionRationale(Campaign01CaseCatalog.rx14, rationale.take(600))
+            },
             onSelectDecision = { decisionId, rationale ->
                 sessionViewModel.selectCaseDecision(Campaign01CaseCatalog.rx14, decisionId, rationale)
             },

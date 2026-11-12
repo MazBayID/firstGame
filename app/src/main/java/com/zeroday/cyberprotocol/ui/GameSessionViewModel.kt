@@ -163,6 +163,11 @@ internal class GameSessionViewModel(
         refresh()
     }
 
+    fun saveCaseDecisionRationale(definition: CaseDefinition, rationale: String) {
+        UpdateCaseProgressUseCase(repository).saveDecisionRationaleDraft(definition, rationale)
+        refresh()
+    }
+
     fun selectCaseDecision(definition: CaseDefinition, decisionId: String, rationale: String) {
         UpdateCaseProgressUseCase(repository).selectDecision(definition, decisionId, rationale)
         refresh()

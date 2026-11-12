@@ -49,11 +49,11 @@ class Rx14CaseProgressionTest {
         useCase.selectAnalysisConclusion(definition, "observed_discrepancy_only")
         assertEquals(CasePhase.OPERATIONAL_DECISION, phase(definition, repository))
 
-        useCase.selectDecision(
-            definition,
-            "insufficient_evidence",
-            "Dua waktu berbeda empat detik, tetapi tidak ada sumber yang menjelaskan penyebabnya."
-        )
+        val rationale = "Dua waktu berbeda empat detik, tetapi tidak ada sumber yang menjelaskan penyebabnya."
+        useCase.saveDecisionRationaleDraft(definition, rationale)
+        assertEquals(rationale, repository.load().caseProgress.getValue(definition.id).decisionRationale)
+        assertEquals(CasePhase.OPERATIONAL_DECISION, phase(definition, repository))
+        useCase.selectDecision(definition, "insufficient_evidence", rationale)
         assertEquals(CasePhase.DEBRIEFING, phase(definition, repository))
 
         useCase.acknowledgeDebrief(definition)
@@ -62,6 +62,40 @@ class Rx14CaseProgressionTest {
             "insufficient_evidence",
             repository.load().caseProgress.getValue(definition.id).selectedDecisionId
         )
+    }
+
+    @Test
+    fun decisionRationaleDraftCannotBeChangedBeforeOperationalDecision() {
+        val definition = Campaign01CaseCatalog.rx14
+        val repository = MemoryRepository(GameState())
+        val useCase = UpdateCaseProgressUseCase(repository)
+
+        val error = runCatching {
+            useCase.saveDecisionRationaleDraft(definition, "I will preserve the discrepancy as unresolved.")
+        }.exceptionOrNull()
+
+        assertTrue(error is IllegalArgumentException)
+        assertEquals("", repository.load().caseProgress[definition.id]?.decisionRationale.orEmpty())
+    }
+
+    @Test
+    fun decisionRationaleDraftCannotExceedStorageLimit() {
+        val definition = Campaign01CaseCatalog.rx14
+        val records = EvidenceAssetCatalog.assets.map { asset ->
+            EvidenceRecord(id = asset.evidenceId, title = asset.title, summary = asset.content.trim(),
+                source = asset.sourceLabel, missionId = EvidenceAssetCatalog.MISSION_ID)
+        }
+        val repository = MemoryRepository(GameState(evidence = records))
+        val useCase = UpdateCaseProgressUseCase(repository)
+        useCase.acknowledgeBriefing(definition)
+        definition.requiredEvidenceIds.forEach { useCase.discoverEvidence(definition, it) }
+        definition.requiredEvidenceIds.forEach { useCase.analyzeEvidence(definition, it) }
+        useCase.selectAnalysisConclusion(definition, "observed_discrepancy_only")
+
+        val error = runCatching { useCase.saveDecisionRationaleDraft(definition, "x".repeat(601)) }.exceptionOrNull()
+
+        assertTrue(error is IllegalArgumentException)
+        assertEquals("", repository.load().caseProgress.getValue(definition.id).decisionRationale)
     }
 
     @Test
