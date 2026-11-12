@@ -817,21 +817,20 @@ private fun CyberProtocolGameContentBody(
             "PENCAPAIAN", "A.E.G.I.S. / PENGHARGAAN",
             buildString {
                 val awards = listOf(
-                    "FIRST_SIGNAL" to ("Sinyal Pertama" to "first_contact.signal"),
-                    "IDENTITY_VERIFIED" to ("Identitas Terverifikasi" to "first_contact.identity"),
-                    "AUDIT_COMPLETE" to ("Audit Jejak Selesai" to "first_contact.audit"),
-                    "INVENTORY_COMPLETE" to ("Inventaris Rekaman Selesai" to "first_contact.inventory"),
-                    "TRACE_COMPLETE" to ("Penelusuran Referensi Selesai" to "first_contact.trace"),
-                    "COMPARE_COMPLETE" to ("Perbandingan Dua Sumber Selesai" to "first_contact.compare"),
-                    "NORMALIZE_COMPLETE" to ("Normalisasi Waktu Selesai" to "first_contact.normalize"),
-                    "DELTA_COMPLETE" to ("Validasi Selisih Selesai" to "first_contact.validate_delta")
+                    "Sinyal Pertama" to ("first_contact.signal" in currentGameState.completedMissionIds),
+                    "Identitas Terverifikasi" to ("first_contact.identity" in currentGameState.completedMissionIds),
+                    "Kasus RX-14 Dituntaskan" to rx14CaseComplete
                 )
-                awards.forEach { (_, award) ->
-                    val earned = award.second in currentGameState.completedMissionIds
-                    append(if (earned) "[DIPEROLEH] " else "[TERKUNCI] ")
-                    append(award.first).append("\n")
+                awards.forEach { (title, earned) ->
+                    append(if (earned) "[DIPEROLEH] " else "[BELUM DICAPAI] ")
+                    append(title).append("\\n")
                 }
-                append(if (currentGameState.storyBeat >= 16) "[DIPEROLEH] First Contact Selesai" else "[TERKUNCI] First Contact Selesai")
+                append("\\n")
+                append(if (rx14CaseComplete) {
+                    "FIRST CONTACT / LAPORAN AKHIR TERVERIFIKASI"
+                } else {
+                    "FIRST CONTACT / KASUS MASIH BERJALAN"
+                })
             },
             CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
         )
