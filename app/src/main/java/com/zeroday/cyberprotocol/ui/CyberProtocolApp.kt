@@ -1347,7 +1347,7 @@ private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBa
                     else Text(localizedUiText(selectedLanguage, "LOCKED", "TERKUNCI"), color = CyberPalette.SteelGray, fontSize = 8.sp)
                 }
             }
-            CPPrimaryButton(if (storyStage >= 16) localizedUiText(selectedLanguage, "OPEN A.E.G.I.S. HUB", "BUKA PUSAT A.E.G.I.S.") else localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA"), onContinue)
+            CPPrimaryButton(if (storyStage >= 16) localizedUiText(selectedLanguage, "OPEN A.E.G.I.S. HUB", "BUKA PUSAT A.E.G.I.S.") else localizedUiText(selectedLanguage, "CONTINUE STORY", localizedUiText(selectedLanguage, "CONTINUE STORY", "LANJUTKAN CERITA")), onContinue)
         }
         Text(
             localizedUiText(selectedLanguage, "New chapters and follow-up operations unlock through story progress. Every piece of evidence and every access permission has a source and authorization.", "Chapter baru dan operasi lanjutan akan terbuka melalui perkembangan cerita. Setiap bukti dan akses memiliki sumber serta otorisasi."),
@@ -1447,8 +1447,8 @@ private fun StoryScreen(
                 CodeEditor(code, onCodeChange, localizedUiText(selectedLanguage, "PYTHON 3 CODE EDITOR", "EDITOR KODE PYTHON 3"), 180)
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SIMPAN KODE") }
-                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN") }
+                    OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text(localizedUiText(selectedLanguage, "SAVE CODE", "SIMPAN KODE")) }
+                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text(localizedUiText(selectedLanguage, "RUN", "JALANKAN")) }
                 }
                 Button(
                     onClick = onSubmit,
@@ -1464,13 +1464,13 @@ private fun StoryScreen(
                 Surface(color = Color(0xFF080D12), shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
                     Column(Modifier.fillMaxWidth().padding(12.dp)) {
-                        Text("KELUARAN TERMINAL", color = CyberPalette.SteelGray, fontSize = 9.sp)
+                        Text(localizedUiText(selectedLanguage, "TERMINAL OUTPUT", "KELUARAN TERMINAL"), color = CyberPalette.SteelGray, fontSize = 9.sp)
                         Text(output, color = Color(0xFFB7E4C7), fontFamily = FontFamily.Monospace)
                     }
                 }
                 if (feedback.isNotBlank()) Text(feedback, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
                 Text(
-                    "SIMPAN KODE menyimpan draf. JALANKAN menguji kode di terminal. SUBMIT mengirim kode yang sama dengan eksekusi terakhir yang berhasil ke evaluator misi.",
+                    localizedUiText(selectedLanguage, "SAVE CODE stores a draft. RUN tests the code in Terminal. SUBMIT sends the same source as the latest successful run to the mission evaluator.", "SIMPAN KODE menyimpan draf. JALANKAN menguji kode di terminal. SUBMIT mengirim kode yang sama dengan eksekusi terakhir yang berhasil ke evaluator misi."),
                     color = CyberPalette.SteelGray,
                     fontSize = 10.sp
                 )
@@ -1481,47 +1481,47 @@ private fun StoryScreen(
                 val analysis = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
                 val decision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
                 GamePanel {
-                    Text("LAPORAN AKHIR AGEN  /  RX-14", color = Color(0xFF83C7D0),
+                    Text(localizedUiText(selectedLanguage, "AGENT FINAL REPORT  /  RX-14", "LAPORAN AKHIR AGEN  /  RX-14"), color = Color(0xFF83C7D0),
                         fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
-                    Text("KESIMPULAN ANALISIS", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    Text(analysis?.title ?: "Tidak ada kesimpulan tersimpan",
+                    Text(localizedUiText(selectedLanguage, "ANALYSIS CONCLUSION", "KESIMPULAN ANALISIS"), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(analysis?.let { CaseLocalizedContent.analysisTitle(it, selectedLanguage) } ?: localizedUiText(selectedLanguage, "No conclusion saved", "Tidak ada kesimpulan tersimpan"),
                         color = Color(0xFFD1D9DF), fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                    Text(analysis?.feedback.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Text(analysis?.let { CaseLocalizedContent.analysisFeedback(it, selectedLanguage) }.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp, lineHeight = 17.sp)
                     HorizontalDivider(color = CyberPalette.Divider)
-                    Text("TINDAKAN OPERASIONAL", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    Text(decision?.title ?: "Tidak ada keputusan tersimpan",
+                    Text(localizedUiText(selectedLanguage, "OPERATIONAL ACTION", "TINDAKAN OPERASIONAL"), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(decision?.let { CaseLocalizedContent.decisionTitle(it, selectedLanguage) } ?: localizedUiText(selectedLanguage, "No decision saved", "Tidak ada keputusan tersimpan"),
                         color = Color(0xFFD1D9DF), fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                    Text(decision?.description.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Text(decision?.let { CaseLocalizedContent.decisionDescription(it, selectedLanguage) }.orEmpty(), color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp, lineHeight = 17.sp)
                     HorizontalDivider(color = CyberPalette.Divider)
-                    Text("ALASAN YANG DICATAT", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    Text(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan tersimpan." },
+                    Text(localizedUiText(selectedLanguage, "RECORDED RATIONALE", "ALASAN YANG DICATAT"), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(caseProgress.decisionRationale.ifBlank { localizedUiText(selectedLanguage, "No rationale saved.", "Tidak ada alasan tersimpan.") },
                         color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp, lineHeight = 17.sp)
-                    Text("STATUS ANOMALI  /  SELISIH EMPAT DETIK TETAP TERBUKA — penyebab belum terbukti.",
+                    Text(localizedUiText(selectedLanguage, "ANOMALY STATUS  /  THE FOUR-SECOND DISCREPANCY REMAINS OPEN — its cause is unproven.", "STATUS ANOMALI  /  SELISIH EMPAT DETIK TETAP TERBUKA — penyebab belum terbukti."),
                         color = Color(0xFFE3C17B), fontSize = 10.sp, lineHeight = 16.sp)
                 }
             }
             when (Campaign01StoryNavigationPolicy.action(stage, casePhase)) {
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_OPERATIONS ->
                     CPPrimaryButton(
-                        if (stage in 11..13 || stage == 15) "BUKA PUSAT OPERASI" else beat.button,
+                        if (stage in 11..13 || stage == 15) localizedUiText(selectedLanguage, "OPEN OPERATIONS", "BUKA PUSAT OPERASI") else beat.button,
                         onOpenOperations
                     )
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_ANALYSIS ->
                     CPPrimaryButton(beat.button, onOpenAnalysis)
                 com.zeroday.cyberprotocol.data.StoryCaseAction.CONTINUE -> {
                     val nextLabel = when {
-                        stage == 11 && casePhase == CasePhase.ANALYSIS -> "LANJUTKAN KE PERBANDINGAN"
+                        stage == 11 && casePhase == CasePhase.ANALYSIS -> localizedUiText(selectedLanguage, "CONTINUE TO COMPARISON", "LANJUTKAN KE PERBANDINGAN")
                         stage == 11 && casePhase != CasePhase.BRIEFING && casePhase != CasePhase.INVESTIGATION ->
                             "LANJUTKAN CERITA"
                         stage == 12 && casePhase == CasePhase.OPERATIONAL_DECISION ->
-                            "LANJUTKAN KE ANALISIS WAKTU"
+                            localizedUiText(selectedLanguage, "CONTINUE TO TIMESTAMP ANALYSIS", "LANJUTKAN KE ANALISIS WAKTU")
                         stage == 13 && casePhase == CasePhase.OPERATIONAL_DECISION ->
-                            "LANJUTKAN KE KEPUTUSAN OPERASIONAL"
+                            localizedUiText(selectedLanguage, "CONTINUE TO OPERATIONAL DECISION", "LANJUTKAN KE KEPUTUSAN OPERASIONAL")
                         stage in 12..13 && (casePhase == CasePhase.DEBRIEFING || casePhase == CasePhase.COMPLETE) ->
                             "LANJUTKAN CERITA"
-                        stage == 14 && casePhase == CasePhase.DEBRIEFING -> "LANJUTKAN KE LAPORAN"
+                        stage == 14 && casePhase == CasePhase.DEBRIEFING -> localizedUiText(selectedLanguage, "CONTINUE TO REPORT", "LANJUTKAN KE LAPORAN")
                         stage == 14 && caseComplete -> beat.completedButton ?: beat.button
                         else -> beat.button
                     }
@@ -1529,7 +1529,7 @@ private fun StoryScreen(
                 }
             }
         }
-        Text("TITIK SIMPAN " + (stage - 1) + " / 14", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+        Text(localizedUiText(selectedLanguage, "CHECKPOINT ", "TITIK SIMPAN ") + (stage - 1) + " / 14", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
     }
 }
 
