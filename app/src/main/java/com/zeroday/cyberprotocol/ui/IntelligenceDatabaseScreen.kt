@@ -191,7 +191,7 @@ internal fun IntelligenceDatabaseScreen(
                     DatabaseValue(databaseText(selectedLanguage, "PROVENANCE", "ASAL-USUL"), localizedEvidenceOrigin(record.provenance.origin, selectedLanguage) + " / " + CaseLocalizedContent.evidenceSource(record, selectedLanguage))
                     record.provenance.sourceAssetId?.let { DatabaseValue(databaseText(selectedLanguage, "SHARED ASSET", "ASET BERSAMA"), it) }
                     record.provenance.sourcePath?.let { DatabaseValue(databaseText(selectedLanguage, "SOURCE PATH", "LOKASI SUMBER"), it) }
-                    DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
+                    DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${localizedEvidenceRelation(it.type, selectedLanguage)}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
                     DatabaseValue(databaseText(selectedLanguage, "REVIEW HISTORY", "RIWAYAT PENINJAUAN"), record.reviewHistory.joinToString { "${localizedEvidenceStatus(it.previousStatus, selectedLanguage)} → ${localizedEvidenceStatus(it.newStatus, selectedLanguage)} / ${it.reviewerId}: ${it.reason}" }.ifBlank { databaseText(selectedLanguage, "No reviews recorded", "Belum ada riwayat peninjauan") })
                     DatabaseValue(databaseText(selectedLanguage, "MISSION", "MISI"), record.missionId)
                     DatabaseValue(databaseText(selectedLanguage, "RECORD ID", "ID CATATAN"), record.id)
@@ -223,7 +223,7 @@ internal fun IntelligenceDatabaseScreen(
                     Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     DatabaseValue(databaseText(selectedLanguage, "SOURCE", "SUMBER"), CaseLocalizedContent.evidenceSource(record, selectedLanguage) + " / " + localizedEvidenceOrigin(record.provenance.origin, selectedLanguage))
                     DatabaseValue(databaseText(selectedLanguage, "STATUS", "STATUS"), if (record.id in caseProgress.discoveredEvidenceIds) databaseText(selectedLanguage, "REVIEWED", "DIPERIKSA") else databaseText(selectedLanguage, "NOT REVIEWED", "BELUM DIPERIKSA"))
-                    DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
+                    DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${localizedEvidenceRelation(it.type, selectedLanguage)}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
                     record.provenance.sourcePath?.let { DatabaseValue(databaseText(selectedLanguage, "SOURCE PATH", "LOKASI SUMBER"), it) }
                 }
             }
