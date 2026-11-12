@@ -81,8 +81,8 @@ internal fun PracticeScreen(
                 ) {
                     Row(Modifier.padding(13.dp), verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(mission.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            Text(mission.objectives.joinToString("  ·  ") { it.title },
+                            Text(CaseLocalizedContent.missionTitle(mission, selectedLanguage), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text(mission.objectives.mapIndexed { index, objective -> CaseLocalizedContent.objectiveTitle(mission, objective, index, selectedLanguage) }.joinToString("  ·  "),
                                 color = Color(0xFF9AB4B8), fontSize = 9.sp)
                             Text(
                                 when {
@@ -100,15 +100,22 @@ internal fun PracticeScreen(
             }
         } else {
             TextButton(onClick = onBackToList, enabled = !busy) { Text(localizedUiText(selectedLanguage, "‹  TRAINING LIST", "‹  DAFTAR LATIHAN"), color = Color(0xFF83C7D0)) }
-            Text(selectedMission.title, color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Black)
-            Text(selectedMission.briefing, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 18.sp)
+            Text(CaseLocalizedContent.missionTitle(selectedMission, selectedLanguage), color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Black)
+            Text(CaseLocalizedContent.missionBriefing(selectedMission, selectedLanguage), color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 18.sp)
+            CaseLocalizedContent.missionNextClue(selectedMission, selectedLanguage)?.let { clue ->
+                Panel {
+                    Text(localizedUiText(selectedLanguage, "NEXT INTELLIGENCE", "PETUNJUK BERIKUTNYA"), color = Color(0xFF83C7D0),
+                        fontSize = 9.sp, letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
+                    Text(clue, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 16.sp)
+                }
+            }
             Panel {
                 Text(localizedUiText(selectedLanguage, "TRAINING OBJECTIVES", "TUJUAN LATIHAN"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
                 selectedMission.objectives.forEachIndexed { index, objective ->
-                    Text("${index + 1}. ${objective.title}", color = Color.White,
+                    Text("${index + 1}. ${CaseLocalizedContent.objectiveTitle(selectedMission, objective, index, selectedLanguage)}", color = Color.White,
                         fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                    Text(objective.description, color = Color(0xFF9AB4B8), fontSize = 10.sp, lineHeight = 15.sp)
+                    Text(CaseLocalizedContent.objectiveDescription(selectedMission, objective, index, selectedLanguage), color = Color(0xFF9AB4B8), fontSize = 10.sp, lineHeight = 15.sp)
                 }
             }
             if (selectedMission.runtimeVariables.isNotEmpty()) {
@@ -135,7 +142,7 @@ internal fun PracticeScreen(
             }
             if (hintLevel > 0) {
                 selectedMission.hints.firstOrNull { it.level == hintLevel }?.let { hint ->
-                    Text(localizedUiText(selectedLanguage, "HINT $hintLevel/3\n${hint.message}", "PETUNJUK $hintLevel/3\n${hint.message}"), color = Color(0xFF83C7D0),
+                    Text(localizedUiText(selectedLanguage, "HINT $hintLevel/3\n${CaseLocalizedContent.hint(selectedMission, hint, selectedLanguage)}", "PETUNJUK $hintLevel/3\n${hint.message}"), color = Color(0xFF83C7D0),
                         fontSize = 11.sp, lineHeight = 17.sp)
                 }
             }
