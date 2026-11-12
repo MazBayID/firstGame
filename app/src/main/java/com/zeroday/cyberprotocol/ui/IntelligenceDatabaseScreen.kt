@@ -165,7 +165,7 @@ internal fun IntelligenceDatabaseScreen(
                     modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(record.title, Modifier.weight(1f), color = Color.White,
+                            Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), Modifier.weight(1f), color = Color.White,
                                 fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             Text(evidenceLabel(record.status, selectedLanguage), color = color, fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold)
@@ -173,21 +173,21 @@ internal fun IntelligenceDatabaseScreen(
                         Text(record.id, color = Color(0xFF8AA8AE), fontSize = 8.sp)
                         Text(
                             if (record.id in concealedCaseEvidenceIds) databaseText(selectedLanguage, "Source content has not been opened.", "Isi sumber belum dibuka.")
-                            else record.summary,
+                            else CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
                             color = Color(0xFF9AB4B8), fontSize = 10.sp, maxLines = 2
                         )
                     }
                 }
             }
             selectedEvidence?.let { record ->
-                DatabaseDetailPanel(databaseText(selectedLanguage, "EVIDENCE RECORD", "CATATAN BUKTI"), record.title) {
+                DatabaseDetailPanel(databaseText(selectedLanguage, "EVIDENCE RECORD", "CATATAN BUKTI"), CaseLocalizedContent.evidenceTitle(record, selectedLanguage)) {
                     Text(
                         if (record.id in concealedCaseEvidenceIds) databaseText(selectedLanguage, "Source content remains locked until the original record is reviewed.", "Isi sumber terkunci sampai catatan asli diperiksa.")
-                        else record.summary,
+                        else CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
                         color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
                     )
                     DatabaseValue(databaseText(selectedLanguage, "STATUS", "STATUS"), evidenceLabel(record.status, selectedLanguage))
-                    DatabaseValue(databaseText(selectedLanguage, "SOURCE", "SUMBER"), record.source)
+                    DatabaseValue(databaseText(selectedLanguage, "SOURCE", "SUMBER"), CaseLocalizedContent.evidenceSource(record, selectedLanguage))
                     DatabaseValue(databaseText(selectedLanguage, "PROVENANCE", "ASAL-USUL"), record.provenance.origin.name + " / " + record.provenance.sourceLabel)
                     record.provenance.sourceAssetId?.let { DatabaseValue(databaseText(selectedLanguage, "SHARED ASSET", "ASET BERSAMA"), it) }
                     record.provenance.sourcePath?.let { DatabaseValue(databaseText(selectedLanguage, "SOURCE PATH", "LOKASI SUMBER"), it) }
@@ -220,7 +220,7 @@ internal fun IntelligenceDatabaseScreen(
                 DatabaseValue(databaseText(selectedLanguage, "DEBRIEF", "DEBRIEFING"), if (caseProgress.debriefViewed) databaseText(selectedLanguage, "COMPLETE", "SELESAI") else databaseText(selectedLanguage, "INCOMPLETE", "BELUM SELESAI"))
                 caseRecords.forEach { record ->
                     HorizontalDivider(color = Color(0xFF293A40))
-                    Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     DatabaseValue(databaseText(selectedLanguage, "SOURCE", "SUMBER"), record.provenance.sourceLabel + " / " + record.provenance.origin.name)
                     DatabaseValue(databaseText(selectedLanguage, "STATUS", "STATUS"), if (record.id in caseProgress.discoveredEvidenceIds) databaseText(selectedLanguage, "REVIEWED", "DIPERIKSA") else databaseText(selectedLanguage, "NOT REVIEWED", "BELUM DIPERIKSA"))
                     DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
