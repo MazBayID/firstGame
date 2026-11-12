@@ -1020,7 +1020,7 @@ private fun CyberProtocolGameContentBody(
                 if (nextRankXp == null) append(localizedUiText(selectedLanguage, "MAXIMUM RANK REACHED", "RANK MAKSIMUM TERCAPAI"))
                 else append(localizedUiText(selectedLanguage, "NEXT RANK IN: ", "MENUJU RANK BERIKUTNYA: ")).append(nextRankXp - currentGameState.experience).append(" XP")
             },
-            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
+            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
         )
         GameScreen.ARCHIVES -> InfoAppScreen(
             localizedUiText(selectedLanguage, "ARCHIVES", "ARSIP"),
@@ -1062,7 +1062,7 @@ private fun CyberProtocolGameContentBody(
                     localizedUiText(selectedLanguage, "FIRST CONTACT / CASE IN PROGRESS", "FIRST CONTACT / KASUS MASIH BERJALAN")
                 })
             },
-            CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
+            CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
         )
         GameScreen.SETTINGS -> SettingsScreen(
             selectedLanguage = selectedLanguage,
@@ -1263,7 +1263,7 @@ private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBa
         "KEPUTUSAN OPERASIONAL", "LAPORAN INVESTIGASI"
     )
 
-    GamePage(localizedUiText(selectedLanguage, "CAMPAIGN", "KAMPANYE"), localizedUiText(selectedLanguage, "A.E.G.I.S. / STORY OPERATIONS", "A.E.G.I.S. / OPERASI CERITA"), onBack, onHub) {
+    GamePage(localizedUiText(selectedLanguage, "CAMPAIGN", "KAMPANYE"), localizedUiText(selectedLanguage, "A.E.G.I.S. / STORY OPERATIONS", "A.E.G.I.S. / OPERASI CERITA"), onBack, onHub, selectedLanguage) {
         Box(
             Modifier.fillMaxWidth()
                 .background(
@@ -1388,7 +1388,7 @@ private fun StoryScreen(
     onRun: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
 ) {
-    GamePage(localizedUiText(selectedLanguage, "FIRST CONTACT", "KONTAK PERTAMA"), localizedUiText(selectedLanguage, "CHAPTER 001  /  RECRUITMENT", "BAB 001  /  REKRUTMEN"), onBack, onHub) {
+    GamePage(localizedUiText(selectedLanguage, "FIRST CONTACT", "KONTAK PERTAMA"), localizedUiText(selectedLanguage, "CHAPTER 001  /  RECRUITMENT", "BAB 001  /  REKRUTMEN"), onBack, onHub, selectedLanguage) {
         Box(
             Modifier.fillMaxWidth()
                 .background(
@@ -1559,7 +1559,7 @@ private fun MissionDebriefScreen(
     nextClue: String?,
     onContinue: () -> Unit
 ) {
-    GamePage(localizedUiText(selectedLanguage, "MISSION DEBRIEF", "DEBRIEF MISI"), localizedUiText(selectedLanguage, "A.E.G.I.S. / VERIFICATION RESULTS", "A.E.G.I.S. / HASIL VERIFIKASI"), onContinue, null) {
+    GamePage(localizedUiText(selectedLanguage, "MISSION DEBRIEF", "DEBRIEF MISI"), localizedUiText(selectedLanguage, "A.E.G.I.S. / VERIFICATION RESULTS", "A.E.G.I.S. / HASIL VERIFIKASI"), onContinue, null, selectedLanguage) {
         GamePanel {
             Text(localizedUiText(selectedLanguage, "MISSION VERIFIED", "MISI TERVERIFIKASI"), color = CyberPalette.Success, fontSize = 10.sp, fontWeight = FontWeight.Bold)
             Text(title, color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Black)
@@ -1581,7 +1581,7 @@ private fun MissionDebriefScreen(
 
 @Composable
 private fun AppHubScreen(gameState: GameState, selectedLanguage: GameLanguage, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
-    GamePage(localizedUiText(selectedLanguage, "APP HUB", "PUSAT APLIKASI"), localizedUiText(selectedLanguage, "A.E.G.I.S. SECURE TOOLS", "PERANGKAT AMAN A.E.G.I.S."), onClose, null) {
+    GamePage(localizedUiText(selectedLanguage, "APP HUB", "PUSAT APLIKASI"), localizedUiText(selectedLanguage, "A.E.G.I.S. SECURE TOOLS", "PERANGKAT AMAN A.E.G.I.S."), onClose, null, selectedLanguage) {
         GamePanel {
             Text(localizedUiText(selectedLanguage, "AUTHORIZED APPLICATIONS", "APLIKASI YANG DIIZINKAN"), color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
             Text(localizedUiText(selectedLanguage, "Choose an application. Closing it returns you to the operation you came from.", "Pilih aplikasi. Menutupnya akan mengembalikanmu ke operasi sebelumnya."),
@@ -2039,7 +2039,7 @@ private fun TerminalScreen(
         outputScrollState.animateScrollTo(outputScrollState.maxValue)
     }
 
-    GamePage("TERMINAL", workspaceLabel, onBack, null) {
+    GamePage("TERMINAL", workspaceLabel, onBack, null, selectedLanguage) {
         GamePanel {
             Text(currentDirectory, color = Color(0xFF8CC8A2), fontSize = 10.sp, fontFamily = FontFamily.Monospace)
             Surface(color = Color(0xFF070B0E), shape = RoundedCornerShape(8.dp),
@@ -2085,7 +2085,7 @@ private fun SettingsScreen(
     onReducedMotionChange: (Boolean) -> Unit,
     onBack: () -> Unit
 ) {
-    GamePage(localizedUiText(selectedLanguage, "SETTINGS", "PENGATURAN"), localizedUiText(selectedLanguage, "A.E.G.I.S. DEVICE PREFERENCES", "PREFERENSI PERANGKAT A.E.G.I.S."), onBack, null) {
+    GamePage(localizedUiText(selectedLanguage, "SETTINGS", "PENGATURAN"), localizedUiText(selectedLanguage, "A.E.G.I.S. DEVICE PREFERENCES", "PREFERENSI PERANGKAT A.E.G.I.S."), onBack, null, selectedLanguage) {
         GamePanel {
             Row(
                 Modifier.fillMaxWidth(),
@@ -2190,8 +2190,8 @@ private fun DatabaseScreen(gameState: GameState, onBack: () -> Unit) {
 }
 
 @Composable
-private fun InfoAppScreen(title: String, subtitle: String, body: String, icon: Int, onBack: () -> Unit) {
-    GamePage(title, subtitle, onBack, null) {
+private fun InfoAppScreen(title: String, subtitle: String, body: String, icon: Int, onBack: () -> Unit, language: GameLanguage = GameLanguage.INDONESIAN) {
+    GamePage(title, subtitle, onBack, null, language) {
         GamePanel {
             androidx.compose.foundation.Image(painterResource(icon), null, Modifier.size(54.dp))
             Text(body, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 22.sp)
@@ -2201,7 +2201,8 @@ private fun InfoAppScreen(title: String, subtitle: String, body: String, icon: I
 
 @Composable
 private fun GamePage(title: String, subtitle: String, onBack: () -> Unit,
-    onHub: (() -> Unit)?, content: @Composable ColumnScope.() -> Unit) {
+    onHub: (() -> Unit)?, language: GameLanguage = GameLanguage.INDONESIAN,
+    content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxSize().background(CyberPalette.Obsidian)
         .verticalScroll(rememberScrollState()).padding(horizontal = 18.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -2210,8 +2211,8 @@ private fun GamePage(title: String, subtitle: String, onBack: () -> Unit,
                 Text(title, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Black, letterSpacing = 1.sp)
                 Text(subtitle, color = CyberPalette.SteelGray, fontSize = 9.sp, letterSpacing = 0.8.sp)
             }
-            if (onHub != null) TextButton(onClick = onHub) { Text("APLIKASI") }
-            TextButton(onClick = onBack) { Text("KEMBALI") }
+            if (onHub != null) TextButton(onClick = onHub) { Text(localizedUiText(language, "APPS", "APLIKASI")) }
+            TextButton(onClick = onBack) { Text(localizedUiText(language, "BACK", "KEMBALI")) }
         }
         HorizontalDivider(color = CyberPalette.Divider)
         content()
