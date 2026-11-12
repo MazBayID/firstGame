@@ -1008,46 +1008,49 @@ The intended outcome is that a complete beginner can enter Cyber Protocol withou
 - If a requested implementation reveals a genuine design gap or requires changing an established decision, update this document first (or in the same coherent change) and clearly identify the design decision before implementing dependent code.
 - Code must implement the design; the design must not be retroactively reinterpreted to excuse behavior that contradicts the approved experience.
 - When a feature is only partially implemented, document its actual status accurately. A screen or placeholder is not proof that the underlying gameplay, learning, persistence, or evaluation behavior works.
-- All CI, APK, signing, and device-validation work must follow the workflow separation and permanent-signing requirements in §24. Android Tests must remain test-only; only the signed Release workflow may produce an APK for device testing.
-- Keep changes on the active development branch and do not merge into `main` until the game is finished and the user explicitly authorizes the merge.
+- All CI, APK, signing, and device-validation work must follow the single-APK build → test → release pipeline and permanent-signing requirements in §24. One candidate commit produces one installable game APK; that exact signed APK is tested and, only if it passes, released.
+- `main` is the sole long-lived development and release branch. Do not maintain a separate permanent development branch or a parallel APK-producing workflow.
 
 
-# 24. Android Release Signing, CI Separation, and Safe Updates
+# 24. Single-APK Build, Test, Release, and Permanent Signing
 
-Cyber Protocol uses a permanent Android release-signing identity. This is a product-maintenance requirement, not merely a build convenience. The CI pipeline has a strict separation between automated tests and the APK intended for installation on physical devices.
+Cyber Protocol has **one installable game APK per candidate commit**. The APK follows one continuous pipeline: **build once → test that exact APK → release that same APK**. Building separate Debug and Release APKs for different testing and distribution stages is prohibited. A test result for one binary must never be used to approve a different binary.
 
-## 24.1 — Android Tests workflow: tests only
+## 24.1 — One artifact, one pipeline
 
-- The **Android Tests** GitHub Actions workflow is exclusively a validation workflow.
-- It runs the Python runner test suite and Android/Kotlin unit tests (including `testDebugUnitTest`).
-- It must not run APK-producing tasks such as `assembleDebug`, `assembleRelease`, `bundleDebug`, or `bundleRelease`.
-- It must not create, sign, upload, publish, or retain an APK artifact.
-- It must not read, restore, or require the permanent release keystore or any release-signing secrets.
-- It runs for pushes to `main` and the active development branch, for pull requests targeting `main`, and by manual dispatch where supported.
-- A failed test run must be reported as failed; it must never create a device-test APK. Pull-request test runs never produce a Release APK.
+- Each candidate commit on `main` goes through one CI pipeline with a clear sequence: source validation, one signed APK build, APK validation, then publication.
+- Source-level checks (including the Python runner tests and Android/Kotlin unit tests) may run before packaging. These checks must not produce a second installable game APK.
+- After source validation passes, CI builds **exactly one installable game APK** using the production Release configuration and the permanent release-signing identity.
+- CI must not build a separate Debug APK, a second Release APK, or another installable game APK for testing, staging, or distribution.
+- The game APK is built once. CI must not rebuild or re-sign it after testing. The exact file produced by the build step is the file passed to every subsequent APK test and ultimately released.
+- If any validation fails, the candidate is rejected and no release is published. After a code change, the pipeline starts again for the new commit and produces one new candidate APK.
+- Keep the tested APK's SHA-256 digest and source commit SHA with the validation result so the released artifact can be traced to the exact tested binary.
 
-## 24.2 — Android Release APK workflow: signed device artifact only
+## 24.2 — Test the built APK before release
 
-- The **Android Release APK** workflow is the only CI workflow authorized to produce an APK for physical-device testing or distribution.
-- It runs only for pushes to `main` or the active development branch, or a manual dispatch explicitly targeting one of those branches; it must not run for pull-request events.
-- It contains a mandatory source-validation job that runs the Python runner tests and Android/Kotlin unit tests for the exact source commit. The Release build job must depend on that job's success. A failed or cancelled validation job must prevent APK production.
-- It builds the Release variant only (for example, `assembleRelease`). It must not build or publish a Debug APK.
-- The resulting `app-release.apk` must be signed with the permanent release keystore and signing certificate. No debug key, newly generated key, or temporary replacement identity may be used.
-- Restore the keystore only into the ephemeral CI runner, restrict its file permissions, validate the alias without printing secrets, and remove the temporary key material after the job.
-- Verify the APK signature and confirm that the package identity, supported ABI, and `versionCode` match the release configuration before uploading the artifact.
-- The artifact must contain only the signed Release APK intended for device testing. Keep artifact retention limited and do not upload signing material, intermediate keystores, or secret-bearing files.
-- Both the validation job and Release build job must check out the exact same commit SHA. If a newer commit is pushed while validation is running, the in-progress release must remain tied to its own tested commit.
+- After the single APK is built and signed, CI verifies its signature, package identity, version code, supported ABIs, and expected production configuration.
+- APK-level smoke and installation checks must use that exact built APK, not a separately built test variant.
+- Functional, runtime, and acceptance checks that can be automated must run against the same APK that will be published. Where physical-device verification is required, install and test this same artifact on the Android device.
+- Source-level unit tests and APK-level tests serve different purposes: source tests validate code before packaging; APK-level tests validate the actual installable binary after packaging. Both are required where applicable, but neither stage may create a second installable game APK.
+- A failed, skipped, cancelled, or incomplete required test blocks publication. A successful source-test result alone does not authorize release if APK-level validation has not passed.
+- Do not publish a "test APK" and then build another "release APK". Do not replace the tested file with a newly generated file after validation.
+- Publish only after all required checks pass. The published artifact must be byte-for-byte the same APK that passed validation, as confirmed by its SHA-256 digest.
 
-## 24.3 — Permanent identity and safe updates
+## 24.3 — Permanent signing identity
+
+- The one installable game APK is signed with the project's permanent Android release keystore. There is no separate debug-signed device-test APK.
+- Every release candidate and every published update must use the same permanent release keystore and signing certificate. Never generate a replacement key for routine builds or updates.
+- Restore the keystore only into the ephemeral CI runner, restrict its file permissions, validate the alias without printing secrets, and remove temporary key material after the job.
+- The keystore and passwords are private release credentials. Store them only in the maintainer's secure offline backup and protected GitHub Actions Secrets. Never commit the keystore, Base64 keystore data, passwords, or signing material to Git, logs, artifacts, or this public design file.
+- Verify the APK signature after building and again verify the released artifact's digest against the tested APK. Never expose signing secrets in logs or artifacts.
+- The permanent keystore must be backed up securely by the maintainer. Losing it may make future in-place updates impossible for installations signed with that key.
+
+## 24.4 — Safe updates and device acceptance
 
 - The release application must retain its existing `applicationId` across updates. Do not change the package identity after the first externally distributed signed build unless a separate migration strategy is deliberately approved.
-- Every release update must be signed with the same permanent release keystore and signing certificate used for the previous release. Never generate a replacement key for routine updates.
-- The keystore and all passwords are private release credentials. Store them only in the maintainer's secure offline backup and the repository's protected GitHub Actions Secrets. Never commit the keystore, Base64 keystore data, passwords, or signing material to Git, logs, artifacts, documentation, or this public design file.
 - Every published update must have a `versionCode` strictly greater than the previously distributed build. A version name may describe the release, but Android uses `versionCode` to determine update order.
 - A signed update should install over the existing app without uninstalling it when the application ID and signing identity match and the version code is higher. Preserve local campaign data during normal updates.
 - Database and save-state changes must use explicit, tested migrations. App updates must not silently reset campaign progress, player code, evidence, settings, or workspaces. Back up and recover local state safely when a migration fails.
 - Never recommend uninstalling a user's existing installation as the first response to an update failure. Diagnose package identity, signing-certificate mismatch, version-code ordering, device compatibility, and installer errors first. Warn about data loss before any destructive recovery step.
-- Debug builds may be used for internal development diagnostics only when separately and explicitly needed; they are never the project’s device-test, acceptance, or distribution artifact. The permanent release key must not be assigned as the Debug signing identity.
-- The release process is not complete until CI verifies the Release APK signature and a physical Android device confirms both clean installation and in-place update over the prior signed Release build, including preservation of local game data. All physical-device acceptance testing uses the signed Release APK, never a Debug APK.
-
-The permanent release key must be backed up securely by the maintainer. Losing it may make future in-place updates impossible for installations signed with that key.
+- Physical-device installation, update, and acceptance testing must use the exact single signed APK produced by the pipeline. Confirm both clean installation and in-place update over the prior signed build, including preservation of local game data.
+- A release is complete only when the required automated checks and APK-level validation pass, the exact tested APK is published, and required physical-device acceptance checks are confirmed.
