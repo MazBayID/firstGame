@@ -68,7 +68,7 @@ internal object GameStateCodec {
                 val recorded = item.optLong("recordedAtEpochMillis", 0L).coerceAtLeast(0L)
                 val provenanceJson = item.optJSONObject("provenance")
                 val provenance = EvidenceProvenance(
-                    origin = provenanceJson?.optString("origin").toEnum(EvidenceOrigin.LEGACY) ?: EvidenceOrigin.LEGACY,
+                    origin = provenanceJson?.optString("origin")?.toEnum(EvidenceOrigin.LEGACY) ?: EvidenceOrigin.LEGACY,
                     sourceLabel = provenanceJson?.optString("sourceLabel").orEmpty().ifBlank { source },
                     sourceAssetId = provenanceJson?.nullableString("sourceAssetId"),
                     sourcePath = provenanceJson?.nullableString("sourcePath"),
