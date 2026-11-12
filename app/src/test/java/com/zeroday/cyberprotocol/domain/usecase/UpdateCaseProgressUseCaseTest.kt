@@ -38,7 +38,7 @@ class UpdateCaseProgressUseCaseTest {
         assertThrows(IllegalArgumentException::class.java) { useCase.analyzeEvidence(definition, "primary") }
         useCase.discoverEvidence(definition, "secondary")
         useCase.analyzeEvidence(definition, "primary")
-        assertThrows(IllegalArgumentException::class.java) { useCase.selectDecision(definition, "monitor") }
+        assertThrows(IllegalArgumentException::class.java) { useCase.selectDecision(definition, "monitor", "Kedua sumber berbeda empat detik; penyebabnya belum terbukti.") }
         useCase.analyzeEvidence(definition, "secondary")
         useCase.analyzeEvidence(definition, "primary")
         assertEquals(CasePhase.OPERATIONAL_DECISION,
@@ -84,7 +84,7 @@ class UpdateCaseProgressUseCaseTest {
         useCase.analyzeEvidence(definition, "optional")
         useCase.analyzeEvidence(definition, "primary")
         useCase.analyzeEvidence(definition, "secondary")
-        useCase.selectDecision(definition, "pause")
+        useCase.selectDecision(definition, "pause", "Tahan operasi sampai sumber tambahan diperiksa.")
         assertEquals("pause", repo.load().caseProgress.getValue("case_a").selectedDecisionId)
     }
 

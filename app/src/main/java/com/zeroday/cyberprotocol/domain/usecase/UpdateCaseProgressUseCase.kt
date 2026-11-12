@@ -47,10 +47,26 @@ class UpdateCaseProgressUseCase(private val repository: GameStateRepository) {
         return update(definition) { it.copy(analyzedEvidenceIds = it.analyzedEvidenceIds + evidenceId) }
     }
 
-    fun selectDecision(definition: CaseDefinition, decisionId: String): GameState {
+    fun selectAnalysisConclusion(definition: CaseDefinition, conclusionId: String): GameState {
         val current = repository.load()
         val progress = current.caseProgress[definition.id] ?: CaseProgress(definition.id)
-        if (progress.selectedDecisionId == decisionId) return current
+        if (progress.analysisConclusionId == conclusionId) return current
+        require(CasePhaseEvaluator.phase(definition, progress) == CasePhase.ANALYSIS) {
+            "Required evidence must be analyzed before choosing an analytical conclusion."
+        }
+        require(CasePhaseEvaluator.canSelectAnalysisConclusion(definition, progress, conclusionId)) {
+            "The analytical conclusion is not available for the current evidence."
+        }
+        return update(definition) { it.copy(analysisConclusionId = conclusionId) }
+    }
+
+    fun selectDecision(definition: CaseDefinition, decisionId: String, rationale: String): GameState {
+        val current = repository.load()
+        val progress = current.caseProgress[definition.id] ?: CaseProgress(definition.id)
+        val normalizedRationale = rationale.trim()
+        require(normalizedRationale.isNotBlank()) { "A decision rationale is required." }
+        require(normalizedRationale.length <= 600) { "Decision rationale is too long." }
+        if (progress.selectedDecisionId == decisionId && progress.decisionRationale == normalizedRationale) return current
         require(CasePhaseEvaluator.phase(definition, progress) == CasePhase.OPERATIONAL_DECISION) {
             "Required evidence must be discovered and analyzed before an operational decision."
         }
@@ -60,7 +76,9 @@ class UpdateCaseProgressUseCase(private val repository: GameStateRepository) {
         require(progress.selectedDecisionId == null) {
             "A decision has already been recorded for this case."
         }
-        return update(definition) { it.copy(selectedDecisionId = decisionId) }
+        return update(definition) {
+            it.copy(selectedDecisionId = decisionId, decisionRationale = normalizedRationale)
+        }
     }
 
     fun acknowledgeDebrief(definition: CaseDefinition): GameState {

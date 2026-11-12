@@ -22,7 +22,7 @@ data class GameState(
     val lastCheckpoint: String = "new_game",
     val updatedAtEpochMillis: Long = 0L
 ) {
-    companion object { const val CURRENT_SCHEMA_VERSION = 8 }
+    companion object { const val CURRENT_SCHEMA_VERSION = 9 }
 }
 
 enum class EvidenceStatus { UNVERIFIED, INFERRED, CORROBORATED, CONFIRMED, DISPUTED, RETRACTED }

@@ -2,6 +2,7 @@ package com.zeroday.cyberprotocol.data
 
 import com.zeroday.cyberprotocol.core.model.CaseDecisionOption
 import com.zeroday.cyberprotocol.core.model.CaseDefinition
+import com.zeroday.cyberprotocol.core.model.CaseAnalysisOption
 import com.zeroday.cyberprotocol.core.model.MissionArchetype
 
 /** Authored case contracts for the guided intelligence campaign. */
@@ -16,6 +17,29 @@ object Campaign01CaseCatalog {
         briefing = "A.E.G.I.S. menemukan dua catatan penerimaan untuk satu transmisi latihan dengan referensi RX-14. Isi dan referensinya cocok, tetapi waktu yang tercatat berbeda empat detik. Tugasmu adalah memeriksa kedua sumber, membandingkan temuan, lalu menentukan langkah yang proporsional. Jangan menganggap selisih waktu sebagai bukti manipulasi.",
         primaryArchetype = MissionArchetype.INVESTIGATION,
         requiredEvidenceIds = EvidenceAssetCatalog.assets.map { it.evidenceId }.toSet(),
+        analysisOptions = listOf(
+            CaseAnalysisOption(
+                id = "observed_discrepancy_only",
+                title = "Selisih empat detik teramati; penyebab belum terbukti",
+                description = "Kedua sumber menyebut RX-14 dengan waktu 09:41:12 dan 09:41:16. Data membuktikan selisih, tetapi belum mengidentifikasi penyebab.",
+                supportedByEvidence = true,
+                feedback = "KESIMPULAN DIDUKUNG. Selisih empat detik adalah fakta yang teramati; penyebabnya tetap belum diketahui."
+            ),
+            CaseAnalysisOption(
+                id = "tampering_confirmed",
+                title = "Manipulasi waktu telah terbukti",
+                description = "Anggap perbedaan waktu sebagai bukti bahwa salah satu sistem mengubah catatan.",
+                supportedByEvidence = false,
+                feedback = "KESIMPULAN BELUM DIDUKUNG. Perbedaan waktu tidak membuktikan manipulasi atau menunjukkan siapa yang mengubah data."
+            ),
+            CaseAnalysisOption(
+                id = "clock_sync_cause",
+                title = "Sinkronisasi jam adalah penyebabnya",
+                description = "Tetapkan perbedaan sinkronisasi jam sebagai penyebab pasti.",
+                supportedByEvidence = false,
+                feedback = "KESIMPULAN BELUM DIDUKUNG. Sinkronisasi jam adalah kemungkinan yang perlu diuji dengan log tambahan, bukan penyebab yang sudah terbukti."
+            )
+        ),
         decisionOptions = listOf(
             CaseDecisionOption("record_discrepancy", "Catat anomali tanpa menetapkan penyebab",
                 "Laporkan kedua waktu dan selisih empat detik sebagai fakta. Tandai penyebabnya belum diketahui."),

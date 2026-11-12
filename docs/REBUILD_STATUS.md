@@ -321,3 +321,13 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Operations displays the chapter reward and updated total XP after completion.
 - A ViewModel regression test covers exactly-once award behavior. Source-test workflow verification is pending.
 - This is a progression integration improvement, not a claim that the complete First Contact campaign is finished.
+
+
+## RX-14 analytical conclusion and decision rationale
+
+- After both required records are analyzed, the player must select an analytical conclusion before operational decisions unlock.
+- The supported conclusion states only what the sources establish: RX-14 is recorded four seconds apart; the cause is not established.
+- Unsupported causal claims receive deterministic feedback and keep the player in Analysis so they can revise the conclusion without losing progress.
+- An operational decision now requires a non-empty player-authored rationale (maximum 600 characters); the rationale is persisted and shown in debrief.
+- Save schema 9 persists the selected analysis conclusion and decision rationale. Schema-8 saves receive safe defaults without losing their existing decision/progress.
+- Source and domain tests cover conclusion gating, retry behavior, rationale persistence, and schema migration. CI verification is pending.

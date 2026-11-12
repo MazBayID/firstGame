@@ -60,6 +60,30 @@ class CasePhaseEvaluatorTest {
         assertEquals(CasePhase.OPERATIONAL_DECISION, CasePhaseEvaluator.phase(definition, progress))
     }
 
+    @Test fun supportedAnalyticalConclusionIsRequiredBeforeOperationalDecision() {
+        val analyticalDefinition = definition.copy(
+            analysisOptions = listOf(
+                CaseAnalysisOption("supported", "Observed fact", "Only the four-second difference is established.", true,
+                    "The records support the observed difference only."),
+                CaseAnalysisOption("unsupported", "Cause identified", "The cause is established.", false,
+                    "No source establishes a cause.")
+            )
+        )
+        var progress = CaseProgress(
+            caseId = analyticalDefinition.id,
+            briefingAcknowledged = true,
+            discoveredEvidenceIds = analyticalDefinition.requiredEvidenceIds,
+            analyzedEvidenceIds = analyticalDefinition.requiredEvidenceIds
+        )
+
+        assertEquals(CasePhase.ANALYSIS, CasePhaseEvaluator.phase(analyticalDefinition, progress))
+        assertTrue(CasePhaseEvaluator.canSelectAnalysisConclusion(analyticalDefinition, progress, "supported"))
+        progress = progress.copy(analysisConclusionId = "unsupported")
+        assertEquals(CasePhase.ANALYSIS, CasePhaseEvaluator.phase(analyticalDefinition, progress))
+        progress = progress.copy(analysisConclusionId = "supported")
+        assertEquals(CasePhase.OPERATIONAL_DECISION, CasePhaseEvaluator.phase(analyticalDefinition, progress))
+    }
+
     @Test fun caseProgressMustMatchCaseDefinition() {
         val error = runCatching {
             CasePhaseEvaluator.phase(definition, CaseProgress("another_case"))

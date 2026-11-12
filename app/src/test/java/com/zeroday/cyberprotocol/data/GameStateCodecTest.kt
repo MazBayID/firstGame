@@ -6,6 +6,7 @@ import com.zeroday.cyberprotocol.core.model.GameState
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -30,7 +31,9 @@ class GameStateCodecTest {
                 briefingAcknowledged = true,
                 discoveredEvidenceIds = setOf("ev_a", "ev_optional"),
                 analyzedEvidenceIds = setOf("ev_a"),
+                analysisConclusionId = "observed_discrepancy_only",
                 selectedDecisionId = "monitor",
+                decisionRationale = "The observed facts do not establish a cause.",
                 debriefViewed = false
             )),
             evidence = listOf(
@@ -73,6 +76,26 @@ class GameStateCodecTest {
         assertEquals(0, decoded.experience)
         assertEquals(0, decoded.clearance)
         assertTrue(decoded.unlockedApps.isNotEmpty())
+    }
+
+    @Test
+    fun schemaEightCaseProgressMigratesWithSafeAnalysisAndRationaleDefaults() {
+        val legacyProgress = JSONObject()
+            .put("caseId", "case_alpha")
+            .put("briefingAcknowledged", true)
+            .put("discoveredEvidenceIds", org.json.JSONArray().put("ev_a"))
+            .put("analyzedEvidenceIds", org.json.JSONArray().put("ev_a"))
+            .put("selectedDecisionId", "monitor")
+        val snapshot = JSONObject()
+            .put("schemaVersion", 8)
+            .put("caseProgress", JSONObject().put("case_alpha", legacyProgress))
+
+        val decoded = GameStateCodec.decode(snapshot)
+        val progress = decoded.caseProgress.getValue("case_alpha")
+
+        assertNull(progress.analysisConclusionId)
+        assertEquals("", progress.decisionRationale)
+        assertEquals("monitor", progress.selectedDecisionId)
     }
 
     @Test

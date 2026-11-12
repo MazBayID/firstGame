@@ -1168,3 +1168,10 @@ Cyber Protocol is developed as a complete, integrated game before release packag
 - Diagnose package identity, signing-certificate mismatch, version ordering, device compatibility, and installer errors before recommending uninstall. Warn about data loss before destructive recovery.
 - Physical-device acceptance uses the exact signed Final APK: test clean installation, in-place update over the previous signed build, and preservation of local game data.
 - Emulator smoke testing is not a substitute for physical-device acceptance. A Final APK is **CI-final and emulator-smoke-tested** after the final pipeline passes; full device acceptance/production readiness still requires physical-device checks.
+
+
+## RX-14 analytical and operational evaluation contract
+
+The player must separate observation from causal interpretation. After reading and analyzing both original receipt sources, the player records a conclusion. The supported conclusion is limited to the observable four-second timestamp difference; claims of proven tampering or a proven clock-synchronization cause are unsupported by the current evidence and must remain retryable rather than silently advancing the case.
+
+An operational decision must include a player-authored rationale grounded in the available evidence. The selected decision and rationale are persisted and included in the case debrief. The player may choose a proportionate follow-up request or explicitly state that the evidence is insufficient. The case reward is granted once after debrief completion.

@@ -370,3 +370,12 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - A startup repair path grants the missing reward to existing completed saves.
 - Operations exposes the earned reward and total campaign XP.
 - Automated regression coverage checks reward amount, Intelligence competency attribution, ledger entry, and idempotency. Source-test workflow verification is pending.
+
+
+## RX-14 analytical conclusion and decision rationale
+
+- The case now has deterministic analytical options. Only the conclusion that records the four-second discrepancy while leaving its cause unresolved is supported by the available sources.
+- Unsupported causal conclusions remain retryable and do not advance the player into operational decision.
+- The player must provide a non-empty rationale (up to 600 characters) with an operational decision; it is persisted in `CaseProgress` and displayed during debrief.
+- Save schema 9 adds `analysisConclusionId` and `decisionRationale`; schema-8 case progress decodes with safe defaults and retains existing decision state.
+- Tests cover supported/unsupported conclusions, progression gates, retry behavior, and codec migration. Full CI and interactive acceptance are still pending.

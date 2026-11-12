@@ -33,7 +33,8 @@ internal fun OperationsScreen(
     onReadSource: (String) -> String?,
     onDiscoverEvidence: (String) -> Unit,
     onAnalyzeEvidence: (String) -> Unit,
-    onSelectDecision: (String) -> Unit,
+    onSelectAnalysisConclusion: (String) -> Unit,
+    onSelectDecision: (String, String) -> Unit,
     onAcknowledgeDebrief: () -> Unit
 ) {
     val phase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
@@ -48,6 +49,8 @@ internal fun OperationsScreen(
         CasePhase.DEBRIEFING, CasePhase.COMPLETE -> 5
     }
     val decision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
+    val analysisConclusion = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
+    var decisionRationale by remember(caseProgress.caseId) { mutableStateOf(caseProgress.decisionRationale) }
 
     Column(
         Modifier.fillMaxSize()
@@ -128,18 +131,60 @@ internal fun OperationsScreen(
                 Text(caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size.toString() +
                     " dari " + caseDefinition.requiredEvidenceIds.size + " sumber telah dianalisis.",
                     color = Color(0xFF91A8AD), fontSize = 10.sp)
+                val allRequiredAnalyzed = caseDefinition.requiredEvidenceIds.all {
+                    it in caseProgress.analyzedEvidenceIds
+                }
+                if (allRequiredAnalyzed && caseDefinition.analysisOptions.isNotEmpty()) {
+                    SectionLabel("KESIMPULAN ANALISIS  /  UJI DUKUNGAN BUKTI")
+                    caseDefinition.analysisOptions.forEach { option ->
+                        Surface(
+                            color = if (caseProgress.analysisConclusionId == option.id) Color(0xFF18323A) else Color(0xFF111F27),
+                            shape = RoundedCornerShape(7.dp),
+                            border = BorderStroke(1.dp, Color(0xFF31545B)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(option.title, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(option.description, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
+                                OutlinedButton(
+                                    onClick = { onSelectAnalysisConclusion(option.id) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
+                                ) { Text(if (caseProgress.analysisConclusionId == option.id) "KESIMPULAN DIPILIH" else "UJI KESIMPULAN") }
+                            }
+                        }
+                    }
+                    analysisConclusion?.let { selected ->
+                        InfoPanel(selected.feedback)
+                    }
+                }
             }
             CasePhase.OPERATIONAL_DECISION -> {
                 SectionLabel("04  /  OPERATIONAL DECISION")
-                InfoPanel("A.E.G.I.S. mencatat 09:41:12 dan arsip mencatat 09:41:16. Pilih tindakan yang proporsional dengan bukti yang tersedia.")
+                InfoPanel(analysisConclusion?.feedback
+                    ?: "Dua sumber telah dianalisis. Pilih tindakan yang proporsional dengan bukti yang tersedia.")
+                OutlinedTextField(
+                    value = decisionRationale,
+                    onValueChange = { decisionRationale = it.take(600) },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    label = { Text("ALASAN KEPUTUSAN") },
+                    placeholder = { Text("Jelaskan fakta dan batas bukti yang mendukung tindakanmu.") }
+                )
+                Text("Alasan ini disimpan bersama keputusan dan ditampilkan saat debrief.",
+                    color = Color(0xFF91A8AD), fontSize = 10.sp, lineHeight = 15.sp)
                 caseDefinition.decisionOptions.forEach { option ->
                     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
                         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
                             Text(option.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                             Text(option.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 16.sp)
-                            OutlinedButton(onClick = { onSelectDecision(option.id) }, modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))) {
+                            OutlinedButton(
+                                onClick = { onSelectDecision(option.id, decisionRationale.trim()) },
+                                enabled = decisionRationale.isNotBlank(),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
+                            ) {
                                 Text("PILIH TINDAKAN")
                             }
                         }
@@ -154,6 +199,8 @@ internal fun OperationsScreen(
                     Text(it.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(it.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 17.sp)
                 }
+                Text("ALASAN KEPUTUSAN", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                InfoPanel(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan yang tersimpan pada save lama." })
                 InfoPanel("Fakta: dua catatan menyebut RX-14 dan waktu penerimaannya berselisih empat detik. Penyebabnya belum dapat dipastikan. Tidak ada dasar untuk menunjuk pelaku atau menyatakan manipulasi.")
                 PrimaryAction("SELESAIKAN DEBRIEF", onAcknowledgeDebrief)
             }

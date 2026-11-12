@@ -31,7 +31,9 @@ internal object GameStateCodec {
                     put("briefingAcknowledged", progress.briefingAcknowledged)
                     put("discoveredEvidenceIds", JSONArray(progress.discoveredEvidenceIds.sorted()))
                     put("analyzedEvidenceIds", JSONArray(progress.analyzedEvidenceIds.sorted()))
+                    put("analysisConclusionId", progress.analysisConclusionId)
                     put("selectedDecisionId", progress.selectedDecisionId)
+                    put("decisionRationale", progress.decisionRationale)
                     put("debriefViewed", progress.debriefViewed)
                 })
             }
@@ -82,7 +84,9 @@ internal object GameStateCodec {
                 briefingAcknowledged = item.optBoolean("briefingAcknowledged", false),
                 discoveredEvidenceIds = item.stringSet("discoveredEvidenceIds"),
                 analyzedEvidenceIds = item.stringSet("analyzedEvidenceIds"),
+                analysisConclusionId = item.optString("analysisConclusionId").takeIf { it.isNotBlank() && it != "null" },
                 selectedDecisionId = item.optString("selectedDecisionId").takeIf { it.isNotBlank() && it != "null" },
+                decisionRationale = item.optString("decisionRationale", ""),
                 debriefViewed = item.optBoolean("debriefViewed", false)
             )
         }

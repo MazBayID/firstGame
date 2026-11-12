@@ -44,9 +44,16 @@ class Rx14CaseProgressionTest {
         assertEquals(CasePhase.ANALYSIS, phase(definition, repository))
 
         definition.requiredEvidenceIds.forEach { useCase.analyzeEvidence(definition, it) }
+        assertEquals(CasePhase.ANALYSIS, phase(definition, repository))
+
+        useCase.selectAnalysisConclusion(definition, "observed_discrepancy_only")
         assertEquals(CasePhase.OPERATIONAL_DECISION, phase(definition, repository))
 
-        useCase.selectDecision(definition, "insufficient_evidence")
+        useCase.selectDecision(
+            definition,
+            "insufficient_evidence",
+            "Dua waktu berbeda empat detik, tetapi tidak ada sumber yang menjelaskan penyebabnya."
+        )
         assertEquals(CasePhase.DEBRIEFING, phase(definition, repository))
 
         useCase.acknowledgeDebrief(definition)

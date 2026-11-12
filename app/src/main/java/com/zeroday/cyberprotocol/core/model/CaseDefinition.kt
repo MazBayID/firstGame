@@ -8,6 +8,21 @@ enum class MissionArchetype { NARRATIVE, INVESTIGATION, TECHNICAL, ANALYTICAL, O
 /** The five authored experience phases are not mandatory application-navigation steps. */
 enum class CasePhase { BRIEFING, INVESTIGATION, ANALYSIS, OPERATIONAL_DECISION, DEBRIEFING, COMPLETE }
 
+data class CaseAnalysisOption(
+    val id: String,
+    val title: String,
+    val description: String,
+    val supportedByEvidence: Boolean,
+    val feedback: String
+) {
+    init {
+        require(id.isNotBlank())
+        require(title.isNotBlank())
+        require(description.isNotBlank())
+        require(feedback.isNotBlank())
+    }
+}
+
 data class CaseDecisionOption(
     val id: String,
     val title: String,
@@ -30,7 +45,8 @@ data class CaseDefinition(
     val primaryArchetype: MissionArchetype,
     val requiredEvidenceIds: Set<String>,
     val optionalEvidenceIds: Set<String> = emptySet(),
-    val decisionOptions: List<CaseDecisionOption>
+    val decisionOptions: List<CaseDecisionOption>,
+    val analysisOptions: List<CaseAnalysisOption> = emptyList()
 ) {
     init {
         require(id.isNotBlank() && campaignId.isNotBlank())
@@ -40,6 +56,7 @@ data class CaseDefinition(
         require(requiredEvidenceIds.intersect(optionalEvidenceIds).isEmpty())
         require(decisionOptions.isNotEmpty())
         require(decisionOptions.map { it.id }.distinct().size == decisionOptions.size)
+        require(analysisOptions.map { it.id }.distinct().size == analysisOptions.size)
         require(decisionOptions.all {
             it.requiredEvidenceIds.all { evidenceId ->
                 evidenceId in requiredEvidenceIds || evidenceId in optionalEvidenceIds
@@ -54,7 +71,9 @@ data class CaseProgress(
     val briefingAcknowledged: Boolean = false,
     val discoveredEvidenceIds: Set<String> = emptySet(),
     val analyzedEvidenceIds: Set<String> = emptySet(),
+    val analysisConclusionId: String? = null,
     val selectedDecisionId: String? = null,
+    val decisionRationale: String = "",
     val debriefViewed: Boolean = false
 ) {
     init {
@@ -64,7 +83,9 @@ data class CaseProgress(
         require(analyzedEvidenceIds.all { it in discoveredEvidenceIds }) {
             "Analyzed evidence must have been discovered first."
         }
+        require(analysisConclusionId == null || analysisConclusionId.isNotBlank())
         require(selectedDecisionId == null || selectedDecisionId.isNotBlank())
+        require(decisionRationale.length <= 600)
     }
 }
 
@@ -77,6 +98,10 @@ object CasePhaseEvaluator {
         }
         if (!definition.requiredEvidenceIds.all { it in progress.analyzedEvidenceIds }) {
             return CasePhase.ANALYSIS
+        }
+        if (progress.selectedDecisionId == null && definition.analysisOptions.isNotEmpty()) {
+            val conclusion = definition.analysisOptions.firstOrNull { it.id == progress.analysisConclusionId }
+            if (conclusion?.supportedByEvidence != true) return CasePhase.ANALYSIS
         }
         if (progress.selectedDecisionId == null) return CasePhase.OPERATIONAL_DECISION
         if (!progress.debriefViewed) return CasePhase.DEBRIEFING
@@ -95,6 +120,17 @@ object CasePhaseEvaluator {
         val currentPhase = phase(definition, progress)
         return currentPhase == CasePhase.INVESTIGATION ||
             (!isRequired && currentPhase == CasePhase.ANALYSIS)
+    }
+
+    fun canSelectAnalysisConclusion(
+        definition: CaseDefinition,
+        progress: CaseProgress,
+        conclusionId: String
+    ): Boolean {
+        require(definition.id == progress.caseId)
+        return definition.requiredEvidenceIds.all {
+            it in progress.discoveredEvidenceIds && it in progress.analyzedEvidenceIds
+        } && definition.analysisOptions.any { it.id == conclusionId }
     }
 
     fun canSelectDecision(

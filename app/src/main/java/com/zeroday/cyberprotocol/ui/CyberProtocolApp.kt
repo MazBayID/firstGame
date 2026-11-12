@@ -731,8 +731,11 @@ private fun CyberProtocolGameContentBody(
             onAnalyzeEvidence = { evidenceId ->
                 sessionViewModel.analyzeCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)
             },
-            onSelectDecision = { decisionId ->
-                sessionViewModel.selectCaseDecision(Campaign01CaseCatalog.rx14, decisionId)
+            onSelectAnalysisConclusion = { conclusionId ->
+                sessionViewModel.selectCaseAnalysisConclusion(Campaign01CaseCatalog.rx14, conclusionId)
+            },
+            onSelectDecision = { decisionId, rationale ->
+                sessionViewModel.selectCaseDecision(Campaign01CaseCatalog.rx14, decisionId, rationale)
             },
             onAcknowledgeDebrief = {
                 sessionViewModel.acknowledgeCaseDebrief(Campaign01CaseCatalog.rx14)
