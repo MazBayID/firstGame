@@ -233,12 +233,37 @@ internal object CaseLocalizedContent {
         }
     }
 
-    fun evidenceSummary(record: EvidenceRecord, language: GameLanguage): String =
-        if (language == GameLanguage.ENGLISH && record.id == "transmission_timestamp_discrepancy") {
-            "Two internal systems recorded reference RX-14 at times four seconds apart. The difference is observable, but its cause is unknown."
-        } else record.summary
+    fun evidenceSummary(record: EvidenceRecord, language: GameLanguage): String {
+        if (language != GameLanguage.ENGLISH) return record.summary
+        if (record.id == "transmission_timestamp_discrepancy") {
+            return "Two internal systems recorded reference RX-14 at times four seconds apart. The difference is observable, but its cause is unknown."
+        }
+        if (record.id.startsWith("evidence_")) {
+            val mission = Campaign01Catalog.find(record.missionId) ?: return record.summary
+            return if (mission.id in Campaign01Catalog.retiredLegacyStoryMissionIds) {
+                "Optional training submission verified by the A.E.G.I.S. evaluator."
+            } else {
+                "Mission submission verified by the A.E.G.I.S. evaluator."
+            }
+        }
+        return record.summary
+    }
 
     fun evidenceSource(record: EvidenceRecord, language: GameLanguage): String {
+        if (record.id.startsWith("evidence_")) {
+            val mission = Campaign01Catalog.find(record.missionId)
+            val evaluatorId = mission?.evaluatorId
+            if (evaluatorId != null) {
+                val optional = mission.id in Campaign01Catalog.retiredLegacyStoryMissionIds
+                return if (language == GameLanguage.ENGLISH) {
+                    if (optional) "A.E.G.I.S. / optional Python practice evaluator $evaluatorId"
+                    else "A.E.G.I.S. / Python mission evaluator $evaluatorId"
+                } else {
+                    if (optional) "A.E.G.I.S. / evaluator Python latihan opsional $evaluatorId"
+                    else "A.E.G.I.S. / evaluator misi Python $evaluatorId"
+                }
+            }
+        }
         if (language != GameLanguage.ENGLISH) return record.source
         return when (record.id) {
             "rx14_aegis_receipt" -> "A.E.G.I.S. Intranet / Receipt Log"
