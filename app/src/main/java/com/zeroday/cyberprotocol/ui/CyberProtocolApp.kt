@@ -1630,7 +1630,7 @@ private fun MessengerScreen(
         "AEGIS" -> "A.E.G.I.S. / Recruitment Office"
         "FREYA" -> "Freya Knox"
         "NEXUS" -> "NEXUS"
-        else -> "Pesan Aman"
+        else -> localizedUiText(selectedLanguage, "Secure Messages", "Pesan Aman")
     }
     val quickReplies = when (selectedContact) {
         "FREYA" -> listOf(
@@ -1671,10 +1671,10 @@ private fun MessengerScreen(
                 Text(contactName, color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                 Text(
                     when (selectedContact) {
-                        "AEGIS" -> "kanal rekrutmen resmi"
-                        "FREYA" -> "mentor  ·  tersedia melalui kanal aman"
-                        "NEXUS" -> "sistem komunikasi aktif"
-                        else -> "A.E.G.I.S.  ·  komunikasi aman"
+                        "AEGIS" -> localizedUiText(selectedLanguage, "official recruitment channel", "kanal rekrutmen resmi")
+                        "FREYA" -> localizedUiText(selectedLanguage, "mentor  ·  available through secure channel", "mentor  ·  tersedia melalui kanal aman")
+                        "NEXUS" -> localizedUiText(selectedLanguage, "communication system active", "sistem komunikasi aktif")
+                        else -> localizedUiText(selectedLanguage, "A.E.G.I.S.  ·  secure communications", "A.E.G.I.S.  ·  komunikasi aman")
                     },
                     color = Color(0xFFB4C2C8), fontSize = 10.sp
                 )
@@ -1688,7 +1688,7 @@ private fun MessengerScreen(
                 onValueChange = { search = it.take(60) },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
                 singleLine = true,
-                placeholder = { Text("Cari percakapan") },
+                placeholder = { Text(localizedUiText(selectedLanguage, "Search conversations", "Cari percakapan")) },
                 leadingIcon = { Text("⌕", color = Color(0xFF9BAEB4), fontSize = 22.sp) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedContainerColor = Color(0xFF202C33),
@@ -1746,7 +1746,7 @@ private fun MessengerScreen(
                     (freyaContactUnlocked && visibleTerms.slice(4..6).any { it.contains(search, true) }) ||
                     (nexusUnlocked && visibleTerms.slice(7..8).any { it.contains(search, true) })
                 if (search.isNotBlank() && !visible) {
-                    Text("Tidak ada percakapan yang cocok.", color = Color(0xFF9BAEB4),
+                    Text(localizedUiText(selectedLanguage, "No matching conversations.", "Tidak ada percakapan yang cocok."), color = Color(0xFF9BAEB4),
                         modifier = Modifier.fillMaxWidth().padding(18.dp), fontSize = 12.sp)
                 }
             }
@@ -1756,7 +1756,7 @@ private fun MessengerScreen(
                     .verticalScroll(chatScrollState).padding(horizontal = 14.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text("PESAN TERENKRIPSI  ·  A.E.G.I.S.",
+                Text(localizedUiText(selectedLanguage, "ENCRYPTED MESSAGE  ·  A.E.G.I.S.", "PESAN TERENKRIPSI  ·  A.E.G.I.S."),
                     Modifier.align(Alignment.CenterHorizontally),
                     color = Color(0xFF91A5AC), fontSize = 9.sp, letterSpacing = 1.sp)
                 when (selectedContact) {
@@ -1774,11 +1774,11 @@ private fun MessengerScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                                Text("TAUTAN RESMI  ·  A.E.G.I.S.", color = Color(0xFF9ED9C1),
+                                Text(localizedUiText(selectedLanguage, "OFFICIAL LINK  ·  A.E.G.I.S.", "TAUTAN RESMI  ·  A.E.G.I.S."), color = Color(0xFF9ED9C1),
                                     fontSize = 9.sp, letterSpacing = 1.sp)
-                                Text("BUKA RANGKAIAN MISI  ↗", color = Color.White,
+                                Text(localizedUiText(selectedLanguage, "OPEN MISSION SEQUENCE  ↗", "BUKA RANGKAIAN MISI  ↗"), color = Color.White,
                                     fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                                Text("Orientasi dan tugas awal", color = Color(0xFFC2D9D0), fontSize = 10.sp)
+                                Text(localizedUiText(selectedLanguage, "Orientation and initial assignments", "Orientasi dan tugas awal"), color = Color(0xFFC2D9D0), fontSize = 10.sp)
                             }
                         }
                     }
@@ -1816,7 +1816,7 @@ private fun MessengerScreen(
                 Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                        Text("TAUTAN DAN LAMPIRAN DARI FREYA", color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
+                        Text(localizedUiText(selectedLanguage, "LINKS AND ATTACHMENTS FROM FREYA", "TAUTAN DAN LAMPIRAN DARI FREYA"), color = Color(0xFF9BAEB4), fontSize = 9.sp, letterSpacing = 1.sp)
                         Surface(
                             onClick = onOpenNexusLink,
                             color = Color(0xFF263A34),
@@ -1825,10 +1825,10 @@ private fun MessengerScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text("NEXUS  /  KANAL SISTEM", color = Color.White,
+                                Text(localizedUiText(selectedLanguage, "NEXUS  /  SYSTEM CHANNEL", "NEXUS  /  KANAL SISTEM"), color = Color.White,
                                     fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                Text("Dukungan analisis dan komunikasi", color = Color(0xFFB9D1C6), fontSize = 10.sp)
-                                Text("Ketuk untuk membuka kontak NEXUS", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                Text(localizedUiText(selectedLanguage, "Analysis and communication support", "Dukungan analisis dan komunikasi"), color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                Text(localizedUiText(selectedLanguage, "Tap to open the NEXUS contact", "Ketuk untuk membuka kontak NEXUS"), color = Color(0xFFB9D1C6), fontSize = 10.sp)
                             }
                         }
                         Surface(
@@ -1842,7 +1842,7 @@ private fun MessengerScreen(
                                 Text("A.E.G.I.S. INTRANET  /  BROWSER", color = Color.White,
                                     fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 Text("ID: RECRUIT-014  ·  KODE: FIRSTCONTACT", color = Color(0xFFB9D1C6), fontSize = 10.sp)
-                                Text("Ketuk untuk membuka portal internal offline", color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                Text(localizedUiText(selectedLanguage, "Tap to open the offline internal portal", "Ketuk untuk membuka portal internal offline"), color = Color(0xFFB9D1C6), fontSize = 10.sp)
                             }
                         }
                         if (evidenceAssetsAvailable) {
@@ -1895,7 +1895,7 @@ private fun MessengerScreen(
                                 Text(attachmentFeedback, color = Color(0xFF83C7D0), fontSize = 10.sp)
                             }
                         }
-                        Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
+                        Text(localizedUiText(selectedLanguage, "QUICK REPLIES", "BALASAN CEPAT"), color = Color(0xFF9BAEB4), fontSize = 9.sp)
                         quickReplies.forEach { choice ->
                             Surface(onClick = { onReply(choice.first) }, color = Color(0xFF263A34),
                                 shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
@@ -1909,7 +1909,7 @@ private fun MessengerScreen(
                 Surface(color = Color(0xFF202C33), modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                        Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
+                        Text(localizedUiText(selectedLanguage, "QUICK REPLIES", "BALASAN CEPAT"), color = Color(0xFF9BAEB4), fontSize = 9.sp)
                         quickReplies.forEach { choice ->
                             Surface(onClick = { onReply(choice.first) }, color = Color(0xFF263A34),
                                 shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
@@ -1931,7 +1931,7 @@ private fun MessengerScreen(
                         onRecordEvidence(evidenceId)
                         evidenceAssetPreview = null
                     }) {
-                        Text(if (canRecordEvidence(evidenceId)) "CATAT SEBAGAI DIPERIKSA" else "TUTUP")
+                        Text(if (canRecordEvidence(evidenceId)) localizedUiText(selectedLanguage, "MARK AS REVIEWED", "CATAT SEBAGAI DIPERIKSA") else localizedUiText(selectedLanguage, "CLOSE", "TUTUP"))
                     }
                 }
             )
