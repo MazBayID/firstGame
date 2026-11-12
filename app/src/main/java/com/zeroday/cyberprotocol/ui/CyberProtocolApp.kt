@@ -874,10 +874,12 @@ private fun CyberProtocolGameContentBody(
             }
         )
         GameScreen.TERMINAL -> TerminalScreen(
+            selectedLanguage = selectedLanguage,
             currentDirectory = terminalSession.currentDirectory,
             workspaceLabel = (activeMission ?: Campaign01Catalog.missions.firstOrNull {
                 it.workspaceDirectory == terminalSession.currentDirectory
-            })?.title?.let { "MISSION WORKSPACE  /  $it" } ?: "PERSONAL WORKSPACE  /  A.E.G.I.S.",
+            })?.let { localizedUiText(selectedLanguage, "MISSION WORKSPACE", "RUANG KERJA MISI") + " / " + CaseLocalizedContent.missionTitle(it, selectedLanguage) }
+                ?: localizedUiText(selectedLanguage, "PERSONAL WORKSPACE / A.E.G.I.S.", "RUANG KERJA PRIBADI / A.E.G.I.S."),
             command = terminalSession.command,
             onCommandChange = { terminalSession = terminalSession.copy(command = it) },
             output = terminalSession.output,
@@ -1002,55 +1004,61 @@ private fun CyberProtocolGameContentBody(
             }
         )
         GameScreen.PROFILE -> InfoAppScreen(
-            "PROFIL AGEN", "A.E.G.I.S. / IDENTITAS PERSONEL",
+            localizedUiText(selectedLanguage, "OPERATIVE PROFILE", "PROFIL AGEN"),
+            localizedUiText(selectedLanguage, "A.E.G.I.S. / PERSONNEL IDENTITY", "A.E.G.I.S. / IDENTITAS PERSONEL"),
             buildString {
-                append("IDENTITAS: AGEN MAGANG\n")
+                append(localizedUiText(selectedLanguage, "IDENTITY: TRAINEE AGENT\n", "IDENTITAS: AGEN MAGANG\n"))
                 append("RANK: ").append(currentGameState.rank.replace('_', ' ')).append("\n")
-                append("PENGALAMAN: ").append(currentGameState.experience).append(" XP\n")
+                append(localizedUiText(selectedLanguage, "EXPERIENCE: ", "PENGALAMAN: ")).append(currentGameState.experience).append(" XP\n")
                 append("CLEARANCE: ").append(currentGameState.clearance).append("\n")
-                append("KAMPANYE: ").append(currentGameState.campaignId).append("\n")
-                append("MISI SELESAI: ").append(currentGameState.completedMissionIds.size).append("\n")
-                append("BUKTI TERCATAT: ").append(currentGameState.evidence.size).append("\n")
+                append(localizedUiText(selectedLanguage, "CAMPAIGN: ", "KAMPANYE: ")).append(currentGameState.campaignId).append("\n")
+                append(localizedUiText(selectedLanguage, "MISSIONS COMPLETED: ", "MISI SELESAI: ")).append(currentGameState.completedMissionIds.size).append("\n")
+                append(localizedUiText(selectedLanguage, "EVIDENCE RECORDED: ", "BUKTI TERCATAT: ")).append(currentGameState.evidence.size).append("\n")
                 append("CHECKPOINT: ").append(currentGameState.lastCheckpoint).append("\n")
                 val nextRankXp = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.nextRankThreshold(currentGameState.experience)
-                if (nextRankXp == null) append("RANK MAKSIMUM TERCAPAI")
-                else append("MENUJU RANK BERIKUTNYA: ").append(nextRankXp - currentGameState.experience).append(" XP")
+                if (nextRankXp == null) append(localizedUiText(selectedLanguage, "MAXIMUM RANK REACHED", "RANK MAKSIMUM TERCAPAI"))
+                else append(localizedUiText(selectedLanguage, "NEXT RANK IN: ", "MENUJU RANK BERIKUTNYA: ")).append(nextRankXp - currentGameState.experience).append(" XP")
             },
             CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.ARCHIVES -> InfoAppScreen(
-            "ARSIP", "A.E.G.I.S. / RIWAYAT OPERASI",
+            localizedUiText(selectedLanguage, "ARCHIVES", "ARSIP"),
+            localizedUiText(selectedLanguage, "A.E.G.I.S. / OPERATION HISTORY", "A.E.G.I.S. / RIWAYAT OPERASI"),
             buildString {
-                append("MISI TERVERIFIKASI\n")
+                append(localizedUiText(selectedLanguage, "VERIFIED MISSIONS\n", "MISI TERVERIFIKASI\n"))
                 Campaign01Catalog.missions.filter { it.id in currentGameState.completedMissionIds }
-                    .forEach { append("• ").append(it.title).append("\n") }
-                if (currentGameState.completedMissionIds.isEmpty()) append("Belum ada misi selesai.\n")
-                append("\nBUKTI TERSIMPAN\n")
+                    .forEach { append("• ").append(CaseLocalizedContent.missionTitle(it, selectedLanguage)).append("\n") }
+                if (currentGameState.completedMissionIds.isEmpty())
+                    append(localizedUiText(selectedLanguage, "No completed missions yet.\n", "Belum ada misi selesai.\n"))
+                append("\n").append(localizedUiText(selectedLanguage, "STORED EVIDENCE\n", "BUKTI TERSIMPAN\n"))
                 currentGameState.evidence.forEach {
-                    append("• ").append(it.title).append(" / ").append(it.status.name).append("\n")
-                    append("  SUMBER: ").append(it.source).append("\n")
+                    append("• ").append(it.title).append(" / ").append(localizedEvidenceStatus(it.status.name, selectedLanguage)).append("\n")
+                    append("  ").append(localizedUiText(selectedLanguage, "SOURCE: ", "SUMBER: ")).append(it.source).append("\n")
                 }
-                if (currentGameState.evidence.isEmpty()) append("Belum ada bukti tersimpan.\n")
+                if (currentGameState.evidence.isEmpty())
+                    append(localizedUiText(selectedLanguage, "No evidence stored yet.\n", "Belum ada bukti tersimpan.\n"))
             },
             CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.ACHIEVEMENTS -> InfoAppScreen(
-            "PENCAPAIAN", "A.E.G.I.S. / PENGHARGAAN",
+            localizedUiText(selectedLanguage, "ACHIEVEMENTS", "PENCAPAIAN"),
+            localizedUiText(selectedLanguage, "A.E.G.I.S. / AWARDS", "A.E.G.I.S. / PENGHARGAAN"),
             buildString {
                 val awards = listOf(
-                    "Sinyal Pertama" to ("first_contact.signal" in currentGameState.completedMissionIds),
-                    "Identitas Terverifikasi" to ("first_contact.identity" in currentGameState.completedMissionIds),
-                    "Kasus RX-14 Dituntaskan" to rx14CaseComplete
+                    localizedUiText(selectedLanguage, "First Signal", "Sinyal Pertama") to ("first_contact.signal" in currentGameState.completedMissionIds),
+                    localizedUiText(selectedLanguage, "Identity Verified", "Identitas Terverifikasi") to ("first_contact.identity" in currentGameState.completedMissionIds),
+                    localizedUiText(selectedLanguage, "RX-14 Case Resolved", "Kasus RX-14 Dituntaskan") to rx14CaseComplete
                 )
                 awards.forEach { (title, earned) ->
-                    append(if (earned) "[DIPEROLEH] " else "[BELUM DICAPAI] ")
+                    append(if (earned) localizedUiText(selectedLanguage, "[EARNED] ", "[DIPEROLEH] ")
+                        else localizedUiText(selectedLanguage, "[NOT YET EARNED] ", "[BELUM DICAPAI] "))
                     append(title).append("\n")
                 }
                 append("\n")
                 append(if (rx14CaseComplete) {
-                    "FIRST CONTACT / LAPORAN AKHIR TERVERIFIKASI"
+                    localizedUiText(selectedLanguage, "FIRST CONTACT / FINAL REPORT VERIFIED", "FIRST CONTACT / LAPORAN AKHIR TERVERIFIKASI")
                 } else {
-                    "FIRST CONTACT / KASUS MASIH BERJALAN"
+                    localizedUiText(selectedLanguage, "FIRST CONTACT / CASE IN PROGRESS", "FIRST CONTACT / KASUS MASIH BERJALAN")
                 })
             },
             CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
@@ -2019,6 +2027,7 @@ private fun ChatBubble(sender: String, message: String, outgoing: Boolean) {
 
 @Composable
 private fun TerminalScreen(
+    selectedLanguage: GameLanguage,
     currentDirectory: String, workspaceLabel: String, command: String, onCommandChange: (String) -> Unit,
     output: String, busy: Boolean, onExecute: () -> Unit, onBack: () -> Unit
 ) {
@@ -2040,11 +2049,11 @@ private fun TerminalScreen(
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(value = command, onValueChange = onCommandChange,
-                    modifier = Modifier.weight(1f), singleLine = true, placeholder = { Text("Masukkan perintah…") },
+                    modifier = Modifier.weight(1f), singleLine = true, placeholder = { Text(localizedUiText(selectedLanguage, "Enter a command…", "Masukkan perintah…")) },
                     textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace, fontSize = 12.sp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = { onExecute() }))
-                Button(onClick = onExecute, enabled = !busy) { Text(if (busy) "…" else "JALANKAN") }
+                Button(onClick = onExecute, enabled = !busy) { Text(if (busy) "…" else localizedUiText(selectedLanguage, "RUN", "JALANKAN")) }
             }
             val availableCommands = listOf("help", "pwd", "ls", "cd", "cat", "mkdir", "touch", "rm", "echo", "whoami", "python", "clear")
             val query = command.trim().lowercase()
@@ -2061,9 +2070,9 @@ private fun TerminalScreen(
                     }
                 }
             }
-            Text("Perintah bergaya Linux • sistem file virtual terisolasi • tanpa akses ke shell Android",
+            Text(localizedUiText(selectedLanguage, "Linux-style commands • isolated virtual filesystem • no access to the Android shell", "Perintah bergaya Linux • sistem file virtual terisolasi • tanpa akses ke shell Android"),
                 color = CyberPalette.SteelGray, fontSize = 10.sp)
-            TextButton(onClick = { onCommandChange("help") }) { Text("TAMPILKAN PANDUAN PERINTAH") }
+            TextButton(onClick = { onCommandChange("help") }) { Text(localizedUiText(selectedLanguage, "SHOW COMMAND GUIDE", "TAMPILKAN PANDUAN PERINTAH")) }
         }
     }
 }
