@@ -389,14 +389,15 @@ private fun CyberProtocolGameContentBody(
                 it.workspaceDirectory == terminalSession.currentDirectory
             }
         val response = if (activeMission == null) {
-            fileSystem.execute(input, terminalSession.currentDirectory)
+            fileSystem.execute(input, terminalSession.currentDirectory, language = selectedLanguage)
         } else {
             fileSystem.execute(
                 input,
                 terminalSession.currentDirectory,
                 activeMission.workspaceDirectory,
                 activeMission.allowedFiles,
-                activeMission.writableFiles
+                activeMission.writableFiles,
+                selectedLanguage
             )
         }
         terminalSession = terminalSession.copy(currentDirectory = response.currentDirectory)
