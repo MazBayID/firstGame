@@ -74,7 +74,7 @@ internal fun OperationsScreen(
         ) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(localizedUiText(selectedLanguage, "ACTIVE CASE", "KASUS AKTIF"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                Text(caseDefinition.title, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(CaseLocalizedContent.title(caseDefinition, selectedLanguage), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "RX-14  ·  DATA SOURCE INVESTIGATION", "RX-14  ·  INVESTIGASI SUMBER DATA"), color = Color(0xFFB8C9CC), fontSize = 10.sp)
                 LinearProgressIndicator(
                     progress = { phaseNumber / 5f }, modifier = Modifier.fillMaxWidth().height(5.dp),
@@ -90,7 +90,7 @@ internal fun OperationsScreen(
         when (phase) {
             CasePhase.BRIEFING -> {
                 SectionLabel(localizedUiText(selectedLanguage, "01  /  INTELLIGENCE BRIEFING", "01  /  BRIEFING INTELIJEN"))
-                InfoPanel(caseDefinition.briefing)
+                InfoPanel(CaseLocalizedContent.briefing(caseDefinition, selectedLanguage))
                 Text(localizedUiText(selectedLanguage, "You do not need to open every app. Start with the case objective, then choose relevant sources.", "Kamu tidak harus membuka semua aplikasi. Mulailah dari tujuan kasus, lalu pilih sumber yang relevan."),
                     color = Color(0xFF91A8AD), fontSize = 11.sp, lineHeight = 17.sp)
                 PrimaryAction(localizedUiText(selectedLanguage, "ACKNOWLEDGE BRIEFING", "PAHAMI BRIEFING"), onAcknowledgeBriefing)
@@ -138,7 +138,7 @@ internal fun OperationsScreen(
             }
             CasePhase.OPERATIONAL_DECISION -> {
                 SectionLabel(localizedUiText(selectedLanguage, "04  /  OPERATIONAL DECISION", "04  /  KEPUTUSAN OPERASIONAL"))
-                InfoPanel(analysisConclusion?.feedback
+                InfoPanel(analysisConclusion?.let { CaseLocalizedContent.analysisFeedback(it, selectedLanguage) }
                     ?: localizedUiText(selectedLanguage, "Both sources have been analyzed. Choose an action proportionate to the available evidence.", "Dua sumber telah dianalisis. Pilih tindakan yang proporsional dengan bukti yang tersedia."))
                 OutlinedTextField(
                     value = decisionRationale,
@@ -154,8 +154,8 @@ internal fun OperationsScreen(
                     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
                         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                            Text(option.title, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            Text(option.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 16.sp)
+                            Text(CaseLocalizedContent.decisionTitle(option, selectedLanguage), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text(CaseLocalizedContent.decisionDescription(option, selectedLanguage), color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 16.sp)
                             OutlinedButton(
                                 onClick = { onSelectDecision(option.id, decisionRationale.trim()) },
                                 enabled = decisionRationale.isNotBlank(),
@@ -173,13 +173,13 @@ internal fun OperationsScreen(
                 InfoPanel(localizedUiText(selectedLanguage, "Your decision has been recorded. Review what the sources support and what remains unknown.", "Keputusanmu telah dicatat. Tinjau kembali apa yang didukung sumber dan apa yang masih belum diketahui."))
                 analysisConclusion?.let {
                     Text(localizedUiText(selectedLanguage, "ANALYSIS CONCLUSION", "KESIMPULAN ANALISIS"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                    Text(it.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    InfoPanel(it.feedback)
+                    Text(CaseLocalizedContent.analysisTitle(it, selectedLanguage), color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    InfoPanel(CaseLocalizedContent.analysisFeedback(it, selectedLanguage))
                 }
                 decision?.let {
                     Text(localizedUiText(selectedLanguage, "RECORDED DECISION", "KEPUTUSAN TERCATAT"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                    Text(it.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text(it.description, color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 17.sp)
+                    Text(CaseLocalizedContent.decisionTitle(it, selectedLanguage), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(CaseLocalizedContent.decisionDescription(it, selectedLanguage), color = Color(0xFFB7C6CB), fontSize = 11.sp, lineHeight = 17.sp)
                 }
                 Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 InfoPanel(caseProgress.decisionRationale.ifBlank { localizedUiText(selectedLanguage, "No rationale was stored in this older save.", "Tidak ada alasan yang tersimpan pada save lama.") })
@@ -190,9 +190,9 @@ internal fun OperationsScreen(
                 SectionLabel(localizedUiText(selectedLanguage, "CASE STATUS  /  COMPLETE", "STATUS KASUS  /  SELESAI"))
                 InfoPanel(localizedUiText(selectedLanguage, "First Contact is complete. The report preserves the distinction between facts, hypotheses, and unknowns. The RX-14 anomaly remains open for review if new evidence becomes available.", "First Contact selesai. Laporan mempertahankan perbedaan antara fakta, dugaan, dan hal yang belum diketahui. Anomali RX-14 tetap terbuka untuk pemeriksaan jika bukti baru tersedia."))
                 Text(localizedUiText(selectedLanguage, "ANALYSIS CONCLUSION", "KESIMPULAN ANALISIS"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                Text(analysisConclusion?.title ?: localizedUiText(selectedLanguage, "No conclusion saved", "Tidak ada kesimpulan tersimpan"), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text(analysisConclusion?.let { CaseLocalizedContent.analysisTitle(it, selectedLanguage) } ?: localizedUiText(selectedLanguage, "No conclusion saved", "Tidak ada kesimpulan tersimpan"), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "FINAL DECISION", "KEPUTUSAN AKHIR"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                Text(decision?.title ?: localizedUiText(selectedLanguage, "No decision saved", "Tidak ada keputusan tersimpan"), color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Text(decision?.let { CaseLocalizedContent.decisionTitle(it, selectedLanguage) } ?: localizedUiText(selectedLanguage, "No decision saved", "Tidak ada keputusan tersimpan"), color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 InfoPanel(caseProgress.decisionRationale.ifBlank { localizedUiText(selectedLanguage, "No rationale was stored in this older save.", "Tidak ada alasan yang tersimpan pada save lama.") })
                 if (caseDefinition.id in gameState.completedMissionIds) {
