@@ -12,7 +12,7 @@ object Campaign01StoryNavigationPolicy {
     }
 
     fun action(stage: Int, phase: CasePhase): StoryCaseAction = when (stage) {
-        11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
+        10, 11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
             StoryCaseAction.OPEN_OPERATIONS
         } else StoryCaseAction.CONTINUE
         12, 13 -> when (phase) {

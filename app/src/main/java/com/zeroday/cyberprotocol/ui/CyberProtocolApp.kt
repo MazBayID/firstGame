@@ -1281,7 +1281,7 @@ private fun StoryScreen(
             when (Campaign01StoryNavigationPolicy.action(stage, casePhase)) {
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_OPERATIONS ->
                     CPPrimaryButton(
-                        if (stage in 12..13 || stage == 15) "BUKA PUSAT OPERASI" else beat.button,
+                        if (stage in 11..13 || stage == 15) "BUKA PUSAT OPERASI" else beat.button,
                         onOpenOperations
                     )
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_ANALYSIS ->

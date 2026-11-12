@@ -401,3 +401,10 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Reopen the RX-14 final report checkpoint for old saves that have storyBeat 16 but no completed case state.
 - Persist the repaired storyBeat through the normal campaign checkpoint path; do not delete XP, mission history, drafts, or workspace files.
 - Only CasePhase.COMPLETE may retain chapter stage 16. Regression tests cover complete and incomplete saves.
+
+
+## RX-14 source inspection entry point — 2026-11-12
+
+- Align the stage-10 "OPEN OPERATIONS" story action with the actual Operations workspace destination.
+- Preserve the phase-aware stage-11 comparison and stage-12 analysis handoff.
+- Add focused route-policy tests for the new entry point.

@@ -45,6 +45,12 @@ class Campaign01StoryTest {
     @Test
     fun rx14StoryPromptsRouteToTheSharedWorkspaceRequiredByCasePhase() {
          assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+            Campaign01StoryNavigationPolicy.action(10, CasePhase.INVESTIGATION))
+        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+            Campaign01StoryNavigationPolicy.action(10, CasePhase.BRIEFING))
+        assertEquals(StoryCaseAction.CONTINUE,
+            Campaign01StoryNavigationPolicy.action(10, CasePhase.ANALYSIS))
+        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
             Campaign01StoryNavigationPolicy.action(11, CasePhase.INVESTIGATION))
         assertEquals(StoryCaseAction.CONTINUE,
             Campaign01StoryNavigationPolicy.action(11, CasePhase.ANALYSIS))

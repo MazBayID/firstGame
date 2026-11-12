@@ -451,3 +451,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The correction is persisted through the normal save path, so Campaign and Dossier cannot continue to display a completed chapter while the case remains incomplete.
 - The final report CTA routes to Operations until CasePhase.COMPLETE.
 - Safe-stage normalization is covered by navigation policy tests.
+
+
+## RX-14 first source-inspection CTA alignment
+
+- The RX-14 Reference Inspection story beat now opens Operations directly while the case is in briefing or investigation, matching the authored instruction instead of advancing to the next story page first.
+- The following Two-Source Comparison beat retains its own phase-aware route, so players can return to Operations until discovery is complete.
+- Navigation policy regression tests cover the stage-10 route in briefing, investigation, and analysis phases.
