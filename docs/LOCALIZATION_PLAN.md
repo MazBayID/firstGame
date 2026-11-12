@@ -88,7 +88,7 @@ The Python test suite now includes a language-parity check for evaluator feedbac
 
 - Localize the Terminal's system-authored help and error messages without translating player files, command names, paths, code, or command output.
 - Review evidence titles/summaries and story/mission feedback for both languages, including old-save fallbacks.
-- Complete Profile/Archives/Achievements content review and ensure all rank, clearance, status, and checkpoint labels are understandable.
+- Perform manual Profile/Archives/Achievements content review on Android and confirm rank, clearance, status, and checkpoint labels remain readable at supported screen sizes.
 - Replace transitional inline bilingual strings with a stable message-key/resource strategy, or document and test the approved alternative if a full resource migration is not justified.
 - Add an automated completeness/parity check covering every player-facing route and authored content ID.
 - Perform manual English and Indonesian journeys on Android, including language switching mid-campaign, force-stop/relaunch, save migration, and end-to-end First Contact completion.
@@ -100,7 +100,7 @@ The virtual Terminal command guide and `whoami` response now respect the selecte
 
 RX-14 evidence titles, the derived discrepancy summary, and source labels now have English presentation variants in Operations, Analysis, Intelligence Database, and Archives. Original receipt contents and stored EvidenceRecord fields remain unchanged. The evaluator's language parameter and localized feedback are covered by Python tests; Terminal language behavior, rank labels, and evidence metadata have Kotlin unit-test coverage.
 
-This checkpoint is implementation progress, not full localization acceptance. Other VFS error messages, all remaining evidence/review metadata, the full message-key parity mechanism, and physical Android review remain open.
+This checkpoint is implementation progress, not full localization acceptance. The full message-key parity mechanism, review of residual technical labels, and physical Android review remain open.
 
 
 ## Implementation checkpoint — 2026-11-12 (player feedback and evidence metadata parity)
@@ -126,3 +126,12 @@ Regression coverage now checks bilingual story beats, all eight mission content 
 The startup loading/retry screen now uses the saved game-language preference before the main game composition is created. The same initial preference is passed into the game state, avoiding a separate first-frame language fallback. Browser evidence reports now render localized titles, summaries, provenance source labels, and preview titles through the shared content resolver; stored evidence and original source bytes remain unchanged. Browser and Profile rank displays use the presentation-layer rank label.
 
 This checkpoint extends L2/L4 coverage but does not close localization acceptance. Manual Android review and a full missing-content audit remain required.
+
+
+## Implementation checkpoint — 2026-11-12 (profile, archive, and achievement screens)
+
+Profile, Archives, and Achievements now use dedicated bilingual data-backed screens instead of plain text summaries. The Profile shows localized rank and competency information; Archives localizes mission/evidence titles, summaries, provenance, review statuses, relationships, and the RX-14 report; Achievements derives bilingual milestone cards from canonical campaign state.
+
+The shared Terminal, mission editor, and practice feedback states now follow the selected language, including empty-output placeholders and language-switch handling. The New Campaign flow resets campaign-scoped workspaces and conversations without changing the player's selected language or accessibility preference.
+
+Source tests cover rank progress, achievement calculations, archive search/retention, mission-evidence metadata, VFS reset behavior, and campaign reset behavior. This is source-level coverage; the English and Indonesian screens still require physical Android review.
