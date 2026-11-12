@@ -183,10 +183,15 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - The permanent keystore is restored only after source tests pass, kept in the ephemeral runner with restricted permissions, and removed even when later steps fail. Pull requests never receive signing secrets.
 - This automated emulator smoke test does not replace physical-device acceptance. Clean installation, in-place update, and save-data preservation must still be confirmed on the user's Android device.
 
-### Current pipeline implementation
+### Current pipeline verification
 
-- The single-APK workflow implementation is committed to `main` and awaits its first complete CI run. Do not call the new pipeline verified until source tests, signed build, emulator installation/launch, checksum comparison, and artifact publication all pass.
-- Previous workflow runs listed below are historical evidence only; they do not verify the new APK-level testing sequence.
+- **Verified:** CI run [#105](https://github.com/MazBayID/firstGame/actions/runs/43137098194) completed successfully on 2026-11-12 for commit `6fe9d6a92a89a5fb29034282211cc0d7d1dc3063`.
+- The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation.
+- The Android Emulator successfully installed and launched that exact APK; the app process remained alive for the smoke-test check.
+- The post-test SHA-256 comparison passed, the unchanged APK and checksum manifest were uploaded as artifact `cyber-protocol-release`, and temporary signing material was removed.
+- GitHub artifact ID: `13908950416`; artifact archive digest: `sha256:a129239077e5a49be711f94d1abc1c94c46c963ff0f5b7a65f28cf01114163f7`; retention expiry: 2026-11-26.
+- This verifies the automated single-APK pipeline for this commit. It does **not** replace physical-device acceptance: clean install, in-place update, and save-data preservation still need testing on the user's Android device.
+- Previous workflow runs listed below are historical evidence only; they do not verify the current APK-level testing sequence.
 
 ### Historical verification observed under the former CI design
 The following older runs predate the current test-only / signed-Release-only workflow separation. Their Debug APK artifacts are historical and must not be used as device-test or distribution builds.
