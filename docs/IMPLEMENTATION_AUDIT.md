@@ -5,6 +5,8 @@
 **Scope:** canonical design, story continuity, Android/Kotlin source, Python runner, local persistence, VFS, app surfaces, tests, and CI workflow.  
 **Purpose:** identify what is genuinely implemented, what is partial, and what must be built next. This is a source review; it is not a physical-device acceptance report.
 
+> **Current-state note (2026-11-12):** Sections 1–8 preserve the original point-in-time baseline and are superseded where they conflict with the dated refreshes below. The latest integrated source review is recorded in **Latest First Contact acceptance refresh** at the end of this file. Do not use the old schema, evidence, localization, or cross-app status statements as current facts.
+
 ## Executive result
 
 Cyber Protocol is a substantial playable foundation, not a blank project. The current branch contains the approved First Contact opening, two required Python onboarding missions, six retired legacy coding missions retained for save/history compatibility, a local virtual filesystem, mission-scoped Python file access, campaign persistence, a seven-app A.E.G.I.S. hub, and a persisted RX-14 case-flow vertical slice.
@@ -479,3 +481,29 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Stage 13 is Timestamp Analysis; it must advance to the Operational Decision beat after the analysis phase is complete. Stage 14 then opens Operations for the actual decision.
 - Stage 14 and 15 now route to Analysis when a save is in the analysis phase, avoiding a phase/UI mismatch for restored saves.
 - Tests assert the authored stage-to-beat mapping and the relevant phase handoffs.
+
+
+## Latest First Contact acceptance refresh — 2026-11-12
+
+**Source baseline:** `2aa66362b2966144d8403e4fc3e185cdb25fe180`  
+**CI:** [run 43183194370](https://github.com/MazBayID/firstGame/actions/runs/43183194370) — **success** for the Python runner suite and Release-variant Android unit tests. The final APK job was skipped as intended; no APK was produced.
+
+### Verified current implementation
+
+- Campaign persistence is GameState schema 9, with codec migration and previous-good-snapshot recovery.
+- Evidence records carry structured provenance, typed relationships, review history, and a controlled status-transition policy. The RX-14 source discrepancy remains explicitly unverified as to cause.
+- The case model persists briefing acknowledgement, source discovery, evidence analysis, analytical conclusion, operational decision, player rationale, and debrief acknowledgement.
+- The RX-14 case is integrated with the story and shared Messenger, Browser, Terminal, Operations, Analysis, Database, and Dossier state. Source inspection from an approved surface updates the same case progress; it does not create duplicate app-local progress.
+- The mandatory First Contact route contains two beginner Python exercises. Six legacy exercises remain available for old-save/history compatibility but no longer block the case.
+- A new source-level acceptance test drives a fresh in-memory campaign through both onboarding missions, all RX-14 phases, the exactly-once chapter reward, and session reconstruction from the saved repository.
+- Story/Operations/Analysis return destinations are now tracked separately. Both visible back actions and Android Back restore the correct originating context; the navigation saver retains compatibility with the earlier two-field state.
+- The Achievements screen now reflects the two active onboarding milestones and actual RX-14 completion rather than showing retired exercises as permanently locked.
+- The story progress indicator reflects all fourteen authored beats.
+
+### Remaining acceptance work
+
+- Complete player-facing English/Indonesian parity. The language preference and story translations exist, but Messenger dialogue and several operational/app surfaces remain incomplete.
+- Build an optional-practice interface if the retired coding exercises are to remain player-accessible; otherwise keep them as compatibility-only content.
+- Continue reviewing player-facing clarity, responsive layouts, settings, and app/session-state boundaries.
+- Perform fresh-install, update, interruption/resume, and save-preservation tests on representative physical Android devices.
+- Do not claim v1.0 or production readiness until the complete campaign and device acceptance gates pass. No later case or culprit is approved by this refresh.

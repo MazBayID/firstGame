@@ -28,7 +28,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - A code editor with basic Python syntax highlighting and editing helpers.
 - A campaign/story-stage flow, code RUN/SUBMIT actions, and a seven-app hub including the offline A.E.G.I.S. Browser.
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
-- GitHub Actions with source validation followed by a clearly labeled development Debug APK on pushes to `main` (no emulator smoke test). A manually approved Final Release on `main` builds one permanently signed Release APK, installs and smoke-tests that exact binary on an Android Emulator, then publishes the unchanged APK with an explicit FINAL — EMULATOR SMOKE-TESTED label.
+- GitHub Actions runs Python and Release-variant Android/Kotlin source tests on pushes to `main`; ordinary development commits do not build or publish APKs. A manually approved Final Release is reserved for an explicitly approved release candidate and must smoke-test the exact signed binary on an Android Emulator before publication.
 
 These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the expanded First Contact investigation; a later investigative case remains unapproved.
 
@@ -92,11 +92,11 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 
 ## Current status
 
-**Phase 0 — Audit and specification alignment:** repository-wide implementation audit recorded in `docs/IMPLEMENTATION_AUDIT.md` against the current `main` baseline (`3c89476`). The audit identifies existing partial foundations, specification gaps, and the ordered implementation batches; follow-up code changes must update this ledger.  
+**Phase 0 — Audit and specification alignment:** implementation audit and dated refreshes are recorded in `docs/IMPLEMENTATION_AUDIT.md`; the latest integrated source baseline is `2aa66362b2966144d8403e4fc3e185cdb25fe180`.  
 **Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, a ViewModel-owned campaign state/progression layer, and isolated snapshot serialization with codec regression tests exist; broader UI state/navigation extraction and Android storage recovery tests remain.  
 **Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
-**Phase 3 — Complete campaign and operational systems:** in progress; First Contact now has fourteen authored story beats and eight evaluated Python missions, graduated hints, debriefs, contact-list messaging, an offline intranet Browser with file downloads and Mission Control submission, and data-backed App Hub surfaces; a later case remains unapproved and is not being silently invented.  
-**Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank calculation, story-gated app unlocks, evidence provenance, profile, archives, achievements, and save recovery foundations exist; clearance progression and full release gates remain.
+**Phase 3 — Complete campaign and operational systems:** in progress; First Contact has fourteen story beats, two mandatory Python onboarding missions, six retired legacy exercises, and an integrated persisted RX-14 case across Messenger, Browser, Terminal, Operations, Analysis, Database, and Dossier. A fresh-save-to-case-completion source acceptance test is present; later cases remain unapproved.  
+**Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank/clearance, Technical and Intelligence competency XP, story-gated app unlocks, evidence review history, profile, archives, achievements, and save recovery are implemented. Physical-device acceptance and complete localization/release gates remain.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists. The implementation audit is a point-in-time assessment of the current source tree, not a claim that the listed workstreams are complete.
 
@@ -429,3 +429,12 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Route source inspection from stage 11, analysis from stages 12–14, the actual operational decision from stage 14, and final debrief from stage 15.
 - Stage 13 advances to the decision prompt once analysis is complete; it must not open the decision workspace prematurely.
 - Add regression assertions for the full stage/phase route matrix.
+
+
+## Latest integration checkpoint — 2026-11-12
+
+- Source commit: `2aa66362b2966144d8403e4fc3e185cdb25fe180`
+- CI run [43183194370](https://github.com/MazBayID/firstGame/actions/runs/43183194370) passed Python runner tests and Release-variant Android unit tests. The final APK job was skipped; no APK was created.
+- The fresh-save First Contact acceptance test covers the two mandatory training missions, RX-14 briefing/investigation/analysis/decision/debrief, the 100 Intelligence XP chapter reward, and repository-backed session reconstruction.
+- Navigation return-path corrections, active-achievement cleanup, and the fourteen-beat progress indicator are included in this source baseline.
+- Remaining gates are listed in the latest refresh of `docs/IMPLEMENTATION_AUDIT.md`; physical-device acceptance and full language parity are not complete.
