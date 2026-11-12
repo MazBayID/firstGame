@@ -1,7 +1,6 @@
 package com.zeroday.cyberprotocol.ui
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class TerminalSessionStateTest {
@@ -41,16 +40,23 @@ class TerminalSessionStateTest {
     }
 
     @Test
-    fun restoredTerminalSessionDoesNotRemainBusy() {
-        // The Saver deliberately excludes transient execution state.
-        val state = TerminalSessionState(
+    fun restoringSessionPreservesWorkspaceAndOutputButClearsTransientBusyFlag() {
+        val original = TerminalSessionState(
             command = "python main.py",
-            currentDirectory = "/A.E.G.I.S/personal",
+            currentDirectory = "/A.E.G.I.S/missions/first_contact",
             output = "ready",
-            busy = false
+            busy = true
         )
+        val saverScope = object : androidx.compose.runtime.saveable.SaverScope {
+            override fun canBeSaved(value: Any): Boolean = true
+        }
 
-        assertFalse(state.busy)
-        assertEquals("python main.py", state.command)
+        val saved = with(saverScope) { TerminalSessionState.Saver.save(original) }
+        val restored = TerminalSessionState.Saver.restore(saved!!)
+
+        assertEquals("python main.py", restored?.command)
+        assertEquals("/A.E.G.I.S/missions/first_contact", restored?.currentDirectory)
+        assertEquals("ready", restored?.output)
+        assertEquals(false, restored?.busy)
     }
 }
