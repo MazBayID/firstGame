@@ -180,7 +180,12 @@ private fun CyberProtocolGameContentBody(
     var codeOutput by rememberSaveable { mutableStateOf("") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
     var terminalSession by rememberSaveable(stateSaver = TerminalSessionState.Saver) {
-        mutableStateOf(TerminalSessionState(currentDirectory = fileSystem.initialDirectory()))
+        mutableStateOf(
+            TerminalSessionState(
+                currentDirectory = fileSystem.initialDirectory(),
+                output = TerminalSessionState.initialOutput(selectedLanguage)
+            )
+        )
     }
     var showResetDialog by remember { mutableStateOf(false) }
     val messengerPreferences = remember { context.getSharedPreferences("cp_messenger_v1", 0) }
@@ -418,7 +423,13 @@ private fun CyberProtocolGameContentBody(
         }
         terminalSession = terminalSession.copy(currentDirectory = response.currentDirectory)
         if (response.clearScreen) {
-            terminalSession = terminalSession.clearOutput()
+            terminalSession = terminalSession.clearOutput(
+                localizedUiText(
+                    selectedLanguage,
+                    "A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\\n",
+                    "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\\n"
+                )
+            )
             return
         }
         appendTerminalOutput("\n$ $input\n")
