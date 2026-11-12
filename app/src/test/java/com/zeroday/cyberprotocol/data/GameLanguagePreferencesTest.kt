@@ -13,7 +13,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 class GameLanguagePreferencesTest {
     @Test fun freshInstallDefaultsToEnglish() {
-        val context = RuntimeEnvironment.getApplication<Context>()
+        val context = RuntimeEnvironment.getApplication() as Context
         context.getSharedPreferences("cp_language_preferences_v1", Context.MODE_PRIVATE).edit().clear().commit()
         assertEquals(GameLanguage.ENGLISH, GameLanguagePreferences.load(context))
     }
