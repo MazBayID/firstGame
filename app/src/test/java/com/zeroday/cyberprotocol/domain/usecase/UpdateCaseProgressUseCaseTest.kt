@@ -43,8 +43,8 @@ class UpdateCaseProgressUseCaseTest {
         useCase.analyzeEvidence(definition, "primary")
         assertEquals(CasePhase.OPERATIONAL_DECISION,
             CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))
-        useCase.selectDecision(definition, "monitor")
-        useCase.selectDecision(definition, "monitor")
+        useCase.selectDecision(definition, "monitor", "Dua sumber berbeda empat detik; penyebabnya belum terbukti.")
+        useCase.selectDecision(definition, "monitor", "Dua sumber berbeda empat detik; penyebabnya belum terbukti.")
         assertEquals(CasePhase.DEBRIEFING,
             CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))
         useCase.acknowledgeDebrief(definition)
