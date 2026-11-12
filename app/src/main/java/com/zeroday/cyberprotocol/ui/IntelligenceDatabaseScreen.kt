@@ -160,6 +160,11 @@ internal fun IntelligenceDatabaseScreen(gameState: GameState, onBack: () -> Unit
                     Text(record.summary, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
                     DatabaseValue("STATUS", evidenceLabel(record.status))
                     DatabaseValue("SOURCE", record.source)
+                    DatabaseValue("PROVENANCE", record.provenance.origin.name + " / " + record.provenance.sourceLabel)
+                    record.provenance.sourceAssetId?.let { DatabaseValue("SHARED ASSET", it) }
+                    record.provenance.sourcePath?.let { DatabaseValue("SOURCE PATH", it) }
+                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { "No linked evidence" })
+                    DatabaseValue("REVIEW HISTORY", record.reviewHistory.joinToString { "${it.previousStatus} → ${it.newStatus} / ${it.reviewerId}: ${it.reason}" }.ifBlank { "No reviews recorded" })
                     DatabaseValue("MISSION", record.missionId)
                     DatabaseValue("RECORD ID", record.id)
                     DatabaseValue("TIMESTAMP", record.recordedAtEpochMillis.toString())
@@ -210,14 +215,18 @@ private fun EmptyDatabaseNote(message: String) {
 
 private fun evidenceLabel(status: EvidenceStatus): String = when (status) {
     EvidenceStatus.CONFIRMED -> "TERKONFIRMASI"
+    EvidenceStatus.CORROBORATED -> "DIKOROBORASI"
     EvidenceStatus.INFERRED -> "DISIMPULKAN"
     EvidenceStatus.DISPUTED -> "DIPERSELISIHKAN"
+    EvidenceStatus.RETRACTED -> "DICABUT"
     EvidenceStatus.UNVERIFIED -> "BELUM TERVERIFIKASI"
 }
 
 private fun evidenceColor(status: EvidenceStatus): Color = when (status) {
     EvidenceStatus.CONFIRMED -> Color(0xFF8CD5AC)
+    EvidenceStatus.CORROBORATED -> Color(0xFF9BC7E8)
     EvidenceStatus.INFERRED -> Color(0xFFE3C17B)
     EvidenceStatus.DISPUTED -> Color(0xFFE09AA6)
+    EvidenceStatus.RETRACTED -> Color(0xFF9A879D)
     EvidenceStatus.UNVERIFIED -> Color(0xFF83C7D0)
 }
