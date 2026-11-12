@@ -13,6 +13,7 @@ import com.zeroday.cyberprotocol.core.model.EvidenceProvenance
 import com.zeroday.cyberprotocol.core.model.EvidenceRelationType
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.data.EvidenceAssetCatalog
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
@@ -76,6 +77,22 @@ internal class GameSessionViewModel(
         updateState { current ->
             if (!current.freyaContactOpened || current.nexusContactUnlocked) current
             else current.copy(nexusContactUnlocked = true, lastCheckpoint = "nexus_contact_unlocked")
+        }
+    }
+
+    /**
+     * Removes retired legacy exercises from the active story slot without deleting
+     * completed mission history, saved drafts, or virtual workspace files.
+     */
+    fun retireLegacyStoryMission() {
+        val activeId = repository.load().activeMissionId ?: return
+        if (activeId !in Campaign01Catalog.retiredLegacyStoryMissionIds) return
+        updateState { current ->
+            if (current.activeMissionId != activeId) current
+            else current.copy(
+                activeMissionId = null,
+                lastCheckpoint = "legacy_story_mission_retired:" + activeId
+            )
         }
     }
 

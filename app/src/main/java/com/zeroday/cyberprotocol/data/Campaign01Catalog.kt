@@ -246,15 +246,18 @@ object Campaign01Catalog {
 
     private val byId = missions.associateBy { it.id }
 
+    /** Only the two beginner onboarding exercises remain mandatory story missions. */
+    val guidedTrainingMissionIds = setOf("first_contact.signal", "first_contact.identity")
+
+    /** Retained for old saves and historical records; these are no longer story progression gates. */
+    val retiredLegacyStoryMissionIds = setOf(
+        "first_contact.audit", "first_contact.inventory", "first_contact.trace",
+        "first_contact.compare", "first_contact.normalize", "first_contact.validate_delta"
+    )
+
     private val storyStageByMissionId = mapOf(
         "first_contact.signal" to 4,
-        "first_contact.identity" to 5,
-        "first_contact.audit" to 8,
-        "first_contact.inventory" to 9,
-        "first_contact.trace" to 11,
-        "first_contact.compare" to 12,
-        "first_contact.normalize" to 13,
-        "first_contact.validate_delta" to 14
+        "first_contact.identity" to 5
     )
 
     fun find(missionId: String): MissionDefinition? = byId[missionId]

@@ -212,6 +212,9 @@ private fun CyberProtocolGameContentBody(
             sessionViewModel.ensureRecruitmentEvidence()
         }
     }
+    LaunchedEffect(currentGameState.activeMissionId) {
+        sessionViewModel.retireLegacyStoryMission()
+    }
 
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 16)
@@ -475,12 +478,6 @@ private fun CyberProtocolGameContentBody(
             val authoredMission = when (beatIndex) {
                 4 -> Campaign01Catalog.find("first_contact.signal")
                 5 -> Campaign01Catalog.find("first_contact.identity")
-                8 -> Campaign01Catalog.find("first_contact.audit")
-                9 -> Campaign01Catalog.find("first_contact.inventory")
-                11 -> Campaign01Catalog.find("first_contact.trace")
-                12 -> Campaign01Catalog.find("first_contact.compare")
-                13 -> Campaign01Catalog.find("first_contact.normalize")
-                14 -> Campaign01Catalog.find("first_contact.validate_delta")
                 else -> null
             }
             LaunchedEffect(authoredMission?.id) {
@@ -509,10 +506,6 @@ private fun CyberProtocolGameContentBody(
                 output = codeOutput,
                 feedback = codeFeedback,
                 saveStatus = savedCodeStatus,
-                canSubmit = authoredMission != null &&
-                    MissionSubmissionPolicy.canSubmit(code.text, lastSuccessfulRunSource) &&
-                    codeFeedback != "MEMVERIFIKASI...",
-                onSubmit = { submitMission(authoredMission) },
                 onSaveCode = {
                     authoredMission?.let { mission ->
                         fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
@@ -952,9 +945,9 @@ private fun CampaignScreen(storyStage: Int, onBack: () -> Unit, onContinue: () -
     val milestones = listOf(
         "ORIENTASI A.E.G.I.S.", "BERKAS RAHASIA 001", "SINYAL PERTAMA",
         "VERIFIKASI IDENTITAS", "STATUS RECRUIT", "SELISIH PERTAMA",
-        "AUDIT JEJAK SISTEM", "INVENTARIS REKAMAN", "LAPORAN AWAL",
-        "PENELUSURAN REFERENSI", "PERBANDINGAN DUA SUMBER", "NORMALISASI WAKTU",
-        "VALIDASI SELISIH", "LAPORAN INVESTIGASI"
+        "PEMERIKSAAN LOG", "INVENTARIS SUMBER", "LAPORAN AWAL",
+        "PEMERIKSAAN RX-14", "PERBANDINGAN SUMBER", "ANALISIS SELISIH",
+        "KEPUTUSAN OPERASIONAL", "LAPORAN INVESTIGASI"
     )
 
     GamePage("KAMPANYE", "A.E.G.I.S. / OPERASI CERITA", onBack, onHub) {
@@ -1071,8 +1064,7 @@ private fun StoryScreen(
     freyaContactUnlocked: Boolean,
     hintLevel: Int, onRequestHint: () -> Unit,
     code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
-    output: String, feedback: String, saveStatus: String, canSubmit: Boolean,
-    onSubmit: () -> Unit, onSaveCode: () -> Unit,
+    output: String, feedback: String, saveStatus: String, onSaveCode: () -> Unit,
     onRun: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
 ) {
@@ -1105,7 +1097,7 @@ private fun StoryScreen(
                 Text(beat.body, color = Color(0xFFD1D9DF), lineHeight = 23.sp, fontSize = 13.sp)
             }
         }
-        if (stage == 4 || stage == 5 || stage == 8 || stage == 9 || stage == 11 || stage == 12 || stage == 13 || stage == 14) {
+        if (mission != null) {
             GamePanel {
                 Text(
                     if (stage <= 5 && freyaContactUnlocked) "FREYA KNOX  /  BANTUAN PELATIHAN"
@@ -1151,18 +1143,7 @@ private fun StoryScreen(
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SIMPAN KODE") }
-                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN") }
-                }
-                Button(
-                    onClick = onSubmit,
-                    enabled = canSubmit,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF28634D),
-                        disabledContainerColor = Color(0xFF26343A)
-                    )
-                ) {
-                    Text(if (canSubmit) "KIRIM / SUBMIT MISI" else "SUBMIT MISI — JALANKAN KODE DULU")
+                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN DI TERMINAL") }
                 }
                 Surface(color = Color(0xFF080D12), shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
@@ -1173,7 +1154,7 @@ private fun StoryScreen(
                 }
                 if (feedback.isNotBlank()) Text(feedback, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
                 Text(
-                    "SIMPAN KODE menyimpan draf. JALANKAN menguji kode di terminal. SUBMIT mengirim kode yang sama dengan eksekusi terakhir yang berhasil ke evaluator misi.",
+                    "JALANKAN hanya mengeksekusi kode. Setelah berhasil, buka A.E.G.I.S. Browser > Mission Control untuk mengirim hasil ke evaluator.",
                     color = CyberPalette.SteelGray,
                     fontSize = 10.sp
                 )

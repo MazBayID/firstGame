@@ -7,7 +7,7 @@
 
 ## Executive result
 
-Cyber Protocol is a substantial playable foundation, not a blank project. The current branch already contains the approved First Contact opening, eight evaluated Python missions, a local virtual filesystem, mission-scoped Python file access, campaign persistence, a seven-app A.E.G.I.S. hub, and several data-backed evidence views.
+Cyber Protocol is a substantial playable foundation, not a blank project. The current branch contains the approved First Contact opening, two required Python onboarding missions, six retired legacy coding missions retained for save/history compatibility, a local virtual filesystem, mission-scoped Python file access, campaign persistence, a seven-app A.E.G.I.S. hub, and a persisted RX-14 case-flow vertical slice.
 
 However, the newly approved product direction is **not yet implemented end-to-end**. In particular:
 
@@ -311,17 +311,17 @@ Implemented on the current branch:
 - Added a progression test that completes RX-14 without inventing a cause for the four-second discrepancy.
 - Fixed the missing Campaign01StoryLocalization import found by CI.
 
-This is a first playable case-flow vertical slice, not a complete campaign conversion. The existing story screen still contains the legacy eight Python mission sequence; those missions have not yet been merged, retired, or moved into optional practice. Messenger/Browser/Database navigation is not yet automatically linked to case evidence discovery; Operations currently exposes the shared evidence records as the case's inspection surface. Verify UI behavior on an emulator before claiming the slice is fully playable.
+This is a first playable case-flow vertical slice, not a complete campaign conversion. The story route now requires only the two beginner Python onboarding exercises; six later legacy missions are retired from mandatory progression and retained for save/history compatibility. Messenger/Browser/Database navigation is not yet automatically linked to case evidence discovery; Operations currently exposes the shared evidence records as the case's inspection surface. Verify UI behavior on an emulator before claiming the slice is fully playable.
 
 ## RX-14 Operations source-inspection interaction
 
-The Operations investigation phase now opens the original receipt text from the shared VirtualFileSystem before the player can mark that source as inspected. The confirmation action records discovery only after the player has viewed the source dialog. The analysis phase remains a separate action. This is an incremental UI vertical slice; the broader redesign of the legacy eight-mission campaign catalog and save migration is still pending. CI run #158 passed source tests and the development Debug APK build for this interaction. Final-release emulator smoke testing remains pending.
+The Operations investigation phase now opens the original receipt text from the shared VirtualFileSystem before the player can mark that source as inspected. The confirmation action records discovery only after the player has viewed the source dialog. The analysis phase remains a separate action. This is an incremental UI vertical slice; the broader redesign of the campaign and cross-app integration remains in progress. CI run #158 passed source tests and the development Debug APK build for this interaction. Final-release emulator smoke testing remains pending.
 
 
-## Editor submission control — direct mission submission
+## Legacy mission route retirement — 2026-11-12
 
-- The First Contact code editor now exposes a dedicated **KIRIM / SUBMIT MISI** action alongside Save and Run.
-- Save remains draft persistence only; Run remains execution only; Submit invokes the existing deterministic mission evaluator.
-- Submit is enabled only when the exact current editor source matches the last successful run source. Editing after Run invalidates the eligible submission.
-- The Browser Mission Control submission path remains available; both entry points use the same submission function and policy.
-- Automated source validation and Android build are required before marking this UI fix verified. Device-level interaction remains pending until emulator smoke testing.
+- Only `first_contact.signal` and `first_contact.identity` remain required Python onboarding missions in the First Contact story route.
+- The six later Python exercises no longer map to story checkpoints. Their corresponding story beats now present source review, comparison, analysis, and operational decision context without requiring code.
+- Existing completed mission IDs, earned XP, player drafts, and workspace files are preserved. Startup clears only a retired legacy mission's active pointer.
+- The six old mission definitions/evaluator contracts remain temporarily for historical save and archive compatibility. A separate optional-practice interface has not yet been built.
+- RX-14 progression is independent of completion of the six retired exercises.

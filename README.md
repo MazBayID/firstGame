@@ -18,7 +18,7 @@ The opening notifications and links are in-game simulations. The app does not ac
 
 ## Current playable foundation
 
-First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. The previous eight evaluated Python missions are legacy implementation contracts, **not a mandatory gameplay sequence**. Their learning concepts may be retained as optional practice, combined, or retired when they do not serve the case. The current codebase is still transitioning away from that legacy sequence; do not mistake the design decision for a completed migration.
+First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. Only the first two Python exercises remain required for beginner onboarding. The six later evaluated exercises have been removed from the mandatory story route; their definitions remain temporarily available for old-save/history compatibility, but a dedicated optional-practice interface has not yet been implemented. The case phases themselves no longer require the player to solve those legacy coding tasks.
 
 The RX-14 case is now represented in Operations as a persisted five-phase case flow. The player inspects the original receipt sources, analyzes them separately, and chooses a proportionate operational response. The valid outcome **insufficient evidence** preserves the unresolved cause of the four-second discrepancy. This case flow is a playable foundation; story routing and cross-app evidence interactions are still being converted.
 

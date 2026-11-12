@@ -5,6 +5,7 @@ import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.EvidenceAssetCatalog
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -46,6 +47,28 @@ class GameSessionViewModelTest {
         assertEquals(expectedIds.size + 1, state.evidence.count {
             it.id in expectedIds || it.id == "transmission_timestamp_discrepancy"
         })
+    }
+
+    @Test
+    fun retiringLegacyActiveMissionPreservesEarnedProgressAndDrafts() {
+        val repository = MemoryRepository(
+            GameState(
+                storyBeat = 12,
+                activeMissionId = "first_contact.trace",
+                completedMissionIds = setOf("first_contact.signal", "first_contact.audit"),
+                experience = 100,
+                savedCode = mapOf("story_11" to "custom_player_draft")
+            )
+        )
+        val viewModel = GameSessionViewModel(repository)
+
+        viewModel.retireLegacyStoryMission()
+        val state = repository.load()
+
+        assertNull(state.activeMissionId)
+        assertEquals(setOf("first_contact.signal", "first_contact.audit"), state.completedMissionIds)
+        assertEquals(100, state.experience)
+        assertEquals("custom_player_draft", state.savedCode["story_11"])
     }
 
     @Test

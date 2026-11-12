@@ -57,8 +57,19 @@ class Campaign01CatalogTest {
     @Test
     fun operationsResumeMappingTargetsEveryAuthoredMissionCheckpoint() {
         assertEquals(
-            listOf(4, 5, 8, 9, 11, 12, 13, 14),
+            listOf(4, 5),
             Campaign01Catalog.missions.mapNotNull { Campaign01Catalog.storyStageForMission(it.id) }
+        )
+        assertEquals(
+            setOf("first_contact.signal", "first_contact.identity"),
+            Campaign01Catalog.guidedTrainingMissionIds
+        )
+        assertEquals(
+            setOf(
+                "first_contact.audit", "first_contact.inventory", "first_contact.trace",
+                "first_contact.compare", "first_contact.normalize", "first_contact.validate_delta"
+            ),
+            Campaign01Catalog.retiredLegacyStoryMissionIds
         )
         assertNull(Campaign01Catalog.storyStageForMission("unapproved_case"))
         assertEquals(8, Campaign01Catalog.missions.size)

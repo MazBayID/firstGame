@@ -224,7 +224,7 @@ The following older runs predate the current test-only / signed-Release-only wor
 - Mission workspace permissions now have Robolectric coverage for read-only asset downloads, persistence across VFS instances, Terminal cat access, write denial, and path-traversal denial. Complete Operations-specific terminal-session integration.
 - Harden the execution boundary beyond AST allowlisting; the current in-process Python runner must not be described as secure against hostile code.
 - Expand the current data-backed Database and Dossier surfaces into fully interactive, story-linked workspaces. Analysis now supports evidence search/filter and Operations now supports active-mission resume; additional review workflows and data navigation remain.
-- Implement the approved Guided Intelligence RPG loop and Evidence & Investigation Engine through a small, complete vertical slice; author the first post-First-Contact investigative case only after its evidence chain, primary archetype, optional leads, and deterministic evaluation are specified. The design direction is approved, but the engine and new case are not yet implemented.
+- Complete the Guided Intelligence RPG conversion beyond the RX-14 vertical slice: cross-app source inspection, richer analytical reasoning and decision rationale, optional-practice access for retired Python concepts, and the next story case only after separate approval. The case engine and first RX-14 case foundation are implemented; the full campaign conversion is not complete.
 - Save-snapshot round trips, previous-good-snapshot recovery, corrupt-snapshot preservation, legacy story migration, and previous-schema migration now have Robolectric coverage. Add archive-retention tests and expand clearance progression.
 - Finish ViewModel-driven state ownership and remaining App Hub interactions; implement complete Indonesian/English localization and the cinematic Campaign presentation overhaul; add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
@@ -249,7 +249,7 @@ Implementation requirements:
 - **Implemented foundation:** Case briefing, discovery of the two shared receipt evidence records, analysis acknowledgement, decision selection, and debrief completion persist through the existing case-progress use cases.
 - **Implemented foundation:** Players may choose to state that evidence is insufficient; alternative decisions request clock-sync or processing-queue logs without asserting a culprit.
 - **Test added:** an end-to-end domain progression test covers the complete RX-14 case and its uncertainty outcome.
-- **Still in progress:** the story screen continues to route through the legacy eight Python missions. Their mechanics must be progressively refactored into beginner training/optional practice or retained only where they naturally support the case.
+- **Migration batch:** only the first two Python exercises remain mandatory beginner onboarding. The six later legacy exercises no longer map to story checkpoints; their definitions remain for history/save compatibility. Old active legacy missions are cleared from the active slot while completed IDs, XP, and saved drafts are preserved. An optional-practice interface is not yet exposed.
 - **Still in progress:** direct cross-app case integration, richer analytical reasoning, decision rationale capture, competency rewards, and emulator smoke testing.
 - **Build gate:** CI run [#158](https://github.com/MazBayID/firstGame/actions/runs/43161653497) passed on commit `940939e9e4f6a9ea1d0eb66e462a88ed9998e7ea`. Source tests and the development Debug APK build succeeded. The final-release job was skipped as expected; this is not a final or emulator-smoke-tested APK.
 
@@ -257,12 +257,3 @@ Implementation requirements:
 
 - Operations now requires the player to open the original VFS receipt content before recording a source as discovered. Evidence inspection and analysis remain separate actions. This is an incremental vertical slice, not completion of the overall First Contact gameplay redesign.
 - CI run #158 passed source tests and built the development Debug APK. Final release was skipped; emulator smoke testing and physical-device acceptance remain outstanding.
-
-
-### Editor submission visibility fix
-
-- Added an explicit Submit action directly beneath the First Contact code editor.
-- Kept Save, Run, and Submit as three separate operations with distinct labels and behavior.
-- Submit reuses the existing evaluator path and exact-source successful-run gate; it is not a second evaluator implementation.
-- Browser Mission Control remains a secondary submission entry point.
-- CI and emulator interaction verification are pending for this change.
