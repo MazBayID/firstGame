@@ -1306,7 +1306,7 @@ private fun StoryScreen(
                 }
             }
         }
-        Text("TITIK SIMPAN " + (stage - 1) + " / 12", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+        Text("TITIK SIMPAN " + (stage - 1) + " / 14", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
     }
 }
 
