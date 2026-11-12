@@ -257,3 +257,12 @@ Implementation requirements:
 
 - Operations now requires the player to open the original VFS receipt content before recording a source as discovered. Evidence inspection and analysis remain separate actions. This is an incremental vertical slice, not completion of the overall First Contact gameplay redesign.
 - CI run #158 passed source tests and built the development Debug APK. Final release was skipped; emulator smoke testing and physical-device acceptance remain outstanding.
+
+
+### Editor submission visibility fix
+
+- Added an explicit Submit action directly beneath the First Contact code editor.
+- Kept Save, Run, and Submit as three separate operations with distinct labels and behavior.
+- Submit reuses the existing evaluator path and exact-source successful-run gate; it is not a second evaluator implementation.
+- Browser Mission Control remains a secondary submission entry point.
+- CI and emulator interaction verification are pending for this change.

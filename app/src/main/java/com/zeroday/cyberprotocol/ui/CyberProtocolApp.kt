@@ -509,6 +509,10 @@ private fun CyberProtocolGameContentBody(
                 output = codeOutput,
                 feedback = codeFeedback,
                 saveStatus = savedCodeStatus,
+                canSubmit = authoredMission != null &&
+                    MissionSubmissionPolicy.canSubmit(code.text, lastSuccessfulRunSource) &&
+                    codeFeedback != "MEMVERIFIKASI...",
+                onSubmit = { submitMission(authoredMission) },
                 onSaveCode = {
                     authoredMission?.let { mission ->
                         fileSystem.openMissionWorkspace(mission).writeFile(mission.writableFiles.first(), code.text)
@@ -1067,7 +1071,8 @@ private fun StoryScreen(
     freyaContactUnlocked: Boolean,
     hintLevel: Int, onRequestHint: () -> Unit,
     code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
-    output: String, feedback: String, saveStatus: String, onSaveCode: () -> Unit,
+    output: String, feedback: String, saveStatus: String, canSubmit: Boolean,
+    onSubmit: () -> Unit, onSaveCode: () -> Unit,
     onRun: () -> Unit, onContinue: () -> Unit,
     onBack: () -> Unit, onHub: () -> Unit
 ) {
@@ -1146,7 +1151,18 @@ private fun StoryScreen(
                 Text(saveStatus, color = CyberPalette.SteelGray, fontSize = 10.sp)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(onClick = onSaveCode, modifier = Modifier.weight(1f)) { Text("SIMPAN KODE") }
-                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN DI TERMINAL") }
+                    Button(onClick = onRun, modifier = Modifier.weight(1f)) { Text("JALANKAN") }
+                }
+                Button(
+                    onClick = onSubmit,
+                    enabled = canSubmit,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF28634D),
+                        disabledContainerColor = Color(0xFF26343A)
+                    )
+                ) {
+                    Text(if (canSubmit) "KIRIM / SUBMIT MISI" else "SUBMIT MISI — JALANKAN KODE DULU")
                 }
                 Surface(color = Color(0xFF080D12), shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
@@ -1157,7 +1173,7 @@ private fun StoryScreen(
                 }
                 if (feedback.isNotBlank()) Text(feedback, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
                 Text(
-                    "JALANKAN hanya mengeksekusi kode. Setelah berhasil, buka A.E.G.I.S. Browser > Mission Control untuk mengirim hasil ke evaluator.",
+                    "SIMPAN KODE menyimpan draf. JALANKAN menguji kode di terminal. SUBMIT mengirim kode yang sama dengan eksekusi terakhir yang berhasil ke evaluator misi.",
                     color = CyberPalette.SteelGray,
                     fontSize = 10.sp
                 )

@@ -316,3 +316,12 @@ This is a first playable case-flow vertical slice, not a complete campaign conve
 ## RX-14 Operations source-inspection interaction
 
 The Operations investigation phase now opens the original receipt text from the shared VirtualFileSystem before the player can mark that source as inspected. The confirmation action records discovery only after the player has viewed the source dialog. The analysis phase remains a separate action. This is an incremental UI vertical slice; the broader redesign of the legacy eight-mission campaign catalog and save migration is still pending. CI run #158 passed source tests and the development Debug APK build for this interaction. Final-release emulator smoke testing remains pending.
+
+
+## Editor submission control — direct mission submission
+
+- The First Contact code editor now exposes a dedicated **KIRIM / SUBMIT MISI** action alongside Save and Run.
+- Save remains draft persistence only; Run remains execution only; Submit invokes the existing deterministic mission evaluator.
+- Submit is enabled only when the exact current editor source matches the last successful run source. Editing after Run invalidates the eligible submission.
+- The Browser Mission Control submission path remains available; both entry points use the same submission function and policy.
+- Automated source validation and Android build are required before marking this UI fix verified. Device-level interaction remains pending until emulator smoke testing.
