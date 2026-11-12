@@ -50,7 +50,7 @@ These foundations are not automatically production-ready. Python file access is 
 ### 3. Complete player experience
 - Keep the A.E.G.I.S. App Hub as a set of connected tools, not a mandatory checklist; the mission design decides which apps are relevant.
 - Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list Messenger, offline A.E.G.I.S. Browser, and remaining App Hub interactions.
-- Continue expanding Analysis and Operations into deeper review/operational workflows. Dossier and Intelligence Database now have dedicated data-backed screens; remaining work is broader cross-linking, archive navigation, and audited evidence review.
+- Continue expanding Analysis and Operations into deeper review/operational workflows. Dossier and Intelligence Database have dedicated data-backed screens, and Archives now supports searchable mission/evidence records plus the RX-14 case report; broader cross-linking and audited evidence review remain.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
 - Implement the approved English-first, Indonesian-supported localization system: English default on fresh installs, persistent in-game language choice, stable message keys, localized story/mission data, and full content parity. Keep code syntax, identifiers, standard command names, file paths, and evaluator-sensitive output authentic.
 
@@ -124,7 +124,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Added deterministic rank thresholds for the approved rank ladder and story-gated App Hub unlock rules; legacy story-stage migration now restores the matching app access.
 - Added a previous-good-snapshot backup and corrupt-snapshot preservation path for local campaign save recovery.
 - Extracted the versioned GameState JSON codec from Android storage and added regression tests for complete state/evidence round trips, legacy defaults, unknown evidence statuses, and unsupported future schemas.
-- Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; added Profile, Archives, Achievements, and a persistent reduced-motion setting to the main menu.
+- Replaced the App Hub's initial placeholders with data-backed Database, Dossier, Analysis, and Operations views; Profile, Archives, and Achievements now have dedicated data-backed screens, alongside a persistent reduced-motion setting.
 - Implemented a contact-list Messenger with separate Freya and NEXUS conversations and locally persisted reply history.
 - Added the offline A.E.G.I.S. Browser with locally validated fictional credentials, persistent login/navigation state, Mission Control, File Repository, Intelligence Reports, Operations Archive, and Agent Profile.
 - Connected Freya's Messenger intranet link and credentials to the Browser; added the first mission's shared `message_fragment.txt` attachment.
@@ -472,3 +472,15 @@ The localization resolver is presentation-only. Stable mission/evidence IDs, ori
 - The legacy duplicate DatabaseScreen composable was removed; the routed IntelligenceDatabaseScreen is the single mission/evidence index implementation.
 
 This is a verified source-integration checkpoint, not production acceptance. Remaining gates include a general localization-key completeness mechanism, final review of mixed-language technical labels, and manual Android journeys in both languages. Do not mark the campaign or v1.0 complete until the full First Contact journey and device acceptance checks pass.
+
+
+## Player-facing progression and archive increment — 2026-11-12
+
+- **Archives:** replaced the text-only summary with a searchable, three-tab record browser for completed mission files, collected evidence, and the RX-14 case report. Evidence details include status, provenance, source path, relationships, and review history. Search and retention behavior has pure unit-test coverage.
+- **Profile:** replaced the text dump with an operative record showing rank progress, XP to the next rank, Technical and Intelligence competency tracks, clearance, unlocked applications, mission statistics, and RX-14 progress. Rank-progress calculations have boundary and maximum-rank tests.
+- **Achievements:** replaced the static award list with ten progress-derived milestones. Awards reflect mandatory onboarding, evidence discovery/analysis, operational decisions, debrief acknowledgement, optional legacy practice, competency XP, and rank. The catalog is computed from persisted campaign state and does not mutate progression.
+- **New Campaign reset:** now clears campaign mission workspaces and Messenger conversation history while preserving Personal Workspace files, canonical shared evidence assets, language choice, accessibility preference, and Browser authentication. Terminal, editor, practice, and debrief UI sessions return to clean defaults. VFS and ViewModel reset behavior have regression tests.
+- **Main menu:** added a deterministic, lightweight A.E.G.I.S. headquarters environment backdrop with a central secured complex, perimeter, city silhouettes, and approach road. This is a procedural visual foundation, not final hand-painted or animated art.
+- **Verified source checks:** Python runner tests and Release-variant Android unit tests passed on commit `3ed2e9daeee6578f5226e6a5f50f7795e1a3f209` (run [43240853147](https://github.com/MazBayID/firstGame/actions/runs/43240853147)). The headquarters backdrop integration's Android unit-test step also passed on commit `933c7a3aa6d83bf785c77bbd66e3987e854eea5e` (run [43241391801](https://github.com/MazBayID/firstGame/actions/runs/43241391801)); final workflow cleanup was still in progress at the time this note was written.
+
+Remaining acceptance still includes full navigation/ViewModel extraction, stronger runtime process isolation, remaining app/case integration, complete localization-key parity, final visual polish, and physical-device testing. These increments do not make the campaign production-complete.
