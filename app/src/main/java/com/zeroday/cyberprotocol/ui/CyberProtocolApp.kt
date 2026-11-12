@@ -1629,14 +1629,18 @@ private fun MessengerScreen(
     }
     val quickReplies = when (selectedContact) {
         "FREYA" -> listOf(
-            "Apa fungsi Terminal?",
-            "Bagaimana membaca berkas misi?",
-            "Apa itu variabel Python?",
-            "Bagaimana menjalankan dan mengirim kode?",
-            "Masih banyak yang harus kupelajari.",
-            "Mengapa kamu memilihku?"
+            "Apa fungsi Terminal?" to if (selectedLanguage == GameLanguage.ENGLISH) "What is the Terminal for?" else "Apa fungsi Terminal?",
+            "Bagaimana membaca berkas misi?" to if (selectedLanguage == GameLanguage.ENGLISH) "How do I read a mission file?" else "Bagaimana membaca berkas misi?",
+            "Apa itu variabel Python?" to if (selectedLanguage == GameLanguage.ENGLISH) "What is a Python variable?" else "Apa itu variabel Python?",
+            "Bagaimana menjalankan dan mengirim kode?" to if (selectedLanguage == GameLanguage.ENGLISH) "How do I run and submit code?" else "Bagaimana menjalankan dan mengirim kode?",
+            "Masih banyak yang harus kupelajari." to if (selectedLanguage == GameLanguage.ENGLISH) "I still have a lot to learn." else "Masih banyak yang harus kupelajari.",
+            "Mengapa kamu memilihku?" to if (selectedLanguage == GameLanguage.ENGLISH) "Why did you choose me?" else "Mengapa kamu memilihku?"
         )
-        "NEXUS" -> listOf("Tampilkan status personel.", "Di mana catatan operasiku?", "Apakah sistem ini berjalan offline?")
+        "NEXUS" -> listOf(
+            "Tampilkan status personel." to if (selectedLanguage == GameLanguage.ENGLISH) "Show personnel status." else "Tampilkan status personel.",
+            "Di mana catatan operasiku?" to if (selectedLanguage == GameLanguage.ENGLISH) "Where are my operation records?" else "Di mana catatan operasiku?",
+            "Apakah sistem ini berjalan offline?" to if (selectedLanguage == GameLanguage.ENGLISH) "Does this system work offline?" else "Apakah sistem ini berjalan offline?"
+        )
         else -> emptyList()
     }
 
@@ -1928,9 +1932,9 @@ private fun MessengerScreen(
                         }
                         Text("BALASAN CEPAT", color = Color(0xFF9BAEB4), fontSize = 9.sp)
                         quickReplies.forEach { choice ->
-                            Surface(onClick = { onReply(choice) }, color = Color(0xFF263A34),
+                            Surface(onClick = { onReply(choice.first) }, color = Color(0xFF263A34),
                                 shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
-                                Text(choice, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
+                                Text(choice.second, Modifier.padding(horizontal = 13.dp, vertical = 10.dp),
                                     color = Color(0xFFE2ECE7), fontSize = 12.sp)
                             }
                         }

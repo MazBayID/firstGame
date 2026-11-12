@@ -42,8 +42,7 @@ internal object MessengerDialogue {
     fun nexusResponse(
         message: String,
         activeMissionTitle: String?,
-        completedMissionCount: Int
-    ,
+        completedMissionCount: Int,
         language: GameLanguage = GameLanguage.INDONESIAN
     ): String {
         if (language == GameLanguage.ENGLISH) return when (message) {
