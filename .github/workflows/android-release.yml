@@ -1,4 +1,4 @@
-name: Android Release APK
+name: Cyber Protocol — Build, Test & Release
 
 on:
   push:
@@ -6,23 +6,24 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: android-release-${{ github.ref }}
+  group: cyber-protocol-release-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  validate-release-source:
-    name: Validate source before release
+  build-test-release:
+    name: Build once, test the exact APK, release the same APK
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the exact release source
+      - name: Check out the candidate commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
 
+      # Source-level tests do not create an installable APK.
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -49,33 +50,7 @@ jobs:
       - name: Run Android unit tests
         run: gradle --no-daemon testDebugUnitTest
 
-  build-release-apk:
-    name: Build permanently signed Release APK
-    needs: validate-release-source
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/rebuild/full-game'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the exact tested commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - uses: android-actions/setup-android@v4
-        with:
-          packages: "platform-tools"
-
-      - name: Install Android SDK
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
-
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.13"
-
+      # Restore the permanent key only after source tests have passed.
       - name: Restore and validate permanent release keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -105,7 +80,7 @@ jobs:
           echo "EXPECTED_CERT_SHA256=$CERT_SHA256" >> "$GITHUB_ENV"
           echo "ANDROID_KEYSTORE_PATH=$KEYSTORE_PATH" >> "$GITHUB_ENV"
 
-      - name: Set monotonic Android version code
+      - name: Set monotonically increasing Android version code
         shell: bash
         run: |
           set -euo pipefail
@@ -113,18 +88,22 @@ jobs:
           echo "ANDROID_VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
           echo "Release version code: $VERSION_CODE"
 
-      - name: Build signed Release APK only
+      # This is the ONLY installable game APK build in this workflow.
+      - name: Build the single permanently signed Release APK
         env:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: gradle --no-daemon assembleRelease
 
-      - name: Verify package, version code, and supported ABIs
+      - name: Validate package, version, ABIs, and permanent signature
+        id: apk_validation
         shell: bash
         run: |
           set -euo pipefail
           APK="app/build/outputs/apk/release/app-release.apk"
+          test -s "$APK"
+
           BADGING=$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK")
           ACTUAL_PACKAGE=$(printf '%s\n' "$BADGING" | sed -n "s/^package: name='\\([^']*\\)'.*/\\1/p" | head -n 1)
           ACTUAL_VERSION_CODE=$(printf '%s\n' "$BADGING" | sed -n "s/.*versionCode='\\([0-9]*\\)'.*/\\1/p" | head -n 1)
@@ -135,15 +114,7 @@ jobs:
 
           unzip -Z1 "$APK" | grep -q '^lib/arm64-v8a/'
           unzip -Z1 "$APK" | grep -q '^lib/x86_64/'
-          echo "Verified package: $ACTUAL_PACKAGE"
-          echo "Verified version code: $ACTUAL_VERSION_CODE"
-          echo "Verified ABIs: arm64-v8a, x86_64"
 
-      - name: Verify APK signature matches the permanent release certificate
-        shell: bash
-        run: |
-          set -euo pipefail
-          APK="app/build/outputs/apk/release/app-release.apk"
           SIGNATURE_OUTPUT=$("$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK")
           printf '%s\n' "$SIGNATURE_OUTPUT"
           ACTUAL_CERT_SHA256=$(printf '%s\n' "$SIGNATURE_OUTPUT" | \
@@ -151,12 +122,51 @@ jobs:
           EXPECTED=$(printf '%s' "$EXPECTED_CERT_SHA256" | tr -d ':')
           test -n "$ACTUAL_CERT_SHA256"
           test "$ACTUAL_CERT_SHA256" = "$EXPECTED"
-          echo "APK signature matches the permanent release keystore."
 
-      - uses: actions/upload-artifact@v4
+          APK_SHA256=$(sha256sum "$APK" | awk '{print $1}')
+          echo "APK_SHA256=$APK_SHA256" >> "$GITHUB_ENV"
+          echo "APK=$APK" >> "$GITHUB_ENV"
+          echo "Package: $ACTUAL_PACKAGE" >> "$GITHUB_STEP_SUMMARY"
+          echo "Version code: $ACTUAL_VERSION_CODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "ABIs: arm64-v8a, x86_64" >> "$GITHUB_STEP_SUMMARY"
+          echo "Permanent signing certificate: verified" >> "$GITHUB_STEP_SUMMARY"
+          echo "APK SHA-256: $APK_SHA256" >> "$GITHUB_STEP_SUMMARY"
+
+      # Install and launch the exact signed Release APK built above.
+      - name: Install and smoke-test the exact Release APK on Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: Pixel_2
+          script: |
+            set -euo pipefail
+            adb install "$APK"
+            adb shell pm path com.zeroday.cyberprotocol
+            adb shell am force-stop com.zeroday.cyberprotocol
+            adb shell monkey -p com.zeroday.cyberprotocol -c android.intent.category.LAUNCHER 1
+            sleep 20
+            adb shell pidof com.zeroday.cyberprotocol
+            echo "Signed Release APK installed and launched successfully."
+
+      - name: Confirm the tested APK is unchanged and prepare its digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACTUAL_SHA256=$(sha256sum "$APK" | awk '{print $1}')
+          test "$ACTUAL_SHA256" = "$APK_SHA256"
+          printf '%s  %s\n' "$APK_SHA256" "app-release.apk" > app-release.apk.sha256
+          echo "Tested APK SHA-256 unchanged: $ACTUAL_SHA256" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+      # Upload the same file tested above. No second build or re-signing occurs.
+      - name: Publish the tested APK and checksum
+        uses: actions/upload-artifact@v4
         with:
           name: cyber-protocol-release
-          path: app/build/outputs/apk/release/app-release.apk
+          path: |
+            app/build/outputs/apk/release/app-release.apk
+            app-release.apk.sha256
           if-no-files-found: error
           retention-days: 14
 
