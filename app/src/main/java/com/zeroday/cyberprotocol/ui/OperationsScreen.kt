@@ -127,7 +127,7 @@ internal fun OperationsScreen(
                     ) {
                         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                             Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                            Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 9.sp)
+                            Text(CaseLocalizedContent.evidenceSource(record, selectedLanguage), color = Color(0xFF83C7D0), fontSize = 9.sp)
                             Text(if (analyzed) localizedUiText(selectedLanguage, "ANALYSIS RECORDED", "ANALISIS TERCATAT") else localizedUiText(selectedLanguage, "AWAITING ANALYSIS", "MENUNGGU HASIL ANALISIS"),
                                 color = if (analyzed) Color(0xFF8CD5AC) else Color(0xFF9AB4B8),
                                 fontSize = 8.sp, fontWeight = FontWeight.Bold)
@@ -254,7 +254,7 @@ private fun EvidencePanel(
         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
             Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-            Text(record.provenance.sourceLabel, color = Color(0xFF83C7D0), fontSize = 10.sp)
+            Text(CaseLocalizedContent.evidenceSource(record, selectedLanguage), color = Color(0xFF83C7D0), fontSize = 10.sp)
             if (discovered) {
                 Text(CaseLocalizedContent.evidenceSummary(record, selectedLanguage), color = Color(0xFFC5D3D0), fontSize = 11.sp, lineHeight = 17.sp)
                 Text(localizedUiText(selectedLanguage, "EVIDENCE STATUS: ", "STATUS BUKTI: ") + localizedEvidenceStatus(record.status, selectedLanguage), color = Color(0xFF91A8AD), fontSize = 9.sp)
