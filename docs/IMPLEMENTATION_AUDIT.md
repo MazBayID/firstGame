@@ -234,3 +234,14 @@ This refresh does not introduce story canon or change gameplay implementation. I
 - Added regression coverage for serialization, legacy decoding, review audit history, transition restrictions, relation validation, idempotency, and provenance preservation.
 
 **Scope boundary:** this checkpoint establishes the domain and persistence contract. It does not yet claim all app surfaces are connected to the evidence graph, VFS assets automatically create evidence, or a new investigative case is playable. A successful Python RUN or evaluator result is not itself an intelligence review and does not automatically classify arbitrary evidence as confirmed.
+
+
+## Batch 04 — Guided Intelligence RPG architecture
+
+- Added mission primary/secondary archetype metadata. Existing STORY_CODE missions default to the Technical archetype without changing their mission IDs, evaluator IDs, workspace contracts, objectives, or rewards.
+- Added a reusable case contract with required and optional evidence IDs, one primary archetype, and deterministic decision options.
+- Added persisted case progress for briefing acknowledgement, discovered evidence, analyzed evidence, selected decision, and debrief acknowledgement.
+- Added a phase evaluator for Briefing → Investigation → Analysis → Operational Decision → Debriefing → Complete. Optional evidence enriches a case but does not block the standard case phase progression.
+- Decision options may require explicitly listed optional evidence; those requirements are checked independently and deterministically.
+- Bumped save schema to 7. Schema-6 and earlier saves retain existing campaign/evidence state and receive an empty case-progress map.
+- No new post-First-Contact story case is authored in this checkpoint. A playable case remains gated on an approved source chain, primary archetype, optional leads, and decision/evaluation design.

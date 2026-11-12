@@ -1,9 +1,6 @@
 package com.zeroday.cyberprotocol.core.model
 
-/**
- * Authored mission content is data, not UI logic. The evaluator ID maps to a
- * deterministic teaching contract in the Python runtime.
- */
+/** Authored mission content is data, not UI logic. */
 enum class MissionKind { STORY_CODE, INVESTIGATION, COMBINED }
 
 data class MissionObjective(
@@ -19,10 +16,7 @@ data class MissionObjective(
     }
 }
 
-data class MissionHint(
-    val level: Int,
-    val message: String
-) {
+data class MissionHint(val level: Int, val message: String) {
     init {
         require(level in 1..3)
         require(message.isNotBlank())
@@ -36,6 +30,12 @@ data class MissionDefinition(
     val title: String,
     val briefing: String,
     val kind: MissionKind,
+    val primaryArchetype: MissionArchetype = when (kind) {
+        MissionKind.STORY_CODE -> MissionArchetype.TECHNICAL
+        MissionKind.INVESTIGATION -> MissionArchetype.INVESTIGATION
+        MissionKind.COMBINED -> MissionArchetype.INVESTIGATION
+    },
+    val secondaryArchetypes: Set<MissionArchetype> = emptySet(),
     val evaluatorId: Int?,
     val rewardXp: Int,
     val requiredClearance: Int,
@@ -43,7 +43,6 @@ data class MissionDefinition(
     val allowedFiles: Set<String>,
     val writableFiles: Set<String> = allowedFiles,
     val runtimeVariables: Map<String, List<String>> = emptyMap(),
-    /** Game-authored read-only files exposed through the intranet repository. */
     val initialFiles: Map<String, String> = emptyMap(),
     val nextClue: String? = null,
     val objectives: List<MissionObjective>,

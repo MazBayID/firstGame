@@ -1,5 +1,6 @@
 package com.zeroday.cyberprotocol.core.model
 
+/** Versioned, serializable snapshot of the player's local campaign state. */
 data class GameState(
     val schemaVersion: Int = CURRENT_SCHEMA_VERSION,
     val campaignId: String = "campaign_01_recruitment",
@@ -14,11 +15,12 @@ data class GameState(
     val clearance: Int = 0,
     val unlockedApps: Set<String> = setOf("MESSENGER"),
     val evidence: List<EvidenceRecord> = emptyList(),
+    val caseProgress: Map<String, CaseProgress> = emptyMap(),
     val savedCode: Map<String, String> = emptyMap(),
     val lastCheckpoint: String = "new_game",
     val updatedAtEpochMillis: Long = 0L
 ) {
-    companion object { const val CURRENT_SCHEMA_VERSION = 6 }
+    companion object { const val CURRENT_SCHEMA_VERSION = 7 }
 }
 
 enum class EvidenceStatus { UNVERIFIED, INFERRED, CORROBORATED, CONFIRMED, DISPUTED, RETRACTED }
@@ -41,11 +43,7 @@ data class EvidenceProvenance(
     }
 }
 
-data class EvidenceRelation(
-    val relatedEvidenceId: String,
-    val type: EvidenceRelationType,
-    val note: String = ""
-) {
+data class EvidenceRelation(val relatedEvidenceId: String, val type: EvidenceRelationType, val note: String = "") {
     init { require(relatedEvidenceId.isNotBlank()) }
 }
 

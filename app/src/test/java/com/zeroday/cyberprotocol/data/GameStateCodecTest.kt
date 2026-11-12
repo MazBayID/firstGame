@@ -23,6 +23,14 @@ class GameStateCodecTest {
             experience = 420,
             clearance = 1,
             unlockedApps = setOf("MESSENGER", "BROWSER", "TERMINAL", "DATABASE", "DOSSIER", "ANALYSIS", "OPERATIONS"),
+            caseProgress = mapOf("case_alpha" to com.zeroday.cyberprotocol.core.model.CaseProgress(
+                caseId = "case_alpha",
+                briefingAcknowledged = true,
+                discoveredEvidenceIds = setOf("ev_a", "ev_optional"),
+                analyzedEvidenceIds = setOf("ev_a"),
+                selectedDecisionId = "monitor",
+                debriefViewed = false
+            )),
             evidence = listOf(
                 EvidenceRecord(
                     id = "rx14_time_delta",
@@ -42,6 +50,7 @@ class GameStateCodecTest {
         val decoded = GameStateCodec.decode(GameStateCodec.encode(state))
 
         assertEquals(state, decoded)
+        assertEquals(state.caseProgress, decoded.caseProgress)
     }
 
     @Test

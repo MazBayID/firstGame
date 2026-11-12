@@ -22,6 +22,18 @@ internal object GameStateCodec {
         put("lastCheckpoint", state.lastCheckpoint)
         put("updatedAtEpochMillis", state.updatedAtEpochMillis)
         put("savedCode", JSONObject().apply { state.savedCode.forEach { (k, v) -> put(k, v) } })
+        put("caseProgress", JSONObject().apply {
+            state.caseProgress.toSortedMap().forEach { (caseId, progress) ->
+                put(caseId, JSONObject().apply {
+                    put("caseId", progress.caseId)
+                    put("briefingAcknowledged", progress.briefingAcknowledged)
+                    put("discoveredEvidenceIds", JSONArray(progress.discoveredEvidenceIds.sorted()))
+                    put("analyzedEvidenceIds", JSONArray(progress.analyzedEvidenceIds.sorted()))
+                    put("selectedDecisionId", progress.selectedDecisionId)
+                    put("debriefViewed", progress.debriefViewed)
+                })
+            }
+        })
         put("evidence", JSONArray().apply {
             state.evidence.forEach { e ->
                 put(JSONObject().apply {
@@ -57,6 +69,21 @@ internal object GameStateCodec {
         val codeJson = json.optJSONObject("savedCode") ?: JSONObject()
         val code = linkedMapOf<String, String>()
         codeJson.keys().forEach { code[it] = codeJson.optString(it, "") }
+        val caseProgressJson = json.optJSONObject("caseProgress") ?: JSONObject()
+        val caseProgress = linkedMapOf<String, CaseProgress>()
+        caseProgressJson.keys().forEach { key ->
+            val item = caseProgressJson.optJSONObject(key) ?: return@forEach
+            val caseId = item.optString("caseId", key)
+            if (caseId.isBlank() || caseId != key) return@forEach
+            caseProgress[caseId] = CaseProgress(
+                caseId = caseId,
+                briefingAcknowledged = item.optBoolean("briefingAcknowledged", false),
+                discoveredEvidenceIds = item.stringSet("discoveredEvidenceIds"),
+                analyzedEvidenceIds = item.stringSet("analyzedEvidenceIds"),
+                selectedDecisionId = item.optString("selectedDecisionId").takeIf { it.isNotBlank() && it != "null" },
+                debriefViewed = item.optBoolean("debriefViewed", false)
+            )
+        }
         val evidenceJson = json.optJSONArray("evidence") ?: JSONArray()
         val evidence = buildList {
             for (i in 0 until evidenceJson.length()) {
@@ -122,6 +149,10 @@ internal object GameStateCodec {
         )
     }
 
+    private fun JSONObject.stringSet(key: String): Set<String> {
+        val a = optJSONArray(key) ?: return emptySet()
+        return buildSet { for (i in 0 until a.length()) add(a.optString(i)) }
+    }
     private fun JSONObject.stringSet(key: String): Set<String> {
         val a = optJSONArray(key) ?: return emptySet()
         return buildSet { for (i in 0 until a.length()) add(a.optString(i)) }
