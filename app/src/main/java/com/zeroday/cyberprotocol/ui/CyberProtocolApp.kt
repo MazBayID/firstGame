@@ -773,7 +773,7 @@ private fun CyberProtocolGameContentBody(
             title = debriefTitle,
             feedback = debriefFeedback,
             xpAwarded = debriefXp,
-            rank = currentGameState.rank.replace('_', ' '),
+            rank = localizedRankName(currentGameState.rank, selectedLanguage),
             totalExperience = currentGameState.experience,
             nextClue = debriefClue,
             onContinue = {
@@ -1009,13 +1009,13 @@ private fun CyberProtocolGameContentBody(
             localizedUiText(selectedLanguage, "A.E.G.I.S. / PERSONNEL IDENTITY", "A.E.G.I.S. / IDENTITAS PERSONEL"),
             buildString {
                 append(localizedUiText(selectedLanguage, "IDENTITY: TRAINEE AGENT\n", "IDENTITAS: AGEN MAGANG\n"))
-                append("RANK: ").append(localizedRankName(currentGameState.rank, selectedLanguage)).append("\n")
+                append(localizedUiText(selectedLanguage, "RANK: ", "PANGKAT: ")).append(localizedRankName(currentGameState.rank, selectedLanguage)).append("\n")
                 append(localizedUiText(selectedLanguage, "EXPERIENCE: ", "PENGALAMAN: ")).append(currentGameState.experience).append(" XP\n")
-                append("CLEARANCE: ").append(currentGameState.clearance).append("\n")
+                append(localizedUiText(selectedLanguage, "CLEARANCE LEVEL: ", "TINGKAT AKSES: ")).append(currentGameState.clearance).append("\n")
                 append(localizedUiText(selectedLanguage, "CAMPAIGN: ", "KAMPANYE: ")).append(currentGameState.campaignId).append("\n")
                 append(localizedUiText(selectedLanguage, "MISSIONS COMPLETED: ", "MISI SELESAI: ")).append(currentGameState.completedMissionIds.size).append("\n")
                 append(localizedUiText(selectedLanguage, "EVIDENCE RECORDED: ", "BUKTI TERCATAT: ")).append(currentGameState.evidence.size).append("\n")
-                append("CHECKPOINT: ").append(currentGameState.lastCheckpoint).append("\n")
+                append(localizedUiText(selectedLanguage, "CHECKPOINT: ", "TITIK SIMPAN: ")).append(currentGameState.lastCheckpoint).append("\n")
                 val nextRankXp = com.zeroday.cyberprotocol.domain.usecase.ProgressionRules.nextRankThreshold(currentGameState.experience)
                 if (nextRankXp == null) append(localizedUiText(selectedLanguage, "MAXIMUM RANK REACHED", "RANK MAKSIMUM TERCAPAI"))
                 else append(localizedUiText(selectedLanguage, "NEXT RANK IN: ", "MENUJU RANK BERIKUTNYA: ")).append(nextRankXp - currentGameState.experience).append(" XP")
@@ -1231,7 +1231,7 @@ private fun RecruitmentNotificationScreen(selectedLanguage: GameLanguage, onOpen
                         Spacer(Modifier.weight(1f))
                         Text(localizedUiText(selectedLanguage, "now", "sekarang"), color = Color(0xFF9AA2AC), fontSize = 10.sp)
                     }
-                    Text("A.E.G.I.S. / Recruitment Office", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                    Text(localizedUiText(selectedLanguage, "A.E.G.I.S. / Recruitment Office", "A.E.G.I.S. / Kantor Rekrutmen"), color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                     Text(localizedUiText(selectedLanguage, "Official invitation: recruitment request.", "Undangan resmi: permintaan perekrutan."), color = Color(0xFFD0D5DC), fontSize = 13.sp)
                 }
             }
@@ -1409,7 +1409,7 @@ private fun StoryScreen(
                     Text(beat.eyebrow, color = Color(0xFFE0A2AD), fontSize = 9.sp,
                         letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.weight(1f))
-                    Text("SCENE ${(stage - 1).toString().padStart(2, '0')}",
+                    Text("${localizedUiText(selectedLanguage, "SCENE", "ADEGAN")} ${(stage - 1).toString().padStart(2, '0')}",
                         color = Color(0xFF9AB4B8), fontSize = 9.sp, letterSpacing = 1.sp)
                 }
                 Text(beat.title, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Black)
