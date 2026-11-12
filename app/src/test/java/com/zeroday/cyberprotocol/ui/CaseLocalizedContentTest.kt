@@ -1,6 +1,7 @@
 package com.zeroday.cyberprotocol.ui
 
 import com.zeroday.cyberprotocol.core.model.GameLanguage
+import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.data.Campaign01CaseCatalog
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import org.junit.Assert.assertEquals
@@ -58,6 +59,25 @@ class CaseLocalizedContentTest {
             assertTrue(CaseLocalizedContent.decisionTitle(option, GameLanguage.ENGLISH).isNotBlank())
             assertTrue(CaseLocalizedContent.decisionDescription(option, GameLanguage.ENGLISH).isNotBlank())
         }
+    }
+
+    @Test
+    fun rx14EvidenceMetadataIsLocalizedWithoutMutatingStoredRecords() {
+        val discrepancy = EvidenceRecord(
+            id = "transmission_timestamp_discrepancy",
+            title = "Perbedaan Waktu Penerimaan Transmisi",
+            summary = "Dua sistem internal mencatat referensi RX-14 pada waktu berbeda empat detik. Perbedaan teramati, tetapi penyebabnya belum diketahui.",
+            source = "A.E.G.I.S. / perbandingan metadata tanda terima",
+            missionId = "first_contact.recruitment"
+        )
+        assertEquals("Transmission Receipt Timestamp Discrepancy",
+            CaseLocalizedContent.evidenceTitle(discrepancy, GameLanguage.ENGLISH))
+        assertTrue(CaseLocalizedContent.evidenceSummary(discrepancy, GameLanguage.ENGLISH)
+            .contains("cause is unknown"))
+        assertEquals("A.E.G.I.S. / receipt metadata comparison",
+            CaseLocalizedContent.evidenceSource(discrepancy, GameLanguage.ENGLISH))
+        assertEquals("Perbedaan Waktu Penerimaan Transmisi", discrepancy.title)
+        assertEquals("A.E.G.I.S. / perbandingan metadata tanda terima", discrepancy.source)
     }
 
     @Test
