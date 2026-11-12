@@ -64,7 +64,9 @@ The **Evidence & Investigation Engine** is the connective foundation for source 
 
 ## Language
 
-Bahasa Indonesia is the current implemented language. English selection and complete localization across all player-facing screens remain planned work; the design requirements are documented in `GAME_CONCEPT.md`. Python syntax and standard technical command names remain unchanged.
+**Approved direction: English-first, Indonesian-supported.** English is the default for fresh installations; Bahasa Indonesia is an in-game alternative whose choice will persist locally. English is the source language for new story and UI content, and both languages must reach full player-facing content parity before bilingual support is called complete. Python syntax, identifiers, standard command names, file paths, and evaluator-sensitive output remain unchanged.
+
+The current build is **not yet localized**: the Language menu is a placeholder and much of the UI and campaign content remains Indonesian-only. See [Localization Plan](docs/LOCALIZATION_PLAN.md) and the language rules in GAME_CONCEPT.md.
 
 ## Safety and technical limitations
 

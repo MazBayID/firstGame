@@ -52,7 +52,7 @@ These foundations are not automatically production-ready. Python file access is 
 - Complete the approved main menu, campaign selection/progress, fourteen-beat First Contact story, contact-list Messenger, offline A.E.G.I.S. Browser, and remaining App Hub interactions.
 - Continue expanding Analysis and Operations into deeper review/operational workflows. Dossier and Intelligence Database now have dedicated data-backed screens; remaining work is broader cross-linking, archive navigation, and audited evidence review.
 - Integrate the entry loading animation efficiently; do not decode all frames into memory at once.
-- Provide coherent Indonesian-first localization foundations and keep code syntax/standard command names authentic.
+- Implement the approved English-first, Indonesian-supported localization system: English default on fresh installs, persistent in-game language choice, stable message keys, localized story/mission data, and full content parity. Keep code syntax, identifiers, standard command names, file paths, and evaluator-sensitive output authentic.
 
 ### 4. Mission and learning systems
 - Use the approved **Guided Intelligence RPG** approach: a case/problem is the gameplay unit, not a mandatory sequence of application visits.

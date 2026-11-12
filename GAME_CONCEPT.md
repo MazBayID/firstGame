@@ -123,6 +123,23 @@ Character conversations are presented through an in-game **chat interface**, rat
 - Detailed chat layout, message timing, typing indicators, attachments, and interaction behavior remain open for later UI design.
 
 
+## 3.4 Language and Localization — English-First
+
+Cyber Protocol is an **English-first, Indonesian-supported** game.
+
+- **Default for a fresh installation:** English, regardless of the Android system language. The game must not silently choose Indonesian based on device locale.
+- **Supported alternative:** Bahasa Indonesia, selectable from the in-game Language menu.
+- **Persistence:** the player's language choice is stored locally and remains active after the app is closed or the device restarts.
+- **Existing progress:** changing language must never reset, migrate, or otherwise alter campaign progress, evidence, code drafts, rank, clearance, or unlocks.
+- **Content parity:** all player-facing content must be available in both languages before the bilingual experience is declared complete. This includes menus, settings, notifications, dialogue, briefings, objectives, hints, mission feedback, reports, evidence labels, debriefs, and accessibility text.
+- **English is the source language:** new authored content is written and reviewed in English first; the Indonesian version follows and must preserve meaning, tone, uncertainty, and gameplay requirements.
+- **Technical authenticity:** Python code, identifiers, syntax, standard command names, file paths, and literal output expected by evaluators must not be translated. Explanatory text around them may be localized.
+- **No mixed-language completion claims:** a language option must not be presented as fully supported while substantial player-facing content remains in the other language. Localization coverage must be tracked and tested by screen/content domain.
+
+The localization implementation should use stable message keys and separate language resources rather than scattering language conditionals through UI code. Authored story and mission content must also have explicit localized variants while retaining stable mission/evidence identifiers. Missing translations must be detected during development and tests; silently falling back to a different language is not an acceptable release behavior.
+
+The current repository still contains Indonesian hard-coded UI and campaign content. This policy defines the approved target; it does not claim that English localization is already implemented. See [Localization Plan](docs/LOCALIZATION_PLAN.md) for rollout and acceptance gates.
+
 # 4. Fictional Intelligence Organization: A.E.G.I.S.
 
 ## 4.1 Identity
@@ -684,7 +701,7 @@ The following details remain open and must be designed deliberately before imple
 - Named human characters, histories, motivations, relationships, and dialogue beyond already approved canon.
 - Detailed A.E.G.I.S. leadership and internal politics.
 - Final menu and operational UI wireframes.
-- Localization workflow and complete translated content.
+- Localization resource architecture, translation workflow, and complete bilingual content parity.
 - NEXUS dialogue model, context rules, and offline/online implementation boundaries.
 - Final technical architecture and Android performance strategy.
 - Audio direction, accessibility, and cinematic asset pipeline.
