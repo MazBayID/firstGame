@@ -28,7 +28,7 @@ The baseline repository was a playable vertical slice, not a blank project. The 
 - A code editor with basic Python syntax highlighting and editing helpers.
 - A campaign/story-stage flow, code RUN/SUBMIT actions, and a seven-app hub including the offline A.E.G.I.S. Browser.
 - UI icon assets, launcher artwork, and 240 WebP loading frames.
-- GitHub Actions with a test-only Android Tests workflow and a separate permanently signed Release APK workflow for device testing.
+- GitHub Actions with one main-branch Build → Test → Release pipeline that builds one permanently signed Release APK, installs and smoke-tests that exact binary on an Android Emulator, then publishes the unchanged APK. Pull requests use source-only tests and never build an installable APK.
 
 These foundations are not automatically production-ready. Python file access is now routed through mission-scoped virtual workspaces and the general terminal is confined to the personal workspace, but execution still occurs in-process and is not a hardened hostile-code sandbox. The game shell still contains substantial UI state, some App Hub interactions remain read-only, and the approved campaign currently covers the expanded First Contact investigation; a later investigative case remains unapproved.
 
@@ -154,7 +154,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Added Python runner limits for AST size, range iteration, integer literals, collection literals, and captured stdout. These are teaching-runtime guardrails, **not a hardened sandbox**.
 - Added the entry-only WebP loading animation. It decodes one frame at a time and releases the previous bitmap instead of loading all 240 frames into memory.
 - Added Python regression tests and Kotlin domain-use-case tests.
-- Split CI responsibilities: Android Tests runs Python and Kotlin tests without publishing an APK; Android Release APK builds and publishes only app-release.apk, signed with the permanent keystore. Release CI verifies the APK signature and versionCode.
+- Established the single-APK CI policy: source tests run before packaging; the main-branch pipeline builds one permanently signed Release APK, tests that exact file on an Android Emulator, verifies its SHA-256 remains unchanged, and publishes that same file. Pull-request checks remain source-only and do not produce installable APKs.
 
 
 - Tightened the Freya notification checkpoint: the introduction can only be acknowledged while the first mission is active; added regression coverage for premature access and the required mission gate.
@@ -172,20 +172,21 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
 
-### Signed release-only build policy
+### Single-APK Build → Test → Release pipeline
 
-- Device testing uses only `app-release.apk`, signed with the permanent Android release keystore. Debug signing is separate and the Debug variant is never used for device acceptance or distribution.
-- The separate Android Tests workflow runs Python and Kotlin/Android unit tests only; it never invokes APK-producing tasks, reads signing secrets, or uploads an installable APK.
-- Android Release APK runs a mandatory Python/Kotlin validation job on pushes or manual dispatches for `main`; its separate Release job depends on validation success, checks out the exact same commit SHA, and builds only `assembleRelease`. Pull requests never receive release-signing secrets or produce APKs.
-- Release verification checks the application ID, versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and SHA-256 certificate fingerprint against the restored permanent keystore.
-- Release CI assigns a monotonically increasing versionCode from the workflow run number (starting above the existing versionCode 6) and verifies that the APK contains the expected value before artifact upload.
-- Release CI verifies the APK signature and uploads one artifact named `cyber-protocol-release`.
+- The `main`-branch workflow is one sequential pipeline: Python/Kotlin source tests → one signed Release APK build → package/signature/ABI/version validation → install and launch smoke test on an Android Emulator → publish the exact tested APK.
+- The pipeline invokes `assembleRelease` once. It does not build an installable Debug APK or rebuild/re-sign the Release APK after testing.
+- The Android Tests workflow is pull-request-only. It runs Python and Kotlin unit tests without signing secrets, APK-producing tasks, or installable APK artifacts. The main-branch Release pipeline repeats the required source tests before building its candidate APK.
+- The emulator smoke test installs the built `app-release.apk` itself, launches `com.zeroday.cyberprotocol`, and requires the app process to remain alive. A failed installation or launch blocks publication.
+- Release validation checks application ID, monotonically increasing versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and the SHA-256 certificate fingerprint against the permanent keystore.
+- The pipeline records the APK SHA-256 before runtime testing and verifies the file is unchanged afterward. The uploaded `cyber-protocol-release` artifact contains that exact APK and its checksum manifest.
+- The permanent keystore is restored only after source tests pass, kept in the ephemeral runner with restricted permissions, and removed even when later steps fail. Pull requests never receive signing secrets.
+- This automated emulator smoke test does not replace physical-device acceptance. Clean installation, in-place update, and save-data preservation must still be confirmed on the user's Android device.
 
-### Verification of the current CI and Release policy
+### Current pipeline implementation
 
-- Android Tests run [43078293753](https://github.com/MazBayID/firstGame/actions/runs/43078293753) passed on commit `7a58b670`; Python runner tests and Android/Kotlin unit tests passed without producing an APK.
-- Android Release APK run [43078293947](https://github.com/MazBayID/firstGame/actions/runs/43078293947) passed on the same commit. The Release build produced `app-release.apk`, versionCode `1024`, verified package identity and both configured ABIs, and confirmed that the APK certificate SHA-256 matches the permanent keystore certificate.
-- The Release artifact `cyber-protocol-release` was uploaded successfully. This is a development snapshot, not a final-game acceptance build; physical-device installation and update validation remain outstanding.
+- The single-APK workflow implementation is committed to `main` and awaits its first complete CI run. Do not call the new pipeline verified until source tests, signed build, emulator installation/launch, checksum comparison, and artifact publication all pass.
+- Previous workflow runs listed below are historical evidence only; they do not verify the new APK-level testing sequence.
 
 ### Historical verification observed under the former CI design
 The following older runs predate the current test-only / signed-Release-only workflow separation. Their Debug APK artifacts are historical and must not be used as device-test or distribution builds.
@@ -206,4 +207,4 @@ The following older runs predate the current test-only / signed-Release-only wor
 - Finish ViewModel-driven state ownership and remaining App Hub interactions; implement complete Indonesian/English localization and the cinematic Campaign presentation overhaul; add audio/control settings when their runtime systems exist.
 - Run the full unit, integration, build, and release checks; then perform final physical-device acceptance.
 
-The branch is deliberately kept as a draft. Phases 1–5 are being developed as one integrated rebuild, but are not yet complete and must not be represented as release-ready.
+The repository's long-lived development and release branch is `main`. The game remains a development build: the integrated rebuild is not complete and must not be represented as final-game release-ready.
