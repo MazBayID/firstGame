@@ -177,7 +177,7 @@ private fun CyberProtocolGameContentBody(
     }
     // A submission is accepted only for the exact source that completed RUN successfully.
     var lastSuccessfulRunSource by rememberSaveable { mutableStateOf<String?>(null) }
-    var codeOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
+    var codeOutput by rememberSaveable { mutableStateOf("") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
     var terminalSession by rememberSaveable(stateSaver = TerminalSessionState.Saver) {
         mutableStateOf(TerminalSessionState(currentDirectory = fileSystem.initialDirectory()))
@@ -203,7 +203,7 @@ private fun CyberProtocolGameContentBody(
             )
         )
     }
-    var savedCodeStatus by rememberSaveable { mutableStateOf("PERUBAHAN BELUM DISIMPAN") }
+    var savedCodeStatus by rememberSaveable { mutableStateOf(localizedUiText(selectedLanguage, "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN")) }
     var debriefTitle by rememberSaveable { mutableStateOf("") }
     var debriefFeedback by rememberSaveable { mutableStateOf("") }
     var debriefXp by rememberSaveable { mutableIntStateOf(0) }
@@ -212,7 +212,7 @@ private fun CyberProtocolGameContentBody(
     var practiceMissionId by rememberSaveable { mutableStateOf<String?>(null) }
     var practiceCode by remember { mutableStateOf(TextFieldValue("")) }
     var practiceLastSuccessfulRunSource by rememberSaveable { mutableStateOf<String?>(null) }
-    var practiceOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
+    var practiceOutput by rememberSaveable { mutableStateOf("") }
     var practiceFeedback by rememberSaveable { mutableStateOf("") }
     var practiceHintLevel by rememberSaveable { mutableIntStateOf(0) }
     var practiceSubmitting by remember { mutableStateOf(false) }
@@ -238,7 +238,7 @@ private fun CyberProtocolGameContentBody(
                 ?: Campaign01Story.codeTemplateForStage(stage)
         )
         practiceLastSuccessfulRunSource = null
-        practiceOutput = "KELUARAN AKAN MUNCUL DI SINI"
+        practiceOutput = ""
         practiceFeedback = ""
         practiceHintLevel = 0
     }
@@ -284,10 +284,10 @@ private fun CyberProtocolGameContentBody(
             ?: preferences.getString("saved_code_$storyStage", null)
         code = TextFieldValue(Campaign01Story.draftForStage(storyStage, savedDraft))
         lastSuccessfulRunSource = null
-        codeOutput = "KELUARAN AKAN MUNCUL DI SINI"
+        codeOutput = ""
         codeFeedback = ""
         hintLevel = 0
-        savedCodeStatus = "DRAF TERSIMPAN"
+        savedCodeStatus = localizedUiText(selectedLanguage, "DRAFT SAVED", "DRAF TERSIMPAN")
     }
 
     LaunchedEffect(currentGameState.storyBeat, rx14CasePhase) {
@@ -314,22 +314,22 @@ private fun CyberProtocolGameContentBody(
     fun submitMission(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?) {
         val sourceToVerify = code.text
         if (mission == null) {
-            codeFeedback = "TIDAK ADA MISI AKTIF UNTUK DIKIRIM."
+            codeFeedback = localizedUiText(selectedLanguage, "NO ACTIVE MISSION TO SUBMIT.", "TIDAK ADA MISI AKTIF UNTUK DIKIRIM.")
         } else if (sourceToVerify.isBlank()) {
-            codeFeedback = "BELUM ADA KODE — tulis solusi terlebih dahulu."
+            codeFeedback = localizedUiText(selectedLanguage, "NO CODE YET — write a solution first.", "BELUM ADA KODE — tulis solusi terlebih dahulu.")
         } else if (!MissionSubmissionPolicy.canSubmit(sourceToVerify, lastSuccessfulRunSource)) {
-            codeFeedback = "JALANKAN KODE TERLEBIH DAHULU. Verifikasi hanya menerima kode yang sama dengan eksekusi terakhir yang berhasil."
+            codeFeedback = localizedUiText(selectedLanguage, "RUN THE CODE FIRST. Verification only accepts the same source as the latest successful run.", "JALANKAN KODE TERLEBIH DAHULU. Verifikasi hanya menerima kode yang sama dengan eksekusi terakhir yang berhasil.")
         } else {
             scope.launch {
-                codeFeedback = "MEMVERIFIKASI..."
+                codeFeedback = localizedUiText(selectedLanguage, "VERIFYING...", "MEMVERIFIKASI...")
                 val result = withContext(Dispatchers.IO) {
                     python.submit(mission.evaluatorId ?: -1, sourceToVerify, selectedLanguage)
                 }
                 if (code.text != sourceToVerify) {
                     lastSuccessfulRunSource = null
-                    codeFeedback = "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."
+                    codeFeedback = localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."))
                 } else {
-                    codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                    codeOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
                     if (result.error.isNotBlank()) codeOutput += "\n" + result.error
                     if (result.passed) {
                         val firstCompletion = sessionViewModel.completeMission(
@@ -359,7 +359,7 @@ private fun CyberProtocolGameContentBody(
                         sessionViewModel.saveCode(
                             "story_$storyStage", sourceToVerify, "code_checkpoint_story_$storyStage"
                         )
-                        savedCodeStatus = "TERSIMPAN PADA CHECKPOINT"
+                        savedCodeStatus = localizedUiText(selectedLanguage, "SAVED AT CHECKPOINT", "TERSIMPAN PADA CHECKPOINT")
                         saveStage(storyStage + 1)
                         debriefTitle = CaseLocalizedContent.missionTitle(mission, selectedLanguage)
                         debriefFeedback = result.feedback
@@ -368,7 +368,7 @@ private fun CyberProtocolGameContentBody(
                         navigate(GameScreen.DEBRIEF)
                     } else {
                         codeFeedback = result.feedback.ifBlank {
-                            "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi."
+                            localizedUiText(selectedLanguage, "NOT VERIFIED — review the code and mission objective.", "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan misi.")
                         }
                     }
                 }
@@ -420,7 +420,7 @@ private fun CyberProtocolGameContentBody(
                 fileSystem.readFile(fileName, terminalSession.currentDirectory, activeMission.workspaceDirectory, activeMission.allowedFiles)
             }
             if (source == null) {
-                val error = "python: tidak dapat membuka '$fileName': file tidak ditemukan"
+                val error = localizedUiText(selectedLanguage, "python: cannot open '$fileName': file not found", "python: tidak dapat membuka '$fileName': file tidak ditemukan")
                 appendTerminalOutput(error + "\n")
                 onPythonResult?.invoke("", error)
             } else {
@@ -434,31 +434,31 @@ private fun CyberProtocolGameContentBody(
                     val result = withContext(Dispatchers.IO) {
                         python.run(source, missionWorkspace, activeMission?.runtimeVariables.orEmpty())
                     }
-                    val visibleOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                    val visibleOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
                     appendTerminalOutput(visibleOutput + "\n")
-                    if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
+                    if (result.error.isNotBlank()) appendTerminalOutput(localizedUiText(selectedLanguage, "ERROR: ", "KESALAHAN: ") + result.error + "\n")
                     terminalSession = terminalSession.copy(busy = false)
                     if (activeMission != null && fileName in activeMission.writableFiles &&
                         result.error.isBlank() && source == code.text
                     ) {
                         lastSuccessfulRunSource = source
-                        codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
-                        codeFeedback = "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control."
+                        codeOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
+                        codeFeedback = localizedUiText(selectedLanguage, "TERMINAL RUN SUCCEEDED — this code is ready to submit through Browser Mission Control.", "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control.")
                     }
                     if (activeMission != null && activeMission.id == practiceMissionId &&
                         fileName in activeMission.writableFiles
                     ) {
-                        practiceOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                        practiceOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
                         if (result.error.isNotBlank()) practiceOutput += "\n" + result.error
                         if (result.error.isBlank() && source == practiceCode.text) {
                             practiceLastSuccessfulRunSource = source
-                            practiceFeedback = "RUN BERHASIL — kode ini siap dikirim ke evaluator latihan."
+                            practiceFeedback = localizedUiText(selectedLanguage, "RUN SUCCEEDED — this code is ready for training evaluation.", "RUN BERHASIL — kode ini siap dikirim ke evaluator latihan.")
                         } else {
                             practiceLastSuccessfulRunSource = null
                             practiceFeedback = if (result.error.isNotBlank()) {
-                                "RUN GAGAL — perbaiki kesalahan sebelum submit."
+                                localizedUiText(selectedLanguage, "RUN FAILED — fix the error before submitting.", "RUN GAGAL — perbaiki kesalahan sebelum submit.")
                             } else {
-                                "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                                localizedUiText(selectedLanguage, "CODE CHANGED DURING RUN — run the latest version again.", "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru.")
                             }
                         }
                     }
@@ -476,22 +476,22 @@ private fun CyberProtocolGameContentBody(
         source: String
     ) {
         if (terminalSession.busy) {
-            codeFeedback = "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai."
+            codeFeedback = localizedUiText(selectedLanguage, "TERMINAL IS RUNNING ANOTHER COMMAND. Try again when it finishes.", "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai.")
             return
         }
         val fileName = mission.writableFiles.firstOrNull()
         if (fileName == null) {
-            codeFeedback = "MISI INI BELUM MENYEDIAKAN FILE KODE YANG DAPAT DITULIS."
+            codeFeedback = localizedUiText(selectedLanguage, "THIS MISSION DOES NOT PROVIDE A WRITABLE CODE FILE.", "MISI INI BELUM MENYEDIAKAN FILE KODE YANG DAPAT DITULIS.")
             return
         }
         val invocation = MissionWorkspacePolicy.pythonCommand(fileName)
         if (invocation == null) {
-            codeFeedback = "NAMA FILE MISI TIDAK VALID UNTUK DIJALANKAN."
+            codeFeedback = localizedUiText(selectedLanguage, "MISSION FILE NAME IS NOT VALID FOR EXECUTION.", "NAMA FILE MISI TIDAK VALID UNTUK DIJALANKAN.")
             return
         }
         val workspace = fileSystem.openMissionWorkspace(mission)
         if (!workspace.writeFile(fileName, source)) {
-            codeFeedback = "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI."
+            codeFeedback = localizedUiText(selectedLanguage, "CODE COULD NOT BE SAVED TO THE MISSION WORKSPACE.", "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI.")
             return
         }
         terminalSession = terminalSession.copy(
@@ -499,21 +499,21 @@ private fun CyberProtocolGameContentBody(
             command = invocation
         )
         lastSuccessfulRunSource = null
-        codeFeedback = "MENJALANKAN MELALUI A.E.G.I.S. TERMINAL..."
+        codeFeedback = localizedUiText(selectedLanguage, "RUNNING THROUGH A.E.G.I.S. TERMINAL...", "MENJALANKAN MELALUI A.E.G.I.S. TERMINAL...")
         terminalReturnScreen = GameScreen.STORY.name
         navigate(GameScreen.TERMINAL)
         executeTerminalCommand(mission) { output, error ->
-            codeOutput = output.ifBlank { "(tidak ada keluaran)" }
+            codeOutput = output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
             if (error.isNotBlank()) codeOutput += "\n" + error
             if (error.isBlank() && code.text == source) {
                 lastSuccessfulRunSource = source
-                codeFeedback = "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control."
+                codeFeedback = localizedUiText(selectedLanguage, "TERMINAL RUN SUCCEEDED — this code is ready to submit through Browser Mission Control.", "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control.")
             } else {
                 lastSuccessfulRunSource = null
                 codeFeedback = if (error.isNotBlank()) {
-                    "EKSEKUSI TERMINAL GAGAL — perbaiki kesalahan sebelum verifikasi."
+                    localizedUiText(selectedLanguage, "TERMINAL EXECUTION FAILED — fix the error before verification.", "EKSEKUSI TERMINAL GAGAL — perbaiki kesalahan sebelum verifikasi.")
                 } else {
-                    "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                    localizedUiText(selectedLanguage, "CODE CHANGED DURING RUN — run the latest version again.", "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru.")
                 }
             }
         }
@@ -521,19 +521,19 @@ private fun CyberProtocolGameContentBody(
 
     fun runPracticeMissionCode(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition) {
         if (terminalSession.busy) {
-            practiceFeedback = "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai."
+            practiceFeedback = localizedUiText(selectedLanguage, "TERMINAL IS RUNNING ANOTHER COMMAND. Try again when it finishes.", "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai.")
             return
         }
         val source = practiceCode.text
         val fileName = mission.writableFiles.firstOrNull()
         val invocation = fileName?.let(MissionWorkspacePolicy::pythonCommand)
         if (source.isBlank() || fileName == null || invocation == null) {
-            practiceFeedback = "KODE ATAU FILE LATIHAN TIDAK VALID."
+            practiceFeedback = localizedUiText(selectedLanguage, "INVALID CODE OR TRAINING FILE.", "KODE ATAU FILE LATIHAN TIDAK VALID.")
             return
         }
         val workspace = fileSystem.openMissionWorkspace(mission)
         if (!workspace.writeFile(fileName, source)) {
-            practiceFeedback = "KODE TIDAK DAPAT DISIMPAN KE WORKSPACE LATIHAN."
+            practiceFeedback = localizedUiText(selectedLanguage, "CODE COULD NOT BE SAVED TO THE TRAINING WORKSPACE.", "KODE TIDAK DAPAT DISIMPAN KE WORKSPACE LATIHAN.")
             return
         }
         sessionViewModel.saveCode(
@@ -542,7 +542,7 @@ private fun CyberProtocolGameContentBody(
             "practice_run:" + mission.id
         )
         practiceLastSuccessfulRunSource = null
-        practiceFeedback = "MENJALANKAN LATIHAN MELALUI TERMINAL..."
+        practiceFeedback = localizedUiText(selectedLanguage, "RUNNING TRAINING THROUGH TERMINAL...", "MENJALANKAN LATIHAN MELALUI TERMINAL...")
         terminalSession = terminalSession.copy(
             currentDirectory = mission.workspaceDirectory,
             command = invocation
@@ -550,17 +550,17 @@ private fun CyberProtocolGameContentBody(
         terminalReturnScreen = GameScreen.PRACTICE.name
         navigate(GameScreen.TERMINAL)
         executeTerminalCommand(mission) { output, error ->
-            practiceOutput = output.ifBlank { "(tidak ada keluaran)" }
+            practiceOutput = output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
             if (error.isNotBlank()) practiceOutput += "\n" + error
             if (error.isBlank() && practiceCode.text == source) {
                 practiceLastSuccessfulRunSource = source
-                practiceFeedback = "RUN BERHASIL — kode ini siap dikirim ke evaluator latihan."
+                practiceFeedback = localizedUiText(selectedLanguage, "RUN SUCCEEDED — this code is ready for training evaluation.", "RUN BERHASIL — kode ini siap dikirim ke evaluator latihan.")
             } else {
                 practiceLastSuccessfulRunSource = null
                 practiceFeedback = if (error.isNotBlank()) {
-                    "RUN GAGAL — perbaiki kesalahan sebelum submit."
+                    localizedUiText(selectedLanguage, "RUN FAILED — fix the error before submitting.", "RUN GAGAL — perbaiki kesalahan sebelum submit.")
                 } else {
-                    "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                    localizedUiText(selectedLanguage, "CODE CHANGED DURING RUN — run the latest version again.", "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru.")
                 }
             }
         }
@@ -570,18 +570,18 @@ private fun CyberProtocolGameContentBody(
         val source = practiceCode.text
         if (practiceSubmitting) return
         if (!MissionSubmissionPolicy.canSubmit(source, practiceLastSuccessfulRunSource)) {
-            practiceFeedback = "JALANKAN KODE TERLEBIH DAHULU. SUBMIT hanya menerima kode yang sama dengan RUN terakhir yang berhasil."
+            practiceFeedback = localizedUiText(selectedLanguage, "RUN THE CODE FIRST. SUBMIT only accepts the same source as the latest successful RUN.", "JALANKAN KODE TERLEBIH DAHULU. SUBMIT hanya menerima kode yang sama dengan RUN terakhir yang berhasil.")
             return
         }
         practiceSubmitting = true
         scope.launch {
-            practiceFeedback = "MEMVERIFIKASI LATIHAN..."
+            practiceFeedback = localizedUiText(selectedLanguage, "VERIFYING TRAINING...", "MEMVERIFIKASI LATIHAN...")
             val result = withContext(Dispatchers.IO) {
                 python.submit(mission.evaluatorId ?: -1, source, selectedLanguage)
             }
             if (practiceCode.text != source) {
                 practiceLastSuccessfulRunSource = null
-                practiceFeedback = "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."
+                practiceFeedback = localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."))
             } else if (result.passed) {
                 val firstCompletion = sessionViewModel.completeMission(
                     mission.id,
@@ -604,17 +604,17 @@ private fun CyberProtocolGameContentBody(
                     source,
                     "practice_completed:" + mission.id
                 )
-                practiceOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                practiceOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
                 practiceFeedback = if (firstCompletion) {
-                    "LATIHAN TERVERIFIKASI  ·  +${mission.rewardXp} XP TECHNICAL"
+                    localizedUiText(selectedLanguage, "TRAINING VERIFIED  ·  +${mission.rewardXp} TECHNICAL XP", "LATIHAN TERVERIFIKASI  ·  +${mission.rewardXp} XP TECHNICAL")
                 } else {
-                    "LATIHAN SUDAH TERVERIFIKASI SEBELUMNYA  ·  TIDAK ADA XP TAMBAHAN"
+                    localizedUiText(selectedLanguage, "TRAINING WAS ALREADY VERIFIED  ·  NO ADDITIONAL XP", "LATIHAN SUDAH TERVERIFIKASI SEBELUMNYA  ·  TIDAK ADA XP TAMBAHAN")
                 }
             } else {
-                practiceOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                practiceOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
                 if (result.error.isNotBlank()) practiceOutput += "\n" + result.error
                 practiceFeedback = result.feedback.ifBlank {
-                    "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan latihan."
+                    localizedUiText(selectedLanguage, "NOT VERIFIED — review the code and training objective.", "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan latihan.")
                 }
             }
             practiceSubmitting = false
@@ -710,7 +710,7 @@ private fun CyberProtocolGameContentBody(
                     if (it.text.length <= 12_000) {
                         code = it
                         lastSuccessfulRunSource = null
-                        savedCodeStatus = "PERUBAHAN BELUM DISIMPAN"
+                        savedCodeStatus = localizedUiText(selectedLanguage, "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN")
                     }
                 },
                 output = codeOutput,
@@ -718,7 +718,7 @@ private fun CyberProtocolGameContentBody(
                 saveStatus = savedCodeStatus,
                 canSubmit = authoredMission != null &&
                     MissionSubmissionPolicy.canSubmit(code.text, lastSuccessfulRunSource) &&
-                    codeFeedback != "MEMVERIFIKASI...",
+                    codeFeedback != localizedUiText(selectedLanguage, "VERIFYING...", "MEMVERIFIKASI..."),
                 onSubmit = { submitMission(authoredMission) },
                 onSaveCode = {
                     authoredMission?.let { mission ->
@@ -728,16 +728,16 @@ private fun CyberProtocolGameContentBody(
                     sessionViewModel.saveCode(
                         "story_$storyStage", code.text, "code_saved_story_$storyStage"
                     )
-                    savedCodeStatus = "TERSIMPAN"
+                    savedCodeStatus = localizedUiText(selectedLanguage, "SAVED", "TERSIMPAN")
                 },
                 onRun = {
                     val sourceToRun = code.text
                     val mission = authoredMission
                     if (sourceToRun.isBlank()) {
                         lastSuccessfulRunSource = null
-                        codeFeedback = "EDITOR KOSONG — tulis kode terlebih dahulu."
+                        codeFeedback = localizedUiText(selectedLanguage, "EDITOR IS EMPTY — write code first.", "EDITOR KOSONG — tulis kode terlebih dahulu.")
                     } else if (mission == null) {
-                        codeFeedback = "TIDAK ADA RUANG KERJA MISI AKTIF."
+                        codeFeedback = localizedUiText(selectedLanguage, "NO ACTIVE MISSION WORKSPACE.", "TIDAK ADA RUANG KERJA MISI AKTIF.")
                     } else {
                         runMissionCode(mission, sourceToRun)
                     }
