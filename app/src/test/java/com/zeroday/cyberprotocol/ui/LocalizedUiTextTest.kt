@@ -25,6 +25,18 @@ class LocalizedUiTextTest {
         assertEquals("UNKNOWN RANK", localizedRankName("UNKNOWN_RANK", GameLanguage.ENGLISH))
     }
 
+    @Test fun evidenceRelationshipTypesHaveLocalizedDisplayNames() {
+        assertEquals("SUPPORTS", localizedEvidenceRelation(
+            com.zeroday.cyberprotocol.core.model.EvidenceRelationType.SUPPORTS, GameLanguage.ENGLISH
+        ))
+        assertEquals("MENDUKUNG", localizedEvidenceRelation(
+            com.zeroday.cyberprotocol.core.model.EvidenceRelationType.SUPPORTS, GameLanguage.INDONESIAN
+        ))
+        assertEquals("BERASAL DARI", localizedEvidenceRelation(
+            com.zeroday.cyberprotocol.core.model.EvidenceRelationType.DERIVED_FROM, GameLanguage.INDONESIAN
+        ))
+    }
+
     @Test fun casePhasesHaveLocalizedDisplayNames() {
         assertEquals("OPERATIONAL DECISION", localizedPhaseName(CasePhase.OPERATIONAL_DECISION, GameLanguage.ENGLISH))
         assertEquals("KEPUTUSAN OPERASIONAL", localizedPhaseName(CasePhase.OPERATIONAL_DECISION, GameLanguage.INDONESIAN))
