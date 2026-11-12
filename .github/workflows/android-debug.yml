@@ -41,5 +41,5 @@ jobs:
         with:
           gradle-version: "8.13"
 
-      - name: Run Android unit tests only
-        run: gradle --no-daemon testDebugUnitTest
+      - name: Run Release-variant Android unit tests only
+        run: gradle --no-daemon testReleaseUnitTest
