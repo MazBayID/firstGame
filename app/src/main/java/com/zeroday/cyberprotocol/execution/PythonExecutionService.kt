@@ -42,9 +42,13 @@ class PythonExecutionService {
         ExecutionResult("", error.message ?: "Python runtime error")
     }
 
-    fun submit(missionId: Int, source: String): EvaluationResult = try {
+    fun submit(
+        missionId: Int,
+        source: String,
+        language: GameLanguage = GameLanguage.ENGLISH
+    ): EvaluationResult = try {
         val raw = Python.getInstance().getModule("runner")
-            .callAttr("evaluate_mission", source, missionId).toString()
+            .callAttr("evaluate_mission", source, missionId, language.localeTag).toString()
         val json = JSONObject(raw)
         EvaluationResult(json.optBoolean("passed"), json.optString("output"),
             json.optString("feedback"), json.optString("error"))
