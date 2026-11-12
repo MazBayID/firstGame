@@ -351,8 +351,9 @@ class VirtualFileSystem(context: Context) {
         Regex(""""([^"]*)"|'([^']*)'|(\S+)""").findAll(line).map { match ->
             match.groups[1]?.value ?: match.groups[2]?.value ?: match.groups[3]?.value.orEmpty()
         }.toList()
+    private fun terminalText(language: GameLanguage, english: String, indonesian: String): String =
+        if (language == GameLanguage.ENGLISH) english else indonesian
 }
-
 
 /** Narrow capability handle for one mission workspace. */
 class MissionWorkspace internal constructor(
@@ -376,7 +377,4 @@ class MissionWorkspace internal constructor(
 
     fun writeFile(name: String, content: String): Boolean =
         owner.writeMissionFile(directory, writableFiles, name, content)
-    private fun terminalText(language: GameLanguage, english: String, indonesian: String): String =
-        if (language == GameLanguage.ENGLISH) english else indonesian
-
 }
