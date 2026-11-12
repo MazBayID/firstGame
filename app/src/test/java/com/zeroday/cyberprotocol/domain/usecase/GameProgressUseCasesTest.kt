@@ -96,9 +96,9 @@ class GameProgressUseCasesTest {
         assertEquals(originalTimestamp, repository.load().evidence.single().recordedAtEpochMillis)
         assertEquals("first_contact.signal", repository.load().evidence.single().missionId)
 
-        val updated = useCase.updateStatus("signal_fragment", EvidenceStatus.DISPUTED)
+        val updated = useCase.review("signal_fragment", EvidenceStatus.DISPUTED, "reviewer:freya", "Conflicting source record.", 1_800_000_000_100L)
         assertEquals(EvidenceStatus.DISPUTED, updated.evidence.single().status)
-        assertEquals("evidence_status_updated:signal_fragment", updated.lastCheckpoint)
+        assertEquals("evidence_reviewed:signal_fragment", updated.lastCheckpoint)
     }
 
     @Test

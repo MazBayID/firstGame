@@ -219,3 +219,18 @@ A batch is complete only when its behavior contract, code, tests, integration, p
 | Physical-device acceptance | Not completed | Clean install, in-place update, and save-preservation checklist |
 
 This refresh does not introduce story canon or change gameplay implementation. It updates the audit baseline only. The next code batch remains **Batch 02 — Evidence Engine core**, preceded by a small design contract for the evidence schema, provenance, status vocabulary, transitions, review audit entries, and schema-5 migration.
+
+
+## Batch 02 — Evidence Engine core
+
+**Implementation checkpoint:** schema 6 / Evidence Engine domain foundation.
+
+- Added structured evidence provenance: origin surface, source label, optional shared-asset ID and workspace path, collection timestamp, and collector identity.
+- Added typed evidence relationships (supports, contradicts, corroborates, derived-from, duplicates) with self-link and duplicate guards.
+- Added corroborated and retracted assessment states while retaining all prior status values.
+- Replaced unaudited direct status replacement with a review operation requiring reviewer identity and a non-empty reason. Accepted transitions append review history; retracted records cannot be reactivated.
+- Re-recording an existing evidence ID preserves its mission assignment, original timestamp, provenance, current status, and review history.
+- Added schema-5-compatible decoding. Legacy evidence is retained and assigned LEGACY provenance from its source and timestamp; the existing repository version-upgrade path persists the upgraded snapshot.
+- Added regression coverage for serialization, legacy decoding, review audit history, transition restrictions, relation validation, idempotency, and provenance preservation.
+
+**Scope boundary:** this checkpoint establishes the domain and persistence contract. It does not yet claim all app surfaces are connected to the evidence graph, VFS assets automatically create evidence, or a new investigative case is playable. A successful Python RUN or evaluator result is not itself an intelligence review and does not automatically classify arbitrary evidence as confirmed.
