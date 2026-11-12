@@ -778,6 +778,7 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.APP_HUB -> AppHubScreen(
             gameState = currentGameState,
+            selectedLanguage = selectedLanguage,
             onClose = { navigate(navigation.hubReturnScreen) },
             onOpen = { target ->
                 if (target == GameScreen.MESSENGER) messengerSession = messengerSession.copy(returnScreen = GameScreen.APP_HUB.name)
@@ -1566,23 +1567,23 @@ private fun MissionDebriefScreen(
 }
 
 @Composable
-private fun AppHubScreen(gameState: GameState, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
-    GamePage("PUSAT APLIKASI", "PERANGKAT AMAN A.E.G.I.S.", onClose, null) {
+private fun AppHubScreen(gameState: GameState, selectedLanguage: GameLanguage, onClose: () -> Unit, onOpen: (GameScreen) -> Unit) {
+    GamePage(localizedUiText(selectedLanguage, "APP HUB", "PUSAT APLIKASI"), localizedUiText(selectedLanguage, "A.E.G.I.S. SECURE TOOLS", "PERANGKAT AMAN A.E.G.I.S."), onClose, null) {
         GamePanel {
-            Text("APLIKASI YANG DIIZINKAN", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
-            Text("Pilih aplikasi. Menutupnya akan mengembalikanmu ke operasi sebelumnya.",
+            Text(localizedUiText(selectedLanguage, "AUTHORIZED APPLICATIONS", "APLIKASI YANG DIIZINKAN"), color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
+            Text(localizedUiText(selectedLanguage, "Choose an application. Closing it returns you to the operation you came from.", "Pilih aplikasi. Menutupnya akan mengembalikanmu ke operasi sebelumnya."),
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
         }
         data class HubApp(val id: String, val title: String, val icon: Int, val target: GameScreen)
         val apps = listOf(
-            HubApp("MESSENGER", "PESAN AMAN", CyberAssets.connection, GameScreen.MESSENGER),
+            HubApp("MESSENGER", localizedUiText(selectedLanguage, "SECURE MESSENGER", "PESAN AMAN"), CyberAssets.connection, GameScreen.MESSENGER),
             HubApp("BROWSER", "A.E.G.I.S. BROWSER", CyberAssets.network, GameScreen.BROWSER),
             HubApp("TERMINAL", "TERMINAL", CyberAssets.terminal, GameScreen.TERMINAL),
-            HubApp("DATABASE", "DATABASE INTELIJEN", CyberAssets.database, GameScreen.DATABASE),
-            HubApp("DOSSIER", "BERKAS PERSONEL", CyberAssets.document, GameScreen.DOSSIER),
-            HubApp("ANALYSIS", "ANALISIS", CyberAssets.dataAnalysis, GameScreen.ANALYSIS),
-            HubApp("OPERATIONS", "OPERASI", CyberAssets.investigation, GameScreen.OPERATIONS),
-            HubApp("PRACTICE", "LATIHAN TAMBAHAN", CyberAssets.practice, GameScreen.PRACTICE)
+            HubApp("DATABASE", localizedUiText(selectedLanguage, "INTELLIGENCE DATABASE", "DATABASE INTELIJEN"), CyberAssets.database, GameScreen.DATABASE),
+            HubApp("DOSSIER", localizedUiText(selectedLanguage, "PERSONNEL DOSSIER", "BERKAS PERSONEL"), CyberAssets.document, GameScreen.DOSSIER),
+            HubApp("ANALYSIS", localizedUiText(selectedLanguage, "ANALYSIS", "ANALISIS"), CyberAssets.dataAnalysis, GameScreen.ANALYSIS),
+            HubApp("OPERATIONS", localizedUiText(selectedLanguage, "OPERATIONS", "OPERASI"), CyberAssets.investigation, GameScreen.OPERATIONS),
+            HubApp("PRACTICE", localizedUiText(selectedLanguage, "OPTIONAL TRAINING", "LATIHAN TAMBAHAN"), CyberAssets.practice, GameScreen.PRACTICE)
         )
         apps.chunked(2).forEach { rowApps ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -1597,7 +1598,7 @@ private fun AppHubScreen(gameState: GameState, onClose: () -> Unit, onOpen: (Gam
                                 Modifier.size(42.dp), alpha = if (unlocked) 1f else 0.3f)
                             Text(app.title, color = if (unlocked) Color.White else CyberPalette.SteelGray,
                                 fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                            Text(if (unlocked) "BUKA  ›" else "TERKUNCI  ·  IZIN DIPERLUKAN",
+                            Text(if (unlocked) localizedUiText(selectedLanguage, "OPEN  ›", "BUKA  ›") else localizedUiText(selectedLanguage, "LOCKED  ·  PERMISSION REQUIRED", "TERKUNCI  ·  IZIN DIPERLUKAN"),
                                 color = CyberPalette.SteelGray, fontSize = 9.sp)
                         }
                     }
