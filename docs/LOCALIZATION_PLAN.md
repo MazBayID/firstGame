@@ -101,3 +101,21 @@ The virtual Terminal command guide and `whoami` response now respect the selecte
 RX-14 evidence titles, the derived discrepancy summary, and source labels now have English presentation variants in Operations, Analysis, Intelligence Database, and Archives. Original receipt contents and stored EvidenceRecord fields remain unchanged. The evaluator's language parameter and localized feedback are covered by Python tests; Terminal language behavior, rank labels, and evidence metadata have Kotlin unit-test coverage.
 
 This checkpoint is implementation progress, not full localization acceptance. Other VFS error messages, all remaining evidence/review metadata, the full message-key parity mechanism, and physical Android review remain open.
+
+
+## Implementation checkpoint — 2026-11-12 (player feedback and evidence metadata parity)
+
+The selected language now covers story and optional-practice editor feedback for save, RUN, SUBMIT, verification, execution failures, and output placeholders. Switching language clears transient evaluator feedback and re-renders the save-status label without changing code drafts or mission progress. The virtual Terminal now localizes its startup banner, clear-screen response, help, command errors, permission errors, empty directory state, and identity response while preserving command names, paths, file bytes, and Python output.
+
+Evidence presentation now localizes mission-evaluator provenance and summaries, evidence source labels, review-history status transitions, evidence origins, and relationship types. The Intelligence Database and Personnel Dossier use the shared RX-14 and mission-content resolver for case titles, briefings, conclusions, decisions, and related mission details. The obsolete duplicate mission-database composable was removed so the routed Intelligence Database remains the single source of truth.
+
+Regression coverage now checks bilingual story beats, all eight mission content mappings, RX-14 analysis/decision variants, evaluator feedback, mission evidence provenance, Terminal language behavior, evidence relation labels, and stable canonical IDs.
+
+**Verified source CI:** [run 43237898965](https://github.com/MazBayID/firstGame/actions/runs/43237898965) — Python runner tests and Release-variant Android unit tests passed on source commit `0ceb4d5d5b41b8092d84877232f826cf0869f6b5`. This was a source-test run; it did not create an APK.
+
+### Remaining localization acceptance gates
+
+- Replace or formally approve the transitional inline bilingual resolver in place of the planned stable resource/message-key system. There is still no general missing-key scanner for every player-facing string.
+- Review any remaining mixed-language technical labels and old-save fallback text.
+- Run complete English and Indonesian journeys on physical Android devices, including fresh install, mid-campaign language switching, force-stop/relaunch, save migration, and end-to-end debrief.
+- Keep runtime exceptions, source code, commands, paths, player-authored rationale, and literal evaluator output unchanged where translation would corrupt their meaning or verification.
