@@ -107,6 +107,8 @@ Pemain diminta membantu memeriksa dua catatan penerimaan dari sumber yang berbed
 
 Pekerjaan ini memperkenalkan pemain pada cara memperlakukan bukti: membuka sumber asli, memeriksa asal-usulnya, mencatat apa yang benar-benar terlihat, dan memisahkan fakta dari dugaan. Konsep pemrograman hanya digunakan bila memang membantu penyelidikan; latihan Python lama lainnya tersedia sebagai praktik opsional.
 
+Penyelidikan bergerak secara alami melalui lima fase: Intelligence Briefing, Investigation, Intelligence Analysis, Operational Decision, serta Debriefing & Progression. Fase-fase ini menggambarkan perkembangan pemahaman dan keputusan pemain, bukan lima layar wajib atau daftar aplikasi yang harus dikunjungi.
+
 Freya terus mendampingi. Ia mulai memberi ruang lebih besar bagi pemain untuk mencoba sendiri, tetapi tetap hadir ketika pemain menemui konsep yang belum dipahami. NEXUS membantu menunjukkan informasi sistem dan rincian teknis yang relevan.
 
 # 6. Referensi RX-14
