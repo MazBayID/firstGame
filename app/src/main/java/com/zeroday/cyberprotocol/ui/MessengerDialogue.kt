@@ -29,7 +29,7 @@ internal object MessengerDialogue {
                 add("The Terminal accepts text commands in the game's workspace. Python is the language we will use to write instructions. We will begin with simple commands, reading files, storing values in variables, and displaying results.")
                 add("After the basic introduction, open the A.E.G.I.S. Intranet through the internal Browser. Use personnel ID RECRUIT-014 and access code FIRSTCONTACT. This portal runs locally on your device.")
                 add("For the First Signal task, I have also attached message_fragment.txt. Save it to the mission workspace, then read it in the Terminal. The Browser Repository and this attachment point to the same file.")
-                if (activeMissionTitle == "Verifikasi Identitas") {
+                if (activeMissionTitle == "Identity Verification" || activeMissionTitle == "Verifikasi Identitas") {
                     add("For Identity Verification, use identity_fragment.txt. Download it from the attachment or File Repository, read it with cat, then store its exact contents in the message variable. Do not guess the message.")
                 }
             }
@@ -46,7 +46,7 @@ internal object MessengerDialogue {
             add("Terminal adalah tempat memberi perintah teks kepada lingkungan kerja game. Python adalah bahasa yang akan kita gunakan untuk menulis instruksi. Kita mulai dari perintah sederhana, membaca berkas, menyimpan nilai ke variabel, lalu menampilkan hasilnya.")
             add("Setelah pengenalan dasar, buka A.E.G.I.S. Intranet melalui Browser internal. Gunakan ID personel RECRUIT-014 dan kode akses FIRSTCONTACT. Portal ini berjalan lokal di perangkatmu.")
             add("Untuk tugas Sinyal Pertama, aku juga melampirkan message_fragment.txt. Simpan berkas itu ke ruang kerja misi, lalu baca melalui Terminal. Browser Repository dan lampiran ini menunjuk berkas yang sama.")
-            if (activeMissionTitle == "Verifikasi Identitas") {
+            if (activeMissionTitle == "Identity Verification" || activeMissionTitle == "Verifikasi Identitas") {
                 add("Untuk Verifikasi Identitas, gunakan identity_fragment.txt. Unduh berkas dari lampiran atau File Repository, baca dengan cat, lalu simpan isi persisnya ke variabel message. Jangan menebak isi pesan.")
             }
         }

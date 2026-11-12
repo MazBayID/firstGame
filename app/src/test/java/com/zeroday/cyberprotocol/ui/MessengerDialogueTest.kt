@@ -58,6 +58,15 @@ class MessengerDialogueTest {
         assertTrue(english.any { it.contains("2 verified missions") })
         assertTrue(indonesian.first().startsWith("Halo. Aku Freya Knox"))
         assertTrue(indonesian.any { it.contains("identity_fragment.txt") })
+
+        val englishTitleWithIndonesianLanguage = MessengerDialogue.freyaIntroduction(
+            "Identity Verification", 2, GameLanguage.INDONESIAN
+        )
+        val indonesianTitleWithEnglishLanguage = MessengerDialogue.freyaIntroduction(
+            "Verifikasi Identitas", 2, GameLanguage.ENGLISH
+        )
+        assertTrue(englishTitleWithIndonesianLanguage.any { it.contains("identity_fragment.txt") })
+        assertTrue(indonesianTitleWithEnglishLanguage.any { it.contains("identity_fragment.txt") })
     }
 
     @Test
