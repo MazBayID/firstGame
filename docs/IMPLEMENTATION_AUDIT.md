@@ -443,3 +443,11 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The final report story beat now assembles the player's persisted RX-14 analytical conclusion, operational action, and written rationale into one report panel.
 - The report explicitly preserves the unresolved four-second discrepancy and does not invent a cause or culprit.
 - The personnel dossier distinguishes the two mandatory onboarding exercises from archived legacy missions, so retired exercises no longer appear as outstanding requirements.
+
+
+## Legacy chapter-complete pointer recovery
+
+- A legacy save with storyBeat 16 but no completed RX-14 case is normalized back to report checkpoint 15.
+- The correction is persisted through the normal save path, so Campaign and Dossier cannot continue to display a completed chapter while the case remains incomplete.
+- The final report CTA routes to Operations until CasePhase.COMPLETE.
+- Safe-stage normalization is covered by navigation policy tests.

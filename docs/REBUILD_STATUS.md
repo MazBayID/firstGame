@@ -394,3 +394,10 @@ Only after this journey is complete should we schedule a release-candidate batch
 - It retains the evidence boundary: the four-second discrepancy remains unresolved and no causal claim is added.
 - Dossier progress now counts the two mandatory Python exercises separately from retired legacy missions retained only for historical saves.
 - Source workflow verification pending.
+
+
+## Legacy save chapter pointer recovery — 2026-11-12
+
+- Reopen the RX-14 final report checkpoint for old saves that have storyBeat 16 but no completed case state.
+- Persist the repaired storyBeat through the normal campaign checkpoint path; do not delete XP, mission history, drafts, or workspace files.
+- Only CasePhase.COMPLETE may retain chapter stage 16. Regression tests cover complete and incomplete saves.

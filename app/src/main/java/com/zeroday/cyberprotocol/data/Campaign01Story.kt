@@ -6,6 +6,11 @@ enum class StoryCaseAction { CONTINUE, OPEN_OPERATIONS, OPEN_ANALYSIS }
 
 /** Routes story prompts to the correct shared case workspace for the player's current progress. */
 object Campaign01StoryNavigationPolicy {
+    fun safeStage(storyStage: Int, phase: CasePhase): Int {
+        val bounded = storyStage.coerceIn(0, 16)
+        return if (bounded >= 16 && phase != CasePhase.COMPLETE) 15 else bounded
+    }
+
     fun action(stage: Int, phase: CasePhase): StoryCaseAction = when (stage) {
         11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
             StoryCaseAction.OPEN_OPERATIONS
@@ -16,6 +21,7 @@ object Campaign01StoryNavigationPolicy {
             else -> StoryCaseAction.CONTINUE
         }
         14 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
+        15 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
         else -> StoryCaseAction.CONTINUE
     }
 }

@@ -164,7 +164,7 @@ private fun CyberProtocolGameContentBody(
         navigation = navigation.navigateTo(destination)
     }
     var storyStage by rememberSaveable {
-        mutableIntStateOf(initialGameState.storyBeat.coerceIn(0, 16))
+        mutableIntStateOf(Campaign01StoryNavigationPolicy.safeStage(initialGameState.storyBeat, rx14CasePhase))
     }
     var code by remember {
         mutableStateOf(TextFieldValue(
@@ -252,6 +252,12 @@ private fun CyberProtocolGameContentBody(
         codeFeedback = ""
         hintLevel = 0
         savedCodeStatus = "DRAF TERSIMPAN"
+    }
+
+    LaunchedEffect(currentGameState.storyBeat, rx14CasePhase) {
+        if (currentGameState.storyBeat >= 16 && rx14CasePhase != CasePhase.COMPLETE) {
+            saveStage(15)
+        }
     }
 
     fun openHub(from: GameScreen) {
@@ -1275,7 +1281,7 @@ private fun StoryScreen(
             when (Campaign01StoryNavigationPolicy.action(stage, casePhase)) {
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_OPERATIONS ->
                     CPPrimaryButton(
-                        if (stage in 12..13) "BUKA PUSAT OPERASI" else beat.button,
+                        if (stage in 12..13 || stage == 15) "BUKA PUSAT OPERASI" else beat.button,
                         onOpenOperations
                     )
                 com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_ANALYSIS ->
