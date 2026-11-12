@@ -10,11 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zeroday.cyberprotocol.R
 import com.zeroday.cyberprotocol.core.model.GameLanguage
 
 @Composable
@@ -30,23 +28,23 @@ internal fun LanguageScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.language_title), Modifier.weight(1f),
+            Text(localizedUiText(selectedLanguage, "GAME LANGUAGE", "BAHASA GAME"), Modifier.weight(1f),
                 color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black)
             TextButton(onClick = onBack) {
-                Text(stringResource(R.string.language_back), color = Color(0xFFBCE8EA))
+                Text(localizedUiText(selectedLanguage, "BACK", "KEMBALI"), color = Color(0xFFBCE8EA))
             }
         }
-        Text(stringResource(R.string.language_description), color = Color(0xFF9AB4B8),
+        Text(localizedUiText(selectedLanguage, "Choose the preferred display language. Campaign progress and saved work are stored separately.", "Pilih bahasa tampilan. Progres kampanye dan pekerjaan tersimpan dikelola secara terpisah."), color = Color(0xFF9AB4B8),
             fontSize = 12.sp, lineHeight = 18.sp)
-        LanguageOption(stringResource(R.string.language_english),
-            stringResource(R.string.language_english_description),
+        LanguageOption("English",
+            localizedUiText(selectedLanguage, "Default for new installations", "Bahasa bawaan untuk instalasi baru"),
             selectedLanguage == GameLanguage.ENGLISH) { onLanguageChange(GameLanguage.ENGLISH) }
-        LanguageOption(stringResource(R.string.language_indonesian),
-            stringResource(R.string.language_indonesian_description),
+        LanguageOption("Bahasa Indonesia",
+            localizedUiText(selectedLanguage, "Indonesian language preference", "Pilihan bahasa Indonesia"),
             selectedLanguage == GameLanguage.INDONESIAN) { onLanguageChange(GameLanguage.INDONESIAN) }
         Surface(color = Color(0xFF2A2118), shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color(0xFF80633A)), modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.language_partial_coverage_notice),
+            Text(localizedUiText(selectedLanguage, "Localization is still in progress. Some player-facing content may remain in the other language.", "Lokalisasi masih berlangsung. Sebagian konten yang tampil kepada pemain mungkin masih menggunakan bahasa lain."),
                 Modifier.padding(14.dp), color = Color(0xFFE3C17B), fontSize = 11.sp, lineHeight = 17.sp)
         }
     }
