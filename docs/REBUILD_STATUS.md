@@ -460,3 +460,15 @@ The localization resolver is presentation-only. Stable mission/evidence IDs, ori
 - The Final Release workflow stages the exact SHA-256-verified APK at the artifact upload path after emulator smoke testing.
 - Release source-test concurrency was changed to avoid cancelling an in-progress test run when a newer development commit arrives.
 - These workflow changes do not mark the game or release process production-complete. The permanently signed Final APK still requires an explicitly approved dispatch and exact-binary emulator smoke test.
+
+
+## Localization integration checkpoint — 2026-11-12
+
+- Source baseline: `0ceb4d5d5b41b8092d84877232f826cf0869f6b5`.
+- Verified CI: [run 43237898965](https://github.com/MazBayID/firstGame/actions/runs/43237898965) passed the Python runner suite and Release-variant Android unit tests. This source-test workflow does not build or upload an APK.
+- English/Indonesian story beats and all eight First Contact mission briefs, objectives, descriptions, clues, and hints use stable authored IDs.
+- RX-14 case analysis, operational decisions, evidence metadata, mission-evaluator feedback, Terminal guidance/errors, editor status, and A.E.G.I.S. app navigation now follow the selected language at the presentation boundary.
+- Language preference remains separate from campaign persistence. Switching language does not rewrite mission IDs, evaluator fixtures, source files, evidence records, or player drafts.
+- The legacy duplicate DatabaseScreen composable was removed; the routed IntelligenceDatabaseScreen is the single mission/evidence index implementation.
+
+This is a verified source-integration checkpoint, not production acceptance. Remaining gates include a general localization-key completeness mechanism, final review of mixed-language technical labels, and manual Android journeys in both languages. Do not mark the campaign or v1.0 complete until the full First Contact journey and device acceptance checks pass.
