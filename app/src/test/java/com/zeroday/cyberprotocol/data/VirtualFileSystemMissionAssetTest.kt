@@ -1,6 +1,7 @@
 package com.zeroday.cyberprotocol.data
 
 import android.content.Context
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -103,6 +104,24 @@ class VirtualFileSystemMissionAssetTest {
         assertEquals(null, EvidenceAssetCatalog.sourceAssetReadByTerminal(
             "ls ${aegis.path}", aegis.content
         ))
+    }
+
+    @Test
+    fun terminalHelpAndIdentityRespectSelectedLanguage() {
+        val fileSystem = VirtualFileSystem(freshContext())
+        val cwd = fileSystem.initialDirectory()
+
+        val englishHelp = fileSystem.execute("help", cwd, language = GameLanguage.ENGLISH).output
+        val indonesianHelp = fileSystem.execute("help", cwd, language = GameLanguage.INDONESIAN).output
+        assertTrue(englishHelp.contains("SUPPORTED COMMANDS"))
+        assertTrue(englishHelp.contains("isolated A.E.G.I.S. virtual environment"))
+        assertTrue(indonesianHelp.contains("DAFTAR PERINTAH"))
+        assertTrue(indonesianHelp.contains("lingkungan virtual A.E.G.I.S."))
+
+        assertTrue(fileSystem.execute("whoami", cwd, language = GameLanguage.ENGLISH)
+            .output.contains("TRAINEE"))
+        assertTrue(fileSystem.execute("whoami", cwd, language = GameLanguage.INDONESIAN)
+            .output.contains("REKRUT"))
     }
 
     @Test
