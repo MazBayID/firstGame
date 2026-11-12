@@ -370,3 +370,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 
 - Preserve the Terminal's successful canonical-source `cat` integration while hiding undiscovered source summaries in the other intelligence apps.
 - Source visibility restrictions do not remove the Terminal discovery path. Discovery still updates the same CaseProgress consumed by Operations, Analysis, Browser, Database, and Dossier.
+
+
+## Story navigation integration — 2026-11-12
+
+- Route RX-14 story CTAs to Operations or Analysis based on CasePhaseEvaluator rather than treating every prompt as a generic Continue button.
+- The story can resume after a player completes a phase in the shared apps, and the next CTA advances to the next narrative beat.
+- Decision/debrief remains gated until the case is complete; the final report remains gated behind debrief acknowledgement.
+- Added policy tests for all active RX-14 stage/phase routes. Source workflow verification pending.

@@ -1,5 +1,25 @@
 package com.zeroday.cyberprotocol.data
 
+import com.zeroday.cyberprotocol.core.model.CasePhase
+
+enum class StoryCaseAction { CONTINUE, OPEN_OPERATIONS, OPEN_ANALYSIS }
+
+/** Routes story prompts to the correct shared case workspace for the player's current progress. */
+object Campaign01StoryNavigationPolicy {
+    fun action(stage: Int, phase: CasePhase): StoryCaseAction = when (stage) {
+        11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
+            StoryCaseAction.OPEN_OPERATIONS
+        } else StoryCaseAction.CONTINUE
+        12, 13 -> when (phase) {
+            CasePhase.BRIEFING, CasePhase.INVESTIGATION -> StoryCaseAction.OPEN_OPERATIONS
+            CasePhase.ANALYSIS -> StoryCaseAction.OPEN_ANALYSIS
+            else -> StoryCaseAction.CONTINUE
+        }
+        14 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
+        else -> StoryCaseAction.CONTINUE
+    }
+}
+
 data class StoryBeat(
     val title: String,
     val eyebrow: String,

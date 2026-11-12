@@ -1,5 +1,8 @@
 package com.zeroday.cyberprotocol.data
 
+import com.zeroday.cyberprotocol.core.model.CasePhase
+import com.zeroday.cyberprotocol.data.StoryCaseAction
+import com.zeroday.cyberprotocol.data.Campaign01StoryNavigationPolicy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -37,6 +40,26 @@ class Campaign01StoryTest {
         assertEquals("LANJUTKAN KE LAPORAN", Campaign01Story.beats[12].completedButton)
         assertEquals("OPEN OPERATIONS", Campaign01StoryLocalization.englishBeats[12].button)
         assertEquals("CONTINUE TO REPORT", Campaign01StoryLocalization.englishBeats[12].completedButton)
+    }
+
+    @Test
+    fun rx14StoryPromptsRouteToTheSharedWorkspaceRequiredByCasePhase() {
+         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+            Campaign01StoryNavigationPolicy.action(11, CasePhase.INVESTIGATION))
+        assertEquals(StoryCaseAction.CONTINUE,
+            Campaign01StoryNavigationPolicy.action(11, CasePhase.ANALYSIS))
+        assertEquals(StoryCaseAction.OPEN_ANALYSIS,
+            Campaign01StoryNavigationPolicy.action(12, CasePhase.ANALYSIS))
+        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+            Campaign01StoryNavigationPolicy.action(13, CasePhase.INVESTIGATION))
+        assertEquals(StoryCaseAction.OPEN_ANALYSIS,
+            Campaign01StoryNavigationPolicy.action(13, CasePhase.ANALYSIS))
+        assertEquals(StoryCaseAction.CONTINUE,
+            Campaign01StoryNavigationPolicy.action(13, CasePhase.OPERATIONAL_DECISION))
+        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+            Campaign01StoryNavigationPolicy.action(14, CasePhase.DEBRIEFING))
+        assertEquals(StoryCaseAction.CONTINUE,
+            Campaign01StoryNavigationPolicy.action(14, CasePhase.COMPLETE))
     }
 
     @Test

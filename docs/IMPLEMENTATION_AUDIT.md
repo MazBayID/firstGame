@@ -420,3 +420,11 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The virtual Terminal participates in RX-14 source inspection. Only a successful `cat` of an approved canonical source path with exact catalog content records the source as inspected.
 - The same shared case progression policy gates the discovery update. Failed reads, arbitrary output, and mission-sandbox reads cannot mark evidence discovered.
 - The helper is covered by unit tests for valid reads, failed output, and unrelated commands.
+
+
+## RX-14 narrative-to-workspace navigation
+
+- Story stages 11–14 now route according to the shared case phase instead of always advancing the narrative page.
+- Investigation prompts open Operations while required sources remain undiscovered; analysis prompts open the Analysis workspace only after discovery; the decision prompt returns to Operations until debrief completion.
+- Once a phase is complete, the story CTA advances to the next authored beat. Completing RX-14 unlocks the final report beat.
+- Navigation policy is isolated and unit-tested across investigation, analysis, decision, debrief, and completion states.

@@ -44,6 +44,7 @@ import com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.data.Campaign01CaseCatalog
 import com.zeroday.cyberprotocol.data.Campaign01Story
+import com.zeroday.cyberprotocol.data.Campaign01StoryNavigationPolicy
 import com.zeroday.cyberprotocol.data.Campaign01StoryLocalization
 import com.zeroday.cyberprotocol.data.StoryBeat
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
@@ -144,7 +145,8 @@ private fun CyberProtocolGameContentBody(
     val currentGameState = sessionViewModel.gameState
     val rx14Progress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
         ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID)
-    val rx14CaseComplete = CasePhaseEvaluator.phase(Campaign01CaseCatalog.rx14, rx14Progress) == CasePhase.COMPLETE
+    val rx14CasePhase = CasePhaseEvaluator.phase(Campaign01CaseCatalog.rx14, rx14Progress)
+    val rx14CaseComplete = rx14CasePhase == CasePhase.COMPLETE
     val fileSystem = remember { VirtualFileSystem(context) }
     val activeMission = currentGameState.activeMissionId?.let(Campaign01Catalog::find)
     val activeWorkspace = remember(activeMission?.id) {
@@ -521,9 +523,14 @@ private fun CyberProtocolGameContentBody(
                 mission = authoredMission,
                 freyaContactUnlocked = currentGameState.freyaContactOpened,
                 caseComplete = rx14CaseComplete,
+                casePhase = rx14CasePhase,
                 onOpenOperations = {
                     navigation = navigation.copy(hubReturnScreen = GameScreen.STORY)
                     navigate(GameScreen.OPERATIONS)
+                },
+                onOpenAnalysis = {
+                    navigation = navigation.copy(hubReturnScreen = GameScreen.STORY)
+                    navigate(GameScreen.ANALYSIS)
                 },
                 hintLevel = hintLevel,
                 onRequestHint = { hintLevel = (hintLevel + 1).coerceAtMost(3) },
@@ -1124,7 +1131,9 @@ private fun StoryScreen(
     beat: StoryBeat, stage: Int, mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?,
     freyaContactUnlocked: Boolean,
     caseComplete: Boolean,
+    casePhase: CasePhase,
     onOpenOperations: () -> Unit,
+    onOpenAnalysis: () -> Unit,
     hintLevel: Int, onRequestHint: () -> Unit,
     code: TextFieldValue, onCodeChange: (TextFieldValue) -> Unit,
     output: String, feedback: String, saveStatus: String, canSubmit: Boolean,
@@ -1234,11 +1243,25 @@ private fun StoryScreen(
                     fontSize = 10.sp
                 )
             }
-        } else if (stage == 14 && !caseComplete) {
-            CPPrimaryButton(beat.button, onOpenOperations)
         } else {
-            val nextLabel = if (stage == 14) beat.completedButton ?: beat.button else beat.button
-            CPPrimaryButton(nextLabel, onContinue)
+            when (Campaign01StoryNavigationPolicy.action(stage, casePhase)) {
+                com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_OPERATIONS ->
+                    CPPrimaryButton(
+                        if (stage in 12..13) "BUKA PUSAT OPERASI" else beat.button,
+                        onOpenOperations
+                    )
+                com.zeroday.cyberprotocol.data.StoryCaseAction.OPEN_ANALYSIS ->
+                    CPPrimaryButton(beat.button, onOpenAnalysis)
+                com.zeroday.cyberprotocol.data.StoryCaseAction.CONTINUE -> {
+                    val nextLabel = when {
+                        stage == 11 && casePhase == CasePhase.ANALYSIS -> "LANJUTKAN KE PERBANDINGAN"
+                        stage in 12..13 && casePhase == CasePhase.OPERATIONAL_DECISION -> "LANJUTKAN KE KEPUTUSAN OPERASIONAL"
+                        stage == 14 && caseComplete -> beat.completedButton ?: beat.button
+                        else -> "LANJUTKAN CERITA"
+                    }
+                    CPPrimaryButton(nextLabel, onContinue)
+                }
+            }
         }
         Text("TITIK SIMPAN " + (stage - 1) + " / 12", color = CyberPalette.SteelGray, fontSize = 10.sp, letterSpacing = 1.2.sp)
     }
