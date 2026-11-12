@@ -1120,13 +1120,15 @@ private fun CyberProtocolGameContentBody(
 
 @Composable
 private fun MainMenuScreen(selectedLanguage: GameLanguage, onContinue: () -> Unit, onNewCampaign: () -> Unit, onHub: () -> Unit, onProfile: () -> Unit, onArchives: () -> Unit, onAchievements: () -> Unit, onSettings: () -> Unit, onLanguage: () -> Unit) {
-    Box(
-        Modifier.fillMaxSize().background(
-            androidx.compose.ui.graphics.Brush.verticalGradient(
-                listOf(Color(0xFF062B33), Color(0xFF071923), Color(0xFF090A0E))
+    Box(Modifier.fillMaxSize()) {
+        HeadquartersBackdrop(Modifier.matchParentSize())
+        Box(
+            Modifier.matchParentSize().background(
+                androidx.compose.ui.graphics.Brush.verticalGradient(
+                    listOf(Color(0x88051A22), Color(0x33071923), Color(0xCC090A0E))
+                )
             )
         )
-    ) {
         Column(
             Modifier.fillMaxSize().verticalScroll(rememberScrollState())
                 .padding(horizontal = 26.dp, vertical = 30.dp),
