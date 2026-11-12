@@ -162,6 +162,14 @@ internal fun OperationsScreen(
                 InfoPanel("First Contact selesai. Laporan mempertahankan perbedaan antara fakta, dugaan, dan hal yang belum diketahui. Anomali RX-14 tetap terbuka untuk pemeriksaan jika bukti baru tersedia.")
                 Text("KEPUTUSAN AKHIR", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 Text(decision?.title ?: "Tidak ada keputusan tersimpan", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                if (caseDefinition.id in gameState.completedMissionIds) {
+                    Text(
+                        "REWARD KASUS  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP",
+                        color = Color(0xFF8CD5AC), fontSize = 11.sp, fontWeight = FontWeight.Bold
+                    )
+                }
+                Text("TOTAL PENGALAMAN  /  ${gameState.experience} XP",
+                    color = Color(0xFFB8C9CC), fontSize = 11.sp)
             }
         }
 

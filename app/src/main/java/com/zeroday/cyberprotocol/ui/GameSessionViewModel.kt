@@ -14,6 +14,7 @@ import com.zeroday.cyberprotocol.core.model.EvidenceRelationType
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
+import com.zeroday.cyberprotocol.data.Campaign01CaseCatalog
 import com.zeroday.cyberprotocol.data.EvidenceAssetCatalog
 import com.zeroday.cyberprotocol.data.LocalGameStateRepository
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
@@ -164,7 +165,27 @@ internal class GameSessionViewModel(
 
     fun acknowledgeCaseDebrief(definition: CaseDefinition) {
         UpdateCaseProgressUseCase(repository).acknowledgeDebrief(definition)
+        ensureCaseCompletionReward(definition)
         refresh()
+    }
+
+    /** Awards the chapter reward once, only after the case reaches COMPLETE. */
+    fun ensureCaseCompletionReward(definition: CaseDefinition) {
+        val current = repository.load()
+        val progress = current.caseProgress[definition.id] ?: return
+        if (com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator.phase(definition, progress) !=
+            com.zeroday.cyberprotocol.core.model.CasePhase.COMPLETE
+        ) return
+        if (definition.id in current.completedMissionIds) return
+
+        completeMission(
+            missionId = definition.id,
+            rewardXp = if (definition.id == Campaign01CaseCatalog.RX14_CASE_ID) {
+                Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP
+            } else 0,
+            requiredClearance = 1,
+            competencyTrack = CompetencyTrack.INTELLIGENCE
+        )
     }
 
     fun saveCode(key: String, source: String, checkpoint: String) {

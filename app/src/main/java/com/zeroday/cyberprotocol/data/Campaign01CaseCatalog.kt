@@ -7,6 +7,7 @@ import com.zeroday.cyberprotocol.core.model.MissionArchetype
 /** Authored case contracts for the guided intelligence campaign. */
 object Campaign01CaseCatalog {
     const val RX14_CASE_ID = "first_contact.rx14"
+    const val RX14_COMPLETION_REWARD_XP = 100
 
     val rx14 = CaseDefinition(
         id = RX14_CASE_ID,

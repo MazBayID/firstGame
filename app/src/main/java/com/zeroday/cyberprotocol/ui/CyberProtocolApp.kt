@@ -221,6 +221,9 @@ private fun CyberProtocolGameContentBody(
     LaunchedEffect(currentGameState.activeMissionId) {
         sessionViewModel.retireLegacyStoryMission()
     }
+    LaunchedEffect(rx14CaseComplete) {
+        if (rx14CaseComplete) sessionViewModel.ensureCaseCompletionReward(Campaign01CaseCatalog.rx14)
+    }
 
     fun canRecordRx14Evidence(evidenceId: String): Boolean {
         val latest = sessionViewModel.gameState
