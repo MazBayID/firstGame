@@ -327,7 +327,7 @@ private fun CyberProtocolGameContentBody(
                 }
                 if (code.text != sourceToVerify) {
                     lastSuccessfulRunSource = null
-                    codeFeedback = localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."))
+                    codeFeedback = localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru.")
                 } else {
                     codeOutput = result.output.ifBlank { localizedUiText(selectedLanguage, "(no output)", "(tidak ada keluaran)") }
                     if (result.error.isNotBlank()) codeOutput += "\n" + result.error
@@ -581,7 +581,7 @@ private fun CyberProtocolGameContentBody(
             }
             if (practiceCode.text != source) {
                 practiceLastSuccessfulRunSource = null
-                practiceFeedback = localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."))
+                practiceFeedback = localizedUiText(selectedLanguage, "CODE CHANGED DURING VERIFICATION — run the latest version again.", "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru.")
             } else if (result.passed) {
                 val firstCompletion = sessionViewModel.completeMission(
                     mission.id,
@@ -1480,7 +1480,7 @@ private fun StoryScreen(
                     border = BorderStroke(1.dp, CyberPalette.Divider)) {
                     Column(Modifier.fillMaxWidth().padding(12.dp)) {
                         Text(localizedUiText(selectedLanguage, "TERMINAL OUTPUT", "KELUARAN TERMINAL"), color = CyberPalette.SteelGray, fontSize = 9.sp)
-                        Text(output, color = Color(0xFFB7E4C7), fontFamily = FontFamily.Monospace)
+                        Text(output.ifBlank { localizedUiText(selectedLanguage, "(no output yet)", "(keluaran akan muncul di sini)") }, color = Color(0xFFB7E4C7), fontFamily = FontFamily.Monospace)
                     }
                 }
                 if (feedback.isNotBlank()) Text(feedback, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp)
