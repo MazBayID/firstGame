@@ -168,7 +168,7 @@ class VirtualFileSystemMissionAssetTest {
             mission.allowedFiles
         )
 
-        assertTrue(removeReadOnly.output.contains("Permission denied"))
+        assertTrue(removeReadOnly.output.startsWith("Akses ditolak:"))
         assertEquals(null, outsideRead)
     }
 }
