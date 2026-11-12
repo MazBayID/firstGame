@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/android-preview.yml"
+      - "app/**"
   workflow_dispatch:
 
 concurrency:
