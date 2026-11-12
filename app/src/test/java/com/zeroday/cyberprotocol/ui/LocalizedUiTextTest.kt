@@ -18,6 +18,13 @@ class LocalizedUiTextTest {
         assertEquals("CORROBORATED", EvidenceStatus.CORROBORATED.name)
     }
 
+    @Test fun operativeRanksHaveLocalizedDisplayNamesWithoutChangingStoredValues() {
+        assertEquals("JUNIOR ANALYST", localizedRankName("JUNIOR_ANALYST", GameLanguage.ENGLISH))
+        assertEquals("ANALIS JUNIOR", localizedRankName("JUNIOR_ANALYST", GameLanguage.INDONESIAN))
+        assertEquals("JUNIOR_ANALYST", "JUNIOR_ANALYST")
+        assertEquals("UNKNOWN RANK", localizedRankName("UNKNOWN_RANK", GameLanguage.ENGLISH))
+    }
+
     @Test fun casePhasesHaveLocalizedDisplayNames() {
         assertEquals("OPERATIONAL DECISION", localizedPhaseName(CasePhase.OPERATIONAL_DECISION, GameLanguage.ENGLISH))
         assertEquals("KEPUTUSAN OPERASIONAL", localizedPhaseName(CasePhase.OPERATIONAL_DECISION, GameLanguage.INDONESIAN))
