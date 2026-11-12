@@ -204,6 +204,10 @@ private fun CyberProtocolGameContentBody(
         sessionViewModel.refresh()
     }
 
+    LaunchedEffect(currentGameState.storyBeat) {
+        if (currentGameState.storyBeat >= 10) fileSystem.installEvidenceAssets()
+    }
+
     fun saveStage(value: Int) {
         storyStage = value.coerceIn(0, 16)
         preferences.edit().putInt("story_stage", storyStage).apply()
