@@ -823,9 +823,9 @@ private fun CyberProtocolGameContentBody(
                 )
                 awards.forEach { (title, earned) ->
                     append(if (earned) "[DIPEROLEH] " else "[BELUM DICAPAI] ")
-                    append(title).append("\\n")
+                    append(title).append("\n")
                 }
-                append("\\n")
+                append("\n")
                 append(if (rx14CaseComplete) {
                     "FIRST CONTACT / LAPORAN AKHIR TERVERIFIKASI"
                 } else {
