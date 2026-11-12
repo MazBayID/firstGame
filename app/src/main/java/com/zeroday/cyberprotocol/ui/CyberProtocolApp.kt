@@ -899,6 +899,7 @@ private fun CyberProtocolGameContentBody(
             caseDefinition = Campaign01CaseCatalog.rx14,
             caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
                 ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
+            selectedLanguage = selectedLanguage,
             onBack = { navigate(navigation.analysisReturnScreen) },
             onAnalyzeCaseEvidence = { evidenceId ->
                 sessionViewModel.analyzeCaseEvidence(Campaign01CaseCatalog.rx14, evidenceId)

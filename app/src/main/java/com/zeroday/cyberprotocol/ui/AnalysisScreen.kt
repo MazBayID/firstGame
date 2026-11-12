@@ -23,6 +23,7 @@ import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.EvidenceStatus
 import com.zeroday.cyberprotocol.core.model.GameState
+import com.zeroday.cyberprotocol.core.model.GameLanguage
 import com.zeroday.cyberprotocol.domain.usecase.EvidenceReviewPolicy
 
 /** Pure evidence filtering shared by the analysis surface and its tests. */
@@ -53,6 +54,7 @@ internal fun AnalysisScreen(
     gameState: GameState,
     caseDefinition: CaseDefinition,
     caseProgress: CaseProgress,
+    selectedLanguage: GameLanguage,
     onBack: () -> Unit,
     onAnalyzeCaseEvidence: (String) -> Unit,
     onSelectAnalysisConclusion: (String) -> Unit,
@@ -93,10 +95,10 @@ internal fun AnalysisScreen(
             Column(Modifier.weight(1f)) {
                 Text("A.E.G.I.S.  /  INTELLIGENCE", color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.5.sp, fontWeight = FontWeight.Bold)
-                Text("ANALISIS BUKTI", color = Color.White, fontSize = 24.sp,
+                Text(localizedUiText(selectedLanguage, "EVIDENCE ANALYSIS", "ANALISIS BUKTI"), color = Color.White, fontSize = 24.sp,
                     fontWeight = FontWeight.Black)
             }
-            TextButton(onClick = onBack) { Text("KEMBALI", color = Color(0xFFBCE8EA)) }
+            TextButton(onClick = onBack) { Text(localizedUiText(selectedLanguage, "BACK", "KEMBALI"), color = Color(0xFFBCE8EA)) }
         }
 
         CaseAnalysisWorkspace(
@@ -114,8 +116,8 @@ internal fun AnalysisScreen(
             onValueChange = { query = it.take(120) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            label = { Text("Cari judul, sumber, atau misi") },
-            placeholder = { Text("Contoh: RX-14") },
+            label = { Text(localizedUiText(selectedLanguage, "Search title, source, or mission", "Cari judul, sumber, atau misi")) },
+            placeholder = { Text(localizedUiText(selectedLanguage, "Example: RX-14", "Contoh: RX-14")) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color(0xFFD0D8DE),
@@ -133,9 +135,9 @@ internal fun AnalysisScreen(
                     selected = selectedStatus == key,
                     onClick = { selectedStatus = key },
                     label = { Text(when (key) {
-                        "ALL" -> "SEMUA"
-                        "CONFIRMED" -> "TERKONFIRMASI"
-                        else -> "BELUM TERVERIFIKASI"
+                        "ALL" -> localizedUiText(selectedLanguage, "ALL", "SEMUA")
+                        "CONFIRMED" -> localizedUiText(selectedLanguage, "CONFIRMED", "TERKONFIRMASI")
+                        else -> localizedUiText(selectedLanguage, "UNVERIFIED", "BELUM TERVERIFIKASI")
                     }, fontSize = 9.sp) }
                 )
             }
@@ -146,10 +148,10 @@ internal fun AnalysisScreen(
                     selected = selectedStatus == key,
                     onClick = { selectedStatus = key },
                     label = { Text(when (key) {
-                        "INFERRED" -> "DISIMPULKAN"
-                        "CORROBORATED" -> "KOROBORASI"
-                        "RETRACTED" -> "DICABUT"
-                        else -> "DIPERSELISIHKAN"
+                        "INFERRED" -> localizedUiText(selectedLanguage, "INFERRED", "DISIMPULKAN")
+                        "CORROBORATED" -> localizedUiText(selectedLanguage, "CORROBORATED", "KOROBORASI")
+                        "RETRACTED" -> localizedUiText(selectedLanguage, "RETRACTED", "DICABUT")
+                        else -> localizedUiText(selectedLanguage, "DISPUTED", "DIPERSELISIHKAN")
                     }, fontSize = 9.sp) }
                 )
             }
@@ -163,7 +165,7 @@ internal fun AnalysisScreen(
         ) {
             Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("REKAMAN BUKTI", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                    Text(localizedUiText(selectedLanguage, "EVIDENCE RECORDS", "REKAMAN BUKTI"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                         letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
                     Text("${filtered.size} DARI ${gameState.evidence.size} REKAMAN",
                         color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
@@ -213,7 +215,7 @@ internal fun AnalysisScreen(
             val targets = EvidenceReviewPolicy.allowedTransitions(target.status).toList()
             AlertDialog(
                 onDismissRequest = { reviewTarget = null },
-                title = { Text("TINJAU KLASIFIKASI") },
+                title = { Text(localizedUiText(selectedLanguage, "REVIEW CLASSIFICATION", "TINJAU KLASIFIKASI")) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(target.title, fontWeight = FontWeight.Bold)
@@ -227,8 +229,8 @@ internal fun AnalysisScreen(
                         OutlinedTextField(
                             value = reviewReason,
                             onValueChange = { reviewReason = it.take(400) },
-                            label = { Text("Alasan peninjauan") },
-                            placeholder = { Text("Jelaskan sumber atau temuan yang mendasari perubahan") },
+                            label = { Text(localizedUiText(selectedLanguage, "Review rationale", "Alasan peninjauan")) },
+                            placeholder = { Text(localizedUiText(selectedLanguage, "Explain the source or finding that supports this change", "Jelaskan sumber atau temuan yang mendasari perubahan")) },
                             minLines = 2
                         )
                     }
@@ -240,10 +242,10 @@ internal fun AnalysisScreen(
                             onReviewEvidence(target.id, reviewStatus, reviewReason.trim())
                             reviewTarget = null
                         }
-                    ) { Text("SIMPAN REVIEW") }
+                    ) { Text(localizedUiText(selectedLanguage, "SAVE REVIEW", "SIMPAN REVIEW")) }
                 },
                 dismissButton = {
-                    TextButton(onClick = { reviewTarget = null }) { Text("BATAL") }
+                    TextButton(onClick = { reviewTarget = null }) { Text(localizedUiText(selectedLanguage, "CANCEL", "BATAL")) }
                 }
             )
         }
@@ -253,12 +255,12 @@ internal fun AnalysisScreen(
 @Composable
 private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, onReview: () -> Unit) {
     val (label, tint) = when (record.status) {
-        EvidenceStatus.CONFIRMED -> "TERKONFIRMASI" to Color(0xFF8CD5AC)
+        EvidenceStatus.CONFIRMED -> localizedUiText(selectedLanguage, "CONFIRMED", "TERKONFIRMASI") to Color(0xFF8CD5AC)
         EvidenceStatus.CORROBORATED -> "DIKOROBORASI" to Color(0xFF9BC7E8)
-        EvidenceStatus.INFERRED -> "DISIMPULKAN" to Color(0xFFE3C17B)
-        EvidenceStatus.DISPUTED -> "DIPERSELISIHKAN" to Color(0xFFE09AA6)
-        EvidenceStatus.RETRACTED -> "DICABUT" to Color(0xFF9A879D)
-        EvidenceStatus.UNVERIFIED -> "BELUM TERVERIFIKASI" to Color(0xFF83C7D0)
+        EvidenceStatus.INFERRED -> localizedUiText(selectedLanguage, "INFERRED", "DISIMPULKAN") to Color(0xFFE3C17B)
+        EvidenceStatus.DISPUTED -> localizedUiText(selectedLanguage, "DISPUTED", "DIPERSELISIHKAN") to Color(0xFFE09AA6)
+        EvidenceStatus.RETRACTED -> localizedUiText(selectedLanguage, "RETRACTED", "DICABUT") to Color(0xFF9A879D)
+        EvidenceStatus.UNVERIFIED -> localizedUiText(selectedLanguage, "UNVERIFIED", "BELUM TERVERIFIKASI") to Color(0xFF83C7D0)
     }
     Surface(
         color = Color(0xFF111B22),
@@ -286,9 +288,9 @@ private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, onRev
             Text("RELASI  /  ${record.relations.size}  ·  RIWAYAT REVIEW  /  ${record.reviewHistory.size}",
                 color = Color(0xFF8AA8AE), fontSize = 9.sp)
             if (EvidenceReviewPolicy.allowedTransitions(record.status).isNotEmpty()) {
-                TextButton(onClick = onReview) { Text("TINJAU BUKTI") }
+                TextButton(onClick = onReview) { Text(localizedUiText(selectedLanguage, "REVIEW EVIDENCE", "TINJAU BUKTI")) }
             } else {
-                Text("STATUS FINAL — TIDAK DAPAT DIAKTIFKAN KEMBALI",
+                Text(localizedUiText(selectedLanguage, "FINAL STATUS — CANNOT BE REACTIVATED", "STATUS FINAL — TIDAK DAPAT DIAKTIFKAN KEMBALI"),
                     color = Color(0xFF9A879D), fontSize = 8.sp)
             }
         }
@@ -350,7 +352,7 @@ private fun CaseAnalysisWorkspace(
             }
             val allAnalyzed = definition.requiredEvidenceIds.all { it in progress.analyzedEvidenceIds }
             if (allAnalyzed && definition.analysisOptions.isNotEmpty()) {
-                Text("KESIMPULAN ANALISIS", color = Color(0xFF83C7D0), fontSize = 9.sp,
+                Text(localizedUiText(selectedLanguage, "ANALYSIS CONCLUSION", "KESIMPULAN ANALISIS"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                 definition.analysisOptions.forEach { option ->
                     val selected = progress.analysisConclusionId == option.id
@@ -365,9 +367,9 @@ private fun CaseAnalysisWorkspace(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
                         ) {
                             Text(when {
-                                !selected -> "UJI KESIMPULAN"
-                                option.supportedByEvidence -> "KESIMPULAN DIDUKUNG"
-                                else -> "DIPILIH — BELUM DIDUKUNG"
+                                !selected -> localizedUiText(selectedLanguage, "TEST CONCLUSION", "UJI KESIMPULAN")
+                                option.supportedByEvidence -> localizedUiText(selectedLanguage, "SUPPORTED CONCLUSION", "KESIMPULAN DIDUKUNG")
+                                else -> localizedUiText(selectedLanguage, "SELECTED — NOT SUPPORTED", "DIPILIH — BELUM DIDUKUNG")
                             })
                         }
                     }
