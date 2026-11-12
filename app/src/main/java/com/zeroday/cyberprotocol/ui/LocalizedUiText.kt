@@ -26,3 +26,31 @@ internal fun localizedPhaseName(phase: CasePhase, language: GameLanguage): Strin
         CasePhase.DEBRIEFING -> localizedUiText(language, "DEBRIEFING", "DEBRIEFING")
         CasePhase.COMPLETE -> localizedUiText(language, "COMPLETE", "SELESAI")
     }
+
+internal fun localizedRankName(rank: String, language: GameLanguage): String {
+    val english = when (rank) {
+        "CIVILIAN" -> "CIVILIAN"
+        "RECRUIT" -> "RECRUIT"
+        "INITIATE" -> "INITIATE"
+        "JUNIOR_ANALYST" -> "JUNIOR ANALYST"
+        "FIELD_ANALYST" -> "FIELD ANALYST"
+        "CYBER_OPERATIVE" -> "CYBER OPERATIVE"
+        "SENIOR_OPERATIVE" -> "SENIOR OPERATIVE"
+        "SPECIAL_AGENT" -> "SPECIAL AGENT"
+        "ELITE_OPERATIVE" -> "ELITE OPERATIVE"
+        else -> rank.replace('_', ' ')
+    }
+    if (language == GameLanguage.ENGLISH) return english
+    return when (rank) {
+        "CIVILIAN" -> "SIPIL"
+        "RECRUIT" -> "REKRUT"
+        "INITIATE" -> "PEMULA"
+        "JUNIOR_ANALYST" -> "ANALIS JUNIOR"
+        "FIELD_ANALYST" -> "ANALIS LAPANGAN"
+        "CYBER_OPERATIVE" -> "OPERATOR SIBER"
+        "SENIOR_OPERATIVE" -> "OPERATOR SENIOR"
+        "SPECIAL_AGENT" -> "AGEN KHUSUS"
+        "ELITE_OPERATIVE" -> "OPERATOR ELIT"
+        else -> english
+    }
+}
