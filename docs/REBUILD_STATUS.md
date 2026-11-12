@@ -96,8 +96,8 @@ No feature is marked production-complete solely because a prior prototype screen
 
 ## Implementation ledger — current branch
 
-Branch: `rebuild/full-game`  
-Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/firstGame/pull/1)
+Branch: `main`  
+Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/firstGame/pull/1) — merged.
 
 ### Completed in this implementation increment
 
@@ -176,7 +176,7 @@ Draft PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID/first
 
 - Device testing uses only `app-release.apk`, signed with the permanent Android release keystore. Debug signing is separate and the Debug variant is never used for device acceptance or distribution.
 - The separate Android Tests workflow runs Python and Kotlin/Android unit tests only; it never invokes APK-producing tasks, reads signing secrets, or uploads an installable APK.
-- Android Release APK runs a mandatory Python/Kotlin validation job on pushes or manual dispatches for `main` or `rebuild/full-game`; its separate Release job depends on validation success, checks out the exact same commit SHA, and builds only `assembleRelease`. Pull requests never receive release-signing secrets or produce APKs.
+- Android Release APK runs a mandatory Python/Kotlin validation job on pushes or manual dispatches for `main`; its separate Release job depends on validation success, checks out the exact same commit SHA, and builds only `assembleRelease`. Pull requests never receive release-signing secrets or produce APKs.
 - Release verification checks the application ID, versionCode, arm64-v8a/x86_64 libraries, APK signature validity, and SHA-256 certificate fingerprint against the restored permanent keystore.
 - Release CI assigns a monotonically increasing versionCode from the workflow run number (starting above the existing versionCode 6) and verifies that the APK contains the expected value before artifact upload.
 - Release CI verifies the APK signature and uploads one artifact named `cyber-protocol-release`.
