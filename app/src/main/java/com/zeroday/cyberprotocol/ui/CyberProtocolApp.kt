@@ -487,7 +487,7 @@ private fun CyberProtocolGameContentBody(
                 }
             }
             StoryScreen(
-                beat = Campaign01Story.localizedBeat(beatIndex - 2, selectedLanguage),
+                beat = Campaign01StoryLocalization.localizedBeat(beatIndex - 2, selectedLanguage),
                 stage = beatIndex,
                 mission = authoredMission,
                 freyaContactUnlocked = currentGameState.freyaContactOpened,
