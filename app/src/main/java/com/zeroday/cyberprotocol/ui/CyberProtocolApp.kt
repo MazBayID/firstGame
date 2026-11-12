@@ -1229,7 +1229,7 @@ private fun RecruitmentNotificationScreen(selectedLanguage: GameLanguage, onOpen
                         }
                         Text(localizedUiText(selectedLanguage, "SECURE MESSAGES", "PESAN AMAN"), color = Color(0xFFE6E9ED), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         Spacer(Modifier.weight(1f))
-                        Text("sekarang", color = Color(0xFF9AA2AC), fontSize = 10.sp)
+                        Text(localizedUiText(selectedLanguage, "now", "sekarang"), color = Color(0xFF9AA2AC), fontSize = 10.sp)
                     }
                     Text("A.E.G.I.S. / Recruitment Office", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                     Text(localizedUiText(selectedLanguage, "Official invitation: recruitment request.", "Undangan resmi: permintaan perekrutan."), color = Color(0xFFD0D5DC), fontSize = 13.sp)
@@ -1285,11 +1285,11 @@ private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBa
                 Modifier.fillMaxWidth().padding(top = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(9.dp)
             ) {
-                Text("A.E.G.I.S.  /  CAMPAIGN 01", color = Color(0xFF9AB4B8),
+                Text(localizedUiText(selectedLanguage, "A.E.G.I.S.  /  CAMPAIGN 01", "A.E.G.I.S.  /  KAMPANYE 01"), color = Color(0xFF9AB4B8),
                     fontSize = 9.sp, letterSpacing = 1.8.sp, fontWeight = FontWeight.Bold)
-                Text("THE RECRUITMENT", color = Color.White,
+                Text(localizedUiText(selectedLanguage, "THE RECRUITMENT", "PEREKRUTAN"), color = Color.White,
                     fontSize = 26.sp, fontWeight = FontWeight.Black, letterSpacing = 0.5.sp)
-                Text("CHAPTER 001  ·  FIRST CONTACT", color = Color(0xFFE0A2AD),
+                Text(localizedUiText(selectedLanguage, "CHAPTER 001  ·  FIRST CONTACT", "BAB 001  ·  KONTAK PERTAMA"), color = Color(0xFFE0A2AD),
                     fontSize = 10.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
                 Text(
