@@ -18,18 +18,9 @@ The opening notifications and links are in-game simulations. The app does not ac
 
 ## Current playable foundation
 
-The approved First Contact chapter currently contains **14 story beats and eight evaluated Python missions**:
+First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. The previous eight evaluated Python missions are legacy implementation contracts, **not a mandatory gameplay sequence**. Their learning concepts may be retained as optional practice, combined, or retired when they do not serve the case. The current codebase is still transitioning away from that legacy sequence; do not mistake the design decision for a completed migration.
 
-1. Sinyal Pertama — variables and `print()`.
-2. Verifikasi Identitas — named variables and output verification.
-3. Audit Jejak Sistem — `for`, `if`, and counting log entries.
-4. Inventaris Rekaman — `len()` and list size.
-5. Penelusuran Referensi — `enumerate()`, filtering, and source indices.
-6. Perbandingan Dua Sumber — list indexing and source comparison.
-7. Normalisasi Waktu — `int()`, indexing, and signed arithmetic.
-8. Validasi Selisih — `abs()` and absolute time difference.
-
-The closing report records a four-second difference between two fictional receipt timestamps. The difference is observable; its cause remains unverified. The chapter does not identify a culprit or claim tampering.
+The RX-14 case is now represented in Operations as a persisted five-phase case flow. The player inspects the original receipt sources, analyzes them separately, and chooses a proportionate operational response. The valid outcome **insufficient evidence** preserves the unresolved cause of the four-second discrepancy. This case flow is a playable foundation; story routing and cross-app evidence interactions are still being converted.
 
 ## Gameplay approach
 
@@ -45,7 +36,7 @@ The core loop is:
 
 Missions use five primary archetypes: Narrative, Investigation, Technical, Analytical, and Operational. A mission may combine activities, but it has one dominant experience. The player is solving a problem, not completing a mandatory sequence of apps. Python and other technical skills are used when the case genuinely calls for them; not every mission requires code.
 
-The **Evidence & Investigation Engine** is the connective foundation for source provenance, evidence records, corroboration, uncertainty, and case findings across the in-world apps. Its detailed schema and the first full investigative case remain design/implementation work. First Contact remains the guided beginner chapter with its existing fourteen story beats and eight evaluated Python missions.
+The **Evidence & Investigation Engine** connects immutable source assets, provenance-aware evidence records, case progression, and uncertainty-aware decisions. RX-14 is the first case-flow vertical slice. Cross-app source discovery, full analytical workspaces, and the remaining legacy mission migration are still in progress.
 
 ## Core systems
 

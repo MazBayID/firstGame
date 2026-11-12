@@ -251,8 +251,9 @@ Implementation requirements:
 - **Test added:** an end-to-end domain progression test covers the complete RX-14 case and its uncertainty outcome.
 - **Still in progress:** the story screen continues to route through the legacy eight Python missions. Their mechanics must be progressively refactored into beginner training/optional practice or retained only where they naturally support the case.
 - **Still in progress:** direct cross-app case integration, richer analytical reasoning, decision rationale capture, competency rewards, and emulator smoke testing.
-- **Build gate:** the missing story-localization import discovered in CI was fixed. The new Operations integration is awaiting CI verification; no new APK is declared release-ready.
+- **Build gate:** CI run [#158](https://github.com/MazBayID/firstGame/actions/runs/43161653497) passed on commit `940939e9e4f6a9ea1d0eb66e462a88ed9998e7ea`. Source tests and the development Debug APK build succeeded. The final-release job was skipped as expected; this is not a final or emulator-smoke-tested APK.
 
 ## RX-14 case interaction update
 
-- Operations now requires the player to open the original VFS receipt content before recording a source as discovered. Evidence inspection and analysis remain separate actions. This UI change is an incremental vertical slice, not completion of the overall First Contact gameplay redesign; CI verification is pending.
+- Operations now requires the player to open the original VFS receipt content before recording a source as discovered. Evidence inspection and analysis remain separate actions. This is an incremental vertical slice, not completion of the overall First Contact gameplay redesign.
+- CI run #158 passed source tests and built the development Debug APK. Final release was skipped; emulator smoke testing and physical-device acceptance remain outstanding.

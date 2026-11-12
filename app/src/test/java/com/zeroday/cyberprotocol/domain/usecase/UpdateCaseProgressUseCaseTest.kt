@@ -63,6 +63,31 @@ class UpdateCaseProgressUseCaseTest {
         ))
     }
 
+
+    @Test fun requiredEvidenceCannotBeInspectedBeforeBriefing() {
+        val repo = repository(); val useCase = UpdateCaseProgressUseCase(repo)
+        assertThrows(IllegalArgumentException::class.java) {
+            useCase.discoverEvidence(definition, "primary")
+        }
+    }
+
+    @Test fun optionalLeadCanBeInspectedAndAnalyzedDuringAnalysis() {
+        val repo = repository(); val useCase = UpdateCaseProgressUseCase(repo)
+        useCase.acknowledgeBriefing(definition)
+        useCase.discoverEvidence(definition, "primary")
+        useCase.discoverEvidence(definition, "secondary")
+        assertThrows(IllegalArgumentException::class.java) {
+            useCase.discoverEvidence(definition, "primary")
+        }
+        useCase.discoverEvidence(definition, "optional")
+        assertEquals(CasePhase.ANALYSIS, CasePhaseEvaluator.phase(definition, repo.load().caseProgress.getValue("case_a")))
+        useCase.analyzeEvidence(definition, "optional")
+        useCase.analyzeEvidence(definition, "primary")
+        useCase.analyzeEvidence(definition, "secondary")
+        useCase.selectDecision(definition, "pause")
+        assertEquals("pause", repo.load().caseProgress.getValue("case_a").selectedDecisionId)
+    }
+
     @Test fun evidenceOutsideCaseCannotBeAdded() {
         val repo = repository(); val useCase = UpdateCaseProgressUseCase(repo)
         assertThrows(IllegalArgumentException::class.java) {
