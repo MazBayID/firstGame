@@ -319,7 +319,39 @@ MISSIONS = {
 }
 
 
-def evaluate_mission(source, mission_id=1):
+def _localize_evaluator_feedback(feedback, language):
+    """Translate evaluator-authored guidance without touching code or expected output."""
+    if language != "id":
+        return feedback
+    translations = {
+        "Fix the syntax error before submitting.": "Perbaiki kesalahan sintaks sebelum mengirim jawaban.",
+        "This mission teaches variables. Assign values to agent and status.": "Misi ini melatih variabel. Berikan nilai pada agent dan status.",
+        "Use the hp and damage variables required by this exercise.": "Gunakan variabel hp dan damage yang diwajibkan latihan ini.",
+        "The objective requires a conditional. Use if/else.": "Tujuan misi memerlukan percabangan. Gunakan if/else.",
+        "The objective requires a for loop. Repeating print statements is not enough.": "Tujuan misi memerlukan perulangan for. Mengulang perintah print saja tidak cukup.",
+        "Use both a loop and a condition to inspect the changing event list.": "Gunakan perulangan dan kondisi untuk memeriksa daftar peristiwa yang berubah.",
+        "Assign the first signal to signal, then display that variable with print(signal).": "Simpan sinyal pertama ke variabel signal, lalu tampilkan dengan print(signal).",
+        "Assign the verified message to message, then display that variable with print(message).": "Simpan pesan terverifikasi ke variabel message, lalu tampilkan dengan print(message).",
+        "Use len(records), assign the result to record_count, and display it.": "Gunakan len(records), simpan hasilnya ke record_count, lalu tampilkan.",
+        "Use for, enumerate(), and if to filter the receipt list while keeping each source index.": "Gunakan for, enumerate(), dan if untuk menyaring daftar tanda terima sambil mempertahankan indeks sumber.",
+        "Use list indexing to assign receipts[0] to primary and receipts[1] to archive.": "Gunakan indeks list untuk menyimpan receipts[0] ke primary dan receipts[1] ke archive.",
+        "Convert both receipt_seconds entries with int(), assign first_time and second_time, then calculate delta.": "Konversi kedua nilai receipt_seconds dengan int(), simpan ke first_time dan second_time, lalu hitung delta.",
+        "Use int() to convert both timestamp strings before subtracting.": "Gunakan int() untuk mengonversi kedua teks waktu sebelum mengurangkannya.",
+        "Assign the absolute timestamp difference to a variable named difference.": "Simpan selisih absolut waktu ke variabel bernama difference.",
+        "Use abs() so the reported difference is never negative.": "Gunakan abs() agar selisih yang dilaporkan tidak pernah negatif.",
+        "All mission checks passed. Required concepts and behavior were verified.": "Semua pemeriksaan misi berhasil. Konsep dan perilaku yang diwajibkan telah terverifikasi.",
+        "Mission not found.": "Misi tidak ditemukan.",
+    }
+    if feedback in translations:
+        return translations[feedback]
+    if feedback.startswith("Execution failed in test "):
+        return feedback.replace("Execution failed in test ", "Eksekusi gagal pada pengujian ", 1) + "."
+    if feedback.startswith("Test ") and ": expected " in feedback and ", got " in feedback:
+        return feedback.replace("Test ", "Pengujian ", 1).replace(": expected ", ": diharapkan ", 1).replace(", got ", ", hasil aktual ", 1)
+    return feedback
+
+
+def evaluate_mission(source, mission_id=1, language="en"):
     try:
         mission_id = int(mission_id)
     except (TypeError, ValueError):
@@ -327,11 +359,11 @@ def evaluate_mission(source, mission_id=1):
     mission = MISSIONS.get(mission_id)
     if mission is None:
         return json.dumps({"output": "", "error": "Unknown mission.",
-                           "passed": False, "feedback": "Mission not found."})
+                           "passed": False, "feedback": _localize_evaluator_feedback("Mission not found.", language)})
     concept_feedback = _concept_check(source, mission_id)
     if concept_feedback:
         return json.dumps({"output": "", "error": "", "passed": False,
-                           "feedback": concept_feedback})
+                           "feedback": _localize_evaluator_feedback(concept_feedback, language)})
     outputs = []
     cases = mission["cases"]
     for index, (variables, expected) in enumerate(cases, start=1):
@@ -343,12 +375,12 @@ def evaluate_mission(source, mission_id=1):
         if result["error"]:
             return json.dumps({"output": result["output"], "error": result["error"],
                                "passed": False,
-                               "feedback": f"Execution failed in test {index}/{len(cases)}."})
+                               "feedback": _localize_evaluator_feedback(f"Execution failed in test {index}/{len(cases)}.", language)})
         actual = result["output"].strip()
         outputs.append(actual)
         if actual != expected:
             return json.dumps({"output": actual, "error": "", "passed": False,
-                               "feedback": f"Test {index}/{len(cases)}: expected {expected!r}, got {actual or '(no output)'!r}."})
+                               "feedback": _localize_evaluator_feedback(f"Test {index}/{len(cases)}: expected {expected!r}, got {actual or '(no output)'!r}.", language)})
     return json.dumps({"output": outputs[0] if outputs else "", "error": "",
                        "passed": True,
-                       "feedback": "All mission checks passed. Required concepts and behavior were verified."})
+                       "feedback": _localize_evaluator_feedback("All mission checks passed. Required concepts and behavior were verified.", language)})
