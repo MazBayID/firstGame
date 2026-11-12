@@ -378,3 +378,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 - The story can resume after a player completes a phase in the shared apps, and the next CTA advances to the next narrative beat.
 - Decision/debrief remains gated until the case is complete; the final report remains gated behind debrief acknowledgement.
 - Added policy tests for all active RX-14 stage/phase routes. Source workflow verification pending.
+
+
+## Identity exercise source asset — 2026-11-12
+
+- Close the missing-input gap in the second mandatory onboarding exercise: provide `identity_fragment.txt` with the evaluator's expected `IDENTITY VERIFIED` content.
+- The file is mission-allowlisted and read-only; only `identity.py` is player-writable.
+- Freya Messenger and Browser File Repository expose the same workspace asset; briefing/hints teach the intended Terminal `cat` workflow.
+- Regression tests cover catalog contract and persistent read-only mission workspace behavior. Source workflow verification pending.

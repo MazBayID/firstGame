@@ -428,3 +428,11 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Investigation prompts open Operations while required sources remain undiscovered; analysis prompts open the Analysis workspace only after discovery; the decision prompt returns to Operations until debrief completion.
 - Once a phase is complete, the story CTA advances to the next authored beat. Completing RX-14 unlocks the final report beat.
 - Navigation policy is isolated and unit-tested across investigation, analysis, decision, debrief, and completion states.
+
+
+## Verifikasi Identitas mission source completeness
+
+- The second mandatory Python exercise now has an explicit read-only source asset, `identity_fragment.txt`, containing the exact verification message expected by evaluator 10.
+- The mission briefing and graduated hints explain how to download the file, inspect it with Terminal `cat`, assign it to `message`, and print it.
+- Freya's Messenger attachment changes with the active onboarding mission and exposes the same persistent workspace asset as Browser File Repository.
+- Catalog and Robolectric workspace tests verify exact content, download, Terminal read, and write protection.

@@ -57,6 +57,24 @@ class VirtualFileSystemMissionAssetTest {
     }
 
     @Test
+    fun identityVerificationMissionDownloadsAnExactReadOnlyMessageFragment() {
+        val context = freshContext()
+        val mission = Campaign01Catalog.find("first_contact.identity")!!
+        val workspace = VirtualFileSystem(context).openMissionWorkspace(mission)
+
+        assertTrue(workspace.downloadAsset("identity_fragment.txt"))
+        assertEquals("IDENTITY VERIFIED\n", workspace.readFile("identity_fragment.txt"))
+        assertFalse(workspace.writeFile("identity_fragment.txt", "TAMPERED"))
+        assertEquals(
+            "IDENTITY VERIFIED\n",
+            VirtualFileSystem(context).execute(
+                "cat identity_fragment.txt", mission.workspaceDirectory,
+                mission.workspaceDirectory, mission.allowedFiles, mission.writableFiles
+            ).output
+        )
+    }
+
+    @Test
     fun firstContactSourceAssetsAreSharedByMessengerBrowserAndTerminalAndPersist() {
         val context = freshContext()
         val fileSystem = VirtualFileSystem(context)

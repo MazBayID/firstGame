@@ -32,6 +32,10 @@ class Campaign01CatalogTest {
 
         assertEquals(9, signal.evaluatorId)
         assertEquals(10, identity.evaluatorId)
+        assertEquals(setOf("identity_fragment.txt"), identity.initialFiles.keys)
+        assertEquals("IDENTITY VERIFIED\n", identity.initialFiles["identity_fragment.txt"])
+        assertTrue("identity_fragment.txt" in identity.allowedFiles)
+        assertTrue("identity_fragment.txt" !in identity.writableFiles)
         assertEquals(25, signal.rewardXp)
         assertEquals(35, identity.rewardXp)
         assertEquals(setOf("message_fragment.txt"), signal.initialFiles.keys)

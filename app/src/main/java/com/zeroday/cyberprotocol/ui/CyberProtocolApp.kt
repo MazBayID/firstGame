@@ -1565,6 +1565,13 @@ private fun MessengerScreen(
                             "Untuk tugas Sinyal Pertama, aku juga melampirkan message_fragment.txt. Simpan berkas itu ke ruang kerja misi, lalu baca melalui Terminal. Browser Repository dan lampiran ini menunjuk berkas yang sama.",
                             false
                         )
+                        if (activeMissionTitle == "Verifikasi Identitas") {
+                            ChatBubble(
+                                "Freya Knox",
+                                "Untuk Verifikasi Identitas, gunakan identity_fragment.txt. Unduh berkas dari lampiran atau File Repository, baca dengan cat, lalu simpan isi persisnya ke variabel message. Jangan menebak isi pesan.",
+                                false
+                            )
+                        }
                         replies.forEach { message ->
                             ChatBubble("Kamu", message, true)
                             ChatBubble(
@@ -1641,13 +1648,18 @@ private fun MessengerScreen(
                                 }
                             }
                         }
-                        if (activeMissionTitle == "Sinyal Pertama") {
+                        val missionAttachment = when (activeMissionTitle) {
+                            "Sinyal Pertama" -> "message_fragment.txt"
+                            "Verifikasi Identitas" -> "identity_fragment.txt"
+                            else -> null
+                        }
+                        if (missionAttachment != null) {
                             Surface(
                                 onClick = {
-                                    attachmentFeedback = if (onDownloadMissionFile("message_fragment.txt")) {
-                                        "message_fragment.txt tersimpan di ruang kerja misi."
+                                    attachmentFeedback = if (onDownloadMissionFile(missionAttachment)) {
+                                        "$missionAttachment tersimpan di ruang kerja misi."
                                     } else {
-                                        "Lampiran belum dapat diunduh. Pastikan Sinyal Pertama masih aktif."
+                                        "Lampiran belum dapat diunduh. Pastikan misi yang sesuai masih aktif."
                                     }
                                 },
                                 color = Color(0xFF202E3B),
@@ -1656,7 +1668,7 @@ private fun MessengerScreen(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text("LAMPIRAN  /  message_fragment.txt", color = Color.White,
+                                    Text("LAMPIRAN  /  $missionAttachment", color = Color.White,
                                         fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                     Text("Fragmen pesan A.E.G.I.S. · hanya baca", color = Color(0xFFB9D1C6), fontSize = 10.sp)
                                     Text("Ketuk untuk menyimpan ke ruang kerja misi", color = Color(0xFF83C7D0), fontSize = 10.sp)

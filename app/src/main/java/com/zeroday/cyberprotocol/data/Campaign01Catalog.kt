@@ -52,19 +52,20 @@ object Campaign01Catalog {
             chapterId = CHAPTER_ID,
             title = "Verifikasi Identitas",
             nextClue = "Dua sistem latihan menyimpan tanda terima untuk satu transmisi. Perhatikan sumber dan waktu pencatatannya.",
-            briefing = "Sinyal pertama membuka pesan verifikasi. Gunakan kembali konsep variabel dan output, tetapi simpan pesan kedua pada variabel message. Freya akan memeriksa hasilnya.",
+            briefing = "Sinyal pertama membuka pesan verifikasi. Unduh identity_fragment.txt dari File Repository A.E.G.I.S. dan baca melalui Terminal dengan cat. Simpan isi persisnya ke variabel message, lalu tampilkan dengan print(message). Freya akan memeriksa hasilnya.",
             kind = MissionKind.STORY_CODE,
             evaluatorId = 10,
             rewardXp = 35,
             requiredClearance = 0,
             workspaceDirectory = "/A.E.G.I.S/missions/first_contact/identity",
-            allowedFiles = setOf("briefing.txt", "identity.py"),
+            allowedFiles = setOf("briefing.txt", "identity_fragment.txt", "identity.py"),
             writableFiles = setOf("identity.py"),
+            initialFiles = mapOf("identity_fragment.txt" to "IDENTITY VERIFIED\n"),
             objectives = listOf(
                 MissionObjective(
                     id = "assign_message",
                     title = "Simpan pesan verifikasi",
-                    description = "Buat variabel bernama message untuk menyimpan pesan identitas."
+                    description = "Baca identity_fragment.txt dan simpan isi pesannya ke variabel message."
                 ),
                 MissionObjective(
                     id = "display_message",
@@ -73,8 +74,8 @@ object Campaign01Catalog {
                 )
             ),
             hints = listOf(
-                MissionHint(1, "Struktur dasarnya sama dengan tugas sebelumnya."),
-                MissionHint(2, "Gunakan nama variabel message, bukan signal."),
+                MissionHint(1, "Unduh identity_fragment.txt dari File Repository, lalu baca dengan cat di Terminal."),
+                MissionHint(2, "Simpan isi berkas persis ke variabel bernama message."),
                 MissionHint(3, "Tampilkan variabel dengan print(message).")
             )
         ),
