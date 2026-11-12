@@ -2,7 +2,7 @@
 
 **Approved product direction:** English-first, Indonesian-supported  
 **Canonical policy:** GAME_CONCEPT.md §3.4  
-**Current implementation state:** L1 foundation and First Contact story localization are implemented. The Language destination persists a preference, the main menu uses localized resources, and all 14 story beats have English and Indonesian variants. Messenger dialogue and operational screens remain incomplete.
+**Current implementation state:** L1 is implemented; L2, L3, and L4 have substantial but incomplete coverage. The language preference persists independently, all 14 story beats and authored Messenger dialogue have English and Indonesian variants, and the campaign, case, training, and several A.E.G.I.S. tool surfaces now read the selected language. L5 parity and manual review are not complete.
 
 ## 1. Product behavior
 
@@ -41,8 +41,8 @@
 
 - **L0 — Contract:** approve English-first behavior, terminology boundaries, persistence rules, and parity requirements. (Approved)
 - **L1 — Foundation:** language identifier, English fresh-install default independent of Android locale, local preference persistence, and a functional Language screen. (Implemented)
-- **L2 — Shell:** localize main menu, navigation, settings, shared components, and system dialogs. (Main menu resources started; remaining shell coverage in progress)
-- **L3 — Campaign:** localize all First Contact story beats, Messenger dialogue, briefings, objectives, hints, mission feedback, and debriefs. (Story beats complete; Messenger and remaining campaign surfaces in progress)
+- **L2 — Shell:** localize main menu, navigation, settings, shared components, and system dialogs. (Main menu, campaign timeline, Language screen, settings, App Hub, campaign reset dialog, and recruitment/mentor notifications now use the selected language; other shell and profile surfaces remain)
+- **L3 — Campaign:** localize all First Contact story beats, Messenger dialogue, briefings, objectives, hints, mission feedback, and debriefs. (All 14 story beats, authored Freya/NEXUS dialogue, the two mandatory onboarding missions, six optional legacy exercises, RX-14 case briefing/conclusions/decisions, and mission debrief labels have selected-language variants; evaluator-generated feedback and several campaign messages still need parity review)
 - **L4 — Operational apps:** localize Browser, Terminal explanatory UI, Database, Dossier, Analysis, Operations, Profile, Archives, and Achievements.
 - **L5 — Quality gate:** automated key/content parity checks, language-switch persistence tests, regression tests for mission IDs/evaluators, and manual review of both languages on Android.
 
@@ -65,3 +65,12 @@ Do not expose English as a completed playable language until L2–L5 cover every
 The current localization batch extends bilingual interface coverage in the RX-14 Operations screen and the optional Training Simulator. Phase/status labels, decision-rationale guidance and legacy-save fallbacks, training navigation, workspace labels, and RUN/SUBMIT controls now use the selected game language. Practice-screen feedback for draft edits and saves is also localized.
 
 This is **interface-copy coverage only**, not full L3/L4 parity. Authored case titles, briefings, analysis/decision option content, optional mission titles/objectives/briefings/hints, and some player-facing output elsewhere still need reviewed English variants. The Language screen must continue to describe localization as partial.
+
+
+## Implementation checkpoint — 2026-11-12 (expanded First Contact coverage)
+
+The selected language is now passed into the campaign timeline, story mission workspace, mission debrief, App Hub, main menu, settings, language preference screen, and recruitment/Freya notifications. The RX-14 case title and briefing, analysis option titles/descriptions/feedback, operational decision titles/descriptions, and mission source presentation are resolved at the UI boundary without changing canonical IDs or evaluator contracts.
+
+The shared First Contact content resolver now supplies English variants for all eight catalog missions: titles, briefings, next clues, objectives, objective descriptions, and graduated hints. The Story, optional Training Simulator, Browser Mission Control, Intelligence Database, and Personnel Dossier use these localized mission values where those details are shown.
+
+A new unit-test suite checks the RX-14 translations, all eight mission-content mappings, and stable language behavior. The current implementation still uses a transitional Kotlin presentation resolver with inline language pairs rather than the final stable resource/message-key system described in the technical direction. Do not mark L2–L5 complete until all remaining player-facing routes and evaluator feedback are covered, a missing-key/content parity check exists, and both language journeys receive manual Android review.
