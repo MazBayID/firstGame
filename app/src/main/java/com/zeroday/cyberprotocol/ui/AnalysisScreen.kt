@@ -320,7 +320,7 @@ private fun CaseAnalysisWorkspace(
         Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
             Text("CASE WORKSPACE  /  RX-14", color = Color(0xFF83C7D0),
                 fontSize = 9.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
-            Text(definition.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(CaseLocalizedContent.title(definition, selectedLanguage), color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(localizedUiText(selectedLanguage, "PHASE  /  ", "FASE  /  ") + localizedPhaseName(phase, selectedLanguage), color = Color(0xFF9AB4B8),
                 fontSize = 9.sp, fontWeight = FontWeight.Bold)
             Text(localizedUiText(selectedLanguage, "Analysis is available only for reviewed sources. Select a conclusion after every required source has been analyzed.", "Analisis hanya dapat dilakukan pada sumber yang sudah diperiksa. Pilih kesimpulan setelah semua sumber wajib dianalisis."),
@@ -360,8 +360,8 @@ private fun CaseAnalysisWorkspace(
                 definition.analysisOptions.forEach { option ->
                     val selected = progress.analysisConclusionId == option.id
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(option.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        Text(option.description, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
+                        Text(CaseLocalizedContent.analysisTitle(option, selectedLanguage), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(CaseLocalizedContent.analysisDescription(option, selectedLanguage), color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
                         OutlinedButton(
                             onClick = { onSelectConclusion(option.id) },
                             enabled = phase == CasePhase.ANALYSIS &&
@@ -378,7 +378,7 @@ private fun CaseAnalysisWorkspace(
                     }
                 }
                 selectedConclusion?.let {
-                    Text(it.feedback, color = if (it.supportedByEvidence) Color(0xFF8CD5AC) else Color(0xFFE3C17B),
+                    Text(CaseLocalizedContent.analysisFeedback(it, selectedLanguage), color = if (it.supportedByEvidence) Color(0xFF8CD5AC) else Color(0xFFE3C17B),
                         fontSize = 10.sp, lineHeight = 16.sp)
                 }
             }
