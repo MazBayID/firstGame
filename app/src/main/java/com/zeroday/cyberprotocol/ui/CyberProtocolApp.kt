@@ -134,13 +134,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     var showResetDialog by remember { mutableStateOf(false) }
     val messengerPreferences = remember { context.getSharedPreferences("cp_messenger_v1", 0) }
     val browserPreferences = remember { context.getSharedPreferences("cp_browser_session_v1", 0) }
-    var browserAuthenticated by rememberSaveable {
-        mutableStateOf(browserPreferences.getBoolean("authenticated", false))
+    var browserSession by rememberSaveable(stateSaver = BrowserSessionState.Saver) {
+        mutableStateOf(
+            BrowserSessionState(
+                authenticated = browserPreferences.getBoolean("authenticated", false)
+            )
+        )
     }
-    var browserPage by rememberSaveable {
-        mutableStateOf(if (browserAuthenticated) "home" else "login")
-    }
-    var browserReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
     var terminalReturnScreen by rememberSaveable { mutableStateOf(GameScreen.APP_HUB.name) }
     var freyaReplies by remember {
         mutableStateOf(messengerPreferences.getString("freya_replies", "").orEmpty()
@@ -368,7 +368,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
 
     BackHandler(enabled = screen != GameScreen.MAIN_MENU) {
         if (screen == GameScreen.BROWSER) {
-            navigate(runCatching { GameScreen.valueOf(browserReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+            navigate(runCatching { GameScreen.valueOf(browserSession.returnScreen) }.getOrDefault(GameScreen.APP_HUB))
         } else if (screen == GameScreen.TERMINAL) {
             navigate(runCatching { GameScreen.valueOf(terminalReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
         } else if (screen == GameScreen.MESSENGER) {
@@ -515,7 +515,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             onClose = { navigate(navigation.hubReturnScreen) },
             onOpen = { target ->
                 if (target == GameScreen.MESSENGER) messengerReturnScreen = GameScreen.APP_HUB.name
-                if (target == GameScreen.BROWSER) browserReturnScreen = GameScreen.APP_HUB.name
+                if (target == GameScreen.BROWSER) browserSession = browserSession.copy(returnScreen = GameScreen.APP_HUB.name)
                 if (target == GameScreen.TERMINAL) terminalReturnScreen = GameScreen.APP_HUB.name
                 navigate(target)
             }
@@ -541,8 +541,8 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 messengerContact = "NEXUS"
             },
             onOpenIntranetLink = {
-                browserReturnScreen = GameScreen.MESSENGER.name
-                browserPage = if (browserAuthenticated) "home" else "login"
+                browserSession = browserSession.copy(returnScreen = GameScreen.MESSENGER.name)
+                browserSession = browserSession.copy(page = browserSession.initialPage())
                 navigate(GameScreen.BROWSER)
             },
             onDownloadMissionFile = ::downloadMissionFile,
@@ -558,19 +558,18 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             }
         )
         GameScreen.BROWSER -> AegisBrowserScreen(
-            authenticated = browserAuthenticated,
-            page = browserPage,
+            authenticated = browserSession.authenticated,
+            page = browserSession.page,
             mission = activeMission,
             gameState = currentGameState,
             evidence = currentGameState.evidence,
             downloadedFiles = activeWorkspace?.listFiles()?.toSet().orEmpty(),
-            onPageChange = { browserPage = it },
+            onPageChange = { browserSession = browserSession.copy(page = it) },
             onAuthenticate = { agentId, accessCode ->
                 val accepted = AegisIntranetAccess.authenticate(agentId, accessCode)
                 if (accepted) {
-                    browserAuthenticated = true
+                    browserSession = browserSession.copy(authenticated = true, page = "home")
                     browserPreferences.edit().putBoolean("authenticated", true).apply()
-                    browserPage = "home"
                 }
                 accepted
             },
@@ -584,7 +583,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 MissionSubmissionPolicy.canSubmit(code.text, lastSuccessfulRunSource),
             submissionStatus = codeFeedback,
             onClose = {
-                navigate(runCatching { GameScreen.valueOf(browserReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
+                navigate(runCatching { GameScreen.valueOf(browserSession.returnScreen) }.getOrDefault(GameScreen.APP_HUB))
             }
         )
         GameScreen.TERMINAL -> TerminalScreen(
