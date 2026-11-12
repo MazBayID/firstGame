@@ -164,7 +164,7 @@ internal fun PracticeScreen(
             Panel {
                 Text(localizedUiText(selectedLanguage, "TERMINAL OUTPUT", "KELUARAN TERMINAL"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                     letterSpacing = 1.1.sp, fontWeight = FontWeight.Bold)
-                Text(output, color = Color(0xFFB7D9C2), fontFamily = FontFamily.Monospace,
+                Text(output.ifBlank { localizedUiText(selectedLanguage, "(no output yet)", "(keluaran akan muncul di sini)") }, color = Color(0xFFB7D9C2), fontFamily = FontFamily.Monospace,
                     fontSize = 10.sp, lineHeight = 15.sp)
             }
             if (feedback.isNotBlank()) Text(feedback, color = Color(0xFFE3C17B),
