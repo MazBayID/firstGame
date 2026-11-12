@@ -1039,7 +1039,7 @@ private fun CyberProtocolGameContentBody(
                 if (currentGameState.evidence.isEmpty())
                     append(localizedUiText(selectedLanguage, "No evidence stored yet.\n", "Belum ada bukti tersimpan.\n"))
             },
-            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }
+            CyberAssets.document, { navigate(GameScreen.MAIN_MENU) }, selectedLanguage
         )
         GameScreen.ACHIEVEMENTS -> InfoAppScreen(
             localizedUiText(selectedLanguage, "ACHIEVEMENTS", "PENCAPAIAN"),
