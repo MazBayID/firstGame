@@ -18,13 +18,13 @@ The opening notifications and links are in-game simulations. The app does not ac
 
 ## Current playable foundation
 
-First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. Only two Python exercises are mandatory: the signal and identity exercises. Six later coding exercises remain in the catalog for legacy-save/history compatibility, but are no longer mandatory and do not block the RX-14 case. A dedicated optional-practice interface has not yet been implemented.
+First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. Only two Python exercises are mandatory: the signal and identity exercises. Six later coding exercises remain in the catalog for legacy-save/history compatibility, but are no longer mandatory and do not block the RX-14 case. After the investigation checkpoint, the A.E.G.I.S. Hub unlocks a **Training Simulator** where all six can be replayed as optional practice. Each uses its own mission workspace, graduated hints, Terminal RUN, exact-source SUBMIT, and a one-time Technical XP reward; practice completion does not advance the story or RX-14 case.
 
 RX-14 is a persisted, five-phase case connected to the campaign story and the shared A.E.G.I.S. tools. The same case progress is used by Messenger, Browser, Terminal, Operations, Analysis, Intelligence Database, and Personnel Dossier. Original receipt assets remain in the game-owned virtual filesystem; source inspection, analysis, the supported conclusion, operational rationale, decision, debrief, and the 100 Intelligence XP chapter reward are persisted. The valid **insufficient evidence** outcome preserves the unresolved cause of the four-second discrepancy.
 
 A source-level acceptance test now exercises a fresh campaign through both required training missions, the complete RX-14 case, reward delivery, and session reload. This is automated integration coverage—not a substitute for testing the experience on a physical Android device.
 
-Remaining work includes broader player-facing localization, an optional-practice interface, future approved chapters, continued UI/session-state cleanup, and physical-device acceptance. No later case or culprit is being invented to fill the campaign.
+Remaining work includes broader player-facing localization, future approved chapters, continued UI/session-state cleanup, and physical-device acceptance. No later case or culprit is being invented to fill the campaign.
 
 ## Gameplay approach
 
@@ -52,7 +52,7 @@ The **Evidence & Investigation Engine** provides structured source provenance, e
 - **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence; Freya provides the intranet link, fictional credentials, and the first mission attachment.
 - **A.E.G.I.S. Browser:** an offline intranet with local fictional login, Mission Control, File Repository, Intelligence Reports, and Agent Profile. Browser downloads and Messenger attachments resolve to the same mission file.
 - **Virtual terminal and workspaces:** Linux-like commands operate within a game-managed virtual filesystem, never the Android host shell. The first signal fragment is downloaded into its mission workspace and read through the Terminal.
-- **Evidence and progression:** mission checkpoints, provenance-aware evidence, XP, rank, clearance, archives, and achievements.
+- **Evidence and progression:** mission checkpoints, provenance-aware evidence, XP, rank, clearance, archives, achievements, and a separate optional Training Simulator for the six retired coding exercises.
 - **Narrative clues:** each mission's successful debrief surfaces a short authored clue that points toward the next story or technical step.
 - **Offline-first foundation:** core story, mission execution, evaluation, and progression do not require an account, server, external AI, or API key.
 - **Accessibility foundation:** reduced-motion preference and responsive Android layouts.

@@ -485,8 +485,8 @@ The player has explicitly directed that complete gameplay/content/UI integration
 
 ## Latest First Contact acceptance refresh — 2026-11-12
 
-**Source baseline:** `2aa66362b2966144d8403e4fc3e185cdb25fe180`  
-**CI:** [run 43183194370](https://github.com/MazBayID/firstGame/actions/runs/43183194370) — **success** for the Python runner suite and Release-variant Android unit tests. The final APK job was skipped as intended; no APK was produced.
+**Source baseline:** `6e3042dd04fa578afc8a6220f54fbf9546f4aea3`  
+**CI:** [run 43185854950](https://github.com/MazBayID/firstGame/actions/runs/43185854950) — **success** for the Python runner suite and Release-variant Android unit tests. The final APK job was skipped as intended; no APK was produced.
 
 ### Verified current implementation
 
@@ -495,7 +495,11 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - The case model persists briefing acknowledgement, source discovery, evidence analysis, analytical conclusion, operational decision, player rationale, and debrief acknowledgement.
 - The RX-14 case is integrated with the story and shared Messenger, Browser, Terminal, Operations, Analysis, Database, and Dossier state. Source inspection from an approved surface updates the same case progress; it does not create duplicate app-local progress.
 - The mandatory First Contact route contains two beginner Python exercises. Six legacy exercises remain available for old-save/history compatibility but no longer block the case.
+- The A.E.G.I.S. Hub unlocks an optional Training Simulator at the investigation checkpoint. It exposes all six retired exercises with separate mission workspaces, graduated hints, Terminal RUN, exact-source SUBMIT, and one-time Technical XP rewards.
+- Optional practice completion records its own mission/evidence result without advancing storyBeat or RX-14 caseProgress. Existing saves receive the new app unlock through progression backfill and codec-derived unlock rules.
+- Terminal command execution resolves the active mission from its workspace directory, so optional practice remains in the correct allowlisted VFS when the player enters commands manually.
 - A new source-level acceptance test drives a fresh in-memory campaign through both onboarding missions, all RX-14 phases, the exactly-once chapter reward, and session reconstruction from the saved repository.
+- Regression tests cover optional-practice unlock timing, old-save unlock recovery, exactly-once technical rewards, and the rule that optional practice does not mutate story or case progression.
 - Story/Operations/Analysis return destinations are now tracked separately. Both visible back actions and Android Back restore the correct originating context; the navigation saver retains compatibility with the earlier two-field state.
 - The Achievements screen now reflects the two active onboarding milestones and actual RX-14 completion rather than showing retired exercises as permanently locked.
 - The story progress indicator reflects all fourteen authored beats.

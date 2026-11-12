@@ -95,7 +95,7 @@ Physical-device acceptance remains a separate final validation step. A CI build 
 **Phase 0 — Audit and specification alignment:** implementation audit and dated refreshes are recorded in `docs/IMPLEMENTATION_AUDIT.md`; the latest integrated source baseline is `2aa66362b2966144d8403e4fc3e185cdb25fe180`.  
 **Phase 1 — Architecture and persistence foundation:** in progress; versioned snapshots, previous-save recovery, mission contracts, authored story data, an extracted destination model, a ViewModel-owned campaign state/progression layer, and isolated snapshot serialization with codec regression tests exist; broader UI state/navigation extraction and Android storage recovery tests remain.  
 **Phase 2 — Runtime and terminal:** in progress; mission-scoped Python text-file I/O, pure read/write permission tests, personal-workspace terminal confinement, path-policy tests, and source/output/resource guardrails exist; process isolation and stronger hostile-code containment remain.  
-**Phase 3 — Complete campaign and operational systems:** in progress; First Contact has fourteen story beats, two mandatory Python onboarding missions, six retired legacy exercises, and an integrated persisted RX-14 case across Messenger, Browser, Terminal, Operations, Analysis, Database, and Dossier. A fresh-save-to-case-completion source acceptance test is present; later cases remain unapproved.  
+**Phase 3 — Complete campaign and operational systems:** in progress; First Contact has fourteen story beats, two mandatory Python onboarding missions, six retired exercises exposed through an optional Training Simulator, and an integrated persisted RX-14 case across Messenger, Browser, Terminal, Operations, Analysis, Database, and Dossier. A fresh-save-to-case-completion source acceptance test is present; later cases remain unapproved.  
 **Phase 4 — Progression, archives, and release quality gates:** in progress; XP/rank/clearance, Technical and Intelligence competency XP, story-gated app unlocks, evidence review history, profile, archives, achievements, and save recovery are implemented. Physical-device acceptance and complete localization/release gates remain.
 
 No feature is marked production-complete solely because a prior prototype screen or partial test exists. The implementation audit is a point-in-time assessment of the current source tree, not a claim that the listed workstreams are complete.
@@ -433,8 +433,9 @@ Only after this journey is complete should we schedule a release-candidate batch
 
 ## Latest integration checkpoint — 2026-11-12
 
-- Source commit: `2aa66362b2966144d8403e4fc3e185cdb25fe180`
-- CI run [43183194370](https://github.com/MazBayID/firstGame/actions/runs/43183194370) passed Python runner tests and Release-variant Android unit tests. The final APK job was skipped; no APK was created.
+- Source commit: `6e3042dd04fa578afc8a6220f54fbf9546f4aea3`
+- CI run [43185854950](https://github.com/MazBayID/firstGame/actions/runs/43185854950) passed Python runner tests and Release-variant Android unit tests. The final APK job was skipped; no APK was created.
 - The fresh-save First Contact acceptance test covers the two mandatory training missions, RX-14 briefing/investigation/analysis/decision/debrief, the 100 Intelligence XP chapter reward, and repository-backed session reconstruction.
+- The optional Training Simulator exposes the six retired coding exercises without reintroducing them as story gates. RUN executes in each exercise's mission workspace; SUBMIT requires the exact successfully-run source; first completion awards Technical XP once. Tests verify unlock, save recovery, and no story/case progression side effects.
 - Navigation return-path corrections, active-achievement cleanup, and the fourteen-beat progress indicator are included in this source baseline.
 - Remaining gates are listed in the latest refresh of `docs/IMPLEMENTATION_AUDIT.md`; physical-device acceptance and full language parity are not complete.
