@@ -91,6 +91,36 @@ class CaseLocalizedContentTest {
     }
 
     @Test
+    fun missionEvidenceSummariesAndEvaluatorProvenanceFollowSelectedLanguage() {
+        val mandatory = Campaign01Catalog.find("first_contact.signal")!!
+        val mandatoryRecord = EvidenceRecord(
+            id = "evidence_${mandatory.id}",
+            title = mandatory.title,
+            summary = "Hasil tugas latihan berhasil diverifikasi oleh evaluator A.E.G.I.S.",
+            source = "A.E.G.I.S. / Python evaluator ${mandatory.evaluatorId}",
+            missionId = mandatory.id
+        )
+        assertEquals("Mission submission verified by the A.E.G.I.S. evaluator.",
+            CaseLocalizedContent.evidenceSummary(mandatoryRecord, GameLanguage.ENGLISH))
+        assertEquals("A.E.G.I.S. / Python mission evaluator ${mandatory.evaluatorId}",
+            CaseLocalizedContent.evidenceSource(mandatoryRecord, GameLanguage.ENGLISH))
+        assertEquals("A.E.G.I.S. / evaluator misi Python ${mandatory.evaluatorId}",
+            CaseLocalizedContent.evidenceSource(mandatoryRecord, GameLanguage.INDONESIAN))
+
+        val optional = Campaign01Catalog.find("first_contact.audit")!!
+        val optionalRecord = mandatoryRecord.copy(
+            id = "evidence_${optional.id}",
+            missionId = optional.id,
+            summary = "Hasil latihan opsional berhasil diverifikasi oleh evaluator A.E.G.I.S.",
+            source = "A.E.G.I.S. / optional practice evaluator ${optional.evaluatorId}"
+        )
+        assertEquals("Optional training submission verified by the A.E.G.I.S. evaluator.",
+            CaseLocalizedContent.evidenceSummary(optionalRecord, GameLanguage.ENGLISH))
+        assertEquals("A.E.G.I.S. / optional Python practice evaluator ${optional.evaluatorId}",
+            CaseLocalizedContent.evidenceSource(optionalRecord, GameLanguage.ENGLISH))
+    }
+
+    @Test
     fun sourceTranslationDoesNotChangeCanonicalIndonesianRecordBytes() {
         val original = "A.E.G.I.S. RECEIPT LOG\nREFERENCE: RX-14\nRECEIVED: 09:41:12\n"
         assertEquals(original, CaseLocalizedContent.evidenceSource(
