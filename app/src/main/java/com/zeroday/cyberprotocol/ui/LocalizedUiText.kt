@@ -54,3 +54,16 @@ internal fun localizedRankName(rank: String, language: GameLanguage): String {
         else -> english
     }
 }
+
+internal fun localizedEvidenceOrigin(origin: com.zeroday.cyberprotocol.core.model.EvidenceOrigin, language: GameLanguage): String =
+    when (origin) {
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.LEGACY -> localizedUiText(language, "LEGACY", "LEGACY")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.MESSENGER -> localizedUiText(language, "MESSENGER", "PESAN")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.INTRANET -> localizedUiText(language, "INTRANET", "INTRANET")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.WORKSPACE_FILE -> localizedUiText(language, "WORKSPACE FILE", "FILE RUANG KERJA")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.TERMINAL -> localizedUiText(language, "TERMINAL", "TERMINAL")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.DATABASE -> localizedUiText(language, "DATABASE", "DATABASE")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.ANALYSIS -> localizedUiText(language, "ANALYSIS", "ANALISIS")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.OPERATIONS -> localizedUiText(language, "OPERATIONS", "OPERASI")
+        com.zeroday.cyberprotocol.core.model.EvidenceOrigin.SYSTEM -> localizedUiText(language, "SYSTEM", "SISTEM")
+    }
