@@ -1136,6 +1136,7 @@ private fun CyberProtocolGameContentBody(
                     debriefClue = ""
                     preferences.edit().putInt("story_stage", 0).apply()
                     saveStage(0)
+                    savedCodeStatus = localizedUiText(selectedLanguage, "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN")
                     navigate(GameScreen.CAMPAIGN)
                 }) { Text(localizedUiText(selectedLanguage, "START", "MULAI")) }
             },
