@@ -103,9 +103,9 @@ Perbedaan itu kecil. Tidak ada bukti bahwa seseorang telah mengubah data. Bisa s
 
 Namun A.E.G.I.S. tidak ingin mengabaikan ketidaksesuaian tersebut.
 
-Pemain diminta membantu memeriksa catatan yang tersedia. Sebuah log peristiwa berisi informasi, peringatan, dan sejumlah kesalahan. Di dalamnya, pemain menemukan beberapa baris bertanda `ERROR`. Pada sumber lain, terdapat daftar referensi rekaman yang perlu dihitung dan diperiksa.
+Pemain diminta membantu memeriksa dua catatan penerimaan dari sumber yang berbeda. Ia dapat memakai perangkat A.E.G.I.S. yang relevan—misalnya Messenger untuk menerima arahan, Browser atau Database untuk membuka catatan, serta Operations untuk mencatat hasil pemeriksaan. Tidak ada kewajiban mengunjungi setiap aplikasi dalam urutan tertentu.
 
-Pekerjaan itu memperkenalkan pemain pada cara membaca kumpulan data, mencari entri tertentu, dan membandingkan dua sumber tanpa mengubah bukti aslinya.
+Pekerjaan ini memperkenalkan pemain pada cara memperlakukan bukti: membuka sumber asli, memeriksa asal-usulnya, mencatat apa yang benar-benar terlihat, dan memisahkan fakta dari dugaan. Konsep pemrograman hanya digunakan bila memang membantu penyelidikan; latihan Python lama lainnya tersedia sebagai praktik opsional.
 
 Freya terus mendampingi. Ia mulai memberi ruang lebih besar bagi pemain untuk mencoba sendiri, tetapi tetap hadir ketika pemain menemui konsep yang belum dipahami. NEXUS membantu menunjukkan informasi sistem dan rincian teknis yang relevan.
 
@@ -113,25 +113,25 @@ Freya terus mendampingi. Ia mulai memberi ruang lebih besar bagi pemain untuk me
 
 Di antara sejumlah catatan, satu referensi mulai menarik perhatian: **RX-14**.
 
-Referensi itu muncul dalam daftar penerimaan dari dua sumber berbeda. Pemain menelusuri daftar tersebut dan menemukan posisi setiap catatan, kemudian membandingkan entri dari sistem A.E.G.I.S. dengan arsip pembanding.
+Referensi itu muncul pada dua catatan penerimaan dari sumber berbeda. Pemain membuka catatan asli dari sistem A.E.G.I.S. dan arsip pembanding, lalu memeriksa isi serta asal-usul masing-masing sumber sebelum membandingkannya.
 
-Kedua catatan memiliki referensi yang sama. Waktu penerimaannya ditulis dalam bentuk angka yang perlu dipahami dan dibandingkan.
+Kedua catatan memiliki referensi RX-14 yang sama. Waktu penerimaannya tercatat sebagai 09:41:12 dan 09:41:16.
 
 Hasil akhirnya menunjukkan bahwa catatan A.E.G.I.S. mencatat RX-14 pada pukul **09:41:12**, sedangkan ARCHIVE mencatat referensi yang sama pada pukul **09:41:16**.
 
 Selisihnya adalah empat detik.
 
-Angka itu dapat dihitung dan diverifikasi. Namun angka tersebut belum menjelaskan penyebab perbedaan.
+Selisih empat detik itu dapat dihitung dan diverifikasi. Namun hasil tersebut hanya membuktikan adanya perbedaan waktu pencatatan, bukan penyebabnya.
 
 Pemain dan Freya membahas beberapa kemungkinan: keterlambatan antrean, sinkronisasi waktu, perbedaan mekanisme pencatatan, atau sesuatu yang belum diketahui. Tidak satu pun dapat dipastikan hanya dari bukti yang tersedia.
 
-Dalam laporan awalnya, pemain memisahkan apa yang benar-benar diamati dari apa yang baru berupa dugaan. Ia tidak menuduh adanya manipulasi tanpa bukti.
+Dalam analisisnya, pemain memisahkan apa yang benar-benar diamati dari apa yang baru berupa dugaan. Ia tidak menuduh adanya manipulasi tanpa bukti. Jika sumber belum cukup untuk mendukung kesimpulan yang lebih jauh, pemain boleh menyatakan bahwa bukti belum memadai.
 
 Bagi Freya, sikap itu sama pentingnya dengan hasil pemeriksaan teknis. Seorang analis tidak hanya perlu menemukan pola; ia juga harus memahami batas dari apa yang dapat disimpulkan.
 
 # 7. Laporan yang Belum Menjawab Semuanya
 
-Laporan First Contact diterima oleh A.E.G.I.S. Perbedaan empat detik itu dicatat sebagai fakta yang teramati, sementara penyebabnya tetap belum terverifikasi.
+Laporan First Contact diterima oleh A.E.G.I.S. Pemain dapat memilih tindakan yang sebanding dengan bukti: mencatat ketidaksesuaian, meminta log sinkronisasi waktu, meminta log antrean pemrosesan, atau menyatakan bahwa bukti belum memadai. Perbedaan empat detik tetap dicatat sebagai fakta yang teramati, sementara penyebabnya belum terverifikasi.
 
 Freya menerima pekerjaan pemain dan mengakui perkembangan yang telah dicapainya. Pemain yang awalnya bahkan belum mengenal terminal kini mulai mampu memeriksa berkas, memahami data, dan menyampaikan kesimpulan dengan lebih hati-hati.
 
@@ -141,7 +141,7 @@ Mengapa dua sistem mencatat penerimaan yang sama pada waktu berbeda? Apakah perb
 
 Belum ada jawaban. Tidak ada tersangka. Tidak ada bukti yang cukup untuk menyatakan bahwa seseorang telah melakukan sesuatu.
 
-Freya menyimpan pertanyaan itu untuk peninjauan berikutnya. First Contact berakhir sebagai bab orientasi dan pemeriksaan awal, sementara kejanggalan RX-14 tetap menjadi benang kecil yang mungkin suatu hari terhubung dengan sesuatu yang jauh lebih besar.
+Freya menyimpan pertanyaan itu untuk peninjauan berikutnya. First Contact berakhir sebagai bab orientasi dan pemeriksaan awal. Laporan debrief menyimpan kesimpulan, keputusan operasional, alasan pemain, batas bukti, dan penghargaan yang diperoleh. Kejanggalan RX-14 tetap menjadi benang kecil yang mungkin suatu hari terhubung dengan sesuatu yang jauh lebih besar.
 
 Pemain telah diterima sebagai Recruit. Ia belum mengetahui alasan sebenarnya dirinya dipilih.
 
@@ -174,6 +174,8 @@ Akan tetapi, pola bukanlah bukti akhir. Setiap hubungan harus ditemukan dan diuj
 Pihak yang berada di balik pola itu tetap tidak dikenal. Motif, jumlah orang yang terlibat, dan tujuan akhirnya belum diketahui.
 
 # 10. Perjalanan Kampanye
+
+Campaign 01 adalah satu-satunya kampanye yang saat ini disetujui untuk implementasi. Garis besar Campaign 02 dan Campaign 03 di bawah merupakan gagasan masa depan, bukan konten yang telah disetujui atau dijanjikan untuk dibangun.
 
 ## Campaign 01 — THE RECRUITMENT
 
