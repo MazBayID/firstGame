@@ -286,7 +286,7 @@ private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selec
             Text(localizedUiText(selectedLanguage, "SOURCE  /  ${CaseLocalizedContent.evidenceSource(record, selectedLanguage)}", "SUMBER  /  ${CaseLocalizedContent.evidenceSource(record, selectedLanguage)}"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                 lineHeight = 14.sp)
             Text(localizedUiText(selectedLanguage, "MISSION  /  ${record.missionId}", "MISI  /  ${record.missionId}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
-            Text(localizedUiText(selectedLanguage, "ORIGIN  /  ${record.provenance.origin.name}", "ASAL  /  ${record.provenance.origin.name}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
+            Text(localizedUiText(selectedLanguage, "ORIGIN  /  ", "ASAL  /  ") + localizedEvidenceOrigin(record.provenance.origin, selectedLanguage), color = Color(0xFF8AA8AE), fontSize = 9.sp)
             Text(localizedUiText(selectedLanguage, "RELATIONS / ${record.relations.size}  ·  REVIEW HISTORY / ${record.reviewHistory.size}", "RELASI / ${record.relations.size}  ·  RIWAYAT REVIEW / ${record.reviewHistory.size}"),
                 color = Color(0xFF8AA8AE), fontSize = 9.sp)
             if (EvidenceReviewPolicy.allowedTransitions(record.status).isNotEmpty()) {
