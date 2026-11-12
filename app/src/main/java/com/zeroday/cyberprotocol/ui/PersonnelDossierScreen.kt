@@ -91,7 +91,7 @@ internal fun PersonnelDossierScreen(
                 DossierValue("INTELLIGENCE COMPETENCY", "${gameState.intelligenceCompetencyXp} XP")
                 DossierValue("KAMPANYE", "FIRST CONTACT  /  $storyProgress OF 14 BEATS")
                 DossierValue("LATIHAN WAJIB TERVERIFIKASI", "$completedGuidedTraining / ${guidedTraining.size}")
-                DossierValue("MISI LEGACY DIARSIPKAN", completedLegacyMissions.toString())
+                DossierValue("LATIHAN TAMBAHAN TERVERIFIKASI", completedLegacyMissions.toString())
                 DossierValue("REKAMAN BUKTI", gameState.evidence.size.toString())
                 DossierValue("KASUS RX-14", casePhase.name.replace('_', ' '))
                 if (nextRank != null) {

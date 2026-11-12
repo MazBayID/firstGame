@@ -209,6 +209,39 @@ private fun CyberProtocolGameContentBody(
     var debriefXp by rememberSaveable { mutableIntStateOf(0) }
     var debriefClue by rememberSaveable { mutableStateOf("") }
     var hintLevel by rememberSaveable { mutableIntStateOf(0) }
+    var practiceMissionId by rememberSaveable { mutableStateOf<String?>(null) }
+    var practiceCode by remember { mutableStateOf(TextFieldValue("")) }
+    var practiceLastSuccessfulRunSource by rememberSaveable { mutableStateOf<String?>(null) }
+    var practiceOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
+    var practiceFeedback by rememberSaveable { mutableStateOf("") }
+    var practiceHintLevel by rememberSaveable { mutableIntStateOf(0) }
+    var practiceSubmitting by rememberSaveable { mutableStateOf(false) }
+
+    val practiceMission = practiceMissionId?.let(Campaign01Catalog::find)
+        ?.takeIf { it.id in Campaign01Catalog.retiredLegacyStoryMissionIds }
+    val practiceMissions = Campaign01Catalog.missions
+        .filter { it.id in Campaign01Catalog.retiredLegacyStoryMissionIds }
+
+    LaunchedEffect(practiceMissionId) {
+        val id = practiceMissionId ?: return@LaunchedEffect
+        val stage = when (id) {
+            "first_contact.audit" -> 8
+            "first_contact.inventory" -> 9
+            "first_contact.trace" -> 11
+            "first_contact.compare" -> 12
+            "first_contact.normalize" -> 13
+            "first_contact.validate_delta" -> 14
+            else -> 0
+        }
+        practiceCode = TextFieldValue(
+            sessionViewModel.gameState.savedCode["practice_" + id]
+                ?: Campaign01Story.codeTemplateForStage(stage)
+        )
+        practiceLastSuccessfulRunSource = null
+        practiceOutput = "KELUARAN AKAN MUNCUL DI SINI"
+        practiceFeedback = ""
+        practiceHintLevel = 0
+    }
 
     LaunchedEffect(screen, storyStage) {
         sessionViewModel.refresh()
@@ -461,6 +494,103 @@ private fun CyberProtocolGameContentBody(
         }
     }
 
+    fun runPracticeMissionCode(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition) {
+        if (terminalSession.busy) {
+            practiceFeedback = "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai."
+            return
+        }
+        val source = practiceCode.text
+        val fileName = mission.writableFiles.firstOrNull()
+        val invocation = fileName?.let(MissionWorkspacePolicy::pythonCommand)
+        if (source.isBlank() || fileName == null || invocation == null) {
+            practiceFeedback = "KODE ATAU FILE LATIHAN TIDAK VALID."
+            return
+        }
+        val workspace = fileSystem.openMissionWorkspace(mission)
+        if (!workspace.writeFile(fileName, source)) {
+            practiceFeedback = "KODE TIDAK DAPAT DISIMPAN KE WORKSPACE LATIHAN."
+            return
+        }
+        practiceLastSuccessfulRunSource = null
+        practiceFeedback = "MENJALANKAN LATIHAN MELALUI TERMINAL..."
+        terminalSession = terminalSession.copy(
+            currentDirectory = mission.workspaceDirectory,
+            command = invocation
+        )
+        terminalReturnScreen = GameScreen.PRACTICE.name
+        navigate(GameScreen.TERMINAL)
+        executeTerminalCommand(mission) { output, error ->
+            practiceOutput = output.ifBlank { "(tidak ada keluaran)" }
+            if (error.isNotBlank()) practiceOutput += "\n" + error
+            if (error.isBlank() && practiceCode.text == source) {
+                practiceLastSuccessfulRunSource = source
+                practiceFeedback = "RUN BERHASIL — kode ini siap dikirim ke evaluator latihan."
+            } else {
+                practiceLastSuccessfulRunSource = null
+                practiceFeedback = if (error.isNotBlank()) {
+                    "RUN GAGAL — perbaiki kesalahan sebelum submit."
+                } else {
+                    "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                }
+            }
+        }
+    }
+
+    fun submitPracticeMission(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition) {
+        val source = practiceCode.text
+        if (practiceSubmitting) return
+        if (!MissionSubmissionPolicy.canSubmit(source, practiceLastSuccessfulRunSource)) {
+            practiceFeedback = "JALANKAN KODE TERLEBIH DAHULU. SUBMIT hanya menerima kode yang sama dengan RUN terakhir yang berhasil."
+            return
+        }
+        practiceSubmitting = true
+        scope.launch {
+            practiceFeedback = "MEMVERIFIKASI LATIHAN..."
+            val result = withContext(Dispatchers.IO) {
+                python.submit(mission.evaluatorId ?: -1, source)
+            }
+            if (practiceCode.text != source) {
+                practiceLastSuccessfulRunSource = null
+                practiceFeedback = "KODE BERUBAH SELAMA VERIFIKASI — jalankan ulang versi terbaru."
+            } else if (result.passed) {
+                val firstCompletion = sessionViewModel.completeMission(
+                    mission.id,
+                    mission.rewardXp,
+                    mission.requiredClearance,
+                    CompetencyTrack.TECHNICAL
+                )
+                sessionViewModel.recordEvidence(
+                    com.zeroday.cyberprotocol.core.model.EvidenceRecord(
+                        id = "evidence_" + mission.id,
+                        title = mission.title,
+                        summary = "Hasil latihan opsional berhasil diverifikasi oleh evaluator A.E.G.I.S.",
+                        source = "A.E.G.I.S. / optional practice evaluator " + mission.evaluatorId,
+                        status = com.zeroday.cyberprotocol.core.model.EvidenceStatus.CONFIRMED,
+                        missionId = mission.id
+                    )
+                )
+                sessionViewModel.saveCode(
+                    "practice_" + mission.id,
+                    source,
+                    "practice_completed:" + mission.id
+                )
+                practiceOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                practiceFeedback = if (firstCompletion) {
+                    "LATIHAN TERVERIFIKASI  ·  +${mission.rewardXp} XP TECHNICAL"
+                } else {
+                    "LATIHAN SUDAH TERVERIFIKASI SEBELUMNYA  ·  TIDAK ADA XP TAMBAHAN"
+                }
+            } else {
+                practiceOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                if (result.error.isNotBlank()) practiceOutput += "\n" + result.error
+                practiceFeedback = result.feedback.ifBlank {
+                    "BELUM TERVERIFIKASI — periksa kembali kode dan tujuan latihan."
+                }
+            }
+            practiceSubmitting = false
+        }
+    }
+
     BackHandler(enabled = screen != GameScreen.MAIN_MENU) {
         if (screen == GameScreen.BROWSER) {
             navigate(runCatching { GameScreen.valueOf(browserSession.returnScreen) }.getOrDefault(GameScreen.APP_HUB))
@@ -707,8 +837,9 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.TERMINAL -> TerminalScreen(
             currentDirectory = terminalSession.currentDirectory,
-            workspaceLabel = activeMission?.title
-                ?.let { "MISSION WORKSPACE  /  $it" } ?: "PERSONAL WORKSPACE  /  A.E.G.I.S.",
+            workspaceLabel = (activeMission ?: Campaign01Catalog.missions.firstOrNull {
+                it.workspaceDirectory == terminalSession.currentDirectory
+            })?.title?.let { "MISSION WORKSPACE  /  $it" } ?: "PERSONAL WORKSPACE  /  A.E.G.I.S.",
             command = terminalSession.command,
             onCommandChange = { terminalSession = terminalSession.copy(command = it) },
             output = terminalSession.output,
@@ -747,6 +878,53 @@ private fun CyberProtocolGameContentBody(
             onReviewEvidence = { evidenceId, status, reason ->
                 sessionViewModel.reviewEvidence(evidenceId, status, reason)
             }
+        )
+        GameScreen.PRACTICE -> PracticeScreen(
+            missions = practiceMissions,
+            completedMissionIds = currentGameState.completedMissionIds,
+            selectedMission = practiceMission,
+            code = practiceCode,
+            output = practiceOutput,
+            feedback = practiceFeedback,
+            hintLevel = practiceHintLevel,
+            canSubmit = practiceMission != null &&
+                MissionSubmissionPolicy.canSubmit(practiceCode.text, practiceLastSuccessfulRunSource) &&
+                !practiceSubmitting,
+            busy = terminalSession.busy,
+            clearance = currentGameState.clearance,
+            onSelectMission = { id -> practiceMissionId = id },
+            onBackToList = {
+                practiceMissionId = null
+                practiceLastSuccessfulRunSource = null
+            },
+            onBack = { navigate(GameScreen.APP_HUB) },
+            onCodeChange = {
+                if (it.text.length <= 12_000) {
+                    practiceCode = it
+                    practiceLastSuccessfulRunSource = null
+                    practiceFeedback = "PERUBAHAN BELUM DISIMPAN"
+                }
+            },
+            onSave = {
+                practiceMission?.let { mission ->
+                    val script = mission.writableFiles.firstOrNull()
+                    val saved = script != null &&
+                        fileSystem.openMissionWorkspace(mission).writeFile(script, practiceCode.text)
+                    if (saved) {
+                        sessionViewModel.saveCode(
+                            "practice_" + mission.id,
+                            practiceCode.text,
+                            "practice_draft:" + mission.id
+                        )
+                        practiceFeedback = "DRAF LATIHAN TERSIMPAN"
+                    } else {
+                        practiceFeedback = "DRAF TIDAK DAPAT DISIMPAN KE WORKSPACE."
+                    }
+                }
+            },
+            onRun = { practiceMission?.let(::runPracticeMissionCode) },
+            onSubmit = { practiceMission?.let(::submitPracticeMission) },
+            onRequestHint = { practiceHintLevel = (practiceHintLevel + 1).coerceAtMost(3) }
         )
         GameScreen.OPERATIONS -> OperationsScreen(
             gameState = currentGameState,
@@ -1356,7 +1534,8 @@ private fun AppHubScreen(gameState: GameState, onClose: () -> Unit, onOpen: (Gam
             HubApp("DATABASE", "DATABASE INTELIJEN", CyberAssets.database, GameScreen.DATABASE),
             HubApp("DOSSIER", "BERKAS PERSONEL", CyberAssets.document, GameScreen.DOSSIER),
             HubApp("ANALYSIS", "ANALISIS", CyberAssets.dataAnalysis, GameScreen.ANALYSIS),
-            HubApp("OPERATIONS", "OPERASI", CyberAssets.investigation, GameScreen.OPERATIONS)
+            HubApp("OPERATIONS", "OPERASI", CyberAssets.investigation, GameScreen.OPERATIONS),
+            HubApp("PRACTICE", "LATIHAN TAMBAHAN", CyberAssets.practice, GameScreen.PRACTICE)
         )
         apps.chunked(2).forEach { rowApps ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
