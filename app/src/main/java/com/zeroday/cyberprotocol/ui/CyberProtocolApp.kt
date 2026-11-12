@@ -963,6 +963,7 @@ private fun CyberProtocolGameContentBody(
             caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
                 ?: com.zeroday.cyberprotocol.core.model.CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
             evidenceRecords = currentGameState.evidence,
+            selectedLanguage = selectedLanguage,
             onBack = { navigate(navigation.caseReturnScreen) },
             onReadSource = { evidenceId ->
                 val asset = com.zeroday.cyberprotocol.data.EvidenceAssetCatalog.assets
