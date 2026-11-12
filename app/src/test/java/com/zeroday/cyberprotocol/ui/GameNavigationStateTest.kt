@@ -57,6 +57,26 @@ class GameNavigationStateTest {
     }
 
     @Test
+    fun navigationSaverPersistsCaseRoutesAndMigratesOlderAnalysisState() {
+        val state = GameNavigationState(
+            currentScreen = GameScreen.ANALYSIS,
+            hubReturnScreen = GameScreen.STORY,
+            caseReturnScreen = GameScreen.STORY,
+            analysisReturnScreen = GameScreen.OPERATIONS
+        )
+        val saved = GameNavigationState.Saver.save(state)
+        val restored = GameNavigationState.Saver.restore(saved!!)!!
+
+        assertEquals(GameScreen.STORY, restored.caseReturnScreen)
+        assertEquals(GameScreen.OPERATIONS, restored.analysisReturnScreen)
+
+        val legacy = GameNavigationState.Saver.restore(
+            listOf(GameScreen.ANALYSIS.name, GameScreen.OPERATIONS.name)
+        )!!
+        assertEquals(GameScreen.OPERATIONS, legacy.analysisReturnScreen)
+    }
+
+    @Test
     fun appScreensReturnToHubAndMenuScreensReturnToMenu() {
         val hub = GameNavigationState(currentScreen = GameScreen.TERMINAL)
         val database = GameNavigationState(currentScreen = GameScreen.DATABASE)
