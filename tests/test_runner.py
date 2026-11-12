@@ -187,7 +187,7 @@ class RunnerTests(unittest.TestCase):
         self.assertIn("variabel signal", concept["feedback"])
 
         passed = json.loads(runner.evaluate_mission(
-            'signal = "ACCESS GRANTED"\\nprint(signal)', 9, "id"
+            'signal = "ACCESS GRANTED"\nprint(signal)', 9, "id"
         ))
         self.assertTrue(passed["passed"])
         self.assertIn("Semua pemeriksaan misi berhasil", passed["feedback"])
