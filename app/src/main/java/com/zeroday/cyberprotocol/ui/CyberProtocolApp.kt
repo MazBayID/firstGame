@@ -128,12 +128,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     var lastSuccessfulRunSource by rememberSaveable { mutableStateOf<String?>(null) }
     var codeOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
     var codeFeedback by rememberSaveable { mutableStateOf("") }
-    var command by rememberSaveable { mutableStateOf("") }
-    var currentDirectory by rememberSaveable { mutableStateOf(fileSystem.initialDirectory()) }
-    var terminalOutput by rememberSaveable {
-        mutableStateOf("TERMINAL VIRTUAL A.E.G.I.S.  ·  BUILD 0.1\nLingkungan game siap digunakan.\nKetik 'help' untuk melihat daftar perintah.\n")
+    var terminalSession by rememberSaveable(stateSaver = TerminalSessionState.Saver) {
+        mutableStateOf(TerminalSessionState(currentDirectory = fileSystem.initialDirectory()))
     }
-    var terminalBusy by remember { mutableStateOf(false) }
     var showResetDialog by remember { mutableStateOf(false) }
     val messengerPreferences = remember { context.getSharedPreferences("cp_messenger_v1", 0) }
     val browserPreferences = remember { context.getSharedPreferences("cp_browser_session_v1", 0) }
@@ -183,11 +180,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
     fun openHub(from: GameScreen) {
         navigation = navigation.openHub(from)
         val activeMission = currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
-        currentDirectory = activeMission?.workspaceDirectory ?: fileSystem.initialDirectory()
+        terminalSession = terminalSession.copy(
+            currentDirectory = activeMission?.workspaceDirectory ?: fileSystem.initialDirectory()
+        )
     }
 
     fun appendTerminalOutput(value: String) {
-        terminalOutput = (terminalOutput + value).takeLast(24_000)
+        terminalSession = terminalSession.appendOutput(value)
     }
 
     fun downloadMissionFile(fileName: String): Boolean =
@@ -255,25 +254,25 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         missionOverride: com.zeroday.cyberprotocol.core.model.MissionDefinition? = null,
         onPythonResult: ((String, String) -> Unit)? = null
     ) {
-        val input = command.trim()
-        if (input.isEmpty() || terminalBusy) return
-        command = ""
+        val input = terminalSession.command.trim()
+        if (input.isEmpty() || terminalSession.busy) return
+        terminalSession = terminalSession.copy(command = "")
         val activeMission = missionOverride
             ?: currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
         val response = if (activeMission == null) {
-            fileSystem.execute(input, currentDirectory)
+            fileSystem.execute(input, terminalSession.currentDirectory)
         } else {
             fileSystem.execute(
                 input,
-                currentDirectory,
+                terminalSession.currentDirectory,
                 activeMission.workspaceDirectory,
                 activeMission.allowedFiles,
                 activeMission.writableFiles
             )
         }
-        currentDirectory = response.currentDirectory
+        terminalSession = terminalSession.copy(currentDirectory = response.currentDirectory)
         if (response.clearScreen) {
-            terminalOutput = "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n"
+            terminalSession = terminalSession.clearOutput()
             return
         }
         appendTerminalOutput("\n$ $input\n")
@@ -281,9 +280,9 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         if (output.startsWith("PYTHON_LAUNCH:")) {
             val fileName = output.removePrefix("PYTHON_LAUNCH:")
             val source = if (activeMission == null) {
-                fileSystem.readFile(fileName, currentDirectory)
+                fileSystem.readFile(fileName, terminalSession.currentDirectory)
             } else {
-                fileSystem.readFile(fileName, currentDirectory, activeMission.workspaceDirectory, activeMission.allowedFiles)
+                fileSystem.readFile(fileName, terminalSession.currentDirectory, activeMission.workspaceDirectory, activeMission.allowedFiles)
             }
             if (source == null) {
                 val error = "python: tidak dapat membuka '$fileName': file tidak ditemukan"
@@ -293,7 +292,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                 if (activeMission != null && fileName in activeMission.writableFiles) {
                     lastSuccessfulRunSource = null
                 }
-                terminalBusy = true
+                terminalSession = terminalSession.copy(busy = true)
                 scope.launch {
                     val missionWorkspace = activeMission?.let { fileSystem.openMissionWorkspace(it) }
                     val result = withContext(Dispatchers.IO) {
@@ -302,7 +301,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
                     val visibleOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                     appendTerminalOutput(visibleOutput + "\n")
                     if (result.error.isNotBlank()) appendTerminalOutput("KESALAHAN: " + result.error + "\n")
-                    terminalBusy = false
+                    terminalSession = terminalSession.copy(busy = false)
                     if (activeMission != null && fileName in activeMission.writableFiles &&
                         result.error.isBlank() && source == code.text
                     ) {
@@ -323,7 +322,7 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
         mission: com.zeroday.cyberprotocol.core.model.MissionDefinition,
         source: String
     ) {
-        if (terminalBusy) {
+        if (terminalSession.busy) {
             codeFeedback = "TERMINAL MASIH MENJALANKAN PERINTAH LAIN. Coba lagi setelah selesai."
             return
         }
@@ -342,8 +341,10 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             codeFeedback = "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI."
             return
         }
-        currentDirectory = mission.workspaceDirectory
-        command = invocation
+        terminalSession = terminalSession.copy(
+            currentDirectory = mission.workspaceDirectory,
+            command = invocation
+        )
         lastSuccessfulRunSource = null
         codeFeedback = "MENJALANKAN MELALUI A.E.G.I.S. TERMINAL..."
         terminalReturnScreen = GameScreen.STORY.name
@@ -587,13 +588,13 @@ private fun CyberProtocolGameContent(reducedMotion: Boolean, onReducedMotionChan
             }
         )
         GameScreen.TERMINAL -> TerminalScreen(
-            currentDirectory = currentDirectory,
+            currentDirectory = terminalSession.currentDirectory,
             workspaceLabel = activeMission?.title
                 ?.let { "MISSION WORKSPACE  /  $it" } ?: "PERSONAL WORKSPACE  /  A.E.G.I.S.",
-            command = command,
-            onCommandChange = { command = it },
-            output = terminalOutput,
-            busy = terminalBusy,
+            command = terminalSession.command,
+            onCommandChange = { terminalSession = terminalSession.copy(command = it) },
+            output = terminalSession.output,
+            busy = terminalSession.busy,
             onExecute = { executeTerminalCommand() },
             onBack = {
                 navigate(runCatching { GameScreen.valueOf(terminalReturnScreen) }.getOrDefault(GameScreen.APP_HUB))
