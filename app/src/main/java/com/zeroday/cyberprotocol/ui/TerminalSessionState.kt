@@ -19,17 +19,21 @@ internal data class TerminalSessionState(
     fun appendOutput(value: String): TerminalSessionState =
         copy(output = (output + value).takeLast(MAX_OUTPUT_CHARACTERS))
 
-    fun clearOutput(): TerminalSessionState =
-        copy(output = CLEAR_OUTPUT)
+    fun clearOutput(message: String): TerminalSessionState =
+        copy(output = message)
 
     companion object {
         private const val MAX_OUTPUT_CHARACTERS = 24_000
-        private const val INITIAL_OUTPUT =
-            "TERMINAL VIRTUAL A.E.G.I.S.  ·  BUILD 0.1\n" +
-            "Lingkungan game siap digunakan.\n" +
-            "Ketik 'help' untuk melihat daftar perintah.\n"
-        private const val CLEAR_OUTPUT =
-            "A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n"
+        fun initialOutput(language: com.zeroday.cyberprotocol.core.model.GameLanguage): String =
+            if (language == com.zeroday.cyberprotocol.core.model.GameLanguage.ENGLISH) {
+                "A.E.G.I.S. VIRTUAL TERMINAL  ·  BUILD 0.1\\n" +
+                    "Game environment is ready.\\n" +
+                    "Type 'help' to view available commands.\\n"
+            } else {
+                "TERMINAL VIRTUAL A.E.G.I.S.  ·  BUILD 0.1\\n" +
+                    "Lingkungan game siap digunakan.\\n" +
+                    "Ketik 'help' untuk melihat daftar perintah.\\n"
+            }
 
         val Saver: Saver<TerminalSessionState, Any> = listSaver(
             save = { state ->
