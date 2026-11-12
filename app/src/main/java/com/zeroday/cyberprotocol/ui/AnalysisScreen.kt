@@ -363,7 +363,13 @@ private fun CaseAnalysisWorkspace(
                                 CasePhaseEvaluator.canSelectAnalysisConclusion(definition, progress, option.id),
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFBCE8EA))
-                        ) { Text(if (selected) "KESIMPULAN TERSIMPAN" else "UJI KESIMPULAN") }
+                        ) {
+                            Text(when {
+                                !selected -> "UJI KESIMPULAN"
+                                option.supportedByEvidence -> "KESIMPULAN DIDUKUNG"
+                                else -> "DIPILIH — BELUM DIDUKUNG"
+                            })
+                        }
                     }
                 }
                 selectedConclusion?.let {
