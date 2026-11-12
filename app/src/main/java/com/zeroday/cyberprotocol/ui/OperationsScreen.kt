@@ -240,7 +240,7 @@ private fun EvidencePanel(
         AlertDialog(
             onDismissRequest = { sourceOpened = false },
             title = { Text(record.title) },
-            text = { Text(sourceContent, fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) },
+            text = { Text(CaseLocalizedContent.evidenceSource(record.id, sourceContent, selectedLanguage), fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) },
             confirmButton = {
                 TextButton(onClick = {
                     sourceOpened = false
