@@ -68,7 +68,7 @@ internal fun IntelligenceDatabaseScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text("A.E.G.I.S. / INTELLIGENCE INDEX", color = Color(0xFF83C7D0),
+                Text(databaseText(selectedLanguage, "A.E.G.I.S. / INTELLIGENCE INDEX", "A.E.G.I.S. / INDEKS INTELIJEN"), color = Color(0xFF83C7D0),
                     fontSize = 9.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
                 Text(databaseText(selectedLanguage, "INTELLIGENCE DATABASE", "DATABASE INTELIJEN"), color = Color.White, fontSize = 23.sp,
                     fontWeight = FontWeight.Black)
@@ -106,11 +106,11 @@ internal fun IntelligenceDatabaseScreen(
                     Text(if (selectedTab == "MISSIONS") databaseText(selectedLanguage, "MISSION DOCUMENTS", "DOKUMEN MISI") else databaseText(selectedLanguage, "EVIDENCE RECORDS", "REKAMAN BUKTI"),
                         color = Color(0xFF83C7D0), fontSize = 9.sp, letterSpacing = 1.2.sp,
                         fontWeight = FontWeight.Bold)
-                    Text(if (selectedTab == "MISSIONS") "${missions.size} / ${Campaign01Catalog.missions.size} DOKUMEN"
-                        else "${evidence.size} REKAMAN",
+                    Text(if (selectedTab == "MISSIONS") databaseText(selectedLanguage, "${missions.size} / ${Campaign01Catalog.missions.size} DOCUMENTS", "${missions.size} / ${Campaign01Catalog.missions.size} DOKUMEN")
+                        else databaseText(selectedLanguage, "${evidence.size} RECORDS", "${evidence.size} REKAMAN"),
                         color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Bold)
                 }
-                Text("LOCAL INDEX", color = Color(0xFF8AA8AE), fontSize = 8.sp)
+                Text(databaseText(selectedLanguage, "LOCAL INDEX", "INDEKS LOKAL"), color = Color(0xFF8AA8AE), fontSize = 8.sp)
             }
         }
 
@@ -137,7 +137,7 @@ internal fun IntelligenceDatabaseScreen(
                 }
             }
             selectedMission?.let { mission ->
-                DatabaseDetailPanel("MISSION FILE", mission.title) {
+                DatabaseDetailPanel(databaseText(selectedLanguage, "MISSION FILE", "BERKAS MISI"), mission.title) {
                     Text(mission.briefing, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
                     Text(databaseText(selectedLanguage, "OBJECTIVES", "SASARAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                     mission.objectives.forEachIndexed { index, objective ->
@@ -145,9 +145,9 @@ internal fun IntelligenceDatabaseScreen(
                             fontWeight = FontWeight.SemiBold)
                         Text(objective.description, color = Color(0xFF9AB4B8), fontSize = 10.sp)
                     }
-                    Text("REWARD ${mission.rewardXp} XP  ·  CLEARANCE ${mission.requiredClearance}",
+                    Text(databaseText(selectedLanguage, "REWARD ${mission.rewardXp} XP  ·  CLEARANCE ${mission.requiredClearance}", "HADIAH ${mission.rewardXp} XP  ·  OTORISASI ${mission.requiredClearance}"),
                         color = Color(0xFF8AA8AE), fontSize = 9.sp)
-                    Text("WORKSPACE  /  ${mission.workspaceDirectory}",
+                    Text(databaseText(selectedLanguage, "WORKSPACE  /  ${mission.workspaceDirectory}", "RUANG KERJA  /  ${mission.workspaceDirectory}"),
                         color = Color(0xFF83C7D0), fontSize = 8.sp)
                 }
             }
@@ -180,25 +180,25 @@ internal fun IntelligenceDatabaseScreen(
                 }
             }
             selectedEvidence?.let { record ->
-                DatabaseDetailPanel("EVIDENCE RECORD", record.title) {
+                DatabaseDetailPanel(databaseText(selectedLanguage, "EVIDENCE RECORD", "CATATAN BUKTI"), record.title) {
                     Text(
                         if (record.id in concealedCaseEvidenceIds) databaseText(selectedLanguage, "Source content remains locked until the original record is reviewed.", "Isi sumber terkunci sampai catatan asli diperiksa.")
                         else record.summary,
                         color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
                     )
-                    DatabaseValue("STATUS", evidenceLabel(record.status, selectedLanguage))
-                    DatabaseValue("SOURCE", record.source)
-                    DatabaseValue("PROVENANCE", record.provenance.origin.name + " / " + record.provenance.sourceLabel)
-                    record.provenance.sourceAssetId?.let { DatabaseValue("SHARED ASSET", it) }
-                    record.provenance.sourcePath?.let { DatabaseValue("SOURCE PATH", it) }
-                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
-                    DatabaseValue("REVIEW HISTORY", record.reviewHistory.joinToString { "${it.previousStatus} → ${it.newStatus} / ${it.reviewerId}: ${it.reason}" }.ifBlank { databaseText(selectedLanguage, "No reviews recorded", "Belum ada riwayat peninjauan") })
-                    DatabaseValue("MISSION", record.missionId)
-                    DatabaseValue("RECORD ID", record.id)
-                    DatabaseValue("TIMESTAMP", record.recordedAtEpochMillis.toString())
+                    DatabaseValue(databaseText(selectedLanguage, "STATUS", "STATUS"), evidenceLabel(record.status, selectedLanguage))
+                    DatabaseValue(databaseText(selectedLanguage, "SOURCE", "SUMBER"), record.source)
+                    DatabaseValue(databaseText(selectedLanguage, "PROVENANCE", "ASAL-USUL"), record.provenance.origin.name + " / " + record.provenance.sourceLabel)
+                    record.provenance.sourceAssetId?.let { DatabaseValue(databaseText(selectedLanguage, "SHARED ASSET", "ASET BERSAMA"), it) }
+                    record.provenance.sourcePath?.let { DatabaseValue(databaseText(selectedLanguage, "SOURCE PATH", "LOKASI SUMBER"), it) }
+                    DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
+                    DatabaseValue(databaseText(selectedLanguage, "REVIEW HISTORY", "RIWAYAT PENINJAUAN"), record.reviewHistory.joinToString { "${it.previousStatus} → ${it.newStatus} / ${it.reviewerId}: ${it.reason}" }.ifBlank { databaseText(selectedLanguage, "No reviews recorded", "Belum ada riwayat peninjauan") })
+                    DatabaseValue(databaseText(selectedLanguage, "MISSION", "MISI"), record.missionId)
+                    DatabaseValue(databaseText(selectedLanguage, "RECORD ID", "ID CATATAN"), record.id)
+                    DatabaseValue(databaseText(selectedLanguage, "TIMESTAMP", "STEMPEL WAKTU"), record.recordedAtEpochMillis.toString())
                     val related = Campaign01Catalog.find(record.missionId)
                     if (related != null) {
-                        Text("DOKUMEN TERKAIT  /  ${related.title}",
+                        Text(databaseText(selectedLanguage, "RELATED DOCUMENT  /  ${related.title}", "DOKUMEN TERKAIT  /  ${related.title}"),
                             color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                         Text(related.briefing, color = Color(0xFF9AB4B8), fontSize = 10.sp,
                             lineHeight = 16.sp)
@@ -206,25 +206,25 @@ internal fun IntelligenceDatabaseScreen(
                 }
             }
         } else {
-            DatabaseDetailPanel("ACTIVE CASE FILE", caseDefinition.title) {
-                DatabaseValue("CASE ID", caseDefinition.id)
-                DatabaseValue("PHASE", casePhase.name.replace('_', ' '))
-                DatabaseValue("BRIEFING", caseDefinition.briefing)
-                DatabaseValue("REQUIRED SOURCES", caseRecords.size.toString())
-                DatabaseValue("DISCOVERED", "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
-                DatabaseValue("ANALYZED", "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
-                DatabaseValue("ANALYTICAL CONCLUSION", analysisConclusion?.title ?: databaseText(selectedLanguage, "Not selected", "Belum dipilih"))
-                DatabaseValue("CONCLUSION FEEDBACK", analysisConclusion?.feedback ?: databaseText(selectedLanguage, "No conclusion saved.", "Belum ada kesimpulan tersimpan."))
-                DatabaseValue("OPERATIONAL DECISION", decision?.title ?: databaseText(selectedLanguage, "Not selected", "Belum dipilih"))
-                DatabaseValue("DECISION RATIONALE", caseProgress.decisionRationale.ifBlank { databaseText(selectedLanguage, "No rationale saved.", "Belum ada alasan tersimpan.") })
-                DatabaseValue("DEBRIEF", if (caseProgress.debriefViewed) databaseText(selectedLanguage, "COMPLETE", "SELESAI") else databaseText(selectedLanguage, "INCOMPLETE", "BELUM SELESAI"))
+            DatabaseDetailPanel(databaseText(selectedLanguage, "ACTIVE CASE FILE", "BERKAS KASUS AKTIF"), caseDefinition.title) {
+                DatabaseValue(databaseText(selectedLanguage, "CASE ID", "ID KASUS"), caseDefinition.id)
+                DatabaseValue(databaseText(selectedLanguage, "PHASE", "FASE"), localizedPhaseName(casePhase, selectedLanguage))
+                DatabaseValue(databaseText(selectedLanguage, "BRIEFING", "ARAHAN"), caseDefinition.briefing)
+                DatabaseValue(databaseText(selectedLanguage, "REQUIRED SOURCES", "SUMBER WAJIB"), caseRecords.size.toString())
+                DatabaseValue(databaseText(selectedLanguage, "DISCOVERED", "DITEMUKAN"), "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                DatabaseValue(databaseText(selectedLanguage, "ANALYZED", "DIANALISIS"), "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                DatabaseValue(databaseText(selectedLanguage, "ANALYTICAL CONCLUSION", "KESIMPULAN ANALISIS"), analysisConclusion?.title ?: databaseText(selectedLanguage, "Not selected", "Belum dipilih"))
+                DatabaseValue(databaseText(selectedLanguage, "CONCLUSION FEEDBACK", "UMPAN BALIK KESIMPULAN"), analysisConclusion?.feedback ?: databaseText(selectedLanguage, "No conclusion saved.", "Belum ada kesimpulan tersimpan."))
+                DatabaseValue(databaseText(selectedLanguage, "OPERATIONAL DECISION", "KEPUTUSAN OPERASIONAL"), decision?.title ?: databaseText(selectedLanguage, "Not selected", "Belum dipilih"))
+                DatabaseValue(databaseText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), caseProgress.decisionRationale.ifBlank { databaseText(selectedLanguage, "No rationale saved.", "Belum ada alasan tersimpan.") })
+                DatabaseValue(databaseText(selectedLanguage, "DEBRIEF", "DEBRIEFING"), if (caseProgress.debriefViewed) databaseText(selectedLanguage, "COMPLETE", "SELESAI") else databaseText(selectedLanguage, "INCOMPLETE", "BELUM SELESAI"))
                 caseRecords.forEach { record ->
                     HorizontalDivider(color = Color(0xFF293A40))
                     Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    DatabaseValue("SOURCE", record.provenance.sourceLabel + " / " + record.provenance.origin.name)
-                    DatabaseValue("STATUS", if (record.id in caseProgress.discoveredEvidenceIds) databaseText(selectedLanguage, "REVIEWED", "DIPERIKSA") else databaseText(selectedLanguage, "NOT REVIEWED", "BELUM DIPERIKSA"))
-                    DatabaseValue("RELATIONSHIPS", record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
-                    record.provenance.sourcePath?.let { DatabaseValue("SOURCE PATH", it) }
+                    DatabaseValue(databaseText(selectedLanguage, "SOURCE", "SUMBER"), record.provenance.sourceLabel + " / " + record.provenance.origin.name)
+                    DatabaseValue(databaseText(selectedLanguage, "STATUS", "STATUS"), if (record.id in caseProgress.discoveredEvidenceIds) databaseText(selectedLanguage, "REVIEWED", "DIPERIKSA") else databaseText(selectedLanguage, "NOT REVIEWED", "BELUM DIPERIKSA"))
+                    DatabaseValue(databaseText(selectedLanguage, "RELATIONSHIPS", "HUBUNGAN"), record.relations.joinToString { "${it.type}: ${it.relatedEvidenceId}" }.ifBlank { databaseText(selectedLanguage, "No linked evidence", "Tidak ada bukti terkait") })
+                    record.provenance.sourcePath?.let { DatabaseValue(databaseText(selectedLanguage, "SOURCE PATH", "LOKASI SUMBER"), it) }
                 }
             }
         }
