@@ -27,13 +27,21 @@ class CaseLocalizedContentTest {
         Campaign01Catalog.missions.forEach { mission ->
             assertNotEquals(mission.title,
                 CaseLocalizedContent.missionTitle(mission, GameLanguage.ENGLISH))
-            assertTrue(CaseLocalizedContent.missionBriefing(mission, GameLanguage.ENGLISH).isNotBlank())
+            assertNotEquals(mission.briefing,
+                CaseLocalizedContent.missionBriefing(mission, GameLanguage.ENGLISH))
+            if (mission.nextClue != null) {
+                assertNotEquals(mission.nextClue,
+                    CaseLocalizedContent.missionNextClue(mission, GameLanguage.ENGLISH))
+            }
             mission.objectives.forEachIndexed { index, objective ->
-                assertTrue(CaseLocalizedContent.objectiveTitle(mission, objective, index, GameLanguage.ENGLISH).isNotBlank())
-                assertTrue(CaseLocalizedContent.objectiveDescription(mission, objective, index, GameLanguage.ENGLISH).isNotBlank())
+                assertNotEquals(objective.title,
+                    CaseLocalizedContent.objectiveTitle(mission, objective, index, GameLanguage.ENGLISH))
+                assertNotEquals(objective.description,
+                    CaseLocalizedContent.objectiveDescription(mission, objective, index, GameLanguage.ENGLISH))
             }
             mission.hints.forEach { hint ->
-                assertTrue(CaseLocalizedContent.hint(mission, hint, GameLanguage.ENGLISH).isNotBlank())
+                assertNotEquals(hint.message,
+                    CaseLocalizedContent.hint(mission, hint, GameLanguage.ENGLISH))
             }
         }
     }
