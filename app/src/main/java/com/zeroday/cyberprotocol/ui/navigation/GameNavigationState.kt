@@ -30,7 +30,8 @@ internal data class GameNavigationState(
             GameScreen.DEBRIEF -> if (storyStage >= 7) GameScreen.CAMPAIGN else GameScreen.STORY
             GameScreen.APP_HUB -> hubReturnScreen
             GameScreen.MESSENGER, GameScreen.BROWSER -> GameScreen.APP_HUB
-            GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER -> GameScreen.APP_HUB
+            GameScreen.TERMINAL, GameScreen.DATABASE, GameScreen.DOSSIER,
+            GameScreen.PRACTICE -> GameScreen.APP_HUB
             GameScreen.ANALYSIS -> analysisReturnScreen
             GameScreen.OPERATIONS -> caseReturnScreen
             GameScreen.PROFILE, GameScreen.ARCHIVES, GameScreen.ACHIEVEMENTS,

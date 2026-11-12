@@ -32,6 +32,7 @@ object ProgressionRules {
         }
         if (beat >= 5) add("ANALYSIS")
         if (beat >= 7) add("OPERATIONS")
+        if (beat >= 10) add("PRACTICE")
     }
 
     fun rankThreshold(rank: String): Int =
