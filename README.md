@@ -43,7 +43,7 @@ The **Evidence & Investigation Engine** connects immutable source assets, proven
 - **First-person player identity:** the player is the operative; no player-avatar portrait is required.
 - **In-world learning:** programming concepts appear when the story gives the player a reason to use them.
 - **Local Python execution:** CPython 3.13 through Chaquopy on Android.
-- **Separate RUN and SUBMIT:** Code Editor RUN saves the source to the mission script and opens the dedicated Terminal to execute `python <script>.py`; Browser Mission Control submits the exact source that completed the latest successful RUN to the authored mission evaluator.
+- **Separate RUN and SUBMIT:** Code Editor RUN saves the source to the mission script and opens the dedicated Terminal to execute `python <script>.py`; the Code Editor exposes a dedicated Submit action, and Browser Mission Control remains an alternate entry point. Both submit the exact source from the latest successful RUN to the same authored mission evaluator.
 - **Mission datasets:** deterministic, fictional, read-only inputs with multiple evaluator fixtures where appropriate.
 - **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence; Freya provides the intranet link, fictional credentials, and the first mission attachment.
 - **A.E.G.I.S. Browser:** an offline intranet with local fictional login, Mission Control, File Repository, Intelligence Reports, and Agent Profile. Browser downloads and Messenger attachments resolve to the same mission file.
@@ -83,11 +83,9 @@ python -m unittest discover -s tests -v
 gradle --no-daemon testReleaseUnitTest
 ```
 
-- **Pushes to `main`:** CI runs Python and Release-variant Android/Kotlin unit tests, then builds and publishes a Debug development APK. The artifact is explicitly marked **DEVELOPMENT — NOT FINAL — SMOKE TEST NOT RUN**.
+- **Pushes to `main`:** run Python and Release-variant Android/Kotlin unit tests only. Do not build or publish an APK for ordinary development commits.
 - **Pull requests targeting `main`:** source-level tests only. No installable APK and no release-signing secrets.
-- **Manual dispatch with `final_release=false`:** source tests followed by a development Debug APK, with no emulator smoke test.
-- **Final APK:** manually dispatch **Cyber Protocol — Build, Test & Release** from `main` with `final_release=true`. CI reruns source tests, builds one permanently signed Release APK, validates it, installs and launches that exact APK on an Android Emulator, verifies its SHA-256 is unchanged, then publishes it as **FINAL — EMULATOR SMOKE-TESTED** with a checksum manifest.
-- Development APKs are for early testing and feedback; they are not release-signed and must never be mistaken for Final APKs.
-- Emulator smoke testing does not replace physical-device acceptance: clean installation, in-place update, and save-data preservation must still be checked on an Android device.
+- **Final APK:** a manual release dispatch is reserved for an explicitly approved release candidate after the complete campaign and gameplay acceptance gates have passed. It is not part of ordinary feature batches.
+- Emulator smoke testing and physical-device acceptance remain final release gates, not substitutes for complete gameplay integration.
 
 The permanent keystore is restored only inside the ephemeral Final Release runner and removed at the end of the job. The project is an evolving game foundation; the full v1.0 campaign is not yet complete.

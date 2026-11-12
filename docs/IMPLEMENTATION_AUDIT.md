@@ -342,3 +342,13 @@ The Operations investigation phase now opens the original receipt text from the 
 - Repeated analysis of an already analyzed evidence record and repeated submission of the same operational decision are idempotent.
 - `CaseProgress` enforces that analyzed evidence must be a subset of discovered evidence, preventing invalid persisted snapshots from representing impossible investigation state.
 - Automated tests cover story-button parity, case progression, and safe repeated actions. CI and emulator verification are still required.
+
+
+## Development priority reset — 2026-11-12
+
+The player has explicitly directed that complete gameplay/content/UI integration takes priority over APK production and CI polish.
+
+- Ordinary `main` pushes now run source tests only; automatic development APK packaging has been removed from the workflow.
+- Unit tests remain a development safety net. They are not the primary deliverable of a feature batch.
+- Do not start release packaging until First Contact can be played end-to-end from a fresh save through the chapter debrief and all integrated acceptance criteria in `docs/REBUILD_STATUS.md` pass.
+- Feature completion requires a connected player journey: authored content, domain behavior, app navigation, UI feedback, persistence/recovery, and progression. A compile, isolated screen, button, or APK does not satisfy this contract.

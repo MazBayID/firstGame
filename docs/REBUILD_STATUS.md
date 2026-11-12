@@ -273,3 +273,33 @@ Implementation requirements:
 - Repeating an already completed evidence-analysis action or submitting the same decision again is safe and does not corrupt case progress.
 - Case snapshots now reject analyzed evidence IDs that were never discovered.
 - CI verification is pending for this batch. This is still a development build; emulator and physical-device acceptance remain outstanding.
+
+
+## Development priority reset — complete game before packaging
+
+**Player direction, 2026-11-12:** do not spend development batches producing APKs or polishing CI while core gameplay, content, and UI are still incomplete. APK production is a release-candidate activity, not a measure of feature progress.
+
+### New batch policy
+
+- Every feature batch must advance a connected player-facing system or remove a real integration blocker.
+- Keep fast, relevant unit/domain tests during implementation to catch regressions. Run broader source suites at coherent integration checkpoints; do not let CI maintenance become the batch's primary deliverable.
+- Ordinary pushes to `main` run source tests only. The automatic development-APK job has been removed. Do not manually dispatch a release build until the complete-game acceptance gates are met and the player explicitly asks for release packaging.
+- Do not count a screen, button, stub, isolated use case, successful compilation, or APK as a complete feature.
+- A system is complete only when its authored content, domain rules, UI interactions, navigation, persistence/recovery, feedback, and progression work together in the actual player journey.
+
+### Integrated game work order
+
+1. **Campaign experience map:** map all fourteen First Contact beats to player actions, active objectives, required/optional information, relevant apps, state transitions, dialogue, and debrief outcomes. Remove dead ends and duplicate routes.
+2. **Case and evidence engine:** finish structured provenance, immutable source assets, evidence relationships, derived findings, review history, status-transition rules, hypotheses, and uncertainty-aware reasoning.
+3. **Mission contract and evaluation:** unify briefing objectives, discoverable facts, technical execution (only where justified), analytical conclusions, operational choices, deterministic evaluation, retry behavior, and rewards.
+4. **Connected A.E.G.I.S. tools:** Messenger, Browser, Terminal, Code Editor, Dossier, Database, Analysis, and Operations must read/write the same underlying case state and return the player to the correct operation context.
+5. **Full First Contact content:** complete authored dialogue, source documents, evidence, analysis prompts, decision choices, consequences, debriefs, clues, and progression for the whole chapter. Do not invent a new case or culprit.
+6. **Player-facing UI and usability:** make every objective discoverable, every action explainable, every submission reachable from the relevant workspace, and every success/failure state visible. Resolve the current editor Submit defect as part of this integrated flow.
+7. **Progression and save continuity:** validate old-save migration, interruption/resume, idempotent rewards, archives, rank/clearance, and case history across the whole campaign.
+8. **Content parity and polish:** finish English-first/Indonesian-supported content coverage, responsive layouts, accessibility, and presentation after the connected gameplay contracts are stable.
+
+### Acceptance definition
+
+A complete First Contact experience must be playable from a fresh save to its chapter debrief without developer instructions or hidden navigation. Every required objective can be found and completed; optional leads remain optional; technical tasks are used only where story-relevant; evidence retains source/provenance; analytical and operational conclusions receive fair deterministic feedback; save/reload does not break progression; and the player can understand what happened and why.
+
+Only after this journey is complete should we schedule a release-candidate batch for full regression, APK packaging, emulator smoke testing, and physical-device acceptance.
