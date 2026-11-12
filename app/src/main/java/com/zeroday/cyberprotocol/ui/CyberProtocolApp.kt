@@ -919,7 +919,7 @@ private fun CyberProtocolGameContentBody(
             canSubmit = practiceMission != null &&
                 MissionSubmissionPolicy.canSubmit(practiceCode.text, practiceLastSuccessfulRunSource) &&
                 !practiceSubmitting,
-            busy = terminalSession.busy,
+            busy = terminalSession.busy || practiceSubmitting,
             clearance = currentGameState.clearance,
             onSelectMission = { id -> practiceMissionId = id },
             onBackToList = {

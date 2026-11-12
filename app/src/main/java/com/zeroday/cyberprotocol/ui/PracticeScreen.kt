@@ -54,7 +54,7 @@ internal fun PracticeScreen(
                 Text("LATIHAN TAMBAHAN", color = Color.White, fontSize = 22.sp,
                     fontWeight = FontWeight.Black)
             }
-            TextButton(onClick = onBack) { Text("APLIKASI", color = Color(0xFFBCE8EA)) }
+            TextButton(onClick = onBack, enabled = !busy) { Text("APLIKASI", color = Color(0xFFBCE8EA)) }
         }
         Surface(color = Color(0xFF102A32), shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
@@ -97,7 +97,7 @@ internal fun PracticeScreen(
                 }
             }
         } else {
-            TextButton(onClick = onBackToList) { Text("‹  DAFTAR LATIHAN", color = Color(0xFF83C7D0)) }
+            TextButton(onClick = onBackToList, enabled = !busy) { Text("‹  DAFTAR LATIHAN", color = Color(0xFF83C7D0)) }
             Text(selectedMission.title, color = Color.White, fontSize = 19.sp, fontWeight = FontWeight.Black)
             Text(selectedMission.briefing, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 18.sp)
             Panel {
