@@ -33,6 +33,19 @@ class VirtualFileSystem(context: Context) {
 
     fun initialDirectory(): String = "$root/personal"
 
+    /**
+     * Starts a clean campaign workspace while preserving the player's personal files
+     * and the canonical shared evidence archive.
+     */
+    @Synchronized
+    fun resetMissionWorkspaces() {
+        files.keys.filter { it.startsWith("$root/missions/") }.toList().forEach(files::remove)
+        directories.removeAll {
+            it.startsWith("$root/missions/") && it != "$root/missions/first_contact"
+        }
+        persist()
+    }
+
     /** Installs the approved First Contact source records without overwriting player data. */
     @Synchronized
     fun installEvidenceAssets(): Boolean {
