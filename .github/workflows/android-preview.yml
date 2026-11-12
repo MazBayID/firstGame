@@ -61,8 +61,10 @@ jobs:
 
           BADGING=$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$SOURCE_APK")
           ACTUAL_PACKAGE=$(echo "$BADGING" | awk -F"'" '/^package:/ {print $2; exit}')
-          ACTUAL_VERSION_CODE=$(echo "$BADGING" | awk -F"'" '{for (i=1; i<=NF; i++) if ($i ~ /^versionCode=/) {sub(/^versionCode=/, "", $i); print $i; exit}}')
+          ACTUAL_VERSION_CODE=$(echo "$BADGING" | awk -F"'" '{for (i=1; i<=NF; i++) {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i); if ($i ~ /^versionCode=/) {sub(/^versionCode=/, "", $i); print $i; exit}}}')
 
+          echo "Detected package: $ACTUAL_PACKAGE"
+          echo "Detected version code: $ACTUAL_VERSION_CODE"
           test "$ACTUAL_PACKAGE" = "com.zeroday.cyberprotocol"
           test "$ACTUAL_VERSION_CODE" = "6"
 
