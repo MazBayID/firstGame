@@ -217,6 +217,22 @@ private fun CyberProtocolGameContentBody(
     var practiceHintLevel by rememberSaveable { mutableIntStateOf(0) }
     var practiceSubmitting by remember { mutableStateOf(false) }
 
+    LaunchedEffect(selectedLanguage) {
+        savedCodeStatus = when (savedCodeStatus) {
+            "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN" ->
+                localizedUiText(selectedLanguage, "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN")
+            "DRAFT SAVED", "DRAF TERSIMPAN" ->
+                localizedUiText(selectedLanguage, "DRAFT SAVED", "DRAF TERSIMPAN")
+            "SAVED", "TERSIMPAN" ->
+                localizedUiText(selectedLanguage, "SAVED", "TERSIMPAN")
+            "SAVED AT CHECKPOINT", "TERSIMPAN PADA CHECKPOINT" ->
+                localizedUiText(selectedLanguage, "SAVED AT CHECKPOINT", "TERSIMPAN PADA CHECKPOINT")
+            else -> savedCodeStatus
+        }
+        codeFeedback = ""
+        practiceFeedback = ""
+    }
+
     val practiceMission = practiceMissionId?.let(Campaign01Catalog::find)
         ?.takeIf { it.id in Campaign01Catalog.retiredLegacyStoryMissionIds }
     val practiceMissions = Campaign01Catalog.missions
