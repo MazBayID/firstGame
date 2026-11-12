@@ -83,6 +83,30 @@ class GameNavigationStateTest {
     }
 
     @Test
+    fun navigationSaverRecoversUnknownOrMalformedScreenNames() {
+        val restored = GameNavigationState.Saver.restore(
+            listOf("REMOVED_SCREEN", 42, "OLD_CASE_DESTINATION", "OLD_ANALYSIS_DESTINATION")
+        )!!
+
+        assertEquals(GameScreen.MAIN_MENU, restored.currentScreen)
+        assertEquals(GameScreen.CAMPAIGN, restored.hubReturnScreen)
+        assertEquals(GameScreen.APP_HUB, restored.caseReturnScreen)
+        assertEquals(GameScreen.APP_HUB, restored.analysisReturnScreen)
+    }
+
+    @Test
+    fun navigationSaverKeepsValidDestinationsWhenOneRouteIsUnknown() {
+        val restored = GameNavigationState.Saver.restore(
+            listOf("OPERATIONS", "STORY", "REMOVED_SCREEN", "OPERATIONS")
+        )!!
+
+        assertEquals(GameScreen.OPERATIONS, restored.currentScreen)
+        assertEquals(GameScreen.STORY, restored.hubReturnScreen)
+        assertEquals(GameScreen.APP_HUB, restored.caseReturnScreen)
+        assertEquals(GameScreen.OPERATIONS, restored.analysisReturnScreen)
+    }
+
+    @Test
     fun appScreensReturnToHubAndMenuScreensReturnToMenu() {
         val hub = GameNavigationState(currentScreen = GameScreen.TERMINAL)
         val database = GameNavigationState(currentScreen = GameScreen.DATABASE)

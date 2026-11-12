@@ -42,6 +42,11 @@ internal data class GameNavigationState(
     }
 
     companion object {
+        private fun restoreScreen(value: Any?, fallback: GameScreen): GameScreen =
+            (value as? String)
+                ?.let { name -> runCatching { GameScreen.valueOf(name) }.getOrNull() }
+                ?: fallback
+
         val Saver: Saver<GameNavigationState, Any> = listSaver(
             save = {
                 listOf(
@@ -51,18 +56,19 @@ internal data class GameNavigationState(
                     it.analysisReturnScreen.name
                 )
             },
-            restore = {
+            restore = { saved ->
+                val currentScreen = restoreScreen(saved.getOrNull(0), GameScreen.MAIN_MENU)
+                val legacyAnalysisReturn = saved.size < 4 && currentScreen == GameScreen.ANALYSIS
                 GameNavigationState(
-                    currentScreen = GameScreen.valueOf(it[0] as String),
-                    hubReturnScreen = GameScreen.valueOf(it[1] as String),
-                    caseReturnScreen = (it.getOrNull(2) as? String)
-                        ?.let { name -> runCatching { GameScreen.valueOf(name) }.getOrNull() }
-                        ?: GameScreen.APP_HUB,
-                    analysisReturnScreen = (it.getOrNull(3) as? String)
-                        ?.let { name -> runCatching { GameScreen.valueOf(name) }.getOrNull() }
-                        ?: if (it.size < 4 && it.getOrNull(0) == GameScreen.ANALYSIS.name) {
-                            GameScreen.valueOf(it[1] as String)
+                    currentScreen = currentScreen,
+                    hubReturnScreen = restoreScreen(saved.getOrNull(1), GameScreen.CAMPAIGN),
+                    caseReturnScreen = restoreScreen(saved.getOrNull(2), GameScreen.APP_HUB),
+                    analysisReturnScreen = restoreScreen(
+                        saved.getOrNull(3),
+                        if (legacyAnalysisReturn) {
+                            restoreScreen(saved.getOrNull(1), GameScreen.APP_HUB)
                         } else GameScreen.APP_HUB
+                    )
                 )
             }
         )
