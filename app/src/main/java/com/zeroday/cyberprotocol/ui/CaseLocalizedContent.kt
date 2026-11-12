@@ -60,4 +60,38 @@ internal object CaseLocalizedContent {
             "insufficient_evidence" -> "Withhold a causal conclusion. The two records show a discrepancy but do not explain why it occurred."
             else -> option.description
         }
+    /**
+     * Translates only the on-screen rendering of the two RX-14 source records.
+     * Canonical file bytes and Terminal output remain unchanged for provenance checks.
+     */
+    fun evidenceSource(evidenceId: String, content: String, language: GameLanguage): String {
+        if (language != GameLanguage.ENGLISH) return content
+        val labels = when (evidenceId) {
+            "rx14_aegis_receipt" -> mapOf(
+                "A.E.G.I.S. RECEIPT LOG" to "A.E.G.I.S. INTAKE RECEIPT LOG",
+                "REFERENCE:" to "REFERENCE:",
+                "RECEIVED:" to "RECEIVED:",
+                "CHANNEL:" to "CHANNEL:",
+                "RECORD:" to "RECORD:"
+            )
+            "rx14_archive_receipt" -> mapOf(
+                "ARCHIVE RECEIPT LOG" to "ARCHIVE INTAKE RECEIPT LOG",
+                "REFERENCE:" to "REFERENCE:",
+                "RECEIVED:" to "RECEIVED:",
+                "CHANNEL:" to "CHANNEL:",
+                "RECORD:" to "RECORD:"
+            )
+            else -> return content
+        }
+        return content.lineSequence().map { line ->
+            val separator = line.indexOf(':')
+            if (separator < 0) labels[line] ?: line
+            else {
+                val label = line.substring(0, separator + 1)
+                val value = line.substring(separator + 1)
+                labels[label]?.plus(value) ?: line
+            }
+        }.joinToString("\n")
+    }
+
 }
