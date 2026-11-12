@@ -194,7 +194,7 @@ internal fun OperationsScreen(
                 Text(localizedUiText(selectedLanguage, "FINAL DECISION", "KEPUTUSAN AKHIR"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 Text(decision?.title ?: localizedUiText(selectedLanguage, "No decision saved", "Tidak ada keputusan tersimpan"), color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "DECISION RATIONALE", "ALASAN KEPUTUSAN"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                InfoPanel(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan yang tersimpan pada save lama." })
+                InfoPanel(caseProgress.decisionRationale.ifBlank { localizedUiText(selectedLanguage, "No rationale was stored in this older save.", "Tidak ada alasan yang tersimpan pada save lama.") })
                 if (caseDefinition.id in gameState.completedMissionIds) {
                     Text(
                         localizedUiText(selectedLanguage, "CASE REWARD  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP", "HADIAH KASUS  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP"),
