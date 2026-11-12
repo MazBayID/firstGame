@@ -142,7 +142,7 @@ internal fun AegisBrowserScreen(
                 ) { Text(browserText(selectedLanguage, "ENTER INTRANET", "MASUK KE INTRANET")) }
             }
         } else {
-            BrowserNavigation(page, onPageChange)
+            BrowserNavigation(page, selectedLanguage, onPageChange)
             when (page) {
                 "mission" -> BrowserPanel {
                     Text("MISSION CONTROL", color = Color(0xFF83C7D0), fontSize = 10.sp, fontWeight = FontWeight.Bold)
@@ -306,7 +306,7 @@ internal fun AegisBrowserScreen(
 }
 
 @Composable
-private fun BrowserNavigation(page: String, onPageChange: (String) -> Unit) {
+private fun BrowserNavigation(page: String, selectedLanguage: GameLanguage, onPageChange: (String) -> Unit) {
     Row(
         Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -360,6 +360,5 @@ private fun BrowserLink(title: String, description: String, onClick: () -> Unit)
 }
 
 
-@Composable
 private fun browserText(language: GameLanguage, english: String, indonesian: String): String =
     localizedUiText(language, english, indonesian)
