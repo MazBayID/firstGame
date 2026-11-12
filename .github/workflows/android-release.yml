@@ -48,7 +48,7 @@ jobs:
           gradle-version: "8.13"
 
       - name: Run Android unit tests
-        run: gradle --no-daemon testDebugUnitTest
+        run: gradle --no-daemon testReleaseUnitTest
 
       # Restore the permanent key only after source tests have passed.
       - name: Restore and validate permanent release keystore
