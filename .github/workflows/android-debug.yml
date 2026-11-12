@@ -1,11 +1,8 @@
-name: Android Tests
+name: Android Tests (PR only)
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 concurrency:
   group: android-tests-${{ github.event.pull_request.number || github.ref }}
