@@ -148,6 +148,39 @@ class VirtualFileSystemMissionAssetTest {
     }
 
     @Test
+    fun newCampaignClearsMissionWorkspacesButPreservesPersonalFilesAndSharedEvidence() {
+        val context = freshContext()
+        val fileSystem = VirtualFileSystem(context)
+        val personalDirectory = fileSystem.initialDirectory()
+        assertTrue(fileSystem.writeFile("keep.txt", "PERSONAL DATA", personalDirectory))
+
+        val mission = Campaign01Catalog.find("first_contact.signal")!!
+        val workspace = fileSystem.openMissionWorkspace(mission)
+        assertTrue(workspace.downloadAsset("message_fragment.txt"))
+        assertTrue(workspace.writeFile("signal.py", "print('old campaign')"))
+
+        fileSystem.installEvidenceAssets()
+        val sharedEvidence = EvidenceAssetCatalog.assets.first()
+        fileSystem.resetMissionWorkspaces()
+
+        assertEquals("PERSONAL DATA", fileSystem.readFile("keep.txt", personalDirectory))
+        assertEquals(null, fileSystem.readFile(
+            "signal.py", mission.workspaceDirectory, mission.workspaceDirectory, mission.allowedFiles
+        ))
+        assertEquals(null, fileSystem.readFile(
+            "message_fragment.txt", mission.workspaceDirectory, mission.workspaceDirectory, mission.allowedFiles
+        ))
+        assertEquals(sharedEvidence.content, fileSystem.readEvidenceAsset(sharedEvidence.id))
+
+        val freshWorkspace = fileSystem.openMissionWorkspace(mission)
+        assertTrue(freshWorkspace.listFiles().contains("briefing.txt"))
+        assertFalse(freshWorkspace.listFiles().contains("signal.py"))
+        assertFalse(freshWorkspace.listFiles().contains("message_fragment.txt"))
+        assertTrue(freshWorkspace.downloadAsset("message_fragment.txt"))
+        assertEquals("ACCESS GRANTED\n", freshWorkspace.readFile("message_fragment.txt"))
+    }
+
+    @Test
     fun missionTerminalCannotDeleteOrReadOutsideAuthorizedFiles() {
         val context = freshContext()
         val mission = Campaign01Catalog.find("first_contact.signal")!!
