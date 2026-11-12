@@ -72,8 +72,8 @@ internal fun PersonnelDossierScreen(
                 Text("ASSIGNMENT  /  MANILA COMMAND", color = Color(0xFFB8C9CC), fontSize = 10.sp)
                 HorizontalDivider(color = Color(0xFF31545B))
                 DossierValue("MENTOR", if (gameState.freyaContactOpened) "FREYA KNOX" else dossierText(selectedLanguage, "NOT ASSIGNED", "BELUM DITETAPKAN"))
-                DossierValue("SISTEM PENDAMPING", if (gameState.nexusContactUnlocked) "NEXUS / AKTIF" else dossierText(selectedLanguage, "NOT ACTIVATED", "BELUM DIAKTIFKAN"))
-                DossierValue("STATUS REKRUTMEN", if (gameState.recruitmentNotificationOpened) dossierText(selectedLanguage, "INVITATION OPENED", "UNDANGAN DIBUKA") else dossierText(selectedLanguage, "AWAITING CONFIRMATION", "MENUNGGU KONFIRMASI"))
+                DossierValue(dossierText(selectedLanguage, "SUPPORT SYSTEM", "SISTEM PENDAMPING"), if (gameState.nexusContactUnlocked) "NEXUS / AKTIF" else dossierText(selectedLanguage, "NOT ACTIVATED", "BELUM DIAKTIFKAN"))
+                DossierValue(dossierText(selectedLanguage, "RECRUITMENT STATUS", "STATUS REKRUTMEN"), if (gameState.recruitmentNotificationOpened) dossierText(selectedLanguage, "INVITATION OPENED", "UNDANGAN DIBUKA") else dossierText(selectedLanguage, "AWAITING CONFIRMATION", "MENUNGGU KONFIRMASI"))
             }
         }
 
