@@ -1009,7 +1009,7 @@ private fun CyberProtocolGameContentBody(
             localizedUiText(selectedLanguage, "A.E.G.I.S. / PERSONNEL IDENTITY", "A.E.G.I.S. / IDENTITAS PERSONEL"),
             buildString {
                 append(localizedUiText(selectedLanguage, "IDENTITY: TRAINEE AGENT\n", "IDENTITAS: AGEN MAGANG\n"))
-                append("RANK: ").append(currentGameState.rank.replace('_', ' ')).append("\n")
+                append("RANK: ").append(localizedRankName(currentGameState.rank, selectedLanguage)).append("\n")
                 append(localizedUiText(selectedLanguage, "EXPERIENCE: ", "PENGALAMAN: ")).append(currentGameState.experience).append(" XP\n")
                 append("CLEARANCE: ").append(currentGameState.clearance).append("\n")
                 append(localizedUiText(selectedLanguage, "CAMPAIGN: ", "KAMPANYE: ")).append(currentGameState.campaignId).append("\n")
