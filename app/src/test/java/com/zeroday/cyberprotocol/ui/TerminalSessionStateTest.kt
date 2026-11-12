@@ -1,6 +1,7 @@
 package com.zeroday.cyberprotocol.ui
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TerminalSessionStateTest {
@@ -20,11 +21,11 @@ class TerminalSessionStateTest {
             currentDirectory = "/A.E.G.I.S/personal",
             output = "old output"
         )
-        val english = original.clearOutput("A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\\n")
-        val indonesian = original.clearOutput("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\\n")
+        val english = original.clearOutput("A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\n")
+        val indonesian = original.clearOutput("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n")
 
-        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\\n", english.output)
-        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\\n", indonesian.output)
+        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\n", english.output)
+        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n", indonesian.output)
         assertEquals("ls", english.command)
         assertEquals("/A.E.G.I.S/personal", english.currentDirectory)
     }
