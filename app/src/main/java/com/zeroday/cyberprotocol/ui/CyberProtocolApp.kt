@@ -926,6 +926,7 @@ private fun CyberProtocolGameContentBody(
                 !practiceSubmitting,
             busy = terminalSession.busy || practiceSubmitting,
             clearance = currentGameState.clearance,
+            selectedLanguage = selectedLanguage,
             onSelectMission = { id -> practiceMissionId = id },
             onBackToList = {
                 practiceMissionId = null
@@ -936,7 +937,7 @@ private fun CyberProtocolGameContentBody(
                 if (it.text.length <= 12_000) {
                     practiceCode = it
                     practiceLastSuccessfulRunSource = null
-                    practiceFeedback = "PERUBAHAN BELUM DISIMPAN"
+                    practiceFeedback = localizedUiText(selectedLanguage, "UNSAVED CHANGES", "PERUBAHAN BELUM DISIMPAN")
                 }
             },
             onSave = {
@@ -950,9 +951,9 @@ private fun CyberProtocolGameContentBody(
                             practiceCode.text,
                             "practice_draft:" + mission.id
                         )
-                        practiceFeedback = "DRAF LATIHAN TERSIMPAN"
+                        practiceFeedback = localizedUiText(selectedLanguage, "TRAINING DRAFT SAVED", "DRAF LATIHAN TERSIMPAN")
                     } else {
-                        practiceFeedback = "DRAF TIDAK DAPAT DISIMPAN KE WORKSPACE."
+                        practiceFeedback = localizedUiText(selectedLanguage, "DRAFT COULD NOT BE SAVED TO THE WORKSPACE.", "DRAF TIDAK DAPAT DISIMPAN KE WORKSPACE.")
                     }
                 }
             },
