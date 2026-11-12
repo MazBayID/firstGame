@@ -37,6 +37,7 @@ internal object MessengerDialogue {
             "Aku tahu pertanyaan itu akan muncul. Untuk sekarang, anggap saja ada alasan yang belum bisa kubagikan lewat kanal ini. Tunjukkan dulu bagaimana kamu menghadapi hal yang belum kamu ketahui."
         else ->
             "Aku mengerti. Periksa briefing dan bukti yang tersedia, lalu kita bahas hasilnya bersama. Jangan menyimpulkan sesuatu sebelum datanya mendukung."
+        }
     }
 
     fun nexusResponse(
