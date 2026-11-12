@@ -364,3 +364,9 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Hidden summaries are excluded from content search in Analysis and Database. Titles and provenance metadata remain visible for navigation.
 - The original source preview in Browser remains available; the player explicitly confirms inspection to update shared discovery progress.
 - Regression coverage verifies that hidden summary text cannot be queried to reveal a case record before discovery.
+
+
+## Terminal source inspection — 2026-11-12
+
+- Preserve the Terminal's successful canonical-source `cat` integration while hiding undiscovered source summaries in the other intelligence apps.
+- Source visibility restrictions do not remove the Terminal discovery path. Discovery still updates the same CaseProgress consumed by Operations, Analysis, Browser, Database, and Dossier.

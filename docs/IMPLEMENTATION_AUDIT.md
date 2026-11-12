@@ -413,3 +413,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Search does not reveal hidden case summaries through matching results. Source metadata remains visible so players can identify where to investigate.
 - Browser source preview remains the deliberate discovery path and records inspection only after the player confirms it.
 - Added filter regression coverage for concealed source summaries.
+
+
+## Terminal source inspection integration — restored alongside source visibility guards
+
+- The virtual Terminal participates in RX-14 source inspection. Only a successful `cat` of an approved canonical source path with exact catalog content records the source as inspected.
+- The same shared case progression policy gates the discovery update. Failed reads, arbitrary output, and mission-sandbox reads cannot mark evidence discovered.
+- The helper is covered by unit tests for valid reads, failed output, and unrelated commands.
