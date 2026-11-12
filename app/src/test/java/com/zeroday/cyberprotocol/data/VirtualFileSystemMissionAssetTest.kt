@@ -127,6 +127,8 @@ class VirtualFileSystemMissionAssetTest {
         val unknownIndonesian = fileSystem.execute("unknown-command", cwd, language = GameLanguage.INDONESIAN).output
         assertTrue(unknownEnglish.startsWith("Unknown command:"))
         assertTrue(unknownIndonesian.startsWith("Perintah tidak dikenal:"))
+        assertEquals("(empty)", fileSystem.execute("ls", cwd, language = GameLanguage.ENGLISH).output)
+        assertEquals("(kosong)", fileSystem.execute("ls", cwd, language = GameLanguage.INDONESIAN).output)
 
         val mission = Campaign01Catalog.find("first_contact.signal")!!
         val workspace = fileSystem.openMissionWorkspace(mission)
@@ -137,6 +139,12 @@ class VirtualFileSystemMissionAssetTest {
             GameLanguage.ENGLISH
         ).output
         assertTrue(deniedEnglish.startsWith("Permission denied:"))
+        val deniedIndonesian = fileSystem.execute(
+            "rm message_fragment.txt", mission.workspaceDirectory,
+            mission.workspaceDirectory, mission.allowedFiles, mission.writableFiles,
+            GameLanguage.INDONESIAN
+        ).output
+        assertTrue(deniedIndonesian.startsWith("Akses ditolak:"))
     }
 
     @Test
