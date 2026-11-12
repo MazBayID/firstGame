@@ -3,6 +3,7 @@ package com.zeroday.cyberprotocol.domain.usecase
 import com.zeroday.cyberprotocol.core.model.*
 import com.zeroday.cyberprotocol.domain.repository.GameStateRepository
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
