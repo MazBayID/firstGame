@@ -152,7 +152,7 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: workspaceRoot, cwd, workspaceRoot)
                     ?: return TerminalResponse(terminalText(language, "Invalid path: access outside the virtual workspace is denied.", "Jalur tidak valid: akses keluar dari ruang kerja virtual ditolak."), cwd)
                 if (!directories.contains(target)) return TerminalResponse(terminalText(language, "Folder not found: $target", "Folder tidak ditemukan: $target"), cwd)
-                if (allowedFiles != null && target != workspaceRoot) return TerminalResponse("Mission workspace does not expose subdirectories.", cwd)
+                if (allowedFiles != null && target != workspaceRoot) return TerminalResponse(terminalText(language, "Mission workspace does not expose subdirectories.", "Ruang kerja misi tidak menyediakan subfolder."), cwd)
                 cwd = target
                 ""
             }
@@ -166,7 +166,7 @@ class VirtualFileSystem(context: Context) {
                         ?: return TerminalResponse(terminalText(language, "Evidence file is not available yet: ${sharedEvidenceAsset.path}", "File bukti belum tersedia: ${sharedEvidenceAsset.path}"), cwd)
                 } else {
                     val target = resolve(requestedPath, cwd, workspaceRoot)
-                        ?: return TerminalResponse("Usage: cat <file>", cwd)
+                        ?: return TerminalResponse(terminalText(language, "Usage: cat <file>", "Penggunaan: cat <file>"), cwd)
                     if (!canReadPath(target)) return TerminalResponse(terminalText(language, "Permission denied: file is outside this mission workspace.", "Akses ditolak: file berada di luar ruang kerja misi ini."), cwd)
                     files[target] ?: return TerminalResponse(terminalText(language, "File not found: $target", "File tidak ditemukan: $target"), cwd)
                 }
@@ -174,7 +174,7 @@ class VirtualFileSystem(context: Context) {
             "mkdir" -> {
                 if (allowedFiles != null) return TerminalResponse(terminalText(language, "Folder creation is disabled in mission workspaces.", "Pembuatan folder dinonaktifkan di ruang kerja misi."), cwd)
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
-                    ?: return TerminalResponse("Usage: mkdir <name>", cwd)
+                    ?: return TerminalResponse(terminalText(language, "Usage: mkdir <name>", "Penggunaan: mkdir <name>"), cwd)
                 if (directories.contains(target) || files.containsKey(target)) return TerminalResponse(terminalText(language, "Already exists: $target", "Sudah ada: $target"), cwd)
                 if (!directories.contains(parent(target))) return TerminalResponse(terminalText(language, "Parent directory does not exist.", "Folder induk tidak ditemukan."), cwd)
                 directories.add(target)
@@ -185,8 +185,8 @@ class VirtualFileSystem(context: Context) {
                 val target = resolve(rest.firstOrNull() ?: "", cwd, workspaceRoot)
                     ?: return TerminalResponse(terminalText(language, "Usage: touch <file>", "Penggunaan: touch <file>"), cwd)
                 if (directories.contains(target)) return TerminalResponse(terminalText(language, "A directory already exists at that path.", "Folder sudah ada pada jalur tersebut."), cwd)
-                if (!canWritePath(target, 0)) return TerminalResponse("Permission denied: file is read-only or outside its allowlist.", cwd)
-                if (!directories.contains(parent(target))) return TerminalResponse("Parent directory does not exist.", cwd)
+                if (!canWritePath(target, 0)) return TerminalResponse(terminalText(language, "Permission denied: file is read-only or outside its allowlist.", "Akses ditolak: file hanya-baca atau di luar daftar izin."), cwd)
+                if (!directories.contains(parent(target))) return TerminalResponse(terminalText(language, "Parent directory does not exist.", "Folder induk tidak ditemukan."), cwd)
                 if (!files.containsKey(target)) files[target] = ""
                 persist()
                 ""
@@ -204,10 +204,10 @@ class VirtualFileSystem(context: Context) {
                 val script = rest.firstOrNull() ?: return TerminalResponse(terminalText(language, "Usage: python <file.py>", "Penggunaan: python <file.py>"), cwd)
                 val target = resolve(script, cwd, workspaceRoot) ?: return TerminalResponse(terminalText(language, "Invalid script path.", "Jalur skrip tidak valid."), cwd)
                 if (!canReadPath(target)) return TerminalResponse(terminalText(language, "Permission denied: script is outside this workspace.", "Akses ditolak: skrip berada di luar ruang kerja ini."), cwd)
-                if (!files.containsKey(target)) return TerminalResponse("File not found: $script", cwd)
+                if (!files.containsKey(target)) return TerminalResponse(terminalText(language, "File not found: $script", "File tidak ditemukan: $script"), cwd)
                 "PYTHON_LAUNCH:" + script
             }
-            else -> if (language == GameLanguage.ENGLISH) "Unknown command: $name\nType 'help' to view the command guide." else "Perintah tidak dikenal: $name\\nKetik 'help' untuk melihat daftar perintah."
+            else -> terminalText(language, "Unknown command: $name\nType 'help' to view the command guide.", "Perintah tidak dikenal: $name\nKetik 'help' untuk melihat daftar perintah.")
         }
         return TerminalResponse(output, cwd)
     }
