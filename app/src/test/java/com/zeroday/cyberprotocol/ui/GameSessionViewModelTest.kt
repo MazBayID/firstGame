@@ -85,6 +85,25 @@ class GameSessionViewModelTest {
     }
 
     @Test
+    fun optionalPracticeCompletionDoesNotAdvanceStoryOrCaseProgress() {
+        val repository = MemoryRepository(GameState(storyBeat = 10, clearance = 1))
+        val viewModel = GameSessionViewModel(repository)
+
+        assertTrue(viewModel.completeMission(
+            "first_contact.audit",
+            rewardXp = 45,
+            requiredClearance = 0,
+            competencyTrack = com.zeroday.cyberprotocol.core.model.CompetencyTrack.TECHNICAL
+        ))
+
+        val state = repository.load()
+        assertEquals(10, state.storyBeat)
+        assertTrue(state.caseProgress.isEmpty())
+        assertEquals(45, state.experience)
+        assertEquals(45, state.technicalCompetencyXp)
+    }
+
+    @Test
     fun completedRx14CaseAwardsChapterRewardExactlyOnce() {
         val definition = Campaign01CaseCatalog.rx14
         val completedProgress = CaseProgress(

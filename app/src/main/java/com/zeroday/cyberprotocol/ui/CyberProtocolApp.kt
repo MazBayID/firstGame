@@ -215,7 +215,7 @@ private fun CyberProtocolGameContentBody(
     var practiceOutput by rememberSaveable { mutableStateOf("KELUARAN AKAN MUNCUL DI SINI") }
     var practiceFeedback by rememberSaveable { mutableStateOf("") }
     var practiceHintLevel by rememberSaveable { mutableIntStateOf(0) }
-    var practiceSubmitting by rememberSaveable { mutableStateOf(false) }
+    var practiceSubmitting by remember { mutableStateOf(false) }
 
     val practiceMission = practiceMissionId?.let(Campaign01Catalog::find)
         ?.takeIf { it.id in Campaign01Catalog.retiredLegacyStoryMissionIds }
