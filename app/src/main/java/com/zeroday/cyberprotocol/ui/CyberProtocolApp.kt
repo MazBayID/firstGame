@@ -1857,10 +1857,10 @@ private fun MessengerScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Text("LAMPIRAN INVESTIGASI  /  ${asset.title}", color = Color.White,
+                                        Text(localizedUiText(selectedLanguage, "INVESTIGATION ATTACHMENT  /  ${asset.title}", "LAMPIRAN INVESTIGASI  /  ${asset.title}"), color = Color.White,
                                             fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                         Text(asset.path, color = Color(0xFFB9D1C6), fontSize = 9.sp)
-                                        Text("Sumber asli tersimpan di arsip virtual A.E.G.I.S.", color = Color(0xFF83C7D0), fontSize = 10.sp)
+                                        Text(localizedUiText(selectedLanguage, "Original source stored in the A.E.G.I.S. virtual archive.", "Sumber asli tersimpan di arsip virtual A.E.G.I.S."), color = Color(0xFF83C7D0), fontSize = 10.sp)
                                     }
                                 }
                             }
@@ -1874,9 +1874,9 @@ private fun MessengerScreen(
                             Surface(
                                 onClick = {
                                     attachmentFeedback = if (onDownloadMissionFile(missionAttachment)) {
-                                        "$missionAttachment tersimpan di ruang kerja misi."
+                                        localizedUiText(selectedLanguage, "$missionAttachment saved to the mission workspace.", "$missionAttachment tersimpan di ruang kerja misi.")
                                     } else {
-                                        "Lampiran belum dapat diunduh. Pastikan misi yang sesuai masih aktif."
+                                        localizedUiText(selectedLanguage, "The attachment could not be downloaded. Make sure the matching mission is active.", "Lampiran belum dapat diunduh. Pastikan misi yang sesuai masih aktif.")
                                     }
                                 },
                                 color = Color(0xFF202E3B),
@@ -1885,10 +1885,10 @@ private fun MessengerScreen(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text("LAMPIRAN  /  $missionAttachment", color = Color.White,
+                                    Text(localizedUiText(selectedLanguage, "ATTACHMENT  /  $missionAttachment", "LAMPIRAN  /  $missionAttachment"), color = Color.White,
                                         fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                                    Text("Fragmen pesan A.E.G.I.S. · hanya baca", color = Color(0xFFB9D1C6), fontSize = 10.sp)
-                                    Text("Ketuk untuk menyimpan ke ruang kerja misi", color = Color(0xFF83C7D0), fontSize = 10.sp)
+                                    Text(localizedUiText(selectedLanguage, "A.E.G.I.S. message fragment · read only", "Fragmen pesan A.E.G.I.S. · hanya baca"), color = Color(0xFFB9D1C6), fontSize = 10.sp)
+                                    Text(localizedUiText(selectedLanguage, "Tap to save to the mission workspace", "Ketuk untuk menyimpan ke ruang kerja misi"), color = Color(0xFF83C7D0), fontSize = 10.sp)
                                 }
                             }
                             if (attachmentFeedback.isNotBlank()) {
