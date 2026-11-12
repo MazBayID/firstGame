@@ -59,6 +59,16 @@ class EvidenceAnalysisFilterTest {
     }
 
     @Test
+    fun concealedCaseEvidenceDoesNotLeakThroughSummarySearch() {
+        assertEquals(emptyList<String>(), EvidenceAnalysisFilter.filter(
+            records, null, "two timestamps", concealedRecordIds = setOf("older")
+        ).map { it.id })
+        assertEquals(listOf("older"), EvidenceAnalysisFilter.filter(
+            records, null, "receipt", concealedRecordIds = setOf("older")
+        ).map { it.id })
+    }
+
+    @Test
     fun statusAndSearchFiltersCanBeCombined() {
         assertEquals(emptyList<String>(),
             EvidenceAnalysisFilter.filter(records, EvidenceStatus.CONFIRMED, "timestamp").map { it.id })

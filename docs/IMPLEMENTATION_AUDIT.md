@@ -406,8 +406,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - No duplicate or screen-local case state is introduced. Source tests and manual navigation verification remain pending.
 
 
-## Terminal source inspection integration
+## Case evidence visibility and investigation integrity
 
-- The virtual Terminal now participates in the RX-14 source workflow. Only a successful `cat` of an approved canonical source path with the exact catalog content is treated as deliberate inspection.
-- The same `CasePhaseEvaluator.canDiscoverEvidence` policy gates the resulting discovery update. Mission workspaces and failed reads cannot mark case evidence as discovered.
-- The matching helper is unit-tested against valid reads, failed output, and unrelated commands.
+- RX-14 source summaries remain concealed in Analysis, Database, and Browser reports until the corresponding original source is explicitly inspected and recorded.
+- The Analysis workspace no longer exposes source content before discovery; its per-source analysis action remains gated by shared CaseProgress.
+- Search does not reveal hidden case summaries through matching results. Source metadata remains visible so players can identify where to investigate.
+- Browser source preview remains the deliberate discovery path and records inspection only after the player confirms it.
+- Added filter regression coverage for concealed source summaries.

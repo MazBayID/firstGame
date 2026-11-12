@@ -42,10 +42,11 @@ internal fun IntelligenceDatabaseScreen(
             it.objectives.any { objective -> objective.title.contains(query, true) ||
                 objective.description.contains(query, true) }
     }
-    val evidence = gameState.evidence.filter {
-        query.isBlank() || it.title.contains(query, true) ||
-            it.summary.contains(query, true) || it.source.contains(query, true) ||
-            it.missionId.contains(query, true)
+    val concealedCaseEvidenceIds = caseDefinition.requiredEvidenceIds - caseProgress.discoveredEvidenceIds
+    val evidence = gameState.evidence.filter { record ->
+        query.isBlank() || record.title.contains(query, true) ||
+            (record.id !in concealedCaseEvidenceIds && record.summary.contains(query, true)) ||
+            record.source.contains(query, true) || record.missionId.contains(query, true)
     }.sortedByDescending { it.recordedAtEpochMillis }
     val selectedMission = selectedMissionId?.let(Campaign01Catalog::find)
     val selectedEvidence = evidence.firstOrNull { it.id == selectedEvidenceId }
@@ -168,13 +169,21 @@ internal fun IntelligenceDatabaseScreen(
                                 fontWeight = FontWeight.Bold)
                         }
                         Text(record.id, color = Color(0xFF8AA8AE), fontSize = 8.sp)
-                        Text(record.summary, color = Color(0xFF9AB4B8), fontSize = 10.sp, maxLines = 2)
+                        Text(
+                            if (record.id in concealedCaseEvidenceIds) "Isi sumber belum dibuka."
+                            else record.summary,
+                            color = Color(0xFF9AB4B8), fontSize = 10.sp, maxLines = 2
+                        )
                     }
                 }
             }
             selectedEvidence?.let { record ->
                 DatabaseDetailPanel("EVIDENCE RECORD", record.title) {
-                    Text(record.summary, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
+                    Text(
+                        if (record.id in concealedCaseEvidenceIds) "Isi sumber terkunci sampai catatan asli diperiksa."
+                        else record.summary,
+                        color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
+                    )
                     DatabaseValue("STATUS", evidenceLabel(record.status))
                     DatabaseValue("SOURCE", record.source)
                     DatabaseValue("PROVENANCE", record.provenance.origin.name + " / " + record.provenance.sourceLabel)

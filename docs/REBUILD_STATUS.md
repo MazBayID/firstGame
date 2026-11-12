@@ -358,9 +358,9 @@ Only after this journey is complete should we schedule a release-candidate batch
 - Source workflow verification is pending.
 
 
-## Terminal source inspection integration
+## RX-14 source visibility guardrails — 2026-11-12
 
-- A successful `cat` of an exact canonical RX-14 source path in the personal virtual workspace records that source as inspected, subject to the same case-phase policy used by Messenger and Browser.
-- Failed reads, arbitrary file output, and mission-sandbox reads do not create case discoveries.
-- The source record is matched against both its canonical path and exact immutable content before the shared case state is updated.
-- Unit tests cover successful source reads and reject unrelated commands or failed output.
+- Conceal undiscovered RX-14 source summaries across Analysis, Database, and Browser report surfaces to preserve the investigation gate.
+- Hidden summaries are excluded from content search in Analysis and Database. Titles and provenance metadata remain visible for navigation.
+- The original source preview in Browser remains available; the player explicitly confirms inspection to update shared discovery progress.
+- Regression coverage verifies that hidden summary text cannot be queried to reveal a case record before discovery.

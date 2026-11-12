@@ -30,7 +30,8 @@ internal object EvidenceAnalysisFilter {
     fun filter(
         records: List<EvidenceRecord>,
         status: EvidenceStatus?,
-        query: String
+        query: String,
+        concealedRecordIds: Set<String> = emptySet()
     ): List<EvidenceRecord> {
         val normalizedQuery = query.trim().lowercase()
         return records.asSequence()
@@ -38,7 +39,7 @@ internal object EvidenceAnalysisFilter {
             .filter { record ->
                 normalizedQuery.isEmpty() ||
                     record.title.lowercase().contains(normalizedQuery) ||
-                    record.summary.lowercase().contains(normalizedQuery) ||
+                    (record.id !in concealedRecordIds && record.summary.lowercase().contains(normalizedQuery)) ||
                     record.source.lowercase().contains(normalizedQuery) ||
                     record.missionId.lowercase().contains(normalizedQuery)
             }
@@ -71,7 +72,10 @@ internal fun AnalysisScreen(
         "RETRACTED" -> EvidenceStatus.RETRACTED
         else -> null
     }
-    val filtered = EvidenceAnalysisFilter.filter(gameState.evidence, status, query)
+    val concealedCaseEvidenceIds = caseDefinition.requiredEvidenceIds - caseProgress.discoveredEvidenceIds
+    val filtered = EvidenceAnalysisFilter.filter(
+        gameState.evidence, status, query, concealedCaseEvidenceIds
+    )
     val casePhase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
     val caseConclusion = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
     val caseRecords = caseDefinition.requiredEvidenceIds.mapNotNull { id ->
@@ -186,14 +190,18 @@ internal fun AnalysisScreen(
             }
         } else {
             filtered.forEach { record ->
-                EvidenceRecordCard(record, onReview = {
-                    val targets = EvidenceReviewPolicy.allowedTransitions(record.status)
-                    if (targets.isNotEmpty()) {
-                        reviewTarget = record
-                        reviewStatus = targets.first()
-                        reviewReason = ""
+                EvidenceRecordCard(
+                    record = record,
+                    concealed = record.id in concealedCaseEvidenceIds,
+                    onReview = {
+                        val targets = EvidenceReviewPolicy.allowedTransitions(record.status)
+                        if (targets.isNotEmpty()) {
+                            reviewTarget = record
+                            reviewStatus = targets.first()
+                            reviewReason = ""
+                        }
                     }
-                })
+                )
             }
         }
 
@@ -243,7 +251,7 @@ internal fun AnalysisScreen(
 }
 
 @Composable
-private fun EvidenceRecordCard(record: EvidenceRecord, onReview: () -> Unit) {
+private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, onReview: () -> Unit) {
     val (label, tint) = when (record.status) {
         EvidenceStatus.CONFIRMED -> "TERKONFIRMASI" to Color(0xFF8CD5AC)
         EvidenceStatus.CORROBORATED -> "DIKOROBORASI" to Color(0xFF9BC7E8)
@@ -265,7 +273,11 @@ private fun EvidenceRecordCard(record: EvidenceRecord, onReview: () -> Unit) {
                 Text(record.id, color = Color(0xFF71858B), fontSize = 8.sp)
             }
             Text(record.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Text(record.summary, color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
+            Text(
+                if (concealed) "ISI SUMBER TERSEMBUNYI — periksa sumber asli melalui Operasi atau Browser."
+                else record.summary,
+                color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
+            )
             HorizontalDivider(color = Color(0xFF293A40))
             Text("SUMBER  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp,
                 lineHeight = 14.sp)
@@ -317,7 +329,10 @@ private fun CaseAnalysisWorkspace(
                         Text(record.title, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         Text(record.provenance.sourceLabel + "  /  " + record.provenance.origin.name,
                             color = Color(0xFF83C7D0), fontSize = 8.sp)
-                        Text(record.summary, color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp)
+                        Text(
+                            if (discovered) record.summary else "Isi sumber terkunci sampai catatan asli diperiksa.",
+                            color = Color(0xFFB7C6CB), fontSize = 10.sp, lineHeight = 15.sp
+                        )
                         Text(when {
                             analyzed -> "ANALISIS TERCATAT"
                             discovered -> "SIAP DIANALISIS"

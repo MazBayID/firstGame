@@ -39,6 +39,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zeroday.cyberprotocol.core.model.CaseDefinition
+import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.EvidenceRecord
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.core.model.MissionDefinition
@@ -60,6 +62,8 @@ internal fun AegisBrowserScreen(
     mission: MissionDefinition?,
     gameState: GameState,
     evidence: List<EvidenceRecord>,
+    caseDefinition: CaseDefinition,
+    caseProgress: CaseProgress,
     downloadedFiles: Set<String>,
     onReadEvidenceAsset: (String) -> String?,
     canRecordEvidence: (String) -> Boolean,
@@ -219,8 +223,14 @@ internal fun AegisBrowserScreen(
                         Text("Belum ada laporan bukti yang tercatat.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
                         evidence.sortedByDescending { it.recordedAtEpochMillis }.forEach { record ->
+                            val concealed = record.id in caseDefinition.requiredEvidenceIds &&
+                                record.id !in caseProgress.discoveredEvidenceIds
                             Text(record.title, color = Color.White, fontWeight = FontWeight.Bold)
-                            Text(record.summary, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                            Text(
+                                if (concealed) "Isi sumber belum dibuka. Gunakan tombol sumber asli untuk memeriksanya."
+                                else record.summary,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp
+                            )
                             Text("${record.status.name}  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp)
                             record.provenance.sourceAssetId?.let { assetId ->
                                 Text("SHARED SOURCE  /  $assetId", color = Color(0xFF9AB4B8), fontSize = 8.sp)
