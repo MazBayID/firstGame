@@ -15,15 +15,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zeroday.cyberprotocol.core.model.CaseDefinition
+import com.zeroday.cyberprotocol.core.model.CasePhaseEvaluator
+import com.zeroday.cyberprotocol.core.model.CaseProgress
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 import com.zeroday.cyberprotocol.domain.usecase.ProgressionRules
 
 @Composable
-internal fun PersonnelDossierScreen(gameState: GameState, onBack: () -> Unit) {
+internal fun PersonnelDossierScreen(
+    gameState: GameState,
+    caseDefinition: CaseDefinition,
+    caseProgress: CaseProgress,
+    onBack: () -> Unit
+) {
     val completed = Campaign01Catalog.missions.filter { it.id in gameState.completedMissionIds }
     val nextRank = ProgressionRules.nextRankThreshold(gameState.experience)
     val storyProgress = (gameState.storyBeat - 2).coerceIn(0, 14)
+    val casePhase = CasePhaseEvaluator.phase(caseDefinition, caseProgress)
+    val analysisConclusion = caseDefinition.analysisOptions.firstOrNull { it.id == caseProgress.analysisConclusionId }
+    val caseDecision = caseDefinition.decisionOptions.firstOrNull { it.id == caseProgress.selectedDecisionId }
 
     Column(
         Modifier.fillMaxSize()
@@ -78,6 +89,7 @@ internal fun PersonnelDossierScreen(gameState: GameState, onBack: () -> Unit) {
                 DossierValue("KAMPANYE", "FIRST CONTACT  /  $storyProgress OF 14 BEATS")
                 DossierValue("MISI TERVERIFIKASI", "${completed.size} OF ${Campaign01Catalog.missions.size}")
                 DossierValue("REKAMAN BUKTI", gameState.evidence.size.toString())
+                DossierValue("KASUS RX-14", casePhase.name.replace('_', ' '))
                 if (nextRank != null) {
                     val currentFloor = ProgressionRules.rankThreshold(gameState.rank)
                     val remaining = (nextRank - gameState.experience).coerceAtLeast(0)
@@ -114,6 +126,26 @@ internal fun PersonnelDossierScreen(gameState: GameState, onBack: () -> Unit) {
                     Text("LULUS", color = Color(0xFF8CD5AC), fontSize = 8.sp,
                         fontWeight = FontWeight.Bold)
                 }
+            }
+        }
+        Text("RIWAYAT KASUS", color = Color(0xFF83C7D0), fontSize = 9.sp,
+            letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
+        Surface(
+            color = Color(0xFF111B22), shape = RoundedCornerShape(8.dp),
+            border = BorderStroke(1.dp, Color(0xFF2B4149)), modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(caseDefinition.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                DossierValue("STATUS", casePhase.name.replace('_', ' '))
+                DossierValue("SUMBER DIPERIKSA", "${caseProgress.discoveredEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                DossierValue("SUMBER DIANALISIS", "${caseProgress.analyzedEvidenceIds.intersect(caseDefinition.requiredEvidenceIds).size} / ${caseDefinition.requiredEvidenceIds.size}")
+                Text("KESIMPULAN", color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                DossierNote(analysisConclusion?.title ?: "Belum ada kesimpulan tersimpan.")
+                DossierValue("KEPUTUSAN", caseDecision?.title ?: "Belum dipilih")
+                Text("ALASAN KEPUTUSAN", color = Color(0xFF83C7D0), fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                DossierNote(caseProgress.decisionRationale.ifBlank { "Belum ada alasan tersimpan." })
+                DossierValue("DEBRIEF", if (caseProgress.debriefViewed) "SELESAI" else "BELUM SELESAI")
+                DossierValue("REWARD", if (caseDefinition.id in gameState.completedMissionIds) "+100 XP" else "BELUM DITERIMA")
             }
         }
         DossierNote("Berkas ini merupakan catatan lokal simulasi A.E.G.I.S. Identitas pribadi pemain tidak dikumpulkan atau dikirim ke server.")
