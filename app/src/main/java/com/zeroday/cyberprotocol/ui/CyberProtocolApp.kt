@@ -833,6 +833,7 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.BROWSER -> AegisBrowserScreen(
             authenticated = browserSession.authenticated,
+            selectedLanguage = selectedLanguage,
             page = browserSession.page,
             mission = activeMission,
             gameState = currentGameState,
@@ -881,6 +882,7 @@ private fun CyberProtocolGameContentBody(
         )
         GameScreen.DATABASE -> IntelligenceDatabaseScreen(
             gameState = currentGameState,
+            selectedLanguage = selectedLanguage,
             caseDefinition = Campaign01CaseCatalog.rx14,
             caseProgress = currentGameState.caseProgress[Campaign01CaseCatalog.RX14_CASE_ID]
                 ?: CaseProgress(Campaign01CaseCatalog.RX14_CASE_ID),
