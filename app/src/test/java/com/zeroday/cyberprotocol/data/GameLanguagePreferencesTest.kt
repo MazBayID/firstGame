@@ -19,7 +19,7 @@ class GameLanguagePreferencesTest {
     }
 
     @Test fun languageChoicePersistsOutsideCampaignPreferences() {
-        val context = RuntimeEnvironment.getApplication<Context>()
+        val context = RuntimeEnvironment.getApplication() as Context
         val campaign = context.getSharedPreferences("cp_game_state_v1", Context.MODE_PRIVATE)
         campaign.edit().putString("snapshot", "campaign-save").commit()
         GameLanguagePreferences.save(context, GameLanguage.INDONESIAN)
