@@ -511,3 +511,10 @@ The player has explicitly directed that complete gameplay/content/UI integration
 - Continue reviewing player-facing clarity, responsive layouts, settings, and app/session-state boundaries.
 - Perform fresh-install, update, interruption/resume, and save-preservation tests on representative physical Android devices.
 - Do not claim v1.0 or production readiness until the complete campaign and device acceptance gates pass. No later case or culprit is approved by this refresh.
+
+
+## Archive confidentiality and release cadence — 2026-11-12
+
+- The searchable Archives surface now applies the same undiscovered RX-14 evidence-summary boundary as Analysis and Database. Hidden summaries cannot be found through search or read in archive cards/details; source labels and record identifiers remain available for investigation navigation.
+- Regression tests cover both English and Indonesian archive summaries and confirm that a known record title remains searchable without leaking its concealed summary.
+- Debug Preview APK packaging is now manual-dispatch only. Ordinary pushes run source tests and do not create an APK for every incremental commit, matching the integrated-development strategy. Dispatch a preview only when a meaningful Android review checkpoint is ready.

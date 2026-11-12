@@ -26,6 +26,33 @@ class ArchiveQueryPolicyTest {
     }
 
     @Test
+    fun undiscoveredCaseEvidenceSummaryCannotLeakThroughArchiveSearchOrDetails() {
+        val hidden = EvidenceRecord(
+            id = "rx14_hidden",
+            title = "RX-14 receipt",
+            summary = "The two records differ by four seconds.",
+            source = "A.E.G.I.S. / receipt metadata",
+            missionId = "first_contact.rx14",
+            recordedAtEpochMillis = 20L
+        )
+        val concealed = setOf(hidden.id)
+
+        assertEquals(emptyList<String>(), ArchiveQueryPolicy.evidence(
+            listOf(hidden), "four seconds", GameLanguage.ENGLISH, concealed
+        ).map { it.id })
+        assertEquals(listOf(hidden.id), ArchiveQueryPolicy.evidence(
+            listOf(hidden), "RX-14", GameLanguage.ENGLISH, concealed
+        ).map { it.id })
+
+        val englishSummary = ArchiveQueryPolicy.evidenceSummary(hidden, concealed, GameLanguage.ENGLISH)
+        val indonesianSummary = ArchiveQueryPolicy.evidenceSummary(hidden, concealed, GameLanguage.INDONESIAN)
+        assertEquals("Source content has not been discovered yet.", englishSummary)
+        assertEquals("Isi sumber belum ditemukan.", indonesianSummary)
+        assertEquals(false, englishSummary.contains("four seconds"))
+        assertEquals(false, indonesianSummary.contains("empat detik"))
+    }
+
+    @Test
     fun evidenceArchiveSortsNewestFirstAndSearchesLocalizedEvidenceMetadata() {
         val missionRecord = EvidenceRecord(
             id = "evidence_first_contact.signal",

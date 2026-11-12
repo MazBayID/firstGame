@@ -39,14 +39,27 @@ internal object ArchiveQueryPolicy {
     fun evidence(
         records: List<com.zeroday.cyberprotocol.core.model.EvidenceRecord>,
         query: String,
-        language: GameLanguage
+        language: GameLanguage,
+        concealedRecordIds: Set<String> = emptySet()
     ) = records.filter { record ->
         query.isBlank() ||
             CaseLocalizedContent.evidenceTitle(record, language).contains(query, true) ||
-            CaseLocalizedContent.evidenceSummary(record, language).contains(query, true) ||
+            (record.id !in concealedRecordIds &&
+                CaseLocalizedContent.evidenceSummary(record, language).contains(query, true)) ||
             CaseLocalizedContent.evidenceSource(record, language).contains(query, true) ||
             record.id.contains(query, true) || record.missionId.contains(query, true)
     }.sortedByDescending { it.recordedAtEpochMillis }
+
+    fun evidenceSummary(
+        record: com.zeroday.cyberprotocol.core.model.EvidenceRecord,
+        concealedRecordIds: Set<String>,
+        language: GameLanguage
+    ): String = if (record.id in concealedRecordIds) {
+        archiveText(language, "Source content has not been discovered yet.",
+            "Isi sumber belum ditemukan.")
+    } else {
+        CaseLocalizedContent.evidenceSummary(record, language)
+    }
 }
 
 @Composable
@@ -65,7 +78,10 @@ internal fun ArchivesScreen(
     val completedMissions = ArchiveQueryPolicy.completedMissions(
         gameState.completedMissionIds, query, selectedLanguage
     )
-    val archivedEvidence = ArchiveQueryPolicy.evidence(gameState.evidence, query, selectedLanguage)
+    val concealedCaseEvidenceIds = caseDefinition.requiredEvidenceIds - caseProgress.discoveredEvidenceIds
+    val archivedEvidence = ArchiveQueryPolicy.evidence(
+        gameState.evidence, query, selectedLanguage, concealedCaseEvidenceIds
+    )
     val selectedMission = selectedMissionId?.let(Campaign01Catalog::find)
         ?.takeIf { it.id in gameState.completedMissionIds }
     val selectedEvidence = archivedEvidence.firstOrNull { it.id == selectedEvidenceId }
@@ -214,7 +230,7 @@ internal fun ArchivesScreen(
                         title = CaseLocalizedContent.evidenceTitle(record, selectedLanguage),
                         metadata = record.id,
                         status = localizedEvidenceStatus(record.status, selectedLanguage),
-                        summary = CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
+                        summary = ArchiveQueryPolicy.evidenceSummary(record, concealedCaseEvidenceIds, selectedLanguage),
                         selected = selectedEvidenceId == record.id,
                         onClick = {
                             selectedEvidenceId = if (selectedEvidenceId == record.id) null else record.id
@@ -226,7 +242,7 @@ internal fun ArchivesScreen(
                         title = CaseLocalizedContent.evidenceTitle(record, selectedLanguage),
                         subtitle = archiveText(selectedLanguage, "EVIDENCE RECORD", "CATATAN BUKTI")
                     ) {
-                        Text(CaseLocalizedContent.evidenceSummary(record, selectedLanguage),
+                        Text(ArchiveQueryPolicy.evidenceSummary(record, concealedCaseEvidenceIds, selectedLanguage),
                             color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp)
                         ArchiveValue(archiveText(selectedLanguage, "STATUS", "STATUS"),
                             localizedEvidenceStatus(record.status, selectedLanguage))
