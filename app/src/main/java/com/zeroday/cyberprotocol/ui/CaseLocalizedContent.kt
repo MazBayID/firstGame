@@ -7,6 +7,8 @@ import com.zeroday.cyberprotocol.core.model.GameLanguage
 import com.zeroday.cyberprotocol.core.model.MissionDefinition
 import com.zeroday.cyberprotocol.core.model.MissionObjective
 import com.zeroday.cyberprotocol.core.model.MissionHint
+import com.zeroday.cyberprotocol.core.model.EvidenceRecord
+import com.zeroday.cyberprotocol.data.Campaign01Catalog
 
 /**
  * Player-facing translations for authored First Contact case content.
@@ -216,6 +218,33 @@ internal object CaseLocalizedContent {
             "first_contact.validate_delta" to 2 -> "Use int() on both items before subtracting."
             "first_contact.validate_delta" to 3 -> "Store abs(int(receipt_seconds[1]) - int(receipt_seconds[0])) in difference."
             else -> hint.message
+        }
+    }
+
+    fun evidenceTitle(record: EvidenceRecord, language: GameLanguage): String {
+        if (language != GameLanguage.ENGLISH) return record.title
+        return when (record.id) {
+            "rx14_aegis_receipt" -> "A.E.G.I.S. Receipt Log — RX-14"
+            "rx14_archive_receipt" -> "Archive Receipt Log — RX-14"
+            "transmission_timestamp_discrepancy" -> "Transmission Receipt Timestamp Discrepancy"
+            else -> if (record.id.startsWith("evidence_")) {
+                Campaign01Catalog.find(record.missionId)?.let { missionTitle(it, language) } ?: record.title
+            } else record.title
+        }
+    }
+
+    fun evidenceSummary(record: EvidenceRecord, language: GameLanguage): String =
+        if (language == GameLanguage.ENGLISH && record.id == "transmission_timestamp_discrepancy") {
+            "Two internal systems recorded reference RX-14 at times four seconds apart. The difference is observable, but its cause is unknown."
+        } else record.summary
+
+    fun evidenceSource(record: EvidenceRecord, language: GameLanguage): String {
+        if (language != GameLanguage.ENGLISH) return record.source
+        return when (record.id) {
+            "rx14_aegis_receipt" -> "A.E.G.I.S. Intranet / Receipt Log"
+            "rx14_archive_receipt" -> "A.E.G.I.S. Archive / Receipt Log"
+            "transmission_timestamp_discrepancy" -> "A.E.G.I.S. / receipt metadata comparison"
+            else -> record.source
         }
     }
 
