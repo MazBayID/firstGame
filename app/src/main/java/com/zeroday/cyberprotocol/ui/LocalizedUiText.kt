@@ -32,6 +32,22 @@ internal fun localizedPhaseName(phase: CasePhase, language: GameLanguage): Strin
         CasePhase.COMPLETE -> localizedUiText(language, "COMPLETE", "SELESAI")
     }
 
+internal fun localizedEvidenceRelation(
+    relation: com.zeroday.cyberprotocol.core.model.EvidenceRelationType,
+    language: GameLanguage
+): String = when (relation) {
+    com.zeroday.cyberprotocol.core.model.EvidenceRelationType.SUPPORTS ->
+        localizedUiText(language, "SUPPORTS", "MENDUKUNG")
+    com.zeroday.cyberprotocol.core.model.EvidenceRelationType.CONTRADICTS ->
+        localizedUiText(language, "CONTRADICTS", "BERTENTANGAN")
+    com.zeroday.cyberprotocol.core.model.EvidenceRelationType.CORROBORATES ->
+        localizedUiText(language, "CORROBORATES", "MENGUATKAN")
+    com.zeroday.cyberprotocol.core.model.EvidenceRelationType.DERIVED_FROM ->
+        localizedUiText(language, "DERIVED FROM", "BERASAL DARI")
+    com.zeroday.cyberprotocol.core.model.EvidenceRelationType.DUPLICATES ->
+        localizedUiText(language, "DUPLICATES", "MENDUPLIKASI")
+}
+
 internal fun localizedRankName(rank: String, language: GameLanguage): String {
     val english = when (rank) {
         "CIVILIAN" -> "CIVILIAN"
