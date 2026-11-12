@@ -169,6 +169,11 @@ internal fun OperationsScreen(
             CasePhase.DEBRIEFING -> {
                 SectionLabel("05  /  DEBRIEFING")
                 InfoPanel("Keputusanmu telah dicatat. Tinjau kembali apa yang didukung sumber dan apa yang masih belum diketahui.")
+                analysisConclusion?.let {
+                    Text("KESIMPULAN ANALISIS", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Text(it.title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    InfoPanel(it.feedback)
+                }
                 decision?.let {
                     Text("KEPUTUSAN TERCATAT", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                     Text(it.title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -182,8 +187,12 @@ internal fun OperationsScreen(
             CasePhase.COMPLETE -> {
                 SectionLabel("CASE STATUS  /  COMPLETE")
                 InfoPanel("First Contact selesai. Laporan mempertahankan perbedaan antara fakta, dugaan, dan hal yang belum diketahui. Anomali RX-14 tetap terbuka untuk pemeriksaan jika bukti baru tersedia.")
+                Text("KESIMPULAN ANALISIS", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(analysisConclusion?.title ?: "Tidak ada kesimpulan tersimpan", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
                 Text("KEPUTUSAN AKHIR", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 Text(decision?.title ?: "Tidak ada keputusan tersimpan", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Text("ALASAN KEPUTUSAN", color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                InfoPanel(caseProgress.decisionRationale.ifBlank { "Tidak ada alasan yang tersimpan pada save lama." })
                 if (caseDefinition.id in gameState.completedMissionIds) {
                     Text(
                         "REWARD KASUS  /  +${com.zeroday.cyberprotocol.data.Campaign01CaseCatalog.RX14_COMPLETION_REWARD_XP} XP",
