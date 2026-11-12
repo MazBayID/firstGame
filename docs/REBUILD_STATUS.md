@@ -170,6 +170,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 - Replaced the text-only Personnel Dossier with a data-backed record showing recruitment/contact status, mentor and NEXUS access, campaign qualification, clearance, verified mission history, evidence count, and XP progress toward the next rank. The rank threshold calculation is now exposed by the progression domain rule and covered by tests.
 - Added unit tests for evidence ordering, status isolation, combined search/filter behavior, and provenance-field search.
 - Extracted terminal command, current-directory, output-buffer, and execution-busy state into a saveable `TerminalSessionState`; terminal output remains bounded to 24,000 characters, and an interrupted in-flight command restores as idle. Added unit tests for output bounds, clear behavior, workspace-state preservation, and save/restore behavior.
+- Grouped A.E.G.I.S. Browser authentication, current page, and return destination into a saveable `BrowserSessionState`; authentication remains persisted through the existing local preference store. Added regression tests for initial login/home routing, Messenger return context, and session restoration.
 - Added one canonical mission-to-story-checkpoint mapping in the campaign catalog and regression coverage for all eight mission destinations. Operations resumes through the existing story gate rather than independently unlocking or starting missions.
 
 
@@ -186,7 +187,7 @@ Integration PR: [#1 — Cyber Protocol full rebuild](https://github.com/MazBayID
 
 ### Current pipeline verification
 
-- **Verified:** CI run [#105](https://github.com/MazBayID/firstGame/actions/runs/43137098194) completed successfully on 2026-11-12 for commit `6fe9d6a92a89a5fb29034282211cc0d7d1dc3063`.
+- **Verified:** CI run [#113](https://github.com/MazBayID/firstGame/actions/runs/43139311310) completed successfully on 2026-11-12 for commit `09a87d471857aacb69aef415816f41adc21f0faf`. It includes the saveable Terminal session state and its regression tests.
 - Subsequent documentation and terminal-state refactor commits are newer than run #105; each new `main` commit is validated by the same release workflow, and the latest run must pass before its APK is considered a tested candidate.
 - The run passed Python runner tests and Release-variant Android unit tests, restored and validated the permanent signing keystore, built one signed Release APK, and passed package/version/ABI/signature validation.
 - The Android Emulator successfully installed and launched that exact APK; the app process remained alive for the smoke-test check.
