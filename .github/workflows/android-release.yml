@@ -13,7 +13,7 @@ on:
 
 concurrency:
   group: cyber-protocol-release-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -183,6 +183,9 @@ jobs:
           set -euo pipefail
           ACTUAL_SHA256=$(sha256sum "$APK" | awk '{print $1}')
           test "$ACTUAL_SHA256" = "$APK_SHA256"
+          mkdir -p release_apk
+          cp "$APK" release_apk/app-release.apk
+          test -s release_apk/app-release.apk
           printf '%s  %s\n' "$APK_SHA256" "app-release.apk" > app-release.apk.sha256
           echo "BUILD CLASS: FINAL" >> "$GITHUB_STEP_SUMMARY"
           echo "EMULATOR SMOKE TEST: PASSED — exact published APK" >> "$GITHUB_STEP_SUMMARY"
