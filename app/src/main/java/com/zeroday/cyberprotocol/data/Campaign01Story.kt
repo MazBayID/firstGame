@@ -12,7 +12,7 @@ object Campaign01StoryNavigationPolicy {
     }
 
     fun action(stage: Int, phase: CasePhase): StoryCaseAction = when (stage) {
-        10, 11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
+        11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
             StoryCaseAction.OPEN_OPERATIONS
         } else StoryCaseAction.CONTINUE
         12 -> when (phase) {
@@ -21,13 +21,23 @@ object Campaign01StoryNavigationPolicy {
             else -> StoryCaseAction.CONTINUE
         }
         13 -> when (phase) {
+            CasePhase.BRIEFING, CasePhase.INVESTIGATION -> StoryCaseAction.OPEN_OPERATIONS
+            CasePhase.ANALYSIS -> StoryCaseAction.OPEN_ANALYSIS
+            CasePhase.OPERATIONAL_DECISION, CasePhase.DEBRIEFING, CasePhase.COMPLETE ->
+                StoryCaseAction.CONTINUE
+        }
+        14 -> when (phase) {
             CasePhase.BRIEFING, CasePhase.INVESTIGATION, CasePhase.OPERATIONAL_DECISION ->
                 StoryCaseAction.OPEN_OPERATIONS
             CasePhase.ANALYSIS -> StoryCaseAction.OPEN_ANALYSIS
             CasePhase.DEBRIEFING, CasePhase.COMPLETE -> StoryCaseAction.CONTINUE
         }
-        14 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
-        15 -> if (phase == CasePhase.COMPLETE) StoryCaseAction.CONTINUE else StoryCaseAction.OPEN_OPERATIONS
+        15 -> when (phase) {
+            CasePhase.BRIEFING, CasePhase.INVESTIGATION, CasePhase.OPERATIONAL_DECISION,
+            CasePhase.DEBRIEFING -> StoryCaseAction.OPEN_OPERATIONS
+            CasePhase.ANALYSIS -> StoryCaseAction.OPEN_ANALYSIS
+            CasePhase.COMPLETE -> StoryCaseAction.CONTINUE
+        }
         else -> StoryCaseAction.CONTINUE
     }
 }

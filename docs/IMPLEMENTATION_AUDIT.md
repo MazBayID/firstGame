@@ -471,3 +471,11 @@ The player has explicitly directed that complete gameplay/content/UI integration
 
 - The two mandatory First Contact variable exercises now require the named variable itself to be passed to `print()`, not merely assigned while a hard-coded output is printed separately.
 - Regression tests include deliberate bypass attempts for both `signal` and `message`, alongside the intended valid submissions.
+
+
+## Story-stage numbering correction for RX-14 handoffs
+
+- Stage 10 is the authored Initial Report beat and must remain a narrative continuation; the first explicit source-inspection beat is stage 11 (RX-14 Reference Inspection).
+- Stage 13 is Timestamp Analysis; it must advance to the Operational Decision beat after the analysis phase is complete. Stage 14 then opens Operations for the actual decision.
+- Stage 14 and 15 now route to Analysis when a save is in the analysis phase, avoiding a phase/UI mismatch for restored saves.
+- Tests assert the authored stage-to-beat mapping and the relevant phase handoffs.

@@ -44,32 +44,36 @@ class Campaign01StoryTest {
 
     @Test
     fun rx14StoryPromptsRouteToTheSharedWorkspaceRequiredByCasePhase() {
-         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+         assertEquals(StoryCaseAction.CONTINUE,
             Campaign01StoryNavigationPolicy.action(10, CasePhase.INVESTIGATION))
         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
-            Campaign01StoryNavigationPolicy.action(10, CasePhase.BRIEFING))
-        assertEquals(StoryCaseAction.CONTINUE,
-            Campaign01StoryNavigationPolicy.action(10, CasePhase.ANALYSIS))
+            Campaign01StoryNavigationPolicy.action(11, CasePhase.BRIEFING))
         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
             Campaign01StoryNavigationPolicy.action(11, CasePhase.INVESTIGATION))
         assertEquals(StoryCaseAction.CONTINUE,
             Campaign01StoryNavigationPolicy.action(11, CasePhase.ANALYSIS))
+        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+            Campaign01StoryNavigationPolicy.action(12, CasePhase.INVESTIGATION))
         assertEquals(StoryCaseAction.OPEN_ANALYSIS,
             Campaign01StoryNavigationPolicy.action(12, CasePhase.ANALYSIS))
         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
             Campaign01StoryNavigationPolicy.action(13, CasePhase.INVESTIGATION))
         assertEquals(StoryCaseAction.OPEN_ANALYSIS,
             Campaign01StoryNavigationPolicy.action(13, CasePhase.ANALYSIS))
-        assertEquals(StoryCaseAction.OPEN_OPERATIONS,
+        assertEquals(StoryCaseAction.CONTINUE,
             Campaign01StoryNavigationPolicy.action(13, CasePhase.OPERATIONAL_DECISION))
         assertEquals(StoryCaseAction.CONTINUE,
             Campaign01StoryNavigationPolicy.action(13, CasePhase.DEBRIEFING))
         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
-            Campaign01StoryNavigationPolicy.action(14, CasePhase.DEBRIEFING))
+            Campaign01StoryNavigationPolicy.action(14, CasePhase.OPERATIONAL_DECISION))
+        assertEquals(StoryCaseAction.OPEN_ANALYSIS,
+            Campaign01StoryNavigationPolicy.action(14, CasePhase.ANALYSIS))
         assertEquals(StoryCaseAction.CONTINUE,
-            Campaign01StoryNavigationPolicy.action(14, CasePhase.COMPLETE))
+            Campaign01StoryNavigationPolicy.action(14, CasePhase.DEBRIEFING))
         assertEquals(StoryCaseAction.OPEN_OPERATIONS,
-            Campaign01StoryNavigationPolicy.action(15, CasePhase.INVESTIGATION))
+            Campaign01StoryNavigationPolicy.action(15, CasePhase.DEBRIEFING))
+        assertEquals(StoryCaseAction.OPEN_ANALYSIS,
+            Campaign01StoryNavigationPolicy.action(15, CasePhase.ANALYSIS))
         assertEquals(StoryCaseAction.CONTINUE,
             Campaign01StoryNavigationPolicy.action(15, CasePhase.COMPLETE))
         assertEquals(15, Campaign01StoryNavigationPolicy.safeStage(16, CasePhase.INVESTIGATION))

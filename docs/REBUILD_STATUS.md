@@ -421,3 +421,11 @@ Only after this journey is complete should we schedule a release-candidate batch
 
 - Strengthen the two required variable exercises: successful output must come from `print(signal)` or `print(message)`, not from a hard-coded print that bypasses the variable objective.
 - Add explicit negative regression cases for both bypass patterns. Python runner tests execute in the source workflow.
+
+
+## RX-14 story stage/beat alignment — 2026-11-12
+
+- Correct the stage numbering: stage 10 is Initial Report; stage 11 is RX-14 Reference Inspection; stage 12 is Two-Source Comparison; stage 13 is Timestamp Analysis; stage 14 is Operational Decision; stage 15 is Investigation Report.
+- Route source inspection from stage 11, analysis from stages 12–14, the actual operational decision from stage 14, and final debrief from stage 15.
+- Stage 13 advances to the decision prompt once analysis is complete; it must not open the decision workspace prematurely.
+- Add regression assertions for the full stage/phase route matrix.

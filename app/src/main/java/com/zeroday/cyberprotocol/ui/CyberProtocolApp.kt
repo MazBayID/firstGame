@@ -1291,10 +1291,13 @@ private fun StoryScreen(
                         stage == 11 && casePhase == CasePhase.ANALYSIS -> "LANJUTKAN KE PERBANDINGAN"
                         stage == 11 && casePhase != CasePhase.BRIEFING && casePhase != CasePhase.INVESTIGATION ->
                             "LANJUTKAN CERITA"
-                        stage in 12..13 && casePhase == CasePhase.OPERATIONAL_DECISION ->
+                        stage == 12 && casePhase == CasePhase.OPERATIONAL_DECISION ->
+                            "LANJUTKAN KE ANALISIS WAKTU"
+                        stage == 13 && casePhase == CasePhase.OPERATIONAL_DECISION ->
                             "LANJUTKAN KE KEPUTUSAN OPERASIONAL"
                         stage in 12..13 && (casePhase == CasePhase.DEBRIEFING || casePhase == CasePhase.COMPLETE) ->
                             "LANJUTKAN CERITA"
+                        stage == 14 && casePhase == CasePhase.DEBRIEFING -> "LANJUTKAN KE LAPORAN"
                         stage == 14 && caseComplete -> beat.completedButton ?: beat.button
                         else -> beat.button
                     }
