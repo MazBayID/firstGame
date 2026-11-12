@@ -23,6 +23,32 @@ import com.zeroday.cyberprotocol.core.model.GameLanguage
 import com.zeroday.cyberprotocol.core.model.GameState
 import com.zeroday.cyberprotocol.data.Campaign01Catalog
 
+internal object ArchiveQueryPolicy {
+    fun completedMissions(
+        completedMissionIds: Set<String>,
+        query: String,
+        language: GameLanguage
+    ) = Campaign01Catalog.missions.filter { mission ->
+        mission.id in completedMissionIds &&
+            (query.isBlank() ||
+                CaseLocalizedContent.missionTitle(mission, language).contains(query, true) ||
+                mission.id.contains(query, true) ||
+                CaseLocalizedContent.missionBriefing(mission, language).contains(query, true))
+    }
+
+    fun evidence(
+        records: List<com.zeroday.cyberprotocol.core.model.EvidenceRecord>,
+        query: String,
+        language: GameLanguage
+    ) = records.filter { record ->
+        query.isBlank() ||
+            CaseLocalizedContent.evidenceTitle(record, language).contains(query, true) ||
+            CaseLocalizedContent.evidenceSummary(record, language).contains(query, true) ||
+            CaseLocalizedContent.evidenceSource(record, language).contains(query, true) ||
+            record.id.contains(query, true) || record.missionId.contains(query, true)
+    }.sortedByDescending { it.recordedAtEpochMillis }
+}
+
 @Composable
 internal fun ArchivesScreen(
     gameState: GameState,
@@ -36,20 +62,10 @@ internal fun ArchivesScreen(
     var selectedMissionId by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedEvidenceId by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val completedMissions = Campaign01Catalog.missions.filter { mission ->
-        mission.id in gameState.completedMissionIds &&
-            (query.isBlank() ||
-                CaseLocalizedContent.missionTitle(mission, selectedLanguage).contains(query, true) ||
-                mission.id.contains(query, true) ||
-                CaseLocalizedContent.missionBriefing(mission, selectedLanguage).contains(query, true))
-    }
-    val archivedEvidence = gameState.evidence.filter { record ->
-        query.isBlank() ||
-            CaseLocalizedContent.evidenceTitle(record, selectedLanguage).contains(query, true) ||
-            CaseLocalizedContent.evidenceSummary(record, selectedLanguage).contains(query, true) ||
-            CaseLocalizedContent.evidenceSource(record, selectedLanguage).contains(query, true) ||
-            record.id.contains(query, true) || record.missionId.contains(query, true)
-    }.sortedByDescending { it.recordedAtEpochMillis }
+    val completedMissions = ArchiveQueryPolicy.completedMissions(
+        gameState.completedMissionIds, query, selectedLanguage
+    )
+    val archivedEvidence = ArchiveQueryPolicy.evidence(gameState.evidence, query, selectedLanguage)
     val selectedMission = selectedMissionId?.let(Campaign01Catalog::find)
         ?.takeIf { it.id in gameState.completedMissionIds }
     val selectedEvidence = archivedEvidence.firstOrNull { it.id == selectedEvidenceId }
