@@ -385,6 +385,9 @@ private fun CyberProtocolGameContentBody(
         terminalSession = terminalSession.copy(command = "")
         val activeMission = missionOverride
             ?: currentGameState.activeMissionId?.let { Campaign01Catalog.find(it) }
+            ?: Campaign01Catalog.missions.firstOrNull {
+                it.workspaceDirectory == terminalSession.currentDirectory
+            }
         val response = if (activeMission == null) {
             fileSystem.execute(input, terminalSession.currentDirectory)
         } else {
@@ -422,6 +425,7 @@ private fun CyberProtocolGameContentBody(
             } else {
                 if (activeMission != null && fileName in activeMission.writableFiles) {
                     lastSuccessfulRunSource = null
+                    if (activeMission.id == practiceMissionId) practiceLastSuccessfulRunSource = null
                 }
                 terminalSession = terminalSession.copy(busy = true)
                 scope.launch {
@@ -439,6 +443,23 @@ private fun CyberProtocolGameContentBody(
                         lastSuccessfulRunSource = source
                         codeOutput = result.output.ifBlank { "(tidak ada keluaran)" }
                         codeFeedback = "EKSEKUSI TERMINAL BERHASIL — kode ini siap dikirim melalui Browser Mission Control."
+                    }
+                    if (activeMission != null && activeMission.id == practiceMissionId &&
+                        fileName in activeMission.writableFiles
+                    ) {
+                        practiceOutput = result.output.ifBlank { "(tidak ada keluaran)" }
+                        if (result.error.isNotBlank()) practiceOutput += "\n" + result.error
+                        if (result.error.isBlank() && source == practiceCode.text) {
+                            practiceLastSuccessfulRunSource = source
+                            practiceFeedback = "RUN BERHASIL — kode ini siap dikirim ke evaluator latihan."
+                        } else {
+                            practiceLastSuccessfulRunSource = null
+                            practiceFeedback = if (result.error.isNotBlank()) {
+                                "RUN GAGAL — perbaiki kesalahan sebelum submit."
+                            } else {
+                                "KODE BERUBAH SAAT DIJALANKAN — jalankan ulang versi terbaru."
+                            }
+                        }
                     }
                     onPythonResult?.invoke(result.output, result.error)
                 }
@@ -514,6 +535,11 @@ private fun CyberProtocolGameContentBody(
             practiceFeedback = "KODE TIDAK DAPAT DISIMPAN KE WORKSPACE LATIHAN."
             return
         }
+        sessionViewModel.saveCode(
+            "practice_" + mission.id,
+            source,
+            "practice_run:" + mission.id
+        )
         practiceLastSuccessfulRunSource = null
         practiceFeedback = "MENJALANKAN LATIHAN MELALUI TERMINAL..."
         terminalSession = terminalSession.copy(

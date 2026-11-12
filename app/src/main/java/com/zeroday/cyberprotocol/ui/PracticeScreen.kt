@@ -65,7 +65,7 @@ internal fun PracticeScreen(
         }
 
         if (selectedMission == null) {
-            Text("ARSIP LATIHAN", color = Color(0xFF83C7D0), fontSize = 9.sp,
+            Text("DAFTAR LATIHAN", color = Color(0xFF83C7D0), fontSize = 9.sp,
                 letterSpacing = 1.2.sp, fontWeight = FontWeight.Bold)
             Text("Pilih konsep yang ingin kamu latih kembali. Semua latihan memakai workspace dan evaluator yang sama dengan sistem misi.",
                 color = Color(0xFF9AB4B8), fontSize = 11.sp, lineHeight = 17.sp)
