@@ -258,7 +258,7 @@ internal fun AnalysisScreen(
 private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selectedLanguage: GameLanguage, onReview: () -> Unit) {
     val (label, tint) = when (record.status) {
         EvidenceStatus.CONFIRMED -> localizedUiText(selectedLanguage, "CONFIRMED", "TERKONFIRMASI") to Color(0xFF8CD5AC)
-        EvidenceStatus.CORROBORATED -> "DIKOROBORASI" to Color(0xFF9BC7E8)
+        EvidenceStatus.CORROBORATED -> localizedUiText(selectedLanguage, "CORROBORATED", "DIKOROBORASI") to Color(0xFF9BC7E8)
         EvidenceStatus.INFERRED -> localizedUiText(selectedLanguage, "INFERRED", "DISIMPULKAN") to Color(0xFFE3C17B)
         EvidenceStatus.DISPUTED -> localizedUiText(selectedLanguage, "DISPUTED", "DIPERSELISIHKAN") to Color(0xFFE09AA6)
         EvidenceStatus.RETRACTED -> localizedUiText(selectedLanguage, "RETRACTED", "DICABUT") to Color(0xFF9A879D)
@@ -283,10 +283,10 @@ private fun EvidenceRecordCard(record: EvidenceRecord, concealed: Boolean, selec
                 color = Color(0xFFC2D0D4), fontSize = 11.sp, lineHeight = 17.sp
             )
             HorizontalDivider(color = Color(0xFF293A40))
-            Text("SUMBER  /  ${record.source}", color = Color(0xFF83C7D0), fontSize = 9.sp,
+            Text(localizedUiText(selectedLanguage, "SOURCE  /  ${record.source}", "SUMBER  /  ${record.source}"), color = Color(0xFF83C7D0), fontSize = 9.sp,
                 lineHeight = 14.sp)
-            Text("MISI  /  ${record.missionId}", color = Color(0xFF8AA8AE), fontSize = 9.sp)
-            Text("ASAL  /  ${record.provenance.origin.name}", color = Color(0xFF8AA8AE), fontSize = 9.sp)
+            Text(localizedUiText(selectedLanguage, "MISSION  /  ${record.missionId}", "MISI  /  ${record.missionId}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
+            Text(localizedUiText(selectedLanguage, "ORIGIN  /  ${record.provenance.origin.name}", "ASAL  /  ${record.provenance.origin.name}"), color = Color(0xFF8AA8AE), fontSize = 9.sp)
             Text("RELASI  /  ${record.relations.size}  ·  RIWAYAT REVIEW  /  ${record.reviewHistory.size}",
                 color = Color(0xFF8AA8AE), fontSize = 9.sp)
             if (EvidenceReviewPolicy.allowedTransitions(record.status).isNotEmpty()) {
