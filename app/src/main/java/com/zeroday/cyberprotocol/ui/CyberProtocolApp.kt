@@ -638,6 +638,7 @@ private fun CyberProtocolGameContentBody(
 
     when (screen) {
         GameScreen.MAIN_MENU -> MainMenuScreen(
+            selectedLanguage = selectedLanguage,
             onContinue = { navigate(GameScreen.CAMPAIGN) },
             onNewCampaign = { showResetDialog = true },
             onHub = { openHub(GameScreen.MAIN_MENU) },
@@ -1053,6 +1054,7 @@ private fun CyberProtocolGameContentBody(
             CyberAssets.investigation, { navigate(GameScreen.MAIN_MENU) }
         )
         GameScreen.SETTINGS -> SettingsScreen(
+            selectedLanguage = selectedLanguage,
             reducedMotion = reducedMotion,
             onReducedMotionChange = onReducedMotionChange,
             onBack = { navigate(GameScreen.MAIN_MENU) }
@@ -1067,8 +1069,8 @@ private fun CyberProtocolGameContentBody(
     if (showResetDialog) {
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
-            title = { Text("MULAI KAMPANYE BARU?") },
-            text = { Text("Progres cerita kampanye akan kembali ke awal. File di Ruang Kerja Pribadi akan tetap tersimpan.") },
+            title = { Text(localizedUiText(selectedLanguage, "START A NEW CAMPAIGN?", "MULAI KAMPANYE BARU?")) },
+            text = { Text(localizedUiText(selectedLanguage, "Campaign story progress will return to the beginning. Files in Personal Workspace will remain saved.", "Progres cerita kampanye akan kembali ke awal. File di Ruang Kerja Pribadi akan tetap tersimpan.")) },
             confirmButton = {
                 TextButton(onClick = {
                     showResetDialog = false
@@ -1076,15 +1078,15 @@ private fun CyberProtocolGameContentBody(
                     preferences.edit().putInt("story_stage", 0).apply()
                     saveStage(0)
                     navigate(GameScreen.CAMPAIGN)
-                }) { Text("MULAI") }
+                }) { Text(localizedUiText(selectedLanguage, "START", "MULAI")) }
             },
-            dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text("BATAL") } }
+            dismissButton = { TextButton(onClick = { showResetDialog = false }) { Text(localizedUiText(selectedLanguage, "CANCEL", "BATAL")) } }
         )
     }
 }
 
 @Composable
-private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, onHub: () -> Unit, onProfile: () -> Unit, onArchives: () -> Unit, onAchievements: () -> Unit, onSettings: () -> Unit, onLanguage: () -> Unit) {
+private fun MainMenuScreen(selectedLanguage: GameLanguage, onContinue: () -> Unit, onNewCampaign: () -> Unit, onHub: () -> Unit, onProfile: () -> Unit, onArchives: () -> Unit, onAchievements: () -> Unit, onSettings: () -> Unit, onLanguage: () -> Unit) {
     Box(
         Modifier.fillMaxSize().background(
             androidx.compose.ui.graphics.Brush.verticalGradient(
@@ -1104,25 +1106,25 @@ private fun MainMenuScreen(onContinue: () -> Unit, onNewCampaign: () -> Unit, on
             Text("A.E.G.I.S.", color = Color(0xFFBCE8EA), fontSize = 15.sp, letterSpacing = 5.sp, fontWeight = FontWeight.Bold)
             Text("CYBER PROTOCOL", color = Color.White, fontSize = 29.sp, letterSpacing = 2.2.sp, fontWeight = FontWeight.Black)
             Spacer(Modifier.height(10.dp))
-            Text(stringResource(R.string.game_motto),
+            Text(localizedUiText(selectedLanguage, "KNOWLEDGE IS POWER.\nINTELLIGENCE IS RESPONSIBILITY.", "PENGETAHUAN ADALAH KEKUATAN.\nINTELIJEN ADALAH TANGGUNG JAWAB."),
                 color = Color(0xFF8AA8AE), fontSize = 10.sp, lineHeight = 17.sp,
                 letterSpacing = 1.2.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             Spacer(Modifier.height(46.dp))
             Surface(color = Color(0xFF0B2028).copy(alpha = 0.82f), shape = RoundedCornerShape(4.dp),
                 border = BorderStroke(1.dp, Color(0xFF28515B)), modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MenuButton(stringResource(R.string.menu_continue_campaign), stringResource(R.string.menu_continue_campaign_desc), onContinue, true, CyberAssets.home)
-                    MenuButton(stringResource(R.string.menu_new_campaign), stringResource(R.string.menu_new_campaign_desc), onNewCampaign, icon = CyberAssets.intelligence)
-                    MenuButton(stringResource(R.string.menu_app_hub), stringResource(R.string.menu_app_hub_desc), onHub, icon = CyberAssets.connection)
-                    MenuButton(stringResource(R.string.menu_profile), stringResource(R.string.menu_profile_desc), onProfile, icon = CyberAssets.profile)
-                    MenuButton(stringResource(R.string.menu_archives), stringResource(R.string.menu_archives_desc), onArchives, icon = CyberAssets.archive)
-                    MenuButton(stringResource(R.string.menu_achievements), stringResource(R.string.menu_achievements_desc), onAchievements, icon = CyberAssets.achievements)
-                    MenuButton(stringResource(R.string.menu_settings), stringResource(R.string.menu_settings_desc), onSettings, icon = CyberAssets.settings)
-                    MenuButton(stringResource(R.string.menu_language), stringResource(R.string.menu_language_desc), onLanguage, icon = CyberAssets.document)
+                    MenuButton(localizedUiText(selectedLanguage, "CONTINUE CAMPAIGN", "LANJUTKAN KAMPANYE"), localizedUiText(selectedLanguage, "Resume your recruitment file", "Lanjutkan berkas perekrutanmu"), onContinue, true, CyberAssets.home)
+                    MenuButton(localizedUiText(selectedLanguage, "NEW CAMPAIGN", "KAMPANYE BARU"), localizedUiText(selectedLanguage, "Start Chapter 001 — First Contact", "Mulai Bab 001 — Kontak Pertama"), onNewCampaign, icon = CyberAssets.intelligence)
+                    MenuButton(localizedUiText(selectedLanguage, "APPLICATION HUB", "PUSAT APLIKASI"), localizedUiText(selectedLanguage, "Open your A.E.G.I.S. tools", "Buka perangkat A.E.G.I.S."), onHub, icon = CyberAssets.connection)
+                    MenuButton(localizedUiText(selectedLanguage, "OPERATIVE PROFILE", "PROFIL AGEN"), localizedUiText(selectedLanguage, "Rank, experience, and clearance", "Pangkat, pengalaman, dan clearance"), onProfile, icon = CyberAssets.profile)
+                    MenuButton(localizedUiText(selectedLanguage, "ARCHIVES", "ARSIP"), localizedUiText(selectedLanguage, "Evidence and operation history", "Bukti dan riwayat operasi"), onArchives, icon = CyberAssets.archive)
+                    MenuButton(localizedUiText(selectedLanguage, "ACHIEVEMENTS", "PENCAPAIAN"), localizedUiText(selectedLanguage, "Awards and milestones", "Penghargaan dan pencapaian"), onAchievements, icon = CyberAssets.achievements)
+                    MenuButton(localizedUiText(selectedLanguage, "SETTINGS", "PENGATURAN"), localizedUiText(selectedLanguage, "Accessibility and display preferences", "Aksesibilitas dan preferensi tampilan"), onSettings, icon = CyberAssets.settings)
+                    MenuButton(localizedUiText(selectedLanguage, "LANGUAGE", "BAHASA"), localizedUiText(selectedLanguage, "Game language preference", "Preferensi bahasa game"), onLanguage, icon = CyberAssets.document)
                 }
             }
             Spacer(Modifier.height(30.dp))
-            Text(stringResource(R.string.menu_footer),
+            Text(localizedUiText(selectedLanguage, "MANILA  /  CENTRAL COMMAND  /  SECURE ACCESS", "MANILA  /  KOMANDO PUSAT  /  AKSES AMAN"),
                 color = Color(0xFF55747A), fontSize = 9.sp, letterSpacing = 1.sp)
         }
     }
@@ -2066,11 +2068,12 @@ private fun TerminalScreen(
 
 @Composable
 private fun SettingsScreen(
+    selectedLanguage: GameLanguage,
     reducedMotion: Boolean,
     onReducedMotionChange: (Boolean) -> Unit,
     onBack: () -> Unit
 ) {
-    GamePage("PENGATURAN", "PREFERENSI PERANGKAT A.E.G.I.S.", onBack, null) {
+    GamePage(localizedUiText(selectedLanguage, "SETTINGS", "PENGATURAN"), localizedUiText(selectedLanguage, "A.E.G.I.S. DEVICE PREFERENCES", "PREFERENSI PERANGKAT A.E.G.I.S."), onBack, null) {
         GamePanel {
             Row(
                 Modifier.fillMaxWidth(),
@@ -2078,9 +2081,9 @@ private fun SettingsScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("KURANGI GERAKAN", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(localizedUiText(selectedLanguage, "REDUCE MOTION", "KURANGI GERAKAN"), color = Color.White, fontWeight = FontWeight.Bold)
                     Text(
-                        "Mengganti animasi pembukaan dengan satu frame statis untuk mengurangi gerakan visual.",
+                        localizedUiText(selectedLanguage, "Replaces the opening animation with a single static frame to reduce visual motion.", "Mengganti animasi pembukaan dengan satu frame statis untuk mengurangi gerakan visual."),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp
                     )
@@ -2088,8 +2091,8 @@ private fun SettingsScreen(
                 Switch(checked = reducedMotion, onCheckedChange = onReducedMotionChange)
             }
             HorizontalDivider(color = CyberPalette.Divider)
-            Text("Preferensi disimpan secara lokal pada perangkat ini.", color = CyberPalette.SteelGray, fontSize = 11.sp)
-            Text("Pengaturan audio dan kontrol akan tersedia setelah sistem audio dan pemetaan kontrol diimplementasikan.", color = CyberPalette.SteelGray, fontSize = 11.sp)
+            Text(localizedUiText(selectedLanguage, "Preferences are stored locally on this device.", "Preferensi disimpan secara lokal pada perangkat ini."), color = CyberPalette.SteelGray, fontSize = 11.sp)
+            Text(localizedUiText(selectedLanguage, "Audio and control settings will be available after the audio and control-mapping systems are implemented.", "Pengaturan audio dan kontrol akan tersedia setelah sistem audio dan pemetaan kontrol diimplementasikan."), color = CyberPalette.SteelGray, fontSize = 11.sp)
         }
     }
 }
