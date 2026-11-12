@@ -14,16 +14,30 @@ class TerminalSessionStateTest {
     }
 
     @Test
-    fun clearOutputReplacesOldTerminalHistoryWithClearMarker() {
-        val state = TerminalSessionState(
+    fun clearOutputUsesTheSelectedLanguageAndPreservesSession() {
+        val original = TerminalSessionState(
             command = "ls",
             currentDirectory = "/A.E.G.I.S/personal",
             output = "old output"
-        ).clearOutput()
+        )
+        val english = original.clearOutput("A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\\n")
+        val indonesian = original.clearOutput("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\\n")
 
-        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\n", state.output)
-        assertEquals("ls", state.command)
-        assertEquals("/A.E.G.I.S/personal", state.currentDirectory)
+        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  OUTPUT CLEARED\\n", english.output)
+        assertEquals("A.E.G.I.S. VIRTUAL TERMINAL  ·  KELUARAN DIBERSIHKAN\\n", indonesian.output)
+        assertEquals("ls", english.command)
+        assertEquals("/A.E.G.I.S/personal", english.currentDirectory)
+    }
+
+
+    @Test
+    fun initialTerminalBannerMatchesSelectedLanguage() {
+        assertTrue(TerminalSessionState.initialOutput(
+            com.zeroday.cyberprotocol.core.model.GameLanguage.ENGLISH
+        ).contains("Game environment is ready."))
+        assertTrue(TerminalSessionState.initialOutput(
+            com.zeroday.cyberprotocol.core.model.GameLanguage.INDONESIAN
+        ).contains("Lingkungan game siap digunakan."))
     }
 
     @Test
