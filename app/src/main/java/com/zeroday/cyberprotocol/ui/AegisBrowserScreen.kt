@@ -150,11 +150,11 @@ internal fun AegisBrowserScreen(
                         Text(browserText(selectedLanguage, "No active operation.", "Belum ada operasi aktif."), color = Color.White, fontSize = 18.sp)
                         Text(browserText(selectedLanguage, "Return to Campaign to continue the orientation sequence.", "Kembali ke Campaign untuk melanjutkan rangkaian orientasi."), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
-                        Text(mission.title, color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
-                        Text(mission.briefing, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                        Text(CaseLocalizedContent.missionTitle(mission, selectedLanguage), color = Color.White, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                        Text(CaseLocalizedContent.missionBriefing(mission, selectedLanguage), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         mission.objectives.forEachIndexed { index, objective ->
-                            Text("${index + 1}. ${objective.title}", color = Color.White, fontWeight = FontWeight.SemiBold)
-                            Text(objective.description, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                            Text("${index + 1}. ${CaseLocalizedContent.objectiveTitle(mission, objective, index, selectedLanguage)}", color = Color.White, fontWeight = FontWeight.SemiBold)
+                            Text(CaseLocalizedContent.objectiveDescription(mission, objective, index, selectedLanguage), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                         }
                         HorizontalDivider(color = Color(0xFF26343D))
                         Text(browserText(selectedLanguage, "OPERATION REQUIREMENTS", "PERSYARATAN OPERASI"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
@@ -266,7 +266,7 @@ internal fun AegisBrowserScreen(
                     } else {
                         gameState.completedMissionIds.sorted().forEach { missionId ->
                             val archivedMission = com.zeroday.cyberprotocol.data.Campaign01Catalog.find(missionId)
-                            Text(archivedMission?.title ?: missionId, color = Color.White, fontWeight = FontWeight.Bold)
+                            Text(archivedMission?.let { CaseLocalizedContent.missionTitle(it, selectedLanguage) } ?: missionId, color = Color.White, fontWeight = FontWeight.Bold)
                             Text(browserText(selectedLanguage, "VERIFIED  /  ${missionId}", "TERVERIFIKASI  /  ${missionId}"), color = Color(0xFF83C7D0), fontSize = 9.sp)
                         }
                     }
