@@ -60,7 +60,8 @@ class VirtualFileSystem(context: Context) {
         currentDirectory: String,
         workspaceRoot: String = "$root/personal",
         allowedFiles: Set<String>? = null,
-        writableFiles: Set<String>? = null
+        writableFiles: Set<String>? = null,
+        language: GameLanguage = GameLanguage.INDONESIAN
     ): TerminalResponse {
         if (commandLine.length > MAX_COMMAND_LENGTH) {
             return TerminalResponse("Command exceeds the 12000-character training limit.", currentDirectory)
@@ -100,7 +101,23 @@ class VirtualFileSystem(context: Context) {
         var cwd = currentDirectory
 
         val output = when (name) {
-            "help" -> """
+            "help" -> if (language == GameLanguage.ENGLISH) """
+                SUPPORTED COMMANDS
+                pwd                 Show the current directory
+                ls [path]           List files and folders
+                cd <path>           Change directory
+                cat <file>          Read a text file
+                mkdir <name>        Create a folder
+                touch <file>        Create an empty file
+                rm <file>           Remove a file
+                echo "text" > file  Write text to a file
+                whoami              Show the in-game identity
+                clear               Clear the terminal display
+                python <file.py>    Run a saved Python script
+                help                Show this guide
+
+                This is an isolated A.E.G.I.S. virtual environment, not the Android shell.
+            """.trimIndent() else """
                 DAFTAR PERINTAH YANG DIDUKUNG
                 pwd                 Tampilkan direktori saat ini
                 ls [path]           Daftar file dan folder
@@ -118,7 +135,7 @@ class VirtualFileSystem(context: Context) {
                 Ini adalah lingkungan virtual A.E.G.I.S. yang terisolasi, bukan shell Android.
             """.trimIndent()
             "pwd" -> cwd
-            "whoami" -> "REKRUT  ·  LINGKUNGAN PELATIHAN A.E.G.I.S."
+            "whoami" -> if (language == GameLanguage.ENGLISH) "TRAINEE  ·  A.E.G.I.S. TRAINING ENVIRONMENT" else "REKRUT  ·  LINGKUNGAN PELATIHAN A.E.G.I.S."
             "ls" -> {
                 val target = resolve(rest.firstOrNull() ?: ".", cwd, workspaceRoot)
                     ?: return TerminalResponse("Jalur tidak valid.", cwd)
@@ -189,7 +206,7 @@ class VirtualFileSystem(context: Context) {
                 if (!files.containsKey(target)) return TerminalResponse("File not found: $script", cwd)
                 "PYTHON_LAUNCH:" + script
             }
-            else -> "Perintah tidak dikenal: $name\nKetik 'help' untuk melihat daftar perintah."
+            else -> if (language == GameLanguage.ENGLISH) "Unknown command: $name\\nType 'help' to view the command guide." else "Perintah tidak dikenal: $name\\nKetik 'help' untuk melihat daftar perintah."
         }
         return TerminalResponse(output, cwd)
     }
