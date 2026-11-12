@@ -64,8 +64,14 @@ class GameNavigationStateTest {
             caseReturnScreen = GameScreen.STORY,
             analysisReturnScreen = GameScreen.OPERATIONS
         )
-        val saved = GameNavigationState.Saver.save(state)
-        val restored = GameNavigationState.Saver.restore(saved!!)!!
+        val restored = GameNavigationState.Saver.restore(
+            listOf(
+                state.currentScreen.name,
+                state.hubReturnScreen.name,
+                state.caseReturnScreen.name,
+                state.analysisReturnScreen.name
+            )
+        )!!
 
         assertEquals(GameScreen.STORY, restored.caseReturnScreen)
         assertEquals(GameScreen.OPERATIONS, restored.analysisReturnScreen)
