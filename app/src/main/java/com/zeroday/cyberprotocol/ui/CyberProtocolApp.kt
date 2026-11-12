@@ -651,6 +651,7 @@ private fun CyberProtocolGameContentBody(
         GameScreen.CAMPAIGN -> {
             if (!currentGameState.recruitmentNotificationOpened && storyStage < 2) {
                 RecruitmentNotificationScreen(
+                    selectedLanguage = selectedLanguage,
                     onOpenMessage = {
                         sessionViewModel.openRecruitmentInvitation()
                         if (storyStage < 2) saveStage(2)
@@ -756,6 +757,7 @@ private fun CyberProtocolGameContentBody(
                 !currentGameState.freyaContactOpened
             ) {
                 FreyaNotificationDialog(
+                    selectedLanguage = selectedLanguage,
                     onOpenMessage = {
                         sessionViewModel.openFreyaIntroduction()
                         messengerSession = messengerSession.copy(selectedContact = "FREYA")
@@ -1152,7 +1154,7 @@ private fun MenuButton(title: String, subtitle: String, onClick: () -> Unit, pri
 }
 
 @Composable
-private fun FreyaNotificationDialog(onOpenMessage: () -> Unit) {
+private fun FreyaNotificationDialog(selectedLanguage: GameLanguage, onOpenMessage: () -> Unit) {
     Dialog(onDismissRequest = {}) {
         Surface(
             color = Color(0xFF202C33),
@@ -1170,14 +1172,14 @@ private fun FreyaNotificationDialog(onOpenMessage: () -> Unit) {
                         Text("FK", Modifier.padding(11.dp), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                     Column(Modifier.weight(1f)) {
-                        Text("PESAN AMAN", color = Color(0xFFE6E9ED),
+                        Text(localizedUiText(selectedLanguage, "SECURE MESSAGES", "PESAN AMAN"), color = Color(0xFFE6E9ED),
                             fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
-                        Text("sekarang", color = Color(0xFF9AA2AC), fontSize = 10.sp)
+                        Text(localizedUiText(selectedLanguage, "now", "sekarang"), color = Color(0xFF9AA2AC), fontSize = 10.sp)
                     }
                 }
                 Text("Freya Knox", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    "Halo. Aku Freya. Aku akan mendampingimu selama misi orientasi A.E.G.I.S.",
+                    localizedUiText(selectedLanguage, "Hello. I am Freya. I will guide you through the A.E.G.I.S. orientation mission.", "Halo. Aku Freya. Aku akan mendampingimu selama misi orientasi A.E.G.I.S."),
                     color = Color(0xFFD0D5DC), fontSize = 13.sp, lineHeight = 19.sp
                 )
                 Button(
@@ -1185,7 +1187,7 @@ private fun FreyaNotificationDialog(onOpenMessage: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF17634F))
                 ) {
-                    Text("BUKA PESAN")
+                    Text(localizedUiText(selectedLanguage, "OPEN MESSAGE", "BUKA PESAN"))
                 }
             }
         }
@@ -1193,7 +1195,7 @@ private fun FreyaNotificationDialog(onOpenMessage: () -> Unit) {
 }
 
 @Composable
-private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
+private fun RecruitmentNotificationScreen(selectedLanguage: GameLanguage, onOpenMessage: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize().background(Color.Black).padding(horizontal = 22.dp),
         contentAlignment = Alignment.TopCenter
@@ -1216,16 +1218,16 @@ private fun RecruitmentNotificationScreen(onOpenMessage: () -> Unit) {
                             Text("P", Modifier.padding(horizontal = 11.dp, vertical = 8.dp),
                                 color = Color.White, fontWeight = FontWeight.Bold, fontSize = 17.sp)
                         }
-                        Text("PESAN AMAN", color = Color(0xFFE6E9ED), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        Text(localizedUiText(selectedLanguage, "SECURE MESSAGES", "PESAN AMAN"), color = Color(0xFFE6E9ED), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         Spacer(Modifier.weight(1f))
                         Text("sekarang", color = Color(0xFF9AA2AC), fontSize = 10.sp)
                     }
                     Text("A.E.G.I.S. / Recruitment Office", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                    Text("Undangan resmi: permintaan perekrutan.", color = Color(0xFFD0D5DC), fontSize = 13.sp)
+                    Text(localizedUiText(selectedLanguage, "Official invitation: recruitment request.", "Undangan resmi: permintaan perekrutan."), color = Color(0xFFD0D5DC), fontSize = 13.sp)
                 }
             }
             Text(
-                "Ketuk notifikasi untuk membuka pesan.",
+                localizedUiText(selectedLanguage, "Tap the notification to open the message.", "Ketuk notifikasi untuk membuka pesan."),
                 modifier = Modifier.fillMaxWidth(),
                 color = Color(0xFF69727E),
                 fontSize = 11.sp
