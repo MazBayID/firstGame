@@ -1,95 +1,98 @@
 # CYBER PROTOCOL
 
-**Adventure RPG · Android-first · Cinematic cyber-intelligence adventure**
+**A story-driven cyber-intelligence adventure RPG for Android.**
 
-Cyber Protocol is a story-driven Android Adventure RPG about an ordinary person recruited into **A.E.G.I.S.**, a fictional independent intelligence organization headquartered in Manila. The player investigates fictional incidents, examines evidence, and completes authorized simulations while gradually learning programming and technical skills.
+Cyber Protocol follows an ordinary person recruited into **A.E.G.I.S.**, a fictional independent intelligence organization headquartered in Manila. The player enters a world of investigations, digital evidence, technical simulations, and difficult decisions—while learning how technology works through the situations they encounter.
 
-Programming is part of the world and the gameplay—not a detached course or a quiz with a story skin.
+Programming is part of the story and gameplay. It is not a separate coding course disguised as a game.
 
-## Campaign 01 — THE RECRUITMENT
+## The story
 
-Chapter 001 — **FIRST CONTACT** opens with an official A.E.G.I.S. recruitment notification. The player must tap it, read the organization's invitation in Secure Messenger, and follow its in-game mission link.
+The first campaign, **THE RECRUITMENT**, begins when the player receives an unexpected invitation from A.E.G.I.S. The organization offers no immediate explanation for why the player was selected.
 
-When the first mission becomes active, a separate notification arrives from **Freya Knox**. She introduces herself as the player's mentor and guides the A.E.G.I.S. assignments. Freya is secretly the person who initiated the recruitment order, but neither the official invitation nor her initial greeting reveals that fact.
+**Freya Knox** becomes the player's human mentor, guiding them through their first assignments and introducing the organization's tools. **NEXUS**, A.E.G.I.S.'s AI support system, provides technical information and system assistance. Freya and NEXUS have different roles: one is a personal mentor, the other an intelligence system.
 
-Freya later provides a link to **NEXUS**, an internal A.E.G.I.S. support system. NEXUS does not appear in the Messenger inbox until the player taps that link. Freya remains the primary human mentor.
+The opening chapter, **FIRST CONTACT**, takes the player from an unfamiliar recruit to an operative capable of completing basic technical tasks and examining an intelligence case.
 
-The opening notifications and links are in-game simulations. The app does not access real phone messages, contacts, or Android notifications.
+Its central case, **RX-14**, begins with two records for the same transmission. One records the event at 09:41:12; another records it at 09:41:16. The four-second difference is observable, but its cause is not established. The player must distinguish verified facts from hypotheses and avoid claiming more than the evidence supports.
 
-## Current playable foundation
+The game’s organizations, people, incidents, and datasets are fictional.
 
-First Contact retains its approved recruitment story, 14 story beats, Freya/NEXUS roles, and beginner-onboarding purpose. Only two Python exercises are mandatory: the signal and identity exercises. Six later coding exercises remain in the catalog for legacy-save/history compatibility, but are no longer mandatory and do not block the RX-14 case. After the investigation checkpoint, the A.E.G.I.S. Hub unlocks a **Training Simulator** where all six can be replayed as optional practice. Each uses its own mission workspace, graduated hints, Terminal RUN, exact-source SUBMIT, and a one-time Technical XP reward; practice completion does not advance the story or RX-14 case.
+## How it plays
 
-RX-14 is a persisted, five-phase case connected to the campaign story and the shared A.E.G.I.S. tools. The same case progress is used by Messenger, Browser, Terminal, Operations, Analysis, Intelligence Database, and Personnel Dossier. Original receipt assets remain in the game-owned virtual filesystem; source inspection, analysis, the supported conclusion, operational rationale, decision, debrief, and the 100 Intelligence XP chapter reward are persisted. The valid **insufficient evidence** outcome preserves the unresolved cause of the four-second discrepancy.
+Cyber Protocol is a **Guided Intelligence RPG**. Each assignment gives the player a situation, an objective, and enough context to make informed progress, while leaving room to investigate and decide.
 
-A source-level acceptance test now exercises a fresh campaign through both required training missions, the complete RX-14 case, reward delivery, and session reload. This is automated integration coverage—not a substitute for testing the experience on a physical Android device.
+A typical case may involve:
 
-Remaining work includes broader player-facing localization, future approved chapters, continued UI/session-state cleanup, and physical-device acceptance. No later case or culprit is being invented to fill the campaign.
+1. **Briefing** — understand the assignment and what is still unknown.
+2. **Investigation** — inspect original records and collect relevant information.
+3. **Analysis** — compare sources, test explanations, and separate facts from assumptions.
+4. **Operational decision** — choose a justified action or request more verification.
+5. **Debrief** — review the result and advance the campaign.
 
-## Gameplay approach
+These are stages of an investigation, not a mandatory sequence of apps. The player uses whichever tools are relevant to the task. Not every mission requires programming.
 
-Cyber Protocol uses a **Guided Intelligence RPG** structure. The campaign gives the player clear story context, objectives, and fair guidance while preserving freedom to choose a reasonable investigative approach.
+## A.E.G.I.S. tools
 
-The core loop is:
+The player's in-game work environment includes connected applications:
 
-1. **Intelligence Briefing** — understand the situation, objective, and unknowns.
-2. **Investigation** — inspect relevant sources and use the tools that fit the case.
-3. **Intelligence Analysis** — compare evidence, test hypotheses, and distinguish facts from assumptions.
-4. **Operational Decision** — submit a supported conclusion, choose an authorized next action, or request more verification.
-5. **Debriefing & Progression** — receive deterministic feedback, record findings, and advance the campaign.
+- **Secure Messenger** — conversations, mission instructions, and attachments from A.E.G.I.S. personnel.
+- **A.E.G.I.S. Browser** — an offline intranet with Mission Control, File Repository, Intelligence Reports, and personnel information.
+- **Virtual Terminal** — a Linux-like command interface for working with files inside the game's virtual workspace.
+- **Python Code Editor** — write and run mission scripts, then submit the exact successfully executed source for evaluation.
+- **Operations and Analysis** — track case phases, inspect evidence, record conclusions, and make operational decisions.
+- **Intelligence Database and Personnel Dossier** — review case records, evidence relationships, operative progress, and history.
+- **Archives, Profile, Achievements, and Training Simulator** — review progress and revisit optional coding practice.
 
-Missions use five primary archetypes: Narrative, Investigation, Technical, Analytical, and Operational. A mission may combine activities, but it has one dominant experience. The player is solving a problem, not completing a mandatory sequence of apps. Python and other technical skills are used when the case genuinely calls for them; not every mission requires code.
+These tools share campaign and case state. Reading a source in one relevant application can update the same investigation progress seen by the others.
 
-The **Evidence & Investigation Engine** provides structured source provenance, evidence relationships, review history, controlled status transitions, and shared case progression. RX-14 is the first integrated case; deeper hypothesis/derived-finding tools and additional approved cases remain future work.
+## Learning through play
 
-## Core systems
+The opening assignments teach practical programming foundations in context. The player learns to work with files and a terminal, understand simple Python variables and output, and use a program to process information.
 
-- **First-person player identity:** the player is the operative; no player-avatar portrait is required.
-- **In-world learning:** programming concepts appear when the story gives the player a reason to use them.
-- **Local Python execution:** CPython 3.13 through Chaquopy on Android.
-- **Separate RUN and SUBMIT:** Code Editor RUN saves the source to the mission script and opens the dedicated Terminal to execute `python <script>.py`; the Code Editor exposes a dedicated Submit action, and Browser Mission Control remains an alternate entry point. Both submit the exact source from the latest successful RUN to the same authored mission evaluator.
-- **Mission datasets:** deterministic, fictional, read-only inputs with multiple evaluator fixtures where appropriate.
-- **Secure Messenger:** A.E.G.I.S., Freya, and NEXUS conversations unlock through the campaign sequence; Freya provides the intranet link, fictional credentials, and the first mission attachment.
-- **A.E.G.I.S. Browser:** an offline intranet with local fictional login, Mission Control, File Repository, Intelligence Reports, and Agent Profile. Browser downloads and Messenger attachments resolve to the same mission file.
-- **Virtual terminal and workspaces:** Linux-like commands operate within a game-managed virtual filesystem, never the Android host shell. The first signal fragment is downloaded into its mission workspace and read through the Terminal.
-- **Evidence and progression:** mission checkpoints, provenance-aware evidence, XP, rank, clearance, archives, achievements, and a separate optional Training Simulator for the six retired coding exercises.
-- **Narrative clues:** each mission's successful debrief surfaces a short authored clue that points toward the next story or technical step.
-- **Offline-first foundation:** core story, mission execution, evaluation, and progression do not require an account, server, external AI, or API key.
-- **Accessibility foundation:** reduced-motion preference and responsive Android layouts.
+The two introductory Python exercises are required for the recruitment journey. Additional coding exercises are available as optional practice in the Training Simulator; they do not block the story or the RX-14 investigation.
 
-## Language
+The game keeps **RUN** and **SUBMIT** separate: running a script executes it in the mission workspace, while submitting asks the mission evaluator to assess the successfully run source.
 
-**Approved direction: English-first, Indonesian-supported.** English is the default for fresh installations; Bahasa Indonesia is an in-game alternative whose choice will persist locally. English is the source language for new story and UI content, and both languages must reach full player-facing content parity before bilingual support is called complete. Python syntax, identifiers, standard command names, file paths, and evaluator-sensitive output remain unchanged.
+## Design principles
 
-The Language screen is functional and persists the English/Bahasa Indonesia choice locally. English is the fresh-install default. All 14 story beats and authored Freya/NEXUS dialogue have both language variants. The campaign timeline, main menu, settings, App Hub, recruitment notifications, mission/debrief UI, RX-14 case content, optional Training Simulator, Terminal command guide, Profile, Archives, Achievements, and selected Browser/Database/Dossier/Operations/Analysis surfaces now use the selected language. The Python evaluator also localizes authored guidance and feedback. Full parity is still in progress: remaining Terminal error messages, some evidence/review metadata, other player-facing routes, automated content-key completeness checks, and manual Android review remain open. See [Localization Plan](docs/LOCALIZATION_PLAN.md) and the language rules in GAME_CONCEPT.md.
+- **Evidence before certainty.** Sources, provenance, observations, hypotheses, and unknowns must remain distinguishable.
+- **Learning with a purpose.** Technical tasks appear when they make sense for the story or investigation.
+- **Connected gameplay.** Apps use shared case state rather than separate copies of progress.
+- **Player progress matters.** Campaign checkpoints, mission workspaces, evidence, decisions, and rewards are persisted locally.
+- **Offline-first.** Core story, tools, Python missions, evaluation, and progression do not require an account, remote server, external AI service, or API key.
+- **Safe simulation boundaries.** Terminal commands operate only on the game's virtual filesystem and never execute commands on the Android host.
 
-## Safety and technical limitations
+The current Python runner applies AST restrictions and resource limits, but runs in-process. It is not a hardened security sandbox for hostile code.
 
-All principal cases, organizations, people, and datasets are fictional. Technical operations are controlled simulations.
+## Current development focus
 
-The current Python runner applies AST restrictions and resource limits, but executes in-process. It is **not a hardened sandbox for hostile code** and must not be treated as one.
+The active priority is to make **FIRST CONTACT** a coherent, complete player experience—from a fresh save and recruitment through the required onboarding, the RX-14 investigation, and its chapter debrief.
 
-## Canonical design references
+The project already contains the core campaign structure, connected A.E.G.I.S. applications, two required Python onboarding exercises, the RX-14 case flow, persistence, and automated source-level tests. The complete player journey and physical-device acceptance still require verification. Future campaign ideas are not a substitute for finishing the active chapter.
 
-- [GAME_CONCEPT.md](GAME_CONCEPT.md) — product direction, gameplay rules, and implementation constraints.
-- [Story_Line.md](Story_Line.md) — narrative blueprint and continuity reference.
-- [Visual Identity](docs/VISUAL_IDENTITY.md) — approved visual direction.
-- [Asset Catalog](docs/ASSET_CATALOG.md) — semantic UI asset registry.
+The goal is a game that works from beginning to end—not a collection of screens, unfinished systems, or documentation.
 
-## Build and CI
+## Technology
 
-Requirements for local validation: JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13.
+- Android application built with Kotlin and Jetpack Compose.
+- Local Python execution through CPython 3.13 and Chaquopy.
+- Local persistence and game-managed virtual workspaces.
+- English-first content with Bahasa Indonesia support under incremental development.
 
-Run the source test suites locally:
+## Build and test
+
+Local development currently expects JDK 17, Android SDK Platform 36, Build Tools 36.0.0, Gradle 8.13, and Python 3.13.
+
+Run the source test suites:
 
 ```bash
 python -m unittest discover -s tests -v
 gradle --no-daemon testReleaseUnitTest
 ```
 
-- **Pushes to `main`:** run Python and Release-variant Android/Kotlin unit tests only. Do not build or publish an APK for ordinary development commits.
-- **Pull requests targeting `main`:** source-level tests only. No installable APK and no release-signing secrets.
-- **Final APK:** a manual release dispatch is reserved for an explicitly approved release candidate after the complete campaign and gameplay acceptance gates have passed. It is not part of ordinary feature batches.
-- Emulator smoke testing and physical-device acceptance remain final release gates, not substitutes for complete gameplay integration.
+Debug Preview APKs can be built at useful review checkpoints. Final release packaging and release acceptance are separate steps and require explicit approval.
 
-The permanent keystore is restored only inside the ephemeral Final Release runner and removed at the end of the job. The project is an evolving game foundation; the full v1.0 campaign is not yet complete.
+---
+
+**Cyber Protocol is about learning to investigate before deciding what is true.**
