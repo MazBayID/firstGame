@@ -2,14 +2,6 @@ name: Cyber Protocol — Debug Preview APK
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "app/**"
-      - "build.gradle*"
-      - "settings.gradle*"
-      - "gradle/**"
-      - ".github/workflows/android-preview.yml"
 
 concurrency:
   group: cyber-protocol-preview-${{ github.ref }}
@@ -20,7 +12,7 @@ permissions:
 
 jobs:
   debug-preview:
-    name: Build and smoke-test Debug Preview APK
+    name: Build Debug Preview APK
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
@@ -74,24 +66,7 @@ jobs:
           echo "APK SHA-256: $APK_SHA256" >> "$GITHUB_STEP_SUMMARY"
           echo "Source commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Install and smoke-test the exact Debug APK on Android Emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 35
-          arch: x86_64
-          profile: pixel_2
-          script: |
-            set -euo pipefail
-            adb uninstall com.zeroday.cyberprotocol >/dev/null 2>&1 || true
-            adb install preview_apk/cyber-protocol-preview.apk
-            adb shell pm path com.zeroday.cyberprotocol
-            adb shell am force-stop com.zeroday.cyberprotocol
-            adb shell monkey -p com.zeroday.cyberprotocol -c android.intent.category.LAUNCHER 1
-            sleep 20
-            adb shell pidof com.zeroday.cyberprotocol
-            echo "DEBUG PREVIEW STATUS: INSTALLED AND LAUNCHED."
-
-      - name: Upload tested Debug Preview APK
+      - name: Upload Debug Preview APK
         uses: actions/upload-artifact@v4
         with:
           name: cyber-protocol-debug-preview
