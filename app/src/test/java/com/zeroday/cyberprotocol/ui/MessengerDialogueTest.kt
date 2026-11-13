@@ -1,11 +1,21 @@
 package com.zeroday.cyberprotocol.ui
 
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import com.zeroday.cyberprotocol.core.model.GameLanguage
 import org.junit.Test
 
 class MessengerDialogueTest {
+
+    @Test
+    fun freyaMissionAttachmentsUseStableMissionIdsIndependentOfDisplayLanguage() {
+        assertEquals("message_fragment.txt", MessengerDialogue.missionAttachment("first_contact.signal"))
+        assertEquals("identity_fragment.txt", MessengerDialogue.missionAttachment("first_contact.identity"))
+        assertNull(MessengerDialogue.missionAttachment(null))
+        assertNull(MessengerDialogue.missionAttachment("unknown.mission"))
+    }
 
     @Test
     fun freyaProvidesEnglishResponsesWithoutChangingCanonicalReplyKeys() {
