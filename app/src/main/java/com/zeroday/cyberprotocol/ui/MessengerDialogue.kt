@@ -9,6 +9,12 @@ import com.zeroday.cyberprotocol.core.model.GameLanguage
  * mission access, or progression. Game-state changes remain explicit ViewModel actions.
  */
 internal object MessengerDialogue {
+    fun missionAttachment(activeMissionId: String?): String? = when (activeMissionId) {
+        "first_contact.signal" -> "message_fragment.txt"
+        "first_contact.identity" -> "identity_fragment.txt"
+        else -> null
+    }
+
     fun freyaIntroduction(
         activeMissionTitle: String?,
         completedMissionCount: Int,
