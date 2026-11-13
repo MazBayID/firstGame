@@ -5,6 +5,8 @@
 **Scope:** canonical design, story continuity, Android/Kotlin source, Python runner, local persistence, VFS, app surfaces, tests, and CI workflow.  
 **Purpose:** identify what is genuinely implemented, what is partial, and what must be built next. This is a source review; it is not a physical-device acceptance report.
 
+> **Engineering-policy authority (2026-11-13):** This audit is not a source of standing workflow rules. Follow [DEVELOPMENT_STRATEGY.md](DEVELOPMENT_STRATEGY.md) for current policy. Historical batch plans and acceptance statements below may be superseded. In particular: Debug Preview APKs may be handed off after successful build/package validation; emulator smoke tests are optional for previews; physical-device checks belong to major acceptance/release checkpoints; testing is risk-based; and localization proceeds incrementally without blocking unrelated work. Story concepts may be designed ahead, while implementation follows the active approved priority.
+
 > **Current-state note (2026-11-12):** Sections 1–8 preserve the original point-in-time baseline and are superseded where they conflict with the dated refreshes below. The latest integrated source review is recorded in **Latest First Contact acceptance refresh** at the end of this file. Do not use the old schema, evidence, localization, or cross-app status statements as current facts.
 
 ## Executive result
