@@ -1,3 +1,5 @@
+> **Policy authority — 2026-11-13:** This file is a chronological status log, not the source of current engineering rules. Follow [DEVELOPMENT_STRATEGY.md](DEVELOPMENT_STRATEGY.md). Earlier entries that say APKs must wait until the whole game is complete, that preview smoke tests are mandatory, or that global localization parity blocks unrelated work are historical and superseded. Debug Preview APKs may be dispatched after a useful checkpoint and handed off after successful build/package validation; emulator smoke is optional. Testing is risk-based, localization is incremental, future story concepts may be designed ahead, and implementation follows the active approved priority.
+
 # Cyber Protocol — Full Rebuild Status
 
 **Development direction:** Full Rebuild (Option A)  
