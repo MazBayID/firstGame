@@ -1,6 +1,6 @@
 # Cyber Protocol — Physical Android Acceptance
 
-This checklist is the final manual acceptance gate for the current First Contact rebuild. CI success is necessary but does not replace installation and gameplay checks on a real Android device.
+This checklist is for major integrated review and release-candidate checkpoints. It is not required for every commit, feature batch, or Debug Preview handoff. A Debug Preview may be handed over after a successful build and package validation; emulator smoke testing is optional and physical-device checks are performed by the player at practical checkpoints. This checklist records real-device acceptance and must not be treated as completed until actually executed.
 
 ## Test build identity
 
@@ -116,6 +116,6 @@ Use a disposable save or back up the current save before testing this section.
 - [ ] All critical gameplay and persistence checks pass.
 - [ ] No known crash, progression blocker, data loss, or permission bypass remains.
 - [ ] Any failed or skipped check is recorded with device model, Android version, APK commit, and reproduction steps.
-- [ ] Only after all applicable checks pass may the rebuild be considered ready for a release-candidate review.
+- [ ] Only after all applicable checks pass may the rebuild be considered ready for release-candidate approval. These checks do not block ordinary Debug Preview APK delivery.
 
 **Status:** Pending physical-device execution. This document is a test plan, not a claim that the checks have passed.
