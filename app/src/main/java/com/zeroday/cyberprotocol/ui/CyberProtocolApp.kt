@@ -837,6 +837,7 @@ private fun CyberProtocolGameContentBody(
             recruitmentInvitation = currentGameState.recruitmentNotificationOpened,
             freyaContactUnlocked = currentGameState.freyaContactOpened,
             nexusUnlocked = currentGameState.nexusContactUnlocked,
+            activeMissionId = currentGameState.activeMissionId,
             activeMissionTitle = currentGameState.activeMissionId?.let { id -> Campaign01Catalog.find(id)?.let { CaseLocalizedContent.missionTitle(it, selectedLanguage) } },
             completedMissionCount = currentGameState.completedMissionIds.size,
             evidenceAssetsAvailable = currentGameState.storyBeat >= 10,
@@ -1654,6 +1655,7 @@ private fun MessengerScreen(
     recruitmentInvitation: Boolean,
     freyaContactUnlocked: Boolean,
     nexusUnlocked: Boolean,
+    activeMissionId: String?,
     activeMissionTitle: String?,
     completedMissionCount: Int,
     evidenceAssetsAvailable: Boolean,
@@ -1915,9 +1917,9 @@ private fun MessengerScreen(
                                 }
                             }
                         }
-                        val missionAttachment = when (activeMissionTitle) {
-                            "Sinyal Pertama" -> "message_fragment.txt"
-                            "Verifikasi Identitas" -> "identity_fragment.txt"
+                        val missionAttachment = when (activeMissionId) {
+                            "first_contact.signal" -> "message_fragment.txt"
+                            "first_contact.identity" -> "identity_fragment.txt"
                             else -> null
                         }
                         if (missionAttachment != null) {
