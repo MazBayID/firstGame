@@ -1917,11 +1917,7 @@ private fun MessengerScreen(
                                 }
                             }
                         }
-                        val missionAttachment = when (activeMissionId) {
-                            "first_contact.signal" -> "message_fragment.txt"
-                            "first_contact.identity" -> "identity_fragment.txt"
-                            else -> null
-                        }
+                        val missionAttachment = MessengerDialogue.missionAttachment(activeMissionId)
                         if (missionAttachment != null) {
                             Surface(
                                 onClick = {
