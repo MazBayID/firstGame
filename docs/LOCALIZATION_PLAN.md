@@ -34,7 +34,7 @@
 3. Move authored story and mission copy into localized content data keyed by stable IDs. Do not duplicate mission logic or evaluator fixtures per language.
 4. Keep the selected language in a dedicated local settings preference. Do not store it in the campaign save schema.
 5. Resolve localized text at presentation boundaries; domain rules, IDs, file contents, Python execution, and evaluators remain language-neutral.
-6. Add automated checks for missing keys and required content variants. A missing translation must fail validation rather than silently show the wrong language.
+6. Add automated checks for missing keys and required content variants. Report missing coverage clearly and scope blocking checks to the changed feature or a language-specific acceptance/release gate; do not block unrelated work globally.
 7. Verify that switching language while a campaign is in progress preserves all player state.
 
 ## 4. Rollout sequence
@@ -46,7 +46,7 @@
 - **L4 — Operational apps:** localize Browser, Terminal explanatory UI, Database, Dossier, Analysis, Operations, Profile, Archives, and Achievements.
 - **L5 — Quality gate:** automated key/content parity checks, language-switch persistence tests, regression tests for mission IDs/evaluators, and manual review of both languages on Android.
 
-Do not expose English as a completed playable language until L2–L5 cover every player-facing route. During rollout, the Language page must accurately state which language coverage is complete; it must not imply that a partial translation is complete.
+During rollout, the Language page and project status must accurately state which language coverage is complete; never imply that partial coverage is complete. Incremental localization is expected: missing translations should be tracked and addressed with the affected feature, but must not block unrelated engineering work.
 
 ## 5. Acceptance criteria
 
@@ -135,3 +135,8 @@ Profile, Archives, and Achievements now use dedicated bilingual data-backed scre
 The shared Terminal, mission editor, and practice feedback states now follow the selected language, including empty-output placeholders and language-switch handling. The New Campaign flow resets campaign-scoped workspaces and conversations without changing the player's selected language or accessibility preference.
 
 Source tests cover rank progress, achievement calculations, archive search/retention, mission-evidence metadata, VFS reset behavior, and campaign reset behavior. This is source-level coverage; the English and Indonesian screens still require physical Android review.
+
+
+## Policy alignment — 2026-11-13
+
+This plan follows the canonical incremental-localization policy in [DEVELOPMENT_STRATEGY.md](DEVELOPMENT_STRATEGY.md). English remains the source language and Indonesian coverage is built in stages. Missing variants are tracked honestly and checked at relevant feature/integration gates; global parity is not a prerequisite for unrelated work. Full bilingual parity remains necessary before claiming complete bilingual acceptance, not before continuing development elsewhere.
