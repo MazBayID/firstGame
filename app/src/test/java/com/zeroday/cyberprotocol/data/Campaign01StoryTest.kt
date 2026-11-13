@@ -82,6 +82,16 @@ class Campaign01StoryTest {
     }
 
     @Test
+    fun requiredPythonOnboardingMissionsCannotBeSkipped() {
+        assertFalse(Campaign01StoryNavigationPolicy.canAdvanceRequiredMissionStage(4, false))
+        assertTrue(Campaign01StoryNavigationPolicy.canAdvanceRequiredMissionStage(4, true))
+        assertFalse(Campaign01StoryNavigationPolicy.canAdvanceRequiredMissionStage(5, false))
+        assertTrue(Campaign01StoryNavigationPolicy.canAdvanceRequiredMissionStage(5, true))
+        assertTrue(Campaign01StoryNavigationPolicy.canAdvanceRequiredMissionStage(3, false))
+        assertTrue(Campaign01StoryNavigationPolicy.canAdvanceRequiredMissionStage(6, false))
+    }
+
+    @Test
     fun missionStarterDraftsContainObjectivesButNoExecutableSolutions() {
         val stages = listOf(4, 5, 8, 9, 11, 12, 13, 14)
         stages.forEachIndexed { index, stage ->

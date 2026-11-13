@@ -724,6 +724,7 @@ private fun CyberProtocolGameContentBody(
                 beat = Campaign01StoryLocalization.localizedBeat(beatIndex - 2, selectedLanguage),
                 stage = beatIndex,
                 mission = authoredMission,
+                missionCompleted = authoredMission?.id?.let { it in currentGameState.completedMissionIds } == true,
                 selectedLanguage = selectedLanguage,
                 freyaContactUnlocked = currentGameState.freyaContactOpened,
                 caseComplete = rx14CaseComplete,
@@ -1399,6 +1400,7 @@ private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBa
 @Composable
 private fun StoryScreen(
     beat: StoryBeat, stage: Int, mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?,
+    missionCompleted: Boolean,
     selectedLanguage: GameLanguage,
     freyaContactUnlocked: Boolean,
     caseComplete: Boolean,
@@ -1565,7 +1567,17 @@ private fun StoryScreen(
                         stage == 14 && caseComplete -> beat.completedButton ?: beat.button
                         else -> beat.button
                     }
-                    CPPrimaryButton(nextLabel, onContinue)
+                    val canAdvance = Campaign01StoryNavigationPolicy
+                        .canAdvanceRequiredMissionStage(stage, missionCompleted)
+                    CPPrimaryButton(
+                        if (!canAdvance) localizedUiText(
+                            selectedLanguage,
+                            "COMPLETE THE REQUIRED MISSION TO CONTINUE",
+                            "SELESAIKAN MISI WAJIB UNTUK MELANJUTKAN"
+                        ) else nextLabel,
+                        onContinue,
+                        enabled = canAdvance
+                    )
                 }
             }
         }

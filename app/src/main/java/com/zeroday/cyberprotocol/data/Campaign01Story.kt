@@ -11,6 +11,10 @@ object Campaign01StoryNavigationPolicy {
         return if (bounded >= 16 && phase != CasePhase.COMPLETE) 15 else bounded
     }
 
+    /** Required Python onboarding stages cannot be bypassed through the story Continue button. */
+    fun canAdvanceRequiredMissionStage(stage: Int, missionCompleted: Boolean): Boolean =
+        stage !in 4..5 || missionCompleted
+
     fun action(stage: Int, phase: CasePhase): StoryCaseAction = when (stage) {
         11 -> if (phase == CasePhase.BRIEFING || phase == CasePhase.INVESTIGATION) {
             StoryCaseAction.OPEN_OPERATIONS
