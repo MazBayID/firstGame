@@ -6,6 +6,17 @@ import com.zeroday.cyberprotocol.R
 /** Semantic registry for the replaceable Cyber Protocol image assets. */
 object CyberAssets {
     @DrawableRes val emblem = R.drawable.cp_emblem
+    @DrawableRes val gameLogo = R.drawable.cyber_protocol_logo
+    @DrawableRes val freyaAvatar = R.drawable.char_freya_avatar
+    @DrawableRes val freyaPortraitNeutral = R.drawable.char_freya_portrait_neutral
+    @DrawableRes val freyaPortraitSerious = R.drawable.char_freya_portrait_serious
+    @DrawableRes val nexusAvatar = R.drawable.char_nexus_avatar_default
+    @DrawableRes val firstContactCover = R.drawable.first_contact_cover
+    @DrawableRes val rx14Cover = R.drawable.case_rx14_cover
+    @DrawableRes val rx14RecordA = R.drawable.evidence_rx14_record_a
+    @DrawableRes val rx14RecordAThumb = R.drawable.evidence_rx14_record_a_thumb
+    @DrawableRes val rx14RecordB = R.drawable.evidence_rx14_record_b
+    @DrawableRes val rx14RecordBThumb = R.drawable.evidence_rx14_record_b_thumb
     @DrawableRes val home = R.drawable.ui_home
     @DrawableRes val learn = R.drawable.ui_learn
     @DrawableRes val practice = R.drawable.ui_practice

@@ -73,6 +73,12 @@ internal fun OperationsScreen(
             border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(CyberAssets.rx14Cover),
+                    contentDescription = localizedUiText(selectedLanguage, "RX-14 case cover", "Sampul kasus RX-14"),
+                    modifier = Modifier.fillMaxWidth().height(190.dp),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                )
                 Text(localizedUiText(selectedLanguage, "ACTIVE CASE", "KASUS AKTIF"), color = Color(0xFF83C7D0), fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 Text(CaseLocalizedContent.title(caseDefinition, selectedLanguage), color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(localizedUiText(selectedLanguage, "RX-14  ·  DATA SOURCE INVESTIGATION", "RX-14  ·  INVESTIGASI SUMBER DATA"), color = Color(0xFFB8C9CC), fontSize = 10.sp)
@@ -253,6 +259,19 @@ private fun EvidencePanel(
     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            val evidenceThumbnail = when {
+                record.id.contains("record_a", ignoreCase = true) -> CyberAssets.rx14RecordAThumb
+                record.id.contains("record_b", ignoreCase = true) -> CyberAssets.rx14RecordBThumb
+                else -> null
+            }
+            evidenceThumbnail?.let { imageRes ->
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(imageRes),
+                    contentDescription = CaseLocalizedContent.evidenceTitle(record, selectedLanguage),
+                    modifier = Modifier.fillMaxWidth().height(120.dp),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                )
+            }
             Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage), color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             Text(CaseLocalizedContent.evidenceSource(record, selectedLanguage), color = Color(0xFF83C7D0), fontSize = 10.sp)
             if (discovered) {

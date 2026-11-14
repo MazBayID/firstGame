@@ -1168,7 +1168,7 @@ private fun MainMenuScreen(selectedLanguage: GameLanguage, onContinue: () -> Uni
             androidx.compose.foundation.Image(painterResource(CyberAssets.emblem), "A.E.G.I.S. emblem", Modifier.size(94.dp))
             Spacer(Modifier.height(22.dp))
             Text("A.E.G.I.S.", color = Color(0xFFBCE8EA), fontSize = 15.sp, letterSpacing = 5.sp, fontWeight = FontWeight.Bold)
-            Text("CYBER PROTOCOL", color = Color.White, fontSize = 29.sp, letterSpacing = 2.2.sp, fontWeight = FontWeight.Black)
+            androidx.compose.foundation.Image(painterResource(CyberAssets.gameLogo), "Cyber Protocol", Modifier.fillMaxWidth().height(76.dp), contentScale = androidx.compose.ui.layout.ContentScale.Fit)
             Spacer(Modifier.height(10.dp))
             Text(localizedUiText(selectedLanguage, "KNOWLEDGE IS POWER.\nINTELLIGENCE IS RESPONSIBILITY.", "PENGETAHUAN ADALAH KEKUATAN.\nINTELIJEN ADALAH TANGGUNG JAWAB."),
                 color = Color(0xFF8AA8AE), fontSize = 10.sp, lineHeight = 17.sp,
@@ -1317,6 +1317,12 @@ private fun CampaignScreen(storyStage: Int, selectedLanguage: GameLanguage, onBa
     )
 
     GamePage(localizedUiText(selectedLanguage, "CAMPAIGN", "KAMPANYE"), localizedUiText(selectedLanguage, "A.E.G.I.S. / STORY OPERATIONS", "A.E.G.I.S. / OPERASI CERITA"), onBack, onHub, selectedLanguage) {
+        androidx.compose.foundation.Image(
+            painter = painterResource(CyberAssets.firstContactCover),
+            contentDescription = localizedUiText(selectedLanguage, "First Contact chapter artwork", "Artwork chapter First Contact"),
+            modifier = Modifier.fillMaxWidth().height(190.dp),
+            contentScale = androidx.compose.ui.layout.ContentScale.Fit
+        )
         Box(
             Modifier.fillMaxWidth()
                 .background(
@@ -1749,13 +1755,18 @@ private fun MessengerScreen(
             TextButton(onClick = {
                 if (selectedContact.isBlank()) onClose() else onSelectContact("")
             }) { Text("‹", color = Color.White, fontSize = 30.sp) }
-            if (selectedContact.isNotBlank()) {
-                Surface(color = if (selectedContact == "FREYA") Color(0xFF315448) else Color(0xFF35434B),
-                    shape = RoundedCornerShape(50)) {
-                    Text(
-                        when (selectedContact) { "AEGIS" -> "A"; "FREYA" -> "FK"; else -> "NX" },
-                        Modifier.padding(10.dp), color = Color.White, fontWeight = FontWeight.Bold
+            if (selectedContact == "FREYA" || selectedContact == "NEXUS") {
+                Surface(color = Color(0xFF263A34), shape = RoundedCornerShape(50)) {
+                    androidx.compose.foundation.Image(
+                        painter = painterResource(if (selectedContact == "FREYA") CyberAssets.freyaAvatar else CyberAssets.nexusAvatar),
+                        contentDescription = if (selectedContact == "FREYA") "Freya Knox" else "NEXUS",
+                        modifier = Modifier.size(42.dp),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
                     )
+                }
+            } else if (selectedContact == "AEGIS") {
+                Surface(color = Color(0xFF35434B), shape = RoundedCornerShape(50)) {
+                    Text("A", Modifier.padding(10.dp), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
