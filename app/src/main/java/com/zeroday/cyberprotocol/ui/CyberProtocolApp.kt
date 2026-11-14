@@ -339,6 +339,19 @@ private fun CyberProtocolGameContentBody(
     fun downloadMissionFile(fileName: String): Boolean =
         activeWorkspace?.downloadAsset(fileName) == true
 
+    fun hasRequiredMissionAssets(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition): Boolean =
+        MissionWorkspacePolicy.hasRequiredAssets(
+            mission.initialFiles.keys,
+            fileSystem.openMissionWorkspace(mission).listFiles().toSet()
+        )
+
+    fun missingMissionAssetsMessage(): String =
+        localizedUiText(
+            selectedLanguage,
+            "DOWNLOAD THE REQUIRED MISSION FILE BEFORE RUNNING THIS EXERCISE.",
+            "UNDUH BERKAS MISI YANG DIPERLUKAN SEBELUM MENJALANKAN LATIHAN INI."
+        )
+
     fun submitMission(mission: com.zeroday.cyberprotocol.core.model.MissionDefinition?) {
         val sourceToVerify = code.text
         if (mission == null) {
@@ -441,6 +454,16 @@ private fun CyberProtocolGameContentBody(
         }
         appendTerminalOutput("\n$ $input\n")
         val output = response.output
+        if (output.startsWith("PYTHON_LAUNCH:") &&
+            activeMission != null &&
+            !hasRequiredMissionAssets(activeMission)
+        ) {
+            val message = missingMissionAssetsMessage()
+            lastSuccessfulRunSource = null
+            appendTerminalOutput(message + "\n")
+            onPythonResult?.invoke("", message)
+            return
+        }
         if (activeMission == null) {
             com.zeroday.cyberprotocol.data.EvidenceAssetCatalog
                 .sourceAssetReadByTerminal(input, output)
@@ -523,15 +546,11 @@ private fun CyberProtocolGameContentBody(
             codeFeedback = localizedUiText(selectedLanguage, "MISSION FILE NAME IS NOT VALID FOR EXECUTION.", "NAMA FILE MISI TIDAK VALID UNTUK DIJALANKAN.")
             return
         }
-        val workspace = fileSystem.openMissionWorkspace(mission)
-        if (!MissionWorkspacePolicy.hasRequiredAssets(mission.initialFiles.keys, workspace.listFiles().toSet())) {
-            codeFeedback = localizedUiText(
-                selectedLanguage,
-                "DOWNLOAD THE REQUIRED MISSION FILE BEFORE RUNNING THIS EXERCISE.",
-                "UNDUH BERKAS MISI YANG DIPERLUKAN SEBELUM MENJALANKAN LATIHAN INI."
-            )
+        if (!hasRequiredMissionAssets(mission)) {
+            codeFeedback = missingMissionAssetsMessage()
             return
         }
+        val workspace = fileSystem.openMissionWorkspace(mission)
         if (!workspace.writeFile(fileName, source)) {
             codeFeedback = localizedUiText(selectedLanguage, "CODE COULD NOT BE SAVED TO THE MISSION WORKSPACE.", "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI.")
             return
