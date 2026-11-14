@@ -242,11 +242,33 @@ private fun EvidencePanel(
     selectedLanguage: GameLanguage
 ) {
     var sourceOpened by remember(record.id) { mutableStateOf(false) }
+    val evidenceImage = when (record.id) {
+        "rx14_aegis_receipt" -> CyberAssets.rx14RecordA
+        "rx14_archive_receipt" -> CyberAssets.rx14RecordB
+        else -> null
+    }
+    val evidenceThumbnail = when (record.id) {
+        "rx14_aegis_receipt" -> CyberAssets.rx14RecordAThumb
+        "rx14_archive_receipt" -> CyberAssets.rx14RecordBThumb
+        else -> null
+    }
     if (sourceOpened && sourceContent != null) {
         AlertDialog(
             onDismissRequest = { sourceOpened = false },
             title = { Text(CaseLocalizedContent.evidenceTitle(record, selectedLanguage)) },
-            text = { Text(CaseLocalizedContent.evidenceSource(record.id, sourceContent, selectedLanguage), fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    evidenceImage?.let { imageRes ->
+                        androidx.compose.foundation.Image(
+                            painter = androidx.compose.ui.res.painterResource(imageRes),
+                            contentDescription = CaseLocalizedContent.evidenceTitle(record, selectedLanguage),
+                            modifier = Modifier.fillMaxWidth().height(220.dp),
+                            contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                        )
+                    }
+                    Text(CaseLocalizedContent.evidenceSource(record.id, sourceContent, selectedLanguage), fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace)
+                }
+            },
             confirmButton = {
                 TextButton(onClick = {
                     sourceOpened = false
@@ -259,11 +281,6 @@ private fun EvidencePanel(
     Surface(color = Color(0xFF111F27), shape = RoundedCornerShape(7.dp),
         border = BorderStroke(1.dp, Color(0xFF31545B)), modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(13.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
-            val evidenceThumbnail = when {
-                record.id.contains("record_a", ignoreCase = true) -> CyberAssets.rx14RecordAThumb
-                record.id.contains("record_b", ignoreCase = true) -> CyberAssets.rx14RecordBThumb
-                else -> null
-            }
             evidenceThumbnail?.let { imageRes ->
                 androidx.compose.foundation.Image(
                     painter = androidx.compose.ui.res.painterResource(imageRes),
