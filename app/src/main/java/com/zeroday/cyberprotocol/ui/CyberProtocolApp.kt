@@ -524,6 +524,14 @@ private fun CyberProtocolGameContentBody(
             return
         }
         val workspace = fileSystem.openMissionWorkspace(mission)
+        if (!MissionWorkspacePolicy.hasRequiredAssets(mission.initialFiles.keys, workspace.listFiles().toSet())) {
+            codeFeedback = localizedUiText(
+                selectedLanguage,
+                "DOWNLOAD THE REQUIRED MISSION FILE BEFORE RUNNING THIS EXERCISE.",
+                "UNDUH BERKAS MISI YANG DIPERLUKAN SEBELUM MENJALANKAN LATIHAN INI."
+            )
+            return
+        }
         if (!workspace.writeFile(fileName, source)) {
             codeFeedback = localizedUiText(selectedLanguage, "CODE COULD NOT BE SAVED TO THE MISSION WORKSPACE.", "KODE TIDAK DAPAT DISIMPAN KE RUANG KERJA MISI.")
             return

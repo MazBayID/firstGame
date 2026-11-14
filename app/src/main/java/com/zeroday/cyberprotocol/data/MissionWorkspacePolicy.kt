@@ -11,6 +11,9 @@ internal object MissionWorkspacePolicy {
     fun canInstallAsset(fileName: String, contentLength: Int, allowedFiles: Set<String>, writableFiles: Set<String>): Boolean =
         fileName in allowedFiles && fileName !in writableFiles && contentLength in 0..50_000
 
+    fun hasRequiredAssets(requiredAssets: Set<String>, availableFiles: Set<String>): Boolean =
+        requiredAssets.all { it in availableFiles }
+
     fun pythonCommand(fileName: String): String? =
         if (fileName.matches(Regex("[A-Za-z0-9][A-Za-z0-9_.-]{0,63}\\.py")) && ".." !in fileName) {
             "python $fileName"

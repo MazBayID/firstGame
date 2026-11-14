@@ -39,6 +39,15 @@ class MissionWorkspacePolicyTest {
     }
 
     @Test
+    fun requiredMissionAssetsMustBePresentBeforeTheExerciseCanRun() {
+        val required = setOf("message_fragment.txt")
+        assertFalse(MissionWorkspacePolicy.hasRequiredAssets(required, emptySet()))
+        assertFalse(MissionWorkspacePolicy.hasRequiredAssets(required, setOf("signal.py")))
+        assertTrue(MissionWorkspacePolicy.hasRequiredAssets(required, setOf("message_fragment.txt", "signal.py")))
+        assertTrue(MissionWorkspacePolicy.hasRequiredAssets(emptySet(), emptySet()))
+    }
+
+    @Test
     fun writesRequireExplicitPermissionAndRespectSizeLimit() {
         assertTrue(MissionWorkspacePolicy.canWrite("signal.py", 0, writable))
         assertTrue(MissionWorkspacePolicy.canWrite("signal.py", 50_000, writable))
