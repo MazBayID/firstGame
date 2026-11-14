@@ -1,8 +1,6 @@
 name: Cyber Protocol — Debug Preview APK
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
